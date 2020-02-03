@@ -1,5 +1,5 @@
 namespace $.$$ {
-	export class $mol_app_portal extends $.$mol_app_portal {
+	export class $hyoo_portal extends $.$hyoo_portal {
 		pages() {
 			switch( this.$.$mol_state_arg.value( 'app' ) ) {
 				case 'habhub' : return [ this.Menu() , ... this.Habhub_app().pages() ]

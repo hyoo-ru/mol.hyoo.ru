@@ -1,4 +1,4 @@
-$mol_app_portal $mol_book
+$hyoo_portal $mol_book
 	Menu $mol_page
 		event_top?val <=> event_front_up?val
 		tools <= tools_root /
@@ -21,7 +21,7 @@ $mol_app_portal $mol_book
 		arg * app null
 		sub / <= Close_app_icon $mol_icon_cross
 	pages /
-		<= Habhub_app $mol_app_habhub
+		<= Habhub_app $hyoo_habhub
 			event_front_up?event <=> event_front_up?event
 			menu_title => habhub_title
 			tools_root / <= Close_app
