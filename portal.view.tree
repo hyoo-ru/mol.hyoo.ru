@@ -4,7 +4,7 @@ $hyoo_portal $mol_book
 		tools <= tools_root /
 			<= Sources $mol_link_iconed
 				title \
-				uri \https://github.com/eigenmethod/mol/tree/master/app/portal
+				uri \https://github.com/hyoo-ru/portal.hyoo.ru
 		title <= menu_title @ \My portal
 		minimal_width 200
 		body /
