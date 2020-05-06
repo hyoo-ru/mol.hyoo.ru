@@ -1,9 +1,9 @@
 [hyoo_portal_menu] {
-	flex: 0 1 200px;
+	flex: 0 0 10rem;
 }
 
 [hyoo_portal_menu_body] {
 	display: flex;
 	flex-direction: column;
-	padding: .5rem;
+	padding: .75rem;
 }

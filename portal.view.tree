@@ -1,12 +1,13 @@
-$hyoo_portal $mol_book
+$hyoo_portal $mol_book2
+	attr * 
+		^
+		mol_theme \$mol_theme_auto
 	Menu $mol_page
-		event_top?val <=> event_front_up?val
 		tools <= tools_root /
 			<= Sources $mol_link_iconed
 				title \
 				uri \https://github.com/hyoo-ru/portal.hyoo.ru
 		title <= menu_title @ \My portal
-		minimal_width 200
 		body /
 			<= Habhub_link $mol_link
 				title <= habhub_title
@@ -22,15 +23,12 @@ $hyoo_portal $mol_book
 		sub / <= Close_app_icon $mol_icon_cross
 	pages /
 		<= Habhub_app $hyoo_habhub
-			event_front_up?event <=> event_front_up?event
 			menu_title => habhub_title
 			tools_root / <= Close_app
 		- <= Files_app $mol_app_files
-			event_front_up?event <=> event_front_up?event
 			title_root => files_title
 			tools_root / <= Close_app
 			uri_root_default \http://ajaxexplorer.com/User5df12c6/
 		<= Supplies_app $mol_app_supplies
-			event_front_up?event <=> event_front_up?event
 			list_title => supplies_title
 			tools_root / <= Close_app
