@@ -2,9 +2,10 @@ name: Deploy
 
 on:
   push:
+  pull_request:
   schedule:
   - cron: "0 7 * * *"
- 
+
 jobs:
   build:
 
@@ -12,17 +13,14 @@ jobs:
     
     steps:
     
-    - name: Checkout sources
-      uses: actions/checkout@v1
-    
-    - name: Build app
-      uses: hyoo-ru/mam_build@master
+    - name: Build apps
+      uses: hyoo-ru/mam_build@master2
       with:
-        module: 'hyoo/portal'
-    
+        package: hyoo/portal
+        
     - name: Deploy on GitHub Pages
       if: github.ref == 'refs/heads/master'
       uses: alex-page/blazing-fast-gh-pages-deploy@v1.1.0
       with:
         repo-token: ${{ secrets.GH_PAT }}
-        site-directory: '.'
+        site-directory: hyoo/portal/-
