@@ -18144,11 +18144,12 @@ var $;
             return next;
         }
         static event_result(event) {
-            this.hearer();
             return event || null;
         }
         static recognitions() {
             var _a, _b;
+            if (!this.hearing())
+                return [];
             const result = this.event_result();
             if (!result)
                 return [];
@@ -23747,7 +23748,7 @@ var $;
                 const texts = this.speaker_content(this.slide());
                 if (texts.length === 0)
                     return [];
-                const found = /[\s\S]*\s([\w]+)\p{L}*?/u.exec(texts[texts.length - 1].found);
+                const found = /[\s\S]*\s([a-zа-яё]+)[^a-zа-яё]*?/ui.exec(texts[texts.length - 1].found);
                 if (!found)
                     return [];
                 const suffix = found[1].replace(/(.)$/, '$1?');
