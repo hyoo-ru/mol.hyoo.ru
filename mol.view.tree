@@ -13,7 +13,7 @@ $hyoo_mol $mol_book2
 				title <= components_title @ \Components
 				arg * app \components
 			<= View_tree_link $mol_link
-				title <= view_tree_title @ \View.Tree Compiler
+				title <= view_tree_title @ \View.Tree
 				arg * app \view.tree
 			<= Articles_link $mol_link
 				title <= articles_title @ \Articles
