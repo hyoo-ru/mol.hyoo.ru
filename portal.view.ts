@@ -1,12 +1,17 @@
 namespace $.$$ {
 	export class $hyoo_portal extends $.$hyoo_portal {
+		
 		pages() {
-			switch( this.$.$mol_state_arg.value( 'app' ) ) {
-				case 'habhub' : return [ this.Menu() , ... this.Habhub_app().pages() ]
-				// case 'files' : return [ this.Menu() , ... this.Files_app().pages() ]
-				case 'supplies' : return [ this.Menu() , ... this.Supplies_app().pages() ]
-				default : return [ this.Menu() ]
-			}
+
+			const app = this.$.$mol_state_arg.value( 'app' )
+			
+			return [
+				this.Menu(),
+				... ( app === 'components' ) ?  this.Components_app().pages() : [],
+				... ( app === 'articles' ) ?  this.Articles_app().pages() : [],
+				... ( app === 'slides' ) ?  [ this.Slides_app() ] : [],
+			]
+
 		}
 
 	}
