@@ -11,3 +11,7 @@
 [hyoo_mol_slides_app] {
 	flex: 1000 0 80rem;
 }
+
+[hyoo_mol_view_tree_app] {
+	flex: 1000 0 60rem;
+}
