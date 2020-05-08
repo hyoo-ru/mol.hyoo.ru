@@ -24,7 +24,6 @@ $hyoo_portal $mol_book2
 	pages /
 		<= Components_app $mol_app_demo
 			menu_title <= components_title
-			tools_root / <= Close_app
 		<= Articles_app $hyoo_habhub
 			menu_title <= articles_title
 			tools_root / <= Close_app
