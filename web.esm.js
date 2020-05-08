@@ -11323,5 +11323,6 @@ var $;
     $.$mol_github_repository_issues = $mol_github_repository_issues;
 })($ || ($ = {}));
 //repository.js.map
-
-//# sourceMappingURL=web.js.map
+;
+export default $
+//# sourceMappingURL=web.esm.js.map

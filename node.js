@@ -1,4 +1,6 @@
-function require( path ){ return $node[ path ] };
+require( "source-map-support" ).install(); var exports = void 0;
+;
+process.on( 'unhandledRejection' , up => { throw up } );
 "use strict"
 
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -181,11 +183,39 @@ var $;
 //context.js.map
 ;
 "use strict";
+var $node = new Proxy({}, { get(target, name, wrapper) {
+        const path = require('path');
+        const fs = require('fs');
+        const mod = require('module');
+        if (mod.builtinModules.indexOf(name) >= 0)
+            return require(name);
+        let dir = path.resolve('.');
+        const suffix = `./node_modules/${name}`;
+        const $$ = $;
+        while (!fs.existsSync(path.join(dir, suffix))) {
+            const parent = path.resolve(dir, '..');
+            if (parent === dir) {
+                $$.$mol_exec('.', 'npm', 'install', name);
+                try {
+                    $$.$mol_exec('.', 'npm', 'install', '@types/' + name);
+                }
+                catch (_a) { }
+                break;
+            }
+            else {
+                dir = parent;
+            }
+        }
+        return require(name);
+    } });
+//node.node.js.map
+;
+"use strict";
 var $;
 (function ($) {
-    $.$mol_dom_context = self;
+    $.$mol_dom_context = new $node.jsdom.JSDOM('', { url: 'https://localhost/' }).window;
 })($ || ($ = {}));
-//context.web.js.map
+//context.node.js.map
 ;
 "use strict";
 var $;
@@ -359,6 +389,21 @@ var $;
     $_1.$mol_object = $mol_object;
 })($ || ($ = {}));
 //object.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_window extends $.$mol_object {
+        static size(next) {
+            return next || {
+                width: 1024,
+                height: 768,
+            };
+        }
+    }
+    $.$mol_window = $mol_window;
+})($ || ($ = {}));
+//window.node.js.map
 ;
 "use strict";
 var $;
@@ -538,45 +583,23 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_log_debug(next) {
-        if (next !== undefined) {
-            if (next == null) {
-                sessionStorage.removeItem('$mol_log_debug()');
-            }
-            else {
-                sessionStorage.setItem('$mol_log_debug()', next);
-            }
-        }
-        return sessionStorage.getItem('$mol_log_debug()');
+    let debug;
+    function $mol_log_debug(next = debug) {
+        return debug = next;
     }
     $.$mol_log_debug = $mol_log_debug;
 })($ || ($ = {}));
-//log_debug.web.js.map
+//log_debug.node.js.map
 ;
 "use strict";
 var $;
 (function ($) {
-    let filter = undefined;
-    $.$mol_log_filter = function $mol_log_filter(next) {
-        if (next !== undefined) {
-            if (next == null) {
-                sessionStorage.removeItem('$mol_log_filter()');
-            }
-            else {
-                sessionStorage.setItem('$mol_log_filter()', next);
-            }
-            filter = next;
-        }
-        if (filter !== undefined)
-            return filter;
-        return filter = sessionStorage.getItem('$mol_log_filter()');
+    let filter;
+    $.$mol_log_filter = function $mol_log_filter(next = filter) {
+        return filter = next;
     };
-    if (typeof sessionStorage === 'undefined')
-        $.$mol_log_filter = (next = null) => filter = next;
-    if ($.$mol_log_filter() == null)
-        console.info('Use $mol_log_filter( needle : string|null ) to toggle logs');
 })($ || ($ = {}));
-//log_filter.web.js.map
+//log_filter.node.js.map
 ;
 "use strict";
 var $;
@@ -725,13 +748,6 @@ var $;
         $.$mol_log2_legend.info($.$mol_log2_token_empty, 'Use `$mol_log2.excludes : null | RegExp[]` to toggle logs');
 })($ || ($ = {}));
 //log2.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    console.debug($.$mol_log2_legend);
-})($ || ($ = {}));
-//log2.web.js.map
 ;
 "use strict";
 var $;
@@ -1539,27 +1555,6 @@ var $;
 //mem.js.map
 ;
 "use strict";
-var $;
-(function ($) {
-    class $mol_window extends $.$mol_object {
-        static size(next, force) {
-            return next || {
-                width: self.innerWidth,
-                height: self.innerHeight,
-            };
-        }
-    }
-    __decorate([
-        $.$mol_mem
-    ], $mol_window, "size", null);
-    $.$mol_window = $mol_window;
-    self.addEventListener('resize', $.$mol_fiber_root($.$mol_log_group(`$mol_window resize`, () => {
-        $mol_window.size(undefined, $.$mol_mem_force_cache);
-    })));
-})($ || ($ = {}));
-//window.web.js.map
-;
-"use strict";
 //param.js.map
 ;
 "use strict";
@@ -1795,38 +1790,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_after_timeout extends $.$mol_object2 {
-        constructor(delay, task) {
-            super();
-            this.delay = delay;
-            this.task = task;
-            this.id = setTimeout(task, delay);
-        }
-        destructor() {
-            clearTimeout(this.id);
-        }
-    }
-    $.$mol_after_timeout = $mol_after_timeout;
-})($ || ($ = {}));
-//timeout.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    if ($.$mol_dom_context.document) {
-        $.$mol_dom_context.document.documentElement.addEventListener('focus', (event) => {
-            new $.$mol_after_tick($.$mol_fiber_root(() => $.$mol_view_selection.focus(event)));
-        }, true);
-        $.$mol_dom_context.document.documentElement.addEventListener('blur', (event) => {
-            new $.$mol_after_timeout(0, $.$mol_fiber_root(() => $.$mol_view_selection.blur(event)));
-        }, true);
-    }
-})($ || ($ = {}));
-//selection.web.js.map
-;
-"use strict";
-var $;
-(function ($) {
     function $mol_dom_qname(name) {
         return name.replace(/\W/, '').replace(/^(?=\d+)/, '_');
     }
@@ -2028,6 +1991,13 @@ var $;
 ;
 "use strict";
 //pick.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_style_attach("mol/view/view/view.css", "[mol_view] {\n\ttransition-property: background-color, height, width, min-height, min-width, max-width, max-height, transform;\n\ttransition-duration: .2s;\n\ttransition-timing-function: ease-out;\n\t-webkit-appearance: none;\n\tword-break: break-word;\n\tbox-sizing: border-box;\n}\n\n[mol_view] > * {\n\tword-break: inherit;\n}\n\n[mol_view_root] {\n\tmargin: 0;\n\tpadding: 0;\n\twidth: 100%;\n\theight: 100%;\n\tbox-sizing: border-box;\n\tfont: var(--mol_skin_font);\n\tbackground: var(--mol_theme_back);\n\tcolor: var(--mol_theme_text);\n}\n\n[mol_view][mol_view_error]:not([mol_view_error=\"Promise\"]) {\n\tbackground-image: repeating-linear-gradient(\n\t\t135deg,\n\t\trgba(255,220,220,1),\n\t\trgba(255,220,220,1) 11px,\n\t\trgba(255,255,220,1) 10px,\n\t\trgba(255,255,220,1) 20px\n\t);\n\tbackground-size: 28px 28px;\n\tcolor: black;\n}\n\n@keyframes mol_view_wait_move {\n\tfrom {\n\t\tbackground-position: 0 0;\n\t}\n\tto {\n\t\tbackground-position: 200vmax 0;\n\t}\n}\n\n@keyframes mol_view_wait_show {\n\tto {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\thsla( 0 , 0% , 50% , .1 ) 0% ,\n\t\t\thsla( 0 , 0% , 50% , 0 ) 5% ,\n\t\t\thsla( 0 , 0% , 50% , 0 ) 45% ,\n\t\t\thsla( 0 , 0% , 50% , .1 ) 50% ,\n\t\t\thsla( 0 , 0% , 50% , 0 ) 55% ,\n\t\t\thsla( 0 , 0% , 50% , 0 ) 95% ,\n\t\t\thsla( 0 , 0% , 50% , .1 ) 100%\n\t\t);\n\t\tbackground-size: 200vmax 200vmax;\n\t}\n}\n\n[mol_view][mol_view_error=\"Promise\"] {\n\tanimation: mol_view_wait_show .5s .5s linear forwards , mol_view_wait_move 1s linear infinite;\n}\n");
+})($ || ($ = {}));
+//view.css.js.map
 ;
 "use strict";
 var $;
@@ -2317,52 +2287,6 @@ var $;
     $.$mol_view = $mol_view;
 })($ || ($ = {}));
 //view.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_after_frame extends $.$mol_object2 {
-        constructor(task) {
-            super();
-            this.task = task;
-            this.id = requestAnimationFrame(task);
-        }
-        destructor() {
-            cancelAnimationFrame(this.id);
-        }
-    }
-    $.$mol_after_frame = $mol_after_frame;
-})($ || ($ = {}));
-//frame.web.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_style_attach("mol/view/view/view.css", "[mol_view] {\n\ttransition-property: background-color, height, width, min-height, min-width, max-width, max-height, transform;\n\ttransition-duration: .2s;\n\ttransition-timing-function: ease-out;\n\t-webkit-appearance: none;\n\tword-break: break-word;\n\tbox-sizing: border-box;\n}\n\n[mol_view] > * {\n\tword-break: inherit;\n}\n\n[mol_view_root] {\n\tmargin: 0;\n\tpadding: 0;\n\twidth: 100%;\n\theight: 100%;\n\tbox-sizing: border-box;\n\tfont: var(--mol_skin_font);\n\tbackground: var(--mol_theme_back);\n\tcolor: var(--mol_theme_text);\n}\n\n[mol_view][mol_view_error]:not([mol_view_error=\"Promise\"]) {\n\tbackground-image: repeating-linear-gradient(\n\t\t135deg,\n\t\trgba(255,220,220,1),\n\t\trgba(255,220,220,1) 11px,\n\t\trgba(255,255,220,1) 10px,\n\t\trgba(255,255,220,1) 20px\n\t);\n\tbackground-size: 28px 28px;\n\tcolor: black;\n}\n\n@keyframes mol_view_wait_move {\n\tfrom {\n\t\tbackground-position: 0 0;\n\t}\n\tto {\n\t\tbackground-position: 200vmax 0;\n\t}\n}\n\n@keyframes mol_view_wait_show {\n\tto {\n\t\tbackground-image: repeating-linear-gradient(\n\t\t\t45deg,\n\t\t\thsla( 0 , 0% , 50% , .1 ) 0% ,\n\t\t\thsla( 0 , 0% , 50% , 0 ) 5% ,\n\t\t\thsla( 0 , 0% , 50% , 0 ) 45% ,\n\t\t\thsla( 0 , 0% , 50% , .1 ) 50% ,\n\t\t\thsla( 0 , 0% , 50% , 0 ) 55% ,\n\t\t\thsla( 0 , 0% , 50% , 0 ) 95% ,\n\t\t\thsla( 0 , 0% , 50% , .1 ) 100%\n\t\t);\n\t\tbackground-size: 200vmax 200vmax;\n\t}\n}\n\n[mol_view][mol_view_error=\"Promise\"] {\n\tanimation: mol_view_wait_show .5s .5s linear forwards , mol_view_wait_move 1s linear infinite;\n}\n");
-})($ || ($ = {}));
-//view.css.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    if ($.$mol_dom_context.document) {
-        const event_name = self.cordova ? 'deviceready' : 'DOMContentLoaded';
-        Promise.resolve().then($.$mol_fiber_root($.$mol_log2.func(() => {
-            $.$mol_view.autobind();
-            $.$mol_defer.run();
-        })));
-        function $mol_view_watch() {
-            $.$mol_fiber_unlimit(() => {
-                for (const view of $.$mol_view.watchers) {
-                    view.view_rect_cache(view.dom_node().getBoundingClientRect().toJSON());
-                }
-                new $.$mol_after_frame($mol_view_watch);
-            });
-        }
-        $mol_view_watch();
-    }
-})($ || ($ = {}));
-//view.web.js.map
 ;
 "use strict";
 //error.js.map
@@ -2751,6 +2675,24 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_after_timeout extends $.$mol_object2 {
+        constructor(delay, task) {
+            super();
+            this.delay = delay;
+            this.task = task;
+            this.id = setTimeout(task, delay);
+        }
+        destructor() {
+            clearTimeout(this.id);
+        }
+    }
+    $.$mol_after_timeout = $mol_after_timeout;
+})($ || ($ = {}));
+//timeout.js.map
+;
+"use strict";
+var $;
+(function ($) {
     var $$;
     (function ($$) {
         const { per, rem } = $.$mol_style_unit;
@@ -2858,6 +2800,19 @@ var $;
     $.$mol_book2 = $mol_book2;
 })($ || ($ = {}));
 //book2.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_after_frame extends $.$mol_after_timeout {
+        constructor(task) {
+            super(16, task);
+            this.task = task;
+        }
+    }
+    $.$mol_after_frame = $mol_after_frame;
+})($ || ($ = {}));
+//frame.node.js.map
 ;
 "use strict";
 var $;
@@ -3368,35 +3323,19 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_merge_dict(target, source) {
-        let result = {};
-        for (let key in target)
-            result[key] = target[key];
-        for (let key in source)
-            result[key] = source[key];
-        return result;
-    }
-    $.$mol_merge_dict = $mol_merge_dict;
-})($ || ($ = {}));
-//dict.js.map
-;
-"use strict";
-var $;
-(function ($) {
     class $mol_state_arg extends $.$mol_object {
         constructor(prefix = '') {
             super();
             this.prefix = prefix;
         }
-        static href(next, force) {
-            if (next === undefined)
-                return $.$mol_dom_context.location.href;
-            history.replaceState(history.state, $.$mol_dom_context.document.title, next);
-            return next;
+        static href(next) {
+            return next || process.argv.slice(2).join(' ');
         }
         static dict(next) {
-            var href = this.href(next && this.make_link(next)).split(/#/)[1] || '';
-            var chunks = href.split(/[\/\?#&;]/g);
+            if (next !== void 0)
+                this.href(this.make_link(next));
+            var href = this.href();
+            var chunks = href.split(' ');
             var params = {};
             chunks.forEach(chunk => {
                 if (!chunk)
@@ -3406,36 +3345,31 @@ var $;
             });
             return params;
         }
-        static dict_cut(except) {
-            const dict = this.dict();
-            const cut = {};
-            for (const key in dict) {
-                if (except.indexOf(key) >= 0)
-                    continue;
-                cut[key] = dict[key];
-            }
-            return cut;
-        }
         static value(key, next) {
-            const nextDict = (next === void 0) ? void 0 : $.$mol_merge_dict(this.dict(), { [key]: next });
-            const next2 = this.dict(nextDict)[key];
-            return (next2 == null) ? null : next2;
+            if (next === void 0)
+                return this.dict()[key] || null;
+            this.href(this.link({ [key]: next }));
+            return next;
         }
         static link(next) {
-            return this.make_link($.$mol_merge_dict(this.dict_cut(Object.keys(next)), next));
+            var params = {};
+            var prev = this.dict();
+            for (var key in prev) {
+                params[key] = prev[key];
+            }
+            for (var key in next) {
+                params[key] = next[key];
+            }
+            return this.make_link(params);
         }
         static make_link(next) {
-            const chunks = [];
-            for (let key in next) {
+            var chunks = [];
+            for (var key in next) {
                 if (null == next[key])
                     continue;
-                const val = next[key];
-                chunks.push([key].concat(val ? [val] : []).map(this.encode).join('='));
+                chunks.push([key].concat(next[key]).map(encodeURIComponent).join('='));
             }
-            return new URL('#' + chunks.join('/'), $.$mol_dom_context.location.href).toString();
-        }
-        static encode(str) {
-            return encodeURIComponent(str).replace(/\(/g, '%28').replace(/\)/g, '%29');
+            return chunks.join(' ');
         }
         value(key, next) {
             return this.constructor.value(this.prefix + key, next);
@@ -3460,16 +3394,10 @@ var $;
     ], $mol_state_arg, "dict", null);
     __decorate([
         $.$mol_mem_key
-    ], $mol_state_arg, "dict_cut", null);
-    __decorate([
-        $.$mol_mem_key
     ], $mol_state_arg, "value", null);
     $.$mol_state_arg = $mol_state_arg;
-    self.addEventListener('hashchange', $.$mol_fiber_root($.$mol_log_group('$mol_state_arg hashchange', (event) => {
-        $mol_state_arg.href($.$mol_dom_context.location.href);
-    })));
 })($ || ($ = {}));
-//arg.web.js.map
+//arg.node.js.map
 ;
 "use strict";
 var $;
@@ -3705,21 +3633,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    self.addEventListener('storage', event => {
-        if (!event.key)
-            return;
-        $.$mol_state_local.value(event.key, undefined, $.$mol_mem_force_cache);
-    });
-})($ || ($ = {}));
-//local.web.js.map
-;
-"use strict";
-var $node = $node || {};
-//node.web.js.map
-;
-"use strict";
-var $;
-(function ($) {
     var _a;
     const TextDecoder = (_a = globalThis.TextDecoder) !== null && _a !== void 0 ? _a : $node.util.TextDecoder;
     function $mol_charset_decode(value, code = 'utf8') {
@@ -3858,240 +3771,160 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_dom_parse(text, type = 'application/xhtml+xml') {
-        const parser = new $.$mol_dom_context.DOMParser();
-        const doc = parser.parseFromString(text, type);
-        const error = doc.getElementsByTagName('parsererror')[0];
-        if (error)
-            throw new Error(error.textContent);
-        return doc;
+    function $mol_compare_array(a, b) {
+        if (a === b)
+            return true;
+        if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b))
+            return false;
+        if (a.length !== b.length)
+            return false;
+        for (let i = 0; i < a.length; i++)
+            if (a[i] !== b[i])
+                return false;
+        return true;
     }
-    $.$mol_dom_parse = $mol_dom_parse;
+    $.$mol_compare_array = $mol_compare_array;
 })($ || ($ = {}));
-//parse.js.map
+//array.js.map
 ;
 "use strict";
 var $;
 (function ($) {
-    class $mol_fetch_response extends $.$mol_object2 {
-        constructor(native) {
-            super();
-            this.native = native;
-        }
-        headers() {
-            return this.native.headers;
-        }
-        mime() {
-            return this.headers().get('content-type');
-        }
-        stream() {
-            return this.native.body;
-        }
-        text() {
-            const buffer = this.buffer();
-            const native = this.native;
-            const mime = native.headers.get('content-type') || '';
-            const [, charset] = /charset=(.*)/.exec(mime) || [, 'utf-8'];
-            const decoder = new TextDecoder(charset);
-            return decoder.decode(buffer);
-        }
-        json() {
-            const response = this.native;
-            const parse = $.$mol_fiber_sync(response.json);
-            return parse.call(response);
-        }
-        buffer() {
-            const response = this.native;
-            const parse = $.$mol_fiber_sync(response.arrayBuffer);
-            return parse.call(response);
-        }
-        xml() {
-            return $.$mol_dom_parse(this.text(), 'application/xml');
-        }
-        xhtml() {
-            return $.$mol_dom_parse(this.text(), 'application/xhtml+xml');
-        }
-        html() {
-            return $.$mol_dom_parse(this.text(), 'text/html');
-        }
+    function stat_convert(stat) {
+        let type;
+        if (stat.isDirectory())
+            type = 'dir';
+        if (stat.isFile())
+            type = 'file';
+        if (stat.isSymbolicLink())
+            type = 'link';
+        if (!type)
+            return $.$mol_fail(new Error(`Unsupported file type`));
+        return {
+            type,
+            size: Number(stat.size),
+            atime: stat.atime,
+            mtime: stat.mtime,
+            ctime: stat.ctime
+        };
     }
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch_response.prototype, "stream", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch_response.prototype, "text", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch_response.prototype, "json", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch_response.prototype, "buffer", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch_response.prototype, "xml", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch_response.prototype, "xhtml", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch_response.prototype, "html", null);
-    $.$mol_fetch_response = $mol_fetch_response;
-    class $mol_fetch extends $.$mol_object2 {
-        static response(input, init) {
-            const response = this.request(input, init);
-            if (Math.floor(response.status / 100) === 2)
-                return new $mol_fetch_response(response);
-            throw new Error(response.statusText || `HTTP Error ${response.status}`);
-        }
-        static stream(input, init) {
-            return this.response(input, init).stream();
-        }
-        static text(input, init) {
-            return this.response(input, init).text();
-        }
-        static json(input, init) {
-            return this.response(input, init).json();
-        }
-        static buffer(input, init) {
-            this.response(input, init).buffer();
-        }
-        static xml(input, init) {
-            return this.response(input, init).xml();
-        }
-        static xhtml(input, init) {
-            return this.response(input, init).xhtml();
-        }
-        static html(input, init) {
-            return this.response(input, init).html();
-        }
+    function buffer_normalize(buf) {
+        return new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
     }
-    $mol_fetch.request = $.$mol_fiber_sync((input, init = {}) => {
-        if (typeof AbortController === 'function') {
-            var controller = new AbortController();
-            init.signal = controller.signal;
-            const fiber = $.$mol_fiber.current;
-            fiber.abort = () => {
-                if (fiber.cursor === -2)
-                    return true;
-                controller.abort();
-                return true;
-            };
-        }
-        let native = $.$mol_dom_context.fetch;
-        if (!native)
-            native = $node['node-fetch'];
-        return native(input, init);
-    });
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch, "response", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch, "stream", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch, "text", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch, "json", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch, "buffer", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch, "xml", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch, "xhtml", null);
-    __decorate([
-        $.$mol_fiber.method
-    ], $mol_fetch, "html", null);
-    $.$mol_fetch = $mol_fetch;
-})($ || ($ = {}));
-//fetch.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_file_web extends $.$mol_file {
+    class $mol_file_node extends $.$mol_file {
         static absolute(path) {
             return this.make({
                 path: $.$mol_const(path)
             });
         }
         static relative(path) {
-            return this.absolute(new URL(path, this.base).toString());
-        }
-        buffer(next, force) {
-            if (next !== undefined)
-                throw new Error(`Saving content not supported: ${this.path}`);
-            const response = $.$mol_fetch.response(this.path());
-            if (response.native.status === 404)
-                throw new $.$mol_file_not_found(`File not found: ${this.path()}`);
-            return new Uint8Array(response.buffer());
+            return this.absolute($node.path.resolve(path).replace(/\\/g, '/'));
         }
         watcher() {
-            throw new Error('$mol_file_web.watcher() not implemented');
+            const watcher = $node.chokidar.watch(this.path(), {
+                persistent: true,
+                ignored: /(^\.|___$)/,
+                depth: 0,
+                ignoreInitial: true,
+                awaitWriteFinish: {
+                    stabilityThreshold: 100,
+                },
+            });
+            const { magenta, magentaBright } = $node.colorette;
+            const handler = (type, path) => $.$mol_fiber_unlimit(() => {
+                const file = $.$mol_file.relative(path.replace(/\\/g, '/'));
+                if (type === 'change') {
+                    const cached = $.$mol_mem_cached(() => file.buffer());
+                    const actual = buffer_normalize($node.fs.readFileSync(file.path()));
+                    if (cached && $.$mol_compare_array(cached, actual))
+                        return;
+                    console.log(magenta(`$mol_file ${type} ${magentaBright(file.relate())}`));
+                    file.reset();
+                    file.buffer(actual, $.$mol_mem_force_cache);
+                }
+                else {
+                    console.log(magenta(`$mol_file ${type} ${magentaBright(file.relate())}`));
+                    file.reset();
+                    file.parent().reset();
+                }
+            });
+            watcher.on('all', handler);
+            watcher.on('error', (error) => {
+                this.stat(error, $.$mol_mem_force_fail);
+            });
+            return {
+                destructor() {
+                    watcher.removeAllListeners();
+                }
+            };
         }
         stat(next, force) {
             let stat = next;
-            if (next === undefined) {
-                const content = this.text();
-                const ctime = new Date();
-                stat = {
-                    type: 'file',
-                    size: content.length,
-                    ctime,
-                    atime: ctime,
-                    mtime: ctime
-                };
+            try {
+                stat = next !== null && next !== void 0 ? next : stat_convert($node.fs.statSync(this.path()));
+            }
+            catch (error) {
+                if (error.code === 'ENOENT')
+                    error = new $.$mol_file_not_found(`File not found: ${this.path()}`);
+                return $.$mol_fail_hidden(error);
             }
             this.parent().watcher();
             return stat;
         }
-        resolve(path) {
-            let res = this.path() + '/' + path;
-            while (true) {
-                let prev = res;
-                res = res.replace(/\/[^\/.]+\/\.\.\//, '/');
-                if (prev === res)
-                    break;
-            }
-            return this.constructor.absolute(res);
-        }
         ensure(next) {
-            throw new Error('$mol_file_web.ensure() not implemented');
+            if (next)
+                $node.fs.mkdirSync(this.path());
+            else
+                $node.fs.unlinkSync(this.path());
+            return true;
+        }
+        buffer(next, force) {
+            if (next === undefined) {
+                this.stat();
+                return buffer_normalize($node.fs.readFileSync(this.path()));
+            }
+            this.parent().exists(true);
+            $node.fs.writeFileSync(this.path(), next);
+            return next;
         }
         sub() {
-            throw new Error('$mol_file_web.sub() not implemented');
+            if (!this.exists())
+                return [];
+            if (this.type() !== 'dir')
+                return [];
+            return $node.fs.readdirSync(this.path())
+                .filter(name => !/^\.+$/.test(name))
+                .map(name => this.resolve(name));
+        }
+        resolve(path) {
+            return this.constructor.relative($node.path.join(this.path(), path));
         }
         relate(base = this.constructor.relative('.')) {
-            throw new Error('$mol_file_web.relate() not implemented');
+            return $node.path.relative(base.path(), this.path()).replace(/\\/g, '/');
         }
         append(next) {
-            throw new Error('$mol_file_web.append() not implemented');
+            $node.fs.appendFileSync(this.path(), next);
         }
     }
-    $mol_file_web.base = $.$mol_dom_context.document
-        ? new URL('.', $.$mol_dom_context.document.currentScript['src']).toString()
-        : '';
     __decorate([
         $.$mol_mem
-    ], $mol_file_web.prototype, "buffer", null);
+    ], $mol_file_node.prototype, "watcher", null);
     __decorate([
         $.$mol_mem
-    ], $mol_file_web.prototype, "stat", null);
+    ], $mol_file_node.prototype, "stat", null);
     __decorate([
         $.$mol_mem
-    ], $mol_file_web.prototype, "sub", null);
+    ], $mol_file_node.prototype, "buffer", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_file_node.prototype, "sub", null);
     __decorate([
         $.$mol_mem_key
-    ], $mol_file_web, "absolute", null);
-    $.$mol_file_web = $mol_file_web;
-    $.$mol_file = $mol_file_web;
+    ], $mol_file_node, "absolute", null);
+    $.$mol_file_node = $mol_file_node;
+    $.$mol_file = $mol_file_node;
 })($ || ($ = {}));
-//file.web.js.map
+//file.node.js.map
 ;
 "use strict";
 var $;
@@ -5837,6 +5670,177 @@ var $;
     $.$hyoo_habhub = $hyoo_habhub;
 })($ || ($ = {}));
 //habhub.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_dom_parse(text, type = 'application/xhtml+xml') {
+        const parser = new $.$mol_dom_context.DOMParser();
+        const doc = parser.parseFromString(text, type);
+        const error = doc.getElementsByTagName('parsererror')[0];
+        if (error)
+            throw new Error(error.textContent);
+        return doc;
+    }
+    $.$mol_dom_parse = $mol_dom_parse;
+})($ || ($ = {}));
+//parse.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_fetch_response extends $.$mol_object2 {
+        constructor(native) {
+            super();
+            this.native = native;
+        }
+        headers() {
+            return this.native.headers;
+        }
+        mime() {
+            return this.headers().get('content-type');
+        }
+        stream() {
+            return this.native.body;
+        }
+        text() {
+            const buffer = this.buffer();
+            const native = this.native;
+            const mime = native.headers.get('content-type') || '';
+            const [, charset] = /charset=(.*)/.exec(mime) || [, 'utf-8'];
+            const decoder = new TextDecoder(charset);
+            return decoder.decode(buffer);
+        }
+        json() {
+            const response = this.native;
+            const parse = $.$mol_fiber_sync(response.json);
+            return parse.call(response);
+        }
+        buffer() {
+            const response = this.native;
+            const parse = $.$mol_fiber_sync(response.arrayBuffer);
+            return parse.call(response);
+        }
+        xml() {
+            return $.$mol_dom_parse(this.text(), 'application/xml');
+        }
+        xhtml() {
+            return $.$mol_dom_parse(this.text(), 'application/xhtml+xml');
+        }
+        html() {
+            return $.$mol_dom_parse(this.text(), 'text/html');
+        }
+    }
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch_response.prototype, "stream", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch_response.prototype, "text", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch_response.prototype, "json", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch_response.prototype, "buffer", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch_response.prototype, "xml", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch_response.prototype, "xhtml", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch_response.prototype, "html", null);
+    $.$mol_fetch_response = $mol_fetch_response;
+    class $mol_fetch extends $.$mol_object2 {
+        static response(input, init) {
+            const response = this.request(input, init);
+            if (Math.floor(response.status / 100) === 2)
+                return new $mol_fetch_response(response);
+            throw new Error(response.statusText || `HTTP Error ${response.status}`);
+        }
+        static stream(input, init) {
+            return this.response(input, init).stream();
+        }
+        static text(input, init) {
+            return this.response(input, init).text();
+        }
+        static json(input, init) {
+            return this.response(input, init).json();
+        }
+        static buffer(input, init) {
+            this.response(input, init).buffer();
+        }
+        static xml(input, init) {
+            return this.response(input, init).xml();
+        }
+        static xhtml(input, init) {
+            return this.response(input, init).xhtml();
+        }
+        static html(input, init) {
+            return this.response(input, init).html();
+        }
+    }
+    $mol_fetch.request = $.$mol_fiber_sync((input, init = {}) => {
+        if (typeof AbortController === 'function') {
+            var controller = new AbortController();
+            init.signal = controller.signal;
+            const fiber = $.$mol_fiber.current;
+            fiber.abort = () => {
+                if (fiber.cursor === -2)
+                    return true;
+                controller.abort();
+                return true;
+            };
+        }
+        let native = $.$mol_dom_context.fetch;
+        if (!native)
+            native = $node['node-fetch'];
+        return native(input, init);
+    });
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch, "response", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch, "stream", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch, "text", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch, "json", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch, "buffer", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch, "xml", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch, "xhtml", null);
+    __decorate([
+        $.$mol_fiber.method
+    ], $mol_fetch, "html", null);
+    $.$mol_fetch = $mol_fetch;
+})($ || ($ = {}));
+//fetch.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_merge_dict(target, source) {
+        let result = {};
+        for (let key in target)
+            result[key] = target[key];
+        for (let key in source)
+            result[key] = source[key];
+        return result;
+    }
+    $.$mol_merge_dict = $mol_merge_dict;
+})($ || ($ = {}));
+//dict.js.map
 ;
 "use strict";
 var $;
@@ -11253,6 +11257,27 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_exec(dir, command, ...args) {
+        let [app, ...args0] = command.split(' ');
+        args = [...args0, ...args];
+        console.info(`${$node.colorette.gray($node.path.relative('', dir))}> ${$node.colorette.blue(app)} ${$node.colorette.cyan(args.join(' '))}`);
+        var res = $node['child_process'].spawnSync(app, args, {
+            cwd: $node.path.resolve(dir),
+            shell: true,
+        });
+        if (res.status || res.error)
+            return $.$mol_fail(res.error || new Error(res.stderr.toString()));
+        if (!res.stdout)
+            res.stdout = new Buffer('');
+        return res;
+    }
+    $.$mol_exec = $mol_exec;
+})($ || ($ = {}));
+//exec.node.js.map
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_github_repository extends $.$mol_github_entity {
         json_update(patch) {
             if (patch.owner)
@@ -11324,4 +11349,4 @@ var $;
 })($ || ($ = {}));
 //repository.js.map
 
-//# sourceMappingURL=web.js.map
+//# sourceMappingURL=node.js.map
