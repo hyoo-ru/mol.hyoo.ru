@@ -3182,6 +3182,7 @@ var $;
                     shrink: 1,
                     basis: per(50),
                 },
+                minHeight: rem(2.5),
                 padding: [rem(.5), rem(.75)],
                 wordBreak: 'normal',
                 cursor: 'default',
@@ -3196,9 +3197,6 @@ var $;
                 justifyContent: 'flex-end',
                 alignItems: 'flex-start',
                 flexWrap: 'wrap',
-                ':empty': {
-                    display: 'none',
-                },
             },
             Body: {
                 flex: {
@@ -20254,7 +20252,7 @@ var $;
         const splittedUri = tree.uri.split(/[#\\\/]/);
         splittedUri.pop();
         const fileName = splittedUri.pop();
-        const SourceNode = $node['source-map'].SourceNode;
+        const SourceNode = (row, col, fileName, text) => text;
         var content = [];
         var locales = {};
         for (let def of $mol_view_tree_classes(tree).sub) {
@@ -20335,11 +20333,11 @@ var $;
                                             args.push(` ${overName[2]} : any `);
                                         if (overName[3])
                                             args.push(` ${overName[3]}? : any `);
-                                        overs.push(...['\t\t\tobj.', new SourceNode(over.row, over.col, fileName, overName[1]), ' = (', args.join(','), ') => ', ...(v || []), '\n']);
+                                        overs.push(...['\t\t\tobj.', SourceNode(over.row, over.col, fileName, overName[1]), ' = (', args.join(','), ') => ', ...(v || []), '\n']);
                                         needSet = ns;
                                     });
                                     const object_args = value.select('/', '').sub.map(arg => getValue(arg)).join(' , ');
-                                    return ['(( obj )=>{\n', ...overs, '\t\t\treturn obj\n\t\t})( new this.$.', new SourceNode(value.row, value.col, fileName, value.type), '( ', object_args, ' ) )'];
+                                    return ['(( obj )=>{\n', ...overs, '\t\t\treturn obj\n\t\t})( new this.$.', SourceNode(value.row, value.col, fileName, value.type), '( ', object_args, ' ) )'];
                                 case (value.type === '*'):
                                     var opts = [];
                                     value.sub.forEach(opt => {
@@ -20353,7 +20351,7 @@ var $;
                                         var ns = needSet;
                                         var v = getValue(opt.sub[0]);
                                         var arg = key[2] ? ` ( ${key[2]}? : any )=> ` : '';
-                                        opts.push(...['\t\t\t"', new SourceNode(opt.row, opt.col, fileName, key[1] + '" : '), arg, ' ', ...(v || []), ' ,\n']);
+                                        opts.push(...['\t\t\t"', SourceNode(opt.row, opt.col, fileName, key[1] + '" : '), arg, ' ', ...(v || []), ' ,\n']);
                                         needSet = ns;
                                     });
                                     return ['({\n', opts.join(''), '\t\t})'];
@@ -20402,7 +20400,7 @@ var $;
                             val = [(needReturn ? `( ${propName[3]} !== void 0 ) ? ${propName[3]} : ` : `if( ${propName[3]} !== void 0 ) return ${propName[3]}\n\t\t`), ...val];
                         if (needReturn)
                             val = ['return ', ...val];
-                        var decl = ['\t', new SourceNode(param.row, param.col, fileName, propName[1]), '(', args.join(','), ') {\n\t\t', ...val, '\n\t}\n\n'];
+                        var decl = ['\t', SourceNode(param.row, param.col, fileName, propName[1]), '(', args.join(','), ') {\n\t\t', ...val, '\n\t}\n\n'];
                         if (needCache) {
                             if (propName[2])
                                 decl = ['\t@ $', 'mol_mem_key\n', ...decl];
@@ -20421,14 +20419,10 @@ var $;
                 const items = members[name] ? members[name] : ['\t', name, '() { return null as any }\n\t}\n'];
                 return [...acc, ...items];
             }, []);
-            var classes = ['namespace $ { export class ', new SourceNode(def.row, def.col, fileName, def.type), ' extends ', new SourceNode(parent.row, parent.col, fileName, parent.type), ' {\n\n', ...body, '} }\n'];
+            var classes = ['namespace $ { export class ', SourceNode(def.row, def.col, fileName, def.type), ' extends ', SourceNode(parent.row, parent.col, fileName, parent.type), ' {\n\n', ...body, '} }\n'];
             content = [...content, ...classes];
         }
-        splittedUri.push(`-view.tree`, `${fileName}.map`);
-        const node = new SourceNode(null, null, fileName, content);
-        node.add(`//@ sourceMappingURL=${splittedUri.join($node.path.sep)}`);
-        const codeWithSourceMap = node.toStringWithSourceMap();
-        return { script: codeWithSourceMap.code, locales: locales, map: codeWithSourceMap.map.toString() };
+        return { script: content.join(''), locales };
     }
     $.$mol_view_tree_compile = $mol_view_tree_compile;
 })($ || ($ = {}));
@@ -22228,6 +22222,97 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $hyoo_tree extends $.$mol_page {
+        title() {
+            return this.$.$mol_locale.text("$hyoo_tree_title");
+        }
+        body() {
+            return [this.Source(), this.Result()];
+        }
+        Source() {
+            return ((obj) => {
+                obj.value = (val) => this.source(val);
+                obj.hint = () => this.source_hint();
+                return obj;
+            })(new this.$.$mol_textarea());
+        }
+        source(val, force) {
+            return (val !== void 0) ? val : "";
+        }
+        source_hint() {
+            return this.$.$mol_locale.text("$hyoo_tree_source_hint");
+        }
+        Result() {
+            return ((obj) => {
+                obj.sub = () => [this.Result_text()];
+                return obj;
+            })(new this.$.$mol_scroll());
+        }
+        Result_text() {
+            return ((obj) => {
+                obj.text = () => this.result();
+                return obj;
+            })(new this.$.$mol_text());
+        }
+        result() {
+            return "";
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "Source", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "source", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "Result", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "Result_text", null);
+    $.$hyoo_tree = $hyoo_tree;
+})($ || ($ = {}));
+//tree.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_style_attach("hyoo/tree/tree.view.css", "[hyoo_tree_body] {\n\tdisplay: flex;\n}\n\n[hyoo_tree_source] {\n\tflex: 50% 1 1;\n\twhite-space: pre;\n\tfont-family: var(--mol_skin_font_monospace);\n}\n\n[hyoo_tree_source_view] {\n\tflex: 33% 1 1;\n}\n\n[hyoo_tree_result] {\n\tflex: 50% 1 1;\n\toutline: 0 0 0 1px var(--mol_theme_line);\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_result_text] {\n\tflex: auto 1 0;\n}\n\n");
+})($ || ($ = {}));
+//tree.view.css.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_tree extends $.$hyoo_tree {
+            compiled() {
+                return $.$mol_view_tree_compile($.$mol_tree.fromString(this.source(), 'view.tree'));
+            }
+            result() {
+                return ''
+                    + '# view.tree.ts\n\n' + this.compiled().script.replace(/^/gm, '\t') + '\n'
+                    + '# view.tree.locale=en.json\n\n' + JSON.stringify(this.compiled().locales, null, '\t').replace(/^/gm, '\t');
+            }
+            source(next) {
+                let source = this.$.$mol_state_arg.value('source', next);
+                if (source == null)
+                    source = this.$.$mol_fetch.text('hyoo/tree/tree.view.tree');
+                return source;
+            }
+        }
+        __decorate([
+            $.$mol_mem
+        ], $hyoo_tree.prototype, "compiled", null);
+        $$.$hyoo_tree = $hyoo_tree;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//tree.view.js.map
+;
+"use strict";
+var $;
+(function ($) {
     class $hyoo_habhub extends $.$mol_book2 {
         attr() {
             return ({
@@ -23717,7 +23802,7 @@ var $;
             return ((obj) => {
                 obj.tools = () => this.tools_root();
                 obj.title = () => this.menu_title();
-                obj.body = () => [this.Components_link(), this.Articles_link(), this.Slides_link()];
+                obj.body = () => [this.Components_link(), this.View_tree_link(), this.Articles_link(), this.Slides_link()];
                 return obj;
             })(new this.$.$mol_page());
         }
@@ -23745,6 +23830,18 @@ var $;
         }
         components_title() {
             return this.$.$mol_locale.text("$hyoo_mol_components_title");
+        }
+        View_tree_link() {
+            return ((obj) => {
+                obj.title = () => this.view_tree_title();
+                obj.arg = () => ({
+                    "app": "view.tree",
+                });
+                return obj;
+            })(new this.$.$mol_link());
+        }
+        view_tree_title() {
+            return this.$.$mol_locale.text("$hyoo_mol_view_tree_title");
         }
         Articles_link() {
             return ((obj) => {
@@ -23785,7 +23882,7 @@ var $;
             })(new this.$.$mol_icon_cross());
         }
         pages() {
-            return [this.Components_app(), this.Articles_app(), this.Slides_app()];
+            return [this.Components_app(), this.View_tree_app(), this.Articles_app(), this.Slides_app()];
         }
         theme() {
             return this.Components_app().theme();
@@ -23794,6 +23891,12 @@ var $;
             return ((obj) => {
                 return obj;
             })(new this.$.$mol_app_demo());
+        }
+        View_tree_app() {
+            return ((obj) => {
+                obj.tools = () => [this.Close_app()];
+                return obj;
+            })(new this.$.$hyoo_tree());
         }
         Articles_app() {
             return ((obj) => {
@@ -23820,6 +23923,9 @@ var $;
     ], $hyoo_mol.prototype, "Components_link", null);
     __decorate([
         $.$mol_mem
+    ], $hyoo_mol.prototype, "View_tree_link", null);
+    __decorate([
+        $.$mol_mem
     ], $hyoo_mol.prototype, "Articles_link", null);
     __decorate([
         $.$mol_mem
@@ -23835,6 +23941,9 @@ var $;
     ], $hyoo_mol.prototype, "Components_app", null);
     __decorate([
         $.$mol_mem
+    ], $hyoo_mol.prototype, "View_tree_app", null);
+    __decorate([
+        $.$mol_mem
     ], $hyoo_mol.prototype, "Articles_app", null);
     __decorate([
         $.$mol_mem
@@ -23846,7 +23955,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("hyoo/mol/mol.view.css", "[hyoo_mol_menu] {\n\tflex: 0 0 15rem;\n}\n\n[hyoo_mol_menu_body] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: .75rem;\n}\n\n[hyoo_mol_slides_app] {\n\tflex: 1000 0 80rem;\n}\n");
+    $.$mol_style_attach("hyoo/mol/mol.view.css", "[hyoo_mol_menu] {\n\tflex: 0 0 15rem;\n}\n\n[hyoo_mol_menu_body] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: .75rem;\n}\n\n[hyoo_mol_slides_app] {\n\tflex: 1000 0 80rem;\n}\n\n[hyoo_mol_view_tree_app] {\n\tflex: 1000 0 60rem;\n}\n");
 })($ || ($ = {}));
 //mol.view.css.js.map
 ;
@@ -23861,6 +23970,7 @@ var $;
                 return [
                     this.Menu(),
                     ...(app === 'components') ? this.Components_app().pages() : [],
+                    ...(app === 'view.tree') ? [this.View_tree_app()] : [],
                     ...(app === 'articles') ? this.Articles_app().pages() : [],
                     ...(app === 'slides') ? [this.Slides_app()] : [],
                 ];

@@ -1,5 +1,7 @@
 {
 	"$hyoo_slides_open_listener_hint": "Открыть слайды в отдельном окне",
+	"$hyoo_tree_source_hint": "view.tree исходник",
+	"$hyoo_tree_title": "View.Tree компилятор",
 	"$mol_app_demo_detail_empty_postfix": "\" ни одного демо не найдено",
 	"$mol_app_demo_detail_empty_prefix": "По префиксу \"",
 	"$mol_app_demo_menu_title": "Демки",

@@ -5651,11 +5651,10 @@ declare namespace $ {
     function $mol_view_tree_prop_value(prop: $mol_tree): $mol_tree;
     function $mol_view_tree_value_type(val: $mol_tree): "string" | "object" | "number" | "locale" | "null" | "bool" | "dict" | "get" | "bind" | "put" | "list";
     function $mol_view_tree_compile(tree: $mol_tree): {
-        script: any;
+        script: string;
         locales: {
             [key: string]: string;
         };
-        map: any;
     };
 }
 
@@ -6008,6 +6007,35 @@ declare namespace $.$$ {
         }): {
             demo: string;
         };
+    }
+}
+
+declare namespace $ {
+    class $hyoo_tree extends $mol_page {
+        title(): string;
+        body(): readonly any[];
+        Source(): $$.$mol_textarea;
+        source(val?: any, force?: $mol_mem_force): any;
+        source_hint(): string;
+        Result(): $$.$mol_scroll;
+        Result_text(): $$.$mol_text;
+        result(): string;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $hyoo_tree extends $.$hyoo_tree {
+        compiled(): {
+            script: string;
+            locales: {
+                [key: string]: string;
+            };
+        };
+        result(): string;
+        source(next?: string): string;
     }
 }
 
@@ -6439,6 +6467,8 @@ declare namespace $ {
         menu_title(): string;
         Components_link(): $$.$mol_link;
         components_title(): string;
+        View_tree_link(): $$.$mol_link;
+        view_tree_title(): string;
         Articles_link(): $$.$mol_link;
         articles_title(): string;
         Slides_link(): $$.$mol_link;
@@ -6448,6 +6478,7 @@ declare namespace $ {
         pages(): readonly any[];
         theme(): any;
         Components_app(): $$.$mol_app_demo;
+        View_tree_app(): $$.$hyoo_tree;
         Articles_app(): $$.$hyoo_habhub;
         Slides_app(): $$.$hyoo_slides;
     }

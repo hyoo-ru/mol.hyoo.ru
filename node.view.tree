@@ -2715,6 +2715,17 @@ $mol_app_demo_nav $mol_grid
 				sub /
 					<= cell_content!id
 
+$hyoo_tree $mol_page
+	title @ \View.Tree compiler
+	body /
+		<= Source $mol_textarea
+			value?val <=> source?val \
+			hint <= source_hint @ \view.tree source
+		<= Result $mol_scroll
+			sub /
+				<= Result_text $mol_text
+					text <= result \
+		
 $hyoo_habhub $mol_book2
 	attr *
 		mol_theme \$mol_theme_auto
@@ -2929,6 +2940,9 @@ $hyoo_mol $mol_book2
 			<= Components_link $mol_link
 				title <= components_title @ \Components
 				arg * app \components
+			<= View_tree_link $mol_link
+				title <= view_tree_title @ \View.Tree Compiler
+				arg * app \view.tree
 			<= Articles_link $mol_link
 				title <= articles_title @ \Articles
 				arg * app \articles
@@ -2941,6 +2955,8 @@ $hyoo_mol $mol_book2
 	pages /
 		<= Components_app $mol_app_demo
 			theme => theme
+		<= View_tree_app $hyoo_tree
+			tools / <= Close_app
 		<= Articles_app $hyoo_habhub
 			menu_title <= articles_title
 			tools_root / <= Close_app
