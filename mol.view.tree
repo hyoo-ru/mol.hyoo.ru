@@ -1,7 +1,7 @@
-$hyoo_portal $mol_book2
+$hyoo_mol $mol_book2
 	attr * 
 		^
-		mol_theme \$mol_theme_auto
+		mol_theme <= theme
 	Menu $mol_page
 		tools <= tools_root /
 			<= Sources $mol_link_iconed
@@ -23,7 +23,7 @@ $hyoo_portal $mol_book2
 		sub / <= Close_app_icon $mol_icon_cross
 	pages /
 		<= Components_app $mol_app_demo
-			menu_title <= components_title
+			theme => theme
 		<= Articles_app $hyoo_habhub
 			menu_title <= articles_title
 			tools_root / <= Close_app

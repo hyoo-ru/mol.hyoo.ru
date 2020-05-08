@@ -1,13 +1,13 @@
-[hyoo_portal_menu] {
+[hyoo_mol_menu] {
 	flex: 0 0 15rem;
 }
 
-[hyoo_portal_menu_body] {
+[hyoo_mol_menu_body] {
 	display: flex;
 	flex-direction: column;
 	padding: .75rem;
 }
 
-[hyoo_portal_slides_app] {
+[hyoo_mol_slides_app] {
 	flex: 1000 0 80rem;
 }

@@ -1,5 +1,5 @@
 namespace $.$$ {
-	export class $hyoo_portal extends $.$hyoo_portal {
+	export class $hyoo_mol extends $.$hyoo_mol {
 		
 		pages() {
 
