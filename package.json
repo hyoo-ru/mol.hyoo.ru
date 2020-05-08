@@ -1,5 +1,5 @@
 {
-  "name": "hyoo_portal",
+  "name": "hyoo_mol",
   "version": "0.0.1",
   "main": "node.js",
   "module": "node.esm.js",
@@ -9,6 +9,7 @@
     "jsdom": "*",
     "chokidar": "*",
     "colorette": "*",
+    "source-map": "*",
     "node-fetch": "*"
   }
 }

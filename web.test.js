@@ -2191,40 +2191,6 @@ var $;
 var $;
 (function ($) {
     $.$mol_test({
-        '$mol_syntax2_md_flow'() {
-            const check = (input, right) => {
-                const tokens = [];
-                $.$mol_syntax2_md_flow.tokenize(input, (...token) => tokens.push(token));
-                $.$mol_assert_like(JSON.stringify(tokens), JSON.stringify(right));
-            };
-            check('Hello,\nWorld..\r\n\r\n\nof Love!', [
-                ['block', 'Hello,\nWorld..\r\n\r\n\n', ['Hello,\nWorld..', '\r\n\r\n\n'], 0],
-                ['block', 'of Love!', ['of Love!', ''], 19],
-            ]);
-            check('# Header1\n\nHello!\n\n## Header2', [
-                ['header', '# Header1\n\n', ['#', ' ', 'Header1', '\n\n'], 0],
-                ['block', 'Hello!\n\n', ['Hello!', '\n\n'], 11],
-                ['header', '## Header2', ['##', ' ', 'Header2', ''], 19],
-            ]);
-            check('```\nstart()\n```\n\n```js\nrestart()\n```\n\nHello!\n\n```\nstop()\n```', [
-                ['code', '```\nstart()\n```\n\n', ['```', '', 'start()\n', '```', '\n\n'], 0],
-                ['code', '```js\nrestart()\n```\n\n', ['```', 'js', 'restart()\n', '```', '\n\n'], 17],
-                ['block', 'Hello!\n\n', ['Hello!', '\n\n'], 38],
-                ['code', '```\nstop()\n```', ['```', '', 'stop()\n', '```', ''], 46],
-            ]);
-            check('| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n\n| Cell11 | Cell12\n| Cell21 | Cell22\n', [
-                ['table', '| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n\n', ['| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n', '\n'], 0],
-                ['table', '| Cell11 | Cell12\n| Cell21 | Cell22\n', ['| Cell11 | Cell12\n| Cell21 | Cell22\n', ''], 68],
-            ]);
-        },
-    });
-})($ || ($ = {}));
-//md.test.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_test({
         'parse and serial'() {
             $.$mol_assert_equal(new $.$mol_time_duration('P42.1Y').toString(), 'P42.1YT');
             $.$mol_assert_equal(new $.$mol_time_duration('P42.1M').toString(), 'P42.1MT');
@@ -2298,6 +2264,268 @@ var $;
 var $;
 (function ($) {
     $.$mol_test({
+        'triplets'() {
+            $.$mol_assert_equal(new $.$mol_time_interval('2015-01-01/P1M').end.toString(), '2015-02-01');
+            $.$mol_assert_equal(new $.$mol_time_interval('P1M/2015-02-01').start.toString(), '2015-01-01');
+            $.$mol_assert_equal(new $.$mol_time_interval('2015-01-01/2015-02-01').duration.toString(), 'PT2678400S');
+        }
+    });
+})($ || ($ = {}));
+//interval.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        'Vector limiting'() {
+            let point = new $.$mol_vector_3d(7, 10, 13);
+            const res = point.limited([[1, 5], [15, 20], [5, 10]]);
+            $.$mol_assert_equal(res.x, 5);
+            $.$mol_assert_equal(res.y, 15);
+            $.$mol_assert_equal(res.z, 10);
+        },
+        'Vector adding scalar'() {
+            let point = new $.$mol_vector_3d(1, 2, 3);
+            let res = point.added0(5);
+            $.$mol_assert_equal(res.x, 6);
+            $.$mol_assert_equal(res.y, 7);
+            $.$mol_assert_equal(res.z, 8);
+        },
+        'Vector adding vector'() {
+            let point = new $.$mol_vector_3d(1, 2, 3);
+            let res = point.added1([5, 10, 15]);
+            $.$mol_assert_equal(res.x, 6);
+            $.$mol_assert_equal(res.y, 12);
+            $.$mol_assert_equal(res.z, 18);
+        },
+        'Vector multiplying scalar'() {
+            let point = new $.$mol_vector_3d(2, 3, 4);
+            let res = point.multed0(-1);
+            $.$mol_assert_equal(res.x, -2);
+            $.$mol_assert_equal(res.y, -3);
+            $.$mol_assert_equal(res.z, -4);
+        },
+        'Vector multiplying vector'() {
+            let point = new $.$mol_vector_3d(2, 3, 4);
+            let res = point.multed1([5, 2, -2]);
+            $.$mol_assert_equal(res.x, 10);
+            $.$mol_assert_equal(res.y, 6);
+            $.$mol_assert_equal(res.z, -8);
+        },
+        'Matrix adding matrix'() {
+            let matrix = new $.$mol_vector_matrix(...[[1, 2], [3, 4], [5, 6]]);
+            let res = matrix.added2([[10, 20], [30, 40], [50, 60]]);
+            $.$mol_assert_equal(res[0][0], 11);
+            $.$mol_assert_equal(res[0][1], 22);
+            $.$mol_assert_equal(res[1][0], 33);
+            $.$mol_assert_equal(res[1][1], 44);
+            $.$mol_assert_equal(res[2][0], 55);
+            $.$mol_assert_equal(res[2][1], 66);
+        },
+        'Matrix multiplying matrix'() {
+            let matrix = new $.$mol_vector_matrix(...[[2, 3], [4, 5], [6, 7]]);
+            let res = matrix.multed2([[2, 3], [4, 5], [6, 7]]);
+            $.$mol_assert_equal(res[0][0], 4);
+            $.$mol_assert_equal(res[0][1], 9);
+            $.$mol_assert_equal(res[1][0], 16);
+            $.$mol_assert_equal(res[1][1], 25);
+            $.$mol_assert_equal(res[2][0], 36);
+            $.$mol_assert_equal(res[2][1], 49);
+        },
+        'Range expanding'() {
+            let range = $.$mol_vector_range_full.inversed;
+            const expanded = range.expanded0(10).expanded0(5);
+            $.$mol_assert_like([...expanded], [5, 10]);
+        },
+        'Vector of range expanding by vector'() {
+            let dimensions = new $.$mol_vector_2d($.$mol_vector_range_full.inversed, $.$mol_vector_range_full.inversed);
+            const expanded = dimensions.expanded1([1, 7]).expanded1([3, 5]);
+            $.$mol_assert_like([...expanded.x], [1, 3]);
+            $.$mol_assert_like([...expanded.y], [5, 7]);
+        },
+        'Vector of range expanding by vector of range'() {
+            let dimensions = new $.$mol_vector_2d($.$mol_vector_range_full.inversed, $.$mol_vector_range_full.inversed);
+            const expanded = dimensions
+                .expanded2([[1, 3], [7, 9]])
+                .expanded2([[2, 4], [6, 8]]);
+            $.$mol_assert_like([...expanded.x], [1, 4]);
+            $.$mol_assert_like([...expanded.y], [6, 9]);
+        },
+        'Vector of infinity range expanding by vector of range'() {
+            let dimensions = new $.$mol_vector_2d($.$mol_vector_range_full.inversed, $.$mol_vector_range_full.inversed);
+            const next = new $.$mol_vector_2d($.$mol_vector_range_full.inversed, $.$mol_vector_range_full.inversed);
+            const expanded = next
+                .expanded2(dimensions);
+            $.$mol_assert_like([...expanded.x], [Infinity, -Infinity]);
+            $.$mol_assert_like([...expanded.y], [Infinity, -Infinity]);
+        },
+    });
+})($ || ($ = {}));
+//vector.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        'return result without errors'() {
+            $.$mol_assert_equal($.$mol_try(() => false), false);
+        },
+    });
+})($ || ($ = {}));
+//try.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        'lazy calls'() {
+            let calls = 0;
+            const list = $.$mol_range2(index => (++calls, index), () => 10);
+            $.$mol_assert_ok(list instanceof Array);
+            $.$mol_assert_equal(list.length, 10);
+            $.$mol_assert_equal(list[-1], -1);
+            $.$mol_assert_equal(list[0], 0);
+            $.$mol_assert_equal(list[9], 9);
+            $.$mol_assert_equal(list[9.5], undefined);
+            $.$mol_assert_equal(list[10], 10);
+            $.$mol_assert_equal(calls, 4);
+        },
+        'infinity list'() {
+            let calls = 0;
+            const list = $.$mol_range2(index => (++calls, index));
+            $.$mol_assert_equal(list.length, Number.POSITIVE_INFINITY);
+            $.$mol_assert_equal(list[0], 0);
+            $.$mol_assert_equal(list[4], 4);
+            $.$mol_assert_equal(list[Number.MAX_SAFE_INTEGER], Number.MAX_SAFE_INTEGER);
+            $.$mol_assert_equal(list[Number.POSITIVE_INFINITY], Number.POSITIVE_INFINITY);
+            $.$mol_assert_equal(calls, 4);
+        },
+        'stringify'() {
+            const list = $.$mol_range2(i => i, () => 5);
+            $.$mol_assert_equal(list.toString(), '0,1,2,3,4');
+            $.$mol_assert_equal(list.join(';'), '0;1;2;3;4');
+        },
+        'for-of'() {
+            let log = '';
+            for (let i of $.$mol_range2(i => i + 1, () => 5)) {
+                log += i;
+            }
+            $.$mol_assert_equal(log, '12345');
+        },
+        'for-in'() {
+            let log = '';
+            for (let i in $.$mol_range2(i => i, () => 5)) {
+                log += i;
+            }
+            $.$mol_assert_equal(log, '01234');
+        },
+        'forEach'() {
+            let log = '';
+            $.$mol_range2(i => i, () => 5).forEach(i => log += i);
+            $.$mol_assert_equal(log, '01234');
+        },
+        'lazy concat'() {
+            let calls1 = 0;
+            let calls2 = 0;
+            const list = $.$mol_range2(index => (++calls1, index), () => 5).concat([0, 1, 2, 3, 4], $.$mol_range2(index => (++calls2, index), () => 5));
+            $.$mol_assert_ok(list instanceof Array);
+            $.$mol_assert_equal(list.length, 15);
+            $.$mol_assert_equal(list[0], 0);
+            $.$mol_assert_equal(list[4], 4);
+            $.$mol_assert_equal(list[5], 0);
+            $.$mol_assert_equal(list[9], 4);
+            $.$mol_assert_equal(list[10], 0);
+            $.$mol_assert_equal(list[14], 4);
+            $.$mol_assert_equal(list[15], 5);
+            $.$mol_assert_equal(calls1, 2);
+            $.$mol_assert_equal(calls2, 3);
+        },
+        'filter'() {
+            let calls = 0;
+            const list = $.$mol_range2(index => (++calls, index), () => 10).filter(v => v % 2).slice(0, 3);
+            $.$mol_assert_ok(list instanceof Array);
+            $.$mol_assert_equal(list.length, 3);
+            $.$mol_assert_equal(list[0], 1);
+            $.$mol_assert_equal(list[2], 5);
+            $.$mol_assert_equal(list[3], 7);
+            $.$mol_assert_equal(calls, 10);
+        },
+        'reduce'() {
+            let calls = 0;
+            const list = $.$mol_range2().slice(1, 6);
+            $.$mol_assert_equal(list.reduce((s, v) => s + v), 15);
+            $.$mol_assert_equal(list.reduce((s, v) => s + v, 5), 20);
+        },
+        'lazy map'() {
+            let calls1 = 0;
+            let calls2 = 0;
+            const source = $.$mol_range2(index => (++calls1, index), () => 5);
+            const target = source.map((item, index, self) => {
+                ++calls2;
+                $.$mol_assert_equal(source, self);
+                return index + 10;
+            }, () => 5);
+            $.$mol_assert_ok(target instanceof Array);
+            $.$mol_assert_equal(target.length, 5);
+            $.$mol_assert_equal(target[0], 10);
+            $.$mol_assert_equal(target[4], 14);
+            $.$mol_assert_equal(target[5], 15);
+            $.$mol_assert_equal(calls1, 3);
+            $.$mol_assert_equal(calls2, 3);
+        },
+        'lazy slice'() {
+            let calls = 0;
+            const list = $.$mol_range2(index => (++calls, index), () => 10).slice(3, 7);
+            $.$mol_assert_ok(list instanceof Array);
+            $.$mol_assert_equal(list.length, 4);
+            $.$mol_assert_equal(list[0], 3);
+            $.$mol_assert_equal(list[3], 6);
+            $.$mol_assert_equal(list[4], 7);
+            $.$mol_assert_equal(calls, 3);
+        },
+        'lazy some'() {
+            let calls = 0;
+            $.$mol_assert_ok($.$mol_range2(index => (++calls, index), () => 5).some(v => v >= 2));
+            $.$mol_assert_equal(calls, 3);
+            $.$mol_assert_not($.$mol_range2(i => i, () => 0).some(v => true));
+            $.$mol_assert_ok($.$mol_range2(i => i).some(v => v > 5));
+        },
+        'lazy every'() {
+            let calls = 0;
+            $.$mol_assert_not($.$mol_range2(index => (++calls, index), () => 5).every(v => v < 2));
+            $.$mol_assert_equal(calls, 3);
+            $.$mol_assert_ok($.$mol_range2(i => i, () => 0).every(v => false));
+            $.$mol_assert_not($.$mol_range2(i => i).every(v => v < 5));
+        },
+        'lazyfy'() {
+            let calls = 0;
+            const list = new $.$mol_range2_array(...[0, 1, 2, 3, 4, 5]).map(i => (++calls, i + 10)).slice(2);
+            $.$mol_assert_ok(list instanceof Array);
+            $.$mol_assert_equal(list.length, 4);
+            $.$mol_assert_equal(calls, 0);
+            $.$mol_assert_equal(list[0], 12);
+            $.$mol_assert_equal(list[3], 15);
+            $.$mol_assert_equal(list[4], Number.NaN);
+            $.$mol_assert_equal(calls, 3);
+        },
+        'prevent modification'() {
+            const list = $.$mol_range2(i => i, () => 5);
+            $.$mol_assert_fail(() => list.push(4), TypeError);
+            $.$mol_assert_fail(() => list.pop(), TypeError);
+            $.$mol_assert_fail(() => list.unshift(4), TypeError);
+            $.$mol_assert_fail(() => list.shift(), TypeError);
+            $.$mol_assert_fail(() => list.splice(1, 2), TypeError);
+            $.$mol_assert_fail(() => list[1] = 2, TypeError);
+            $.$mol_assert_equal(list.toString(), '0,1,2,3,4');
+        }
+    });
+})($ || ($ = {}));
+//range2.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
         'convertion to primitives'() {
             var unit = new $.$mol_unit_money_usd(5);
             $.$mol_assert_equal(unit.valueOf(), 5);
@@ -2317,6 +2545,273 @@ var $;
     });
 })($ || ($ = {}));
 //unit.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        '$mol_syntax2_md_flow'() {
+            const check = (input, right) => {
+                const tokens = [];
+                $.$mol_syntax2_md_flow.tokenize(input, (...token) => tokens.push(token));
+                $.$mol_assert_like(JSON.stringify(tokens), JSON.stringify(right));
+            };
+            check('Hello,\nWorld..\r\n\r\n\nof Love!', [
+                ['block', 'Hello,\nWorld..\r\n\r\n\n', ['Hello,\nWorld..', '\r\n\r\n\n'], 0],
+                ['block', 'of Love!', ['of Love!', ''], 19],
+            ]);
+            check('# Header1\n\nHello!\n\n## Header2', [
+                ['header', '# Header1\n\n', ['#', ' ', 'Header1', '\n\n'], 0],
+                ['block', 'Hello!\n\n', ['Hello!', '\n\n'], 11],
+                ['header', '## Header2', ['##', ' ', 'Header2', ''], 19],
+            ]);
+            check('```\nstart()\n```\n\n```js\nrestart()\n```\n\nHello!\n\n```\nstop()\n```', [
+                ['code', '```\nstart()\n```\n\n', ['```', '', 'start()\n', '```', '\n\n'], 0],
+                ['code', '```js\nrestart()\n```\n\n', ['```', 'js', 'restart()\n', '```', '\n\n'], 17],
+                ['block', 'Hello!\n\n', ['Hello!', '\n\n'], 38],
+                ['code', '```\nstop()\n```', ['```', '', 'stop()\n', '```', ''], 46],
+            ]);
+            check('| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n\n| Cell11 | Cell12\n| Cell21 | Cell22\n', [
+                ['table', '| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n\n', ['| header1 | header2\n|----|----\n| Cell11 | Cell12\n| Cell21 | Cell22\n', '\n'], 0],
+                ['table', '| Cell11 | Cell12\n| Cell21 | Cell22\n', ['| Cell11 | Cell12\n| Cell21 | Cell22\n', ''], 68],
+            ]);
+        },
+    });
+})($ || ($ = {}));
+//md.test.js.map
+;
+"use strict";
+var $;
+(function ($_1) {
+    $_1.$mol_test({
+        'tree parsing'() {
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString("foo\nbar\n").sub.length, 2);
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString("foo\nbar\n").sub[1].type, "bar");
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString("foo\n\n\n").sub.length, 1);
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString("=foo\n\\bar\n").sub.length, 2);
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString("=foo\n\\bar\n").sub[1].data, "bar");
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString("foo bar \\pol").sub[0].sub[0].sub[0].data, "pol");
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString("foo bar\n\t\\pol\n\t\\men").sub[0].sub[0].sub[1].data, "men");
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString('foo bar \\text\n').toString(), 'foo bar \\text\n');
+        },
+        'inserting'() {
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString('a b c d').insert(new $_1.$mol_tree, 'a', 'b', 'c').toString(), 'a b \\\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString('a b').insert(new $_1.$mol_tree, 'a', 'b', 'c', 'd').toString(), 'a b c \\\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString('a b c d').insert(new $_1.$mol_tree, 0, 0, 0).toString(), 'a b \\\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString('a b').insert(new $_1.$mol_tree, 0, 0, 0, 0).toString(), 'a b \\\n\t\\\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString('a b c d').insert(new $_1.$mol_tree, null, null, null).toString(), 'a b \\\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromString('a b').insert(new $_1.$mol_tree, null, null, null, null).toString(), 'a b \\\n\t\\\n');
+        },
+        'fromJSON'() {
+            $_1.$mol_assert_equal($_1.$mol_tree.fromJSON([]).toString(), '/\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromJSON([false, true]).toString(), '/\n\tfalse\n\ttrue\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromJSON([0, 1, 2.3]).toString(), '/\n\t0\n\t1\n\t2.3\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromJSON(['', 'foo', 'bar\nbaz']).toString(), '/\n\t\\\n\t\\foo\n\t\\\n\t\t\\bar\n\t\t\\baz\n');
+            $_1.$mol_assert_equal($_1.$mol_tree.fromJSON({ 'foo': false, 'bar\nbaz': 'lol' }).toString(), '*\n\tfoo false\n\t\\\n\t\t\\bar\n\t\t\\baz\n\t\t\\lol\n');
+        },
+        'toJSON'() {
+            $_1.$mol_assert_equal(JSON.stringify($_1.$mol_tree.fromString('/\n').sub[0]), '[]');
+            $_1.$mol_assert_equal(JSON.stringify($_1.$mol_tree.fromString('/\n\tfalse\n\ttrue\n').sub[0]), '[false,true]');
+            $_1.$mol_assert_equal(JSON.stringify($_1.$mol_tree.fromString('/\n\t0\n\t1\n\t2.3\n').sub[0]), '[0,1,2.3]');
+            $_1.$mol_assert_equal(JSON.stringify($_1.$mol_tree.fromString('/\n\t\\\n\t\\foo\n\t\\\n\t\t\\bar\n\t\t\\baz\n').sub[0]), '["","foo","bar\\nbaz"]');
+            $_1.$mol_assert_equal(JSON.stringify($_1.$mol_tree.fromString('*\n\tfoo false\n\t\\\n\t\t\\bar\n\t\t\\baz\n\t\t\\lol\n').sub[0]), '{"foo":false,"bar\\nbaz":"lol"}');
+        },
+        'hack'() {
+            const res = $_1.$mol_tree.fromString(`foo bar xxx`).hack({
+                '': (tree, context) => [tree.hack(context)],
+                'bar': (tree, context) => [tree.hack(context).clone({ type: '777' })],
+            });
+            $_1.$mol_assert_equal(res.toString(), new $_1.$mol_tree({ type: 'foo 777 xxx' }).toString());
+        },
+        'errors handling'($) {
+            const errors = [];
+            class Tree extends $_1.$mol_tree {
+            }
+            Tree.$ = $.$mol_ambient({
+                $mol_fail: error => errors.push(error.message)
+            });
+            Tree.fromString(`
+				\t \tfoo
+				bar \\data
+			`, 'test');
+            $_1.$mol_assert_like(errors, ['Syntax error at test:2\n \tfoo']);
+        },
+    });
+})($ || ($ = {}));
+//tree.test.js.map
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $_1.$mol_test({
+            'simple props'($) {
+                const app = $_1.$mol_view_tree_test_simple.make({ $ });
+                $_1.$mol_assert_equal(app.some(), 1);
+                $_1.$mol_assert_equal(app.bool(), true);
+                $_1.$mol_assert_equal(app.str(), 'test');
+                $_1.$mol_assert_ok(Array.isArray(app.arr()));
+                $_1.$mol_assert_ok(Array.isArray(app.arr_string()));
+            },
+            'default value'($) {
+                const app = $_1.$mol_view_tree_test_binding.make({ $ });
+                $_1.$mol_assert_equal(app.value(), '123');
+            },
+            'both binding'($) {
+                const app = $_1.$mol_view_tree_test_binding.make({ $ });
+                $_1.$mol_assert_ok(app.value() !== 1);
+                app.value(1);
+                $_1.$mol_assert_equal(app.value(), 1);
+            },
+            'left binding'($) {
+                const app = $_1.$mol_view_tree_test_binding.make({ $ });
+                $_1.$mol_assert_not(app.head_complete_enabled());
+                $_1.$mol_assert_not(app.enabled());
+            },
+            'sub component'($) {
+                const app = $_1.$mol_view_tree_test_binding_right.make({ $ });
+                $_1.$mol_assert_ok(app.Test() instanceof $_1.$mol_view_tree_test_binding_right_test);
+            },
+            'right binding - change owner property'($) {
+                const app = $_1.$mol_view_tree_test_binding_right.make({ $ });
+                const val = 123;
+                $_1.$mol_assert_ok(app.outer_width() !== val);
+                $_1.$mol_assert_ok(app.Test().width() !== val);
+                app.outer_width(val);
+                $_1.$mol_assert_equal(app.outer_width(), val);
+                $_1.$mol_assert_equal(app.Test().width(), val);
+            },
+            'right binding - change part property'($) {
+                const app = $_1.$mol_view_tree_test_binding_right.make({ $ });
+                const val = 123;
+                $_1.$mol_assert_ok(app.outer_width() !== val);
+                $_1.$mol_assert_ok(app.Test().width() !== val);
+                app.Test().width(val);
+                $_1.$mol_assert_equal(app.Test().width(), val);
+                $_1.$mol_assert_equal(app.outer_width(), val);
+            },
+            'attributes merging'($) {
+                const app = $_1.$mol_view_tree_test_attributes.make({ $ });
+                $_1.$mol_assert_like(app.some(), { a: 1, b: 2 });
+            },
+            'subcomponent indexed'($) {
+                const app = $_1.$mol_view_tree_test_attributes_subcomponent.make({ $ });
+                const val = 123;
+                app.page = (index) => index;
+                $_1.$mol_assert_equal(app.Page(val).Sub(), val);
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+//tree.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        'Makes reactive value by key'() {
+            class Fib extends $.$mol_object2 {
+                static get value() {
+                    return $.$mol_atom2_dict({
+                        get: (index, dict) => {
+                            if (index < 2)
+                                return 1;
+                            return dict[index - 1] + dict[index - 2];
+                        }
+                    });
+                }
+            }
+            __decorate([
+                $.$mol_atom2_field
+            ], Fib, "value", null);
+            $.$mol_assert_equal(Fib.value[10], 89);
+            Fib.value[1] = 2;
+            $.$mol_assert_equal(Fib.value[10], 144);
+        },
+        'Reactive keys list'() {
+            class Registry extends $.$mol_object2 {
+                static get value() {
+                    return $.$mol_atom2_dict({});
+                }
+                static get size() {
+                    return Object.keys(this.value).length;
+                }
+            }
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "value", null);
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "size", null);
+            $.$mol_assert_equal(Registry.size, 0);
+            Registry.value[1] = 2;
+            Registry.value[3] = 4;
+            $.$mol_assert_equal(Registry.size, 2);
+        },
+        'Can be iterated over keys'() {
+            class Registry extends $.$mol_object2 {
+                static get value() {
+                    return $.$mol_atom2_dict({});
+                }
+            }
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "value", null);
+            Registry.value[1] = 2;
+            Registry.value[3] = 4;
+            const keys = [];
+            for (let key in Registry.value)
+                keys.push(key);
+            $.$mol_assert_like(keys, ['1', '3']);
+        },
+        async 'Call back on abort'() {
+            const log = [];
+            class Registry extends $.$mol_object2 {
+                static get item() {
+                    return $.$mol_atom2_dict({
+                        get: key => key,
+                        abort: key => {
+                            log.push(key);
+                            return true;
+                        },
+                    });
+                }
+                static get result() { return this.condition ? this.item['foo'] : ''; }
+            }
+            Registry.condition = true;
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "item", null);
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "condition", void 0);
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "result", null);
+            $.$mol_assert_equal(Registry.result, 'foo');
+            Registry.condition = false;
+            $.$mol_assert_equal(Registry.result, '');
+            $.$mol_assert_like(log, []);
+            await $.$mol_fiber_warp();
+            $.$mol_assert_like(log, ['foo']);
+        },
+        'Value has js-path name'() {
+            class Registry extends $.$mol_object2 {
+                static get item() {
+                    return $.$mol_atom2_dict({
+                        get: (key) => new $.$mol_object2,
+                    });
+                }
+            }
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "item", null);
+            $.$mol_assert_equal(`${Registry.item['foo']}`, 'Registry.item["foo"]');
+        },
+    });
+})($ || ($ = {}));
+//dict.test.js.map
 ;
 "use strict";
 //equals.test.js.map
