@@ -32,15 +32,6 @@ $mol_button $mol_view
 	sub /$mol_view_content
 		<= title
 
-$mol_button_typed $mol_button
-
-$mol_button_major $mol_button_typed
-	attr *
-		^
-		mol_theme \$mol_theme_accent
-
-$mol_button_minor $mol_button_typed
-
 $mol_page $mol_view
 	sub /
 		<= Head $mol_view
@@ -132,6 +123,10 @@ $mol_list $mol_view
 		0
 
 $mol_float $mol_view
+
+$mol_button_typed $mol_button
+
+$mol_button_minor $mol_button_typed
 
 $mol_check $mol_button_minor
 	attr *
@@ -458,6 +453,11 @@ $mol_string $mol_view
 		^
 		input?event <=> event_change?event null
 		keydown?event <=> event_key_press?event null
+
+$mol_button_major $mol_button_typed
+	attr *
+		^
+		mol_theme \$mol_theme_accent
 
 $mol_app_supplies_enter $mol_view
 	entered?val false
