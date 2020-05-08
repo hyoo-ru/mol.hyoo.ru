@@ -16,7 +16,7 @@ jobs:
     - name: Build apps
       uses: hyoo-ru/mam_build@master2
       with:
-        package: hyoo/portal
+        package: hyoo/mol
         
     - name: Deploy on GitHub Pages
       if: github.ref == 'refs/heads/master'
