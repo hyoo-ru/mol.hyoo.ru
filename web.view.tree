@@ -2715,14 +2715,32 @@ $mol_app_demo_nav $mol_grid
 				sub /
 					<= cell_content!id
 
-$hyoo_tree $mol_page
-	title @ \View.Tree compiler
-	body /
-		<= Source $mol_textarea
-			value?val <=> source?val \
-			hint <= source_hint @ \view.tree source
-		<= Result $mol_scroll
-			sub /
+$hyoo_tree $mol_book2
+	attr *
+		^
+		mol_theme \$mol_theme_auto
+	pages /
+		<= Source $mol_page
+			title @ \View.Tree
+			tools /
+				<= Compile $mol_link 
+					sub /
+						<= compile_label @ \Compile
+					arg *
+						compile \
+			body /
+				<= Source_text $mol_textarea
+					value?val <=> source?val \
+					hint <= source_hint @ \view.tree source
+		<= Result $mol_page
+			title @ \Compiled
+			tools /
+				<= Close $mol_link 
+					sub /
+						<= Close_icon $mol_icon_cross
+					arg *
+						compile null
+			body /
 				<= Result_text $mol_text
 					text <= result \
 		
@@ -2756,176 +2774,6 @@ $hyoo_habhub $mol_book2
 		title <= gist_title!id \
 		arg <= gist_arg!id *
 
-$hyoo_slides_page $mol_book
-	role \
-	contents?val \
-	slide?val 0
-	Placeholder null
-	pages /
-		<= Speaker $mol_page
-			minimal_width 300
-			head <= speaker_tools /
-			body /
-				<= Speaker_content $mol_text
-					uri_base <= uri_base \
-					tokens <= speaker_content /
-		<= Listener $mol_page
-			tools <= tools /
-			minimal_width <= listener_width 600
-			event_top?event <=> event_front_up?event
-			title <= title
-			body /
-				<= Listener_content $mol_text
-					uri_base <= uri_base \
-					tokens <= listener_content /
-				<= Link $mol_link
-					uri <= uri_page \
-					sub / <= uri_page \
-				<= Progress $mol_portion
-					portion <= progress 0
-
-$mol_icon_external $mol_icon path \M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z
-
-$hyoo_slides $mol_view
-	uri_slides_default \https://nin-jin.github.io/slides/slides/
-	attr *
-		^
-		hyoo_slides_role <= role \
-		mol_theme <= theme \$mol_theme_light
-	style *
-		^
-		touch-action \none
-	contents?val \
-	Loader $mol_view
-		dom_name \iframe
-		attr *
-			src <= uri_slides <= uri_slides_default \https://nin-jin.github.io/slides/slides/
-		event *
-			load?val <=> event_load?val null
-	Page!index $hyoo_slides_page
-		tools <= tools /
-		title <= page_title!index \
-		slide?val <=> page_slide!index?val 0
-		uri_base <= uri_base \
-		role <= role \
-		listener_content <= listener_content!index /
-		speaker_content <= speaker_content!index /
-		progress <= progress!index 0
-		speaker_tools <= speaker_tools /
-			<= Speech_toggle $mol_check_icon
-				Icon <= Speech_toggle_icon $mol_icon_microphone
-				checked?val <=> speech_enabled?val false
-				hint <= speech_toggle_hint @ \Speech contol
-			<= Speech_text $mol_view sub / <= speech_text \
-			<= Open_listener $mol_link
-				target \_blank
-				hint <= open_listener_hint @ \Open slides window
-				arg *
-					role \listener
-					slide null
-				sub /
-					<= Open_listener_icon $mol_icon_external
-	plugins /
-		<= Nav $mol_nav
-			keys_y <= slide_keys /
-			keys_x <= slide_keys /
-			current_y?val <=> slide?val 0
-			current_x?val <=> slide?val 0
-		<= Touch $mol_touch
-			swipe_to_left?event <=> event_next?event null
-			swipe_to_right?event <=> event_prev?event null
-		<= Speech_next $mol_speech
-			event_catch?val <=> event_next?val null
-			patterns <= speech_next /
-				\next
-				\forward
-				\дальше
-				\далее
-				\даша
-				\дарья
-				\дай
-				\доля
-				\удали
-				\впер[её]д
-				\период
-				\перевод
-				\следующий слайд
-		<= Speech_next_auto $mol_speech
-			event_catch?val <=> event_next?val null
-			suffix \
-			patterns <= speech_next_auto /
-		<= Speech_slide $mol_speech
-			event_catch?val <=> event_slide?val null
-			patterns <= speech_slide /
-				\number (\d+)
-				\(\d+) slide
-				\номер (\d+)
-				\(\d+) слайд
-		<= Speech_prev $mol_speech
-			event_catch?val <=> event_prev?val null
-			patterns <= speech_prev /
-				\back
-				\назад
-				\назар
-				\надо
-				\предыдущий слайд
-		<= Speech_start $mol_speech
-			event_catch?val <=> event_start?val null
-			patterns <= speech_start /
-				\to beginning
-				\first slide
-				\начало
-				\начала
-				\первый слайд
-				\первый слой
-		<= Speech_end $mol_speech
-			event_catch?val <=> event_end?val null
-			patterns <= speech_end /
-				\to ending
-				\last slide
-				\конец
-				\последний слайд
-		<= Speech_about $mol_speech
-			event_catch?val <=> event_about?val null
-			patterns <= speech_about /
-				\about( \S+?)+
-				\search( \S+?)+
-				\про( \S+?)+
-				\найти( \S+?)+
-				\найди( \S+?)+
-		<= Speech_repeat $mol_speech
-			event_catch?val <=> event_repeat?val null
-			patterns <= speech_repeat /
-				\repeat
-				\повтори
-				\повторите
-		<= Speech_on $mol_speech
-			event_catch?val <=> event_speech_on?val null
-			patterns <= speech_on /
-				\continue
-				\продолжай
-		<= Speech_off $mol_speech
-			event_catch?val <=> event_speech_off?val null
-			patterns <= speech_off /
-				\shut up
-				\hush
-				\замолчи
-				\помолчи
-		<= Lights_toggle $mol_speech
-			event_catch?val <=> event_lights_toggle?val null
-			patterns <= lights_toggle /
-				\lights off
-				\lights on
-				\toggle lights
-				\свет
-				\след
-				\цвет
-		<= Sing $mol_speech
-			event_catch?val <=> event_sing?val null
-			patterns <= sing /
-				\sing( \S+?)*
-				\спой( \S+?)*
-
 $hyoo_mol $mol_book2
 	attr * 
 		^
@@ -2946,7 +2794,7 @@ $hyoo_mol $mol_book2
 			<= Articles_link $mol_link
 				title <= articles_title @ \Articles
 				arg * app \articles
-			<= Slides_link $mol_link
+			- <= Slides_link $mol_link
 				title <= slides_title @ \Slides
 				arg * app \slides
 	Close_app $mol_link
@@ -2956,9 +2804,8 @@ $hyoo_mol $mol_book2
 		<= Components_app $mol_app_demo
 			theme => theme
 		<= View_tree_app $hyoo_tree
-			tools / <= Close_app
 		<= Articles_app $hyoo_habhub
 			menu_title <= articles_title
 			tools_root / <= Close_app
-		<= Slides_app $hyoo_slides
+		- <= Slides_app $hyoo_slides
 			tools / <= Close_app
