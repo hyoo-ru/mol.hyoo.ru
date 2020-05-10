@@ -18,7 +18,7 @@ $hyoo_mol $mol_book2
 			<= Articles_link $mol_link
 				title <= articles_title @ \Articles
 				arg * app \articles
-			<= Slides_link $mol_link
+			- <= Slides_link $mol_link
 				title <= slides_title @ \Slides
 				arg * app \slides
 	Close_app $mol_link
@@ -28,9 +28,8 @@ $hyoo_mol $mol_book2
 		<= Components_app $mol_app_demo
 			theme => theme
 		<= View_tree_app $hyoo_tree
-			tools / <= Close_app
 		<= Articles_app $hyoo_habhub
 			menu_title <= articles_title
 			tools_root / <= Close_app
-		<= Slides_app $hyoo_slides
+		- <= Slides_app $hyoo_slides
 			tools / <= Close_app

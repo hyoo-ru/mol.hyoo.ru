@@ -8,9 +8,9 @@ namespace $.$$ {
 			return [
 				this.Menu(),
 				... ( app === 'components' ) ?  this.Components_app().pages() : [],
-				... ( app === 'view.tree' ) ?  [ this.View_tree_app() ] : [],
+				... ( app === 'view.tree' ) ?  this.View_tree_app().pages() : [],
 				... ( app === 'articles' ) ?  this.Articles_app().pages() : [],
-				... ( app === 'slides' ) ?  [ this.Slides_app() ] : [],
+				// ... ( app === 'slides' ) ?  [ this.Slides_app() ] : [],
 			]
 
 		}
