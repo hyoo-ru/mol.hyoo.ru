@@ -10,6 +10,7 @@ namespace $.$$ {
 				... ( app === 'components' ) ?  this.Components_app().pages() : [],
 				... ( app === 'view.tree' ) ?  this.View_tree_app().pages() : [],
 				... ( app === 'articles' ) ?  this.Articles_app().pages() : [],
+				//... ( app === 'icons' ) ?  [ this.Icons_app() ] : [],
 				// ... ( app === 'slides' ) ?  [ this.Slides_app() ] : [],
 			]
 

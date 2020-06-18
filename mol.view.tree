@@ -1,11 +1,10 @@
 $hyoo_mol $mol_book2
-	attr * 
-		^
-		mol_theme <= theme
+	plugins /
+		<= Theme $mol_theme_auto
 	Menu $mol_page
 		tools <= tools_root /
-			<= Sources $mol_link_iconed
-				title \
+			<= Lights $mol_lights_toggle
+			<= Sources $mol_link_source
 				uri \https://github.com/hyoo-ru/portal.hyoo.ru
 		title <= menu_title @ \$mol portal
 		body /
@@ -18,6 +17,9 @@ $hyoo_mol $mol_book2
 			<= Articles_link $mol_link
 				title <= articles_title @ \Articles
 				arg * app \articles
+			- <= Icons_link $mol_link
+				title <= icons_title @ \Icons
+				arg * app \icons
 			- <= Slides_link $mol_link
 				title <= slides_title @ \Slides
 				arg * app \slides
@@ -26,10 +28,11 @@ $hyoo_mol $mol_book2
 		sub / <= Close_app_icon $mol_icon_cross
 	pages /
 		<= Components_app $mol_app_demo
-			theme => theme
 		<= View_tree_app $hyoo_tree
 		<= Articles_app $hyoo_habhub
 			menu_title <= articles_title
 			tools_root / <= Close_app
+		- <= Icons_app $mol_frame
+			uri \https://nin-jin.github.io/mol_icon/
 		- <= Slides_app $hyoo_slides
 			tools / <= Close_app
