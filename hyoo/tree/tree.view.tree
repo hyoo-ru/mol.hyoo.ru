@@ -1,11 +1,11 @@
 $hyoo_tree $mol_book2
-	attr *
-		^
-		mol_theme \$mol_theme_auto
+	plugins /
+		<= Theme $mol_theme_auto
 	pages /
 		<= Source $mol_page
 			title @ \View.Tree
 			tools /
+				<= Lights $mol_lights_toggle
 				<= Compile $mol_link 
 					sub /
 						<= compile_label @ \Compile
