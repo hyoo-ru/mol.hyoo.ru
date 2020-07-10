@@ -4265,9 +4265,9 @@ declare namespace $ {
         attr(): {
             src: string;
             allow: string;
-            allowfullscreen: boolean;
         };
         uri(): string;
+        allow(): string;
         fullscreen(): boolean;
         accelerometer(): boolean;
         autoplay(): boolean;
@@ -4285,7 +4285,7 @@ declare namespace $.$$ {
         dom_node: (next?: HTMLIFrameElement) => HTMLIFrameElement;
         window(): unknown;
         render(): void;
-        allow(): string[];
+        allow(): string;
     }
 }
 
