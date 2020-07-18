@@ -1511,8 +1511,8 @@ var $;
             this.masters.push(master, this.masters[cursor + 1]);
         }
         subscribe(promise) {
-            const fresh = this.fresh;
-            return promise.then(fresh, fresh);
+            const obsolete = () => this.obsolete();
+            return promise.then(obsolete, obsolete);
         }
         get() {
             if ($mol_atom2.cached)
@@ -1825,11 +1825,11 @@ var $;
 (function ($) {
     function $mol_dict_key(value) {
         if (!value)
-            return value;
+            return JSON.stringify(value);
         if (typeof value !== 'object')
-            return value;
+            return JSON.stringify(value);
         if (Array.isArray(value))
-            return value.map($mol_dict_key).join(' , ');
+            return JSON.stringify(value);
         if (Object.getPrototypeOf(Object.getPrototypeOf(value)) === null)
             return JSON.stringify(value);
         return value;
@@ -14696,7 +14696,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/form/form.css", "[mol_form] {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[mol_form_bar_fields] {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[mol_form_bar_fields] > * {\n\tmargin: .75rem;\n}\n\n[mol_form_bar_buttons] {\n\tbox-shadow: none;\n}\n\n[mol_form_bar_buttons] > * {\n\tflex: 1 1 auto;\n}\n");
+    $.$mol_style_attach("mol/form/form.css", "[mol_form] {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[mol_form_bar_fields] {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[mol_form_bar_fields] > * {\n\tmargin: .75rem;\n}\n\n[mol_form_bar_buttons] {\n\tbox-shadow: none;\n\tpadding: 0;\n}\n\n[mol_form_bar_buttons] > * {\n\tflex: 1 1 auto;\n}\n");
 })($ || ($ = {}));
 //form.css.js.map
 ;
