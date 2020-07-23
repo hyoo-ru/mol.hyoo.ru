@@ -39,12 +39,51 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    const instances = new WeakSet();
+    function $mol_delegate(proto, target) {
+        const proxy = new Proxy(proto, {
+            get: (_, field) => {
+                const obj = target();
+                let val = Reflect.get(obj, field);
+                if (typeof val === 'function') {
+                    val = val.bind(obj);
+                }
+                return val;
+            },
+            has: (_, field) => Reflect.has(target(), field),
+            set: (_, field, value) => Reflect.set(target(), field, value),
+            getOwnPropertyDescriptor: (_, field) => Reflect.getOwnPropertyDescriptor(target(), field),
+            ownKeys: () => Reflect.ownKeys(target()),
+            getPrototypeOf: () => Reflect.getPrototypeOf(target()),
+            setPrototypeOf: (_, donor) => Reflect.setPrototypeOf(target(), donor),
+            isExtensible: () => Reflect.isExtensible(target()),
+            preventExtensions: () => Reflect.preventExtensions(target()),
+            apply: (_, self, args) => Reflect.apply(target(), self, args),
+            construct: (_, args, retarget) => Reflect.construct(target(), args, retarget),
+            defineProperty: (_, field, descr) => Reflect.defineProperty(target(), field, descr),
+            deleteProperty: (_, field) => Reflect.deleteProperty(target(), field),
+        });
+        instances.add(proxy);
+        return proxy;
+    }
+    $.$mol_delegate = $mol_delegate;
+    Reflect.defineProperty($mol_delegate, Symbol.hasInstance, {
+        value: (obj) => instances.has(obj),
+    });
+})($ || ($ = {}));
+//delegate.js.map
+;
+"use strict";
+var $;
+(function ($) {
     $.$mol_owning_map = new WeakMap();
     function $mol_owning_allow(having) {
         try {
             if (!having)
                 return false;
             if (typeof having !== 'object')
+                return false;
+            if (having instanceof $.$mol_delegate)
                 return false;
             if (typeof having['destructor'] !== 'function')
                 return false;
@@ -2366,15 +2405,12 @@ var $;
                 }
             }
             catch (error) {
-                const need_catch = $.$mol_fail_catch(error);
-                if (need_catch) {
-                    $.$mol_dom_render_attributes(node, { mol_view_error: error.name || error.constructor.name });
-                }
+                $.$mol_dom_render_attributes(node, { mol_view_error: error.name || error.constructor.name });
                 if (error instanceof Promise) {
                     $.$mol_atom2.current.subscribe(error);
                     return node;
                 }
-                if (need_catch) {
+                if ($.$mol_fail_catch(error)) {
                     try {
                         void (node.innerText = error.message);
                     }
@@ -15500,7 +15536,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/image/image.view.css", "[mol_image] {\n\tbox-shadow: 0 0 0 1px var(--mol_theme_line);\n\tborder-radius: var(--mol_skin_round);\n\toverflow: hidden;\n\tflex: 0 1 auto;\n\tmax-width: 100%;\n}\n");
+    $.$mol_style_attach("mol/image/image.view.css", "[mol_image] {\n\tborder-radius: var(--mol_skin_round);\n\toverflow: hidden;\n\tflex: 0 1 auto;\n\tmax-width: 100%;\n}\n");
 })($ || ($ = {}));
 //image.view.css.js.map
 ;
@@ -16396,9 +16432,6 @@ var $;
 //tail.js.map
 ;
 "use strict";
-//foot.js.map
-;
-"use strict";
 //value.js.map
 ;
 "use strict";
@@ -16413,6 +16446,9 @@ var $;
     $.$mol_data_setup = $mol_data_setup;
 })($ || ($ = {}));
 //setup.js.map
+;
+"use strict";
+//foot.js.map
 ;
 "use strict";
 var $;
@@ -16493,7 +16529,7 @@ var $;
     $.$mol_data_string = (val) => {
         if (typeof val === 'string')
             return val;
-        return $.$mol_fail(new $.$mol_data_error(`${typeof val} is not a string`));
+        return $.$mol_fail(new $.$mol_data_error(`${val} is not a string`));
     };
 })($ || ($ = {}));
 //string.js.map
@@ -24161,53 +24197,6 @@ var $;
 //assert.js.map
 ;
 "use strict";
-//writable.test.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_after_mock_queue = [];
-    function $mol_after_mock_warp() {
-        const queue = $.$mol_after_mock_queue.splice(0);
-        for (const task of queue)
-            task();
-    }
-    $.$mol_after_mock_warp = $mol_after_mock_warp;
-    class $mol_after_mock_commmon extends $.$mol_object2 {
-        constructor(task) {
-            super();
-            this.task = task;
-            this.promise = Promise.resolve();
-            this.cancelled = false;
-            $.$mol_after_mock_queue.push(task);
-        }
-        destructor() {
-            const index = $.$mol_after_mock_queue.indexOf(this.task);
-            if (index >= 0)
-                $.$mol_after_mock_queue.splice(index, 1);
-        }
-    }
-    $.$mol_after_mock_commmon = $mol_after_mock_commmon;
-    class $mol_after_mock_timeout extends $mol_after_mock_commmon {
-        constructor(delay, task) {
-            super(task);
-            this.delay = delay;
-        }
-    }
-    $.$mol_after_mock_timeout = $mol_after_mock_timeout;
-})($ || ($ = {}));
-//mock.test.js.map
-;
-"use strict";
-var $;
-(function ($_1) {
-    $_1.$mol_test_mocks.push($ => {
-        $.$mol_after_tick = $_1.$mol_after_mock_commmon;
-    });
-})($ || ($ = {}));
-//tick.test.js.map
-;
-"use strict";
 //deep.test.js.map
 ;
 "use strict";
@@ -24698,6 +24687,116 @@ var $;
     $.$mol_assert_like = $mol_assert_like;
 })($ || ($ = {}));
 //assert.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        'get'() {
+            const proxy = $.$mol_delegate({}, () => ({ foo: 777 }));
+            $.$mol_assert_equal(proxy.foo, 777);
+        },
+        'has'() {
+            const proxy = $.$mol_delegate({}, () => ({ foo: 777 }));
+            $.$mol_assert_equal('foo' in proxy, true);
+        },
+        'set'() {
+            const target = { foo: 777 };
+            const proxy = $.$mol_delegate({}, () => target);
+            proxy.foo = 123;
+            $.$mol_assert_equal(target.foo, 123);
+        },
+        'getOwnPropertyDescriptor'() {
+            const proxy = $.$mol_delegate({}, () => ({ foo: 777 }));
+            $.$mol_assert_like(Object.getOwnPropertyDescriptor(proxy, 'foo'), {
+                value: 777,
+                writable: true,
+                enumerable: true,
+                configurable: true,
+            });
+        },
+        'ownKeys'() {
+            const proxy = $.$mol_delegate({}, () => ({ foo: 777, [Symbol.toStringTag]: 'bar' }));
+            $.$mol_assert_like(Reflect.ownKeys(proxy), ['foo', Symbol.toStringTag]);
+        },
+        'getPrototypeOf'() {
+            class Foo {
+            }
+            const proxy = $.$mol_delegate({}, () => new Foo);
+            $.$mol_assert_equal(Object.getPrototypeOf(proxy), Foo.prototype);
+        },
+        'setPrototypeOf'() {
+            class Foo {
+            }
+            const target = {};
+            const proxy = $.$mol_delegate({}, () => target);
+            Object.setPrototypeOf(proxy, Foo.prototype);
+            $.$mol_assert_equal(Object.getPrototypeOf(target), Foo.prototype);
+        },
+        'instanceof'() {
+            class Foo {
+            }
+            const proxy = $.$mol_delegate({}, () => new Foo);
+            $.$mol_assert_ok(proxy instanceof Foo);
+            $.$mol_assert_ok(proxy instanceof $.$mol_delegate);
+        },
+        'autobind'() {
+            class Foo {
+            }
+            const proxy = $.$mol_delegate({}, () => new Foo);
+            $.$mol_assert_ok(proxy.valueOf() instanceof Foo);
+            $.$mol_assert_not(proxy.valueOf() instanceof $.$mol_delegate);
+        },
+    });
+})($ || ($ = {}));
+//delegate.test.js.map
+;
+"use strict";
+//writable.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_after_mock_queue = [];
+    function $mol_after_mock_warp() {
+        const queue = $.$mol_after_mock_queue.splice(0);
+        for (const task of queue)
+            task();
+    }
+    $.$mol_after_mock_warp = $mol_after_mock_warp;
+    class $mol_after_mock_commmon extends $.$mol_object2 {
+        constructor(task) {
+            super();
+            this.task = task;
+            this.promise = Promise.resolve();
+            this.cancelled = false;
+            $.$mol_after_mock_queue.push(task);
+        }
+        destructor() {
+            const index = $.$mol_after_mock_queue.indexOf(this.task);
+            if (index >= 0)
+                $.$mol_after_mock_queue.splice(index, 1);
+        }
+    }
+    $.$mol_after_mock_commmon = $mol_after_mock_commmon;
+    class $mol_after_mock_timeout extends $mol_after_mock_commmon {
+        constructor(delay, task) {
+            super(task);
+            this.delay = delay;
+        }
+    }
+    $.$mol_after_mock_timeout = $mol_after_mock_timeout;
+})($ || ($ = {}));
+//mock.test.js.map
+;
+"use strict";
+var $;
+(function ($_1) {
+    $_1.$mol_test_mocks.push($ => {
+        $.$mol_after_tick = $_1.$mol_after_mock_commmon;
+    });
+})($ || ($ = {}));
+//tick.test.js.map
 ;
 "use strict";
 var $;
@@ -26603,9 +26702,6 @@ var $;
 //tail.test.js.map
 ;
 "use strict";
-//foot.test.js.map
-;
-"use strict";
 var $;
 (function ($) {
     $.$mol_test({
@@ -26616,6 +26712,9 @@ var $;
     });
 })($ || ($ = {}));
 //setup.test.js.map
+;
+"use strict";
+//foot.test.js.map
 ;
 "use strict";
 var $;
@@ -26693,12 +26792,12 @@ var $;
         'Is not string'() {
             $.$mol_assert_fail(() => {
                 $.$mol_data_string(0);
-            }, 'number is not a string');
+            }, '0 is not a string');
         },
         'Is object string'() {
             $.$mol_assert_fail(() => {
-                $.$mol_data_string(new String(''));
-            }, 'object is not a string');
+                $.$mol_data_string(new String('x'));
+            }, 'x is not a string');
         },
     });
 })($ || ($ = {}));
@@ -26713,13 +26812,13 @@ var $;
         },
         'Is not number'() {
             $.$mol_assert_fail(() => {
-                $.$mol_data_number('');
-            }, 'string is not a number');
+                $.$mol_data_number('x');
+            }, 'x is not a number');
         },
         'Is object number'() {
             $.$mol_assert_fail(() => {
                 $.$mol_data_number(new Number(''));
-            }, 'object is not a number');
+            }, '0 is not a number');
         },
     });
 })($ || ($ = {}));
@@ -26731,7 +26830,7 @@ var $;
     $.$mol_data_number = (val) => {
         if (typeof val === 'number')
             return val;
-        return $.$mol_fail(new $.$mol_data_error(`${typeof val} is not a number`));
+        return $.$mol_fail(new $.$mol_data_error(`${val} is not a number`));
     };
 })($ || ($ = {}));
 //number.js.map
@@ -26754,12 +26853,12 @@ var $;
         'Has wrong item'() {
             $.$mol_assert_fail(() => {
                 $.$mol_data_array($.$mol_data_number)([1, '1']);
-            }, '[1] string is not a number');
+            }, '[1] 1 is not a number');
         },
         'Has wrong deep item'() {
             $.$mol_assert_fail(() => {
                 $.$mol_data_array($.$mol_data_array($.$mol_data_number))([[], [0, 0, false]]);
-            }, '[1] [2] boolean is not a number');
+            }, '[1] [2] false is not a number');
         },
     });
 })($ || ($ = {}));
