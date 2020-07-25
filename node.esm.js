@@ -4684,7 +4684,9 @@ var $;
                 return new this.$.$mol_state_arg(this.state_key()).link(this.arg());
             }
             current() {
-                if (this.uri() === this.$.$mol_state_arg.href())
+                const base = this.$.$mol_state_arg.href();
+                const target = new URL(this.uri(), base).toString();
+                if (base === target)
                     return true;
                 const args = this.arg();
                 const keys = Object.keys(args).filter(key => args[key] != null);
@@ -4901,7 +4903,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: block;\n\t/* display: flex;\n\tflex-direction: column;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n\n[mol_list] > * {\n\tdisplay: block;\n}\n");
+    $.$mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: block;\n\t/* display: flex;\n\tflex-direction: column;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\tmin-height: .5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n\n[mol_list] > * {\n\tdisplay: block;\n}\n");
 })($ || ($ = {}));
 //list.view.css.js.map
 ;
@@ -15381,11 +15383,17 @@ var $;
                 return obj;
             })(new this.$.$mol_paragraph());
         }
+        List(id) {
+            return ((obj) => {
+                obj.rows = () => this.content(id);
+                return obj;
+            })(new this.$.$mol_list());
+        }
         Quote(id) {
             return ((obj) => {
-                obj.sub = () => this.content(id);
+                obj.rows = () => this.content(id);
                 return obj;
-            })(new this.$.$mol_paragraph());
+            })(new this.$.$mol_list());
         }
         Strong(id) {
             return ((obj) => {
@@ -15461,6 +15469,9 @@ var $;
     __decorate([
         $.$mol_mem_key
     ], $mol_html_view.prototype, "Paragraph", null);
+    __decorate([
+        $.$mol_mem_key
+    ], $mol_html_view.prototype, "List", null);
     __decorate([
         $.$mol_mem_key
     ], $mol_html_view.prototype, "Quote", null);
@@ -15629,6 +15640,7 @@ var $;
         },
         Break: {
             display: 'block',
+            height: rem(.5),
         },
         Text: {
             display: 'inline',
@@ -15642,6 +15654,7 @@ var $;
 (function ($) {
     var $$;
     (function ($$) {
+        const warned = new Set();
         class $mol_html_view extends $.$mol_html_view {
             dom() {
                 return this.$.$mol_dom_parse(this.html(), 'text/html').body;
@@ -15671,12 +15684,13 @@ var $;
                     case 'H6':
                         return [this.Heading(node)];
                     case 'P':
-                    case 'DIV':
-                    case 'OL':
-                    case 'UL':
                     case 'LI':
                     case 'PRE':
                         return [this.Paragraph(node)];
+                    case 'DIV':
+                    case 'UL':
+                    case 'OL':
+                        return [this.List(node)];
                     case 'BLOCKQUOTE':
                         return [this.Quote(node)];
                     case 'STRONG':
@@ -15701,7 +15715,15 @@ var $;
                     case 'BR':
                         return [this.Break(node)];
                     default:
-                        console.warn(node.nodeName, node);
+                        if (!warned.has(node.nodeName)) {
+                            this.$.$mol_log3_warn({
+                                place: `${this}.views()`,
+                                message: 'Unsupported tag',
+                                tag: node.nodeName,
+                                hint: 'Add support to $mol_html_view',
+                            });
+                            warned.add(node.nodeName);
+                        }
                         return this.content(node);
                 }
             }
