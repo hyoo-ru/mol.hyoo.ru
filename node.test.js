@@ -4632,6 +4632,12 @@ var $;
                 color: $.$mol_theme.hover,
             }
         },
+        ':focus-within': {
+            outline: 'none',
+            background: {
+                color: $.$mol_theme.hover,
+            }
+        },
         '@': {
             mol_link_current: {
                 'true': {
@@ -19857,8 +19863,9 @@ var $;
                     if (!found)
                         continue;
                     new $.$mol_defer(() => {
-                        this.commands_skip(i + 1);
-                        this.event_catch(found.slice(1));
+                        if (this.event_catch(found.slice(1))) {
+                            this.commands_skip(i + 1);
+                        }
                     });
                     return null;
                 }
@@ -19867,6 +19874,7 @@ var $;
         }
         event_catch(found) {
             console.log(found);
+            return false;
         }
         patterns() {
             return [];
