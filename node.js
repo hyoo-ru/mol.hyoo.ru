@@ -1258,10 +1258,10 @@ var $;
     class $mol_fiber extends $.$mol_wrapper {
         constructor() {
             super(...arguments);
-            this.value = undefined;
-            this.error = null;
             this.cursor = 0;
             this.masters = [];
+            this._value = undefined;
+            this._error = null;
         }
         static wrap(task) {
             return function $mol_fiber_wrapper(...args) {
@@ -1304,6 +1304,14 @@ var $;
             }
             const promise = new this.$.Promise(done => this.queue.push(() => (done(), promise)));
             return promise;
+        }
+        get value() { return this._value; }
+        set value(next) {
+            this._value = next;
+        }
+        get error() { return this._error; }
+        set error(next) {
+            this._error = next;
         }
         schedule() {
             $mol_fiber.schedule().then(() => this.wake());
@@ -1524,8 +1532,6 @@ var $;
         constructor() {
             super(...arguments);
             this.slaves = [];
-            this._value = undefined;
-            this._error = null;
         }
         static get current() {
             const atom = $.$mol_fiber.current;
@@ -9665,7 +9671,7 @@ var $;
 (function ($) {
     class $mol_plot_line extends $.$mol_plot_graph {
         threshold() {
-            return 4;
+            return 1;
         }
         spacing() {
             return 2;
