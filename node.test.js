@@ -4116,18 +4116,6 @@ var $;
 var $;
 (function ($) {
     var _a;
-    const TextDecoder = (_a = globalThis.TextDecoder) !== null && _a !== void 0 ? _a : $node.util.TextDecoder;
-    function $mol_charset_decode(value, code = 'utf8') {
-        return new TextDecoder(code).decode(value);
-    }
-    $.$mol_charset_decode = $mol_charset_decode;
-})($ || ($ = {}));
-//decode.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    var _a;
     const TextEncoder = (_a = globalThis.TextEncoder) !== null && _a !== void 0 ? _a : $node.util.TextEncoder;
     const encoder = new TextEncoder();
     function $mol_charset_encode(value) {
@@ -4136,6 +4124,18 @@ var $;
     $.$mol_charset_encode = $mol_charset_encode;
 })($ || ($ = {}));
 //encode.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    var _a;
+    const TextDecoder = (_a = globalThis.TextDecoder) !== null && _a !== void 0 ? _a : $node.util.TextDecoder;
+    function $mol_charset_decode(value, code = 'utf8') {
+        return new TextDecoder(code).decode(value);
+    }
+    $.$mol_charset_decode = $mol_charset_decode;
+})($ || ($ = {}));
+//decode.js.map
 ;
 "use strict";
 var $;
@@ -4209,7 +4209,8 @@ var $;
             return match ? match[1].substring(1) : '';
         }
         text(next, force) {
-            return $.$mol_charset_decode(this.buffer(next === undefined ? undefined : $.$mol_charset_encode(next), force));
+            const buffer = next === undefined ? undefined : $.$mol_charset_encode(next);
+            return $.$mol_charset_decode(this.buffer(buffer, force));
         }
         fail(error) {
             this.buffer(error, $.$mol_mem_force_fail);
@@ -4257,6 +4258,9 @@ var $;
     __decorate([
         $.$mol_mem
     ], $mol_file.prototype, "exists", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_file.prototype, "text", null);
     __decorate([
         $.$mol_mem_key
     ], $mol_file, "absolute", null);
@@ -4326,41 +4330,18 @@ var $;
                     stabilityThreshold: 100,
                 },
             });
-            const handler = (type, path) => $.$mol_fiber_unlimit(() => {
+            watcher
+                .on('all', (type, path) => {
                 const file = $.$mol_file.relative(path.replace(/\\/g, '/'));
+                file.reset();
                 if (type === 'change') {
-                    const cached = $.$mol_mem_cached(() => file.buffer());
-                    const path = file.path();
-                    let actual;
-                    try {
-                        actual = buffer_normalize($node.fs.readFileSync(path));
-                    }
-                    catch (e) {
-                        e.message += '\n' + path;
-                        return this.$.$mol_fail_hidden(e);
-                    }
-                    if (cached && $.$mol_compare_array(cached, actual))
-                        return;
-                    this.$.$mol_log3_rise({
-                        place: `$mol_file:watcher`,
-                        message: type,
-                        path: file.relate(),
-                    });
-                    file.reset();
-                    file.buffer(actual, $.$mol_mem_force_cache);
+                    file.buffer(undefined, $.$mol_mem_force_update);
                 }
                 else {
-                    this.$.$mol_log3_rise({
-                        place: `${this}.watcher()`,
-                        message: type,
-                        path: file.relate(),
-                    });
-                    file.reset();
                     file.parent().reset();
                 }
-            });
-            watcher.on('all', handler);
-            watcher.on('error', (error) => {
+            })
+                .on('error', (error) => {
                 this.stat(error, $.$mol_mem_force_fail);
             });
             return {
@@ -4403,20 +4384,29 @@ var $;
             if (next === undefined) {
                 this.stat();
                 try {
-                    return buffer_normalize($node.fs.readFileSync(path));
+                    const prev = $.$mol_mem_cached(() => this.buffer());
+                    next = buffer_normalize($node.fs.readFileSync(path));
+                    if (prev !== undefined && !$.$mol_compare_array(prev, next)) {
+                        this.$.$mol_log3_rise({
+                            place: `$mol_file_node..buffer()`,
+                            message: 'Changed',
+                            path: this.relate(),
+                        });
+                    }
+                    return next;
                 }
-                catch (e) {
-                    e.message += '\n' + path;
-                    return this.$.$mol_fail_hidden(e);
+                catch (error) {
+                    error.message += '\n' + path;
+                    return this.$.$mol_fail_hidden(error);
                 }
             }
             this.parent().exists(true);
             try {
                 $node.fs.writeFileSync(path, next);
             }
-            catch (e) {
-                e.message += '\n' + path;
-                return this.$.$mol_fail_hidden(e);
+            catch (error) {
+                error.message += '\n' + path;
+                return this.$.$mol_fail_hidden(error);
             }
             return next;
         }
@@ -4840,7 +4830,7 @@ var $;
             return true;
         }
         render_over() {
-            return 0.5;
+            return 0;
         }
         sub() {
             return this.rows();
@@ -30579,6 +30569,19 @@ var $;
 var $;
 (function ($) {
     $.$mol_test({
+        'encode utf8 string'() {
+            const str = 'Hello, ΧΨΩЫ';
+            const encoded = new Uint8Array([72, 101, 108, 108, 111, 44, 32, 206, 167, 206, 168, 206, 169, 208, 171]);
+            $.$mol_assert_like($.$mol_charset_encode(str), encoded);
+        },
+    });
+})($ || ($ = {}));
+//encode.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
         'decode utf8 string'() {
             const str = 'Hello, ΧΨΩЫ';
             const encoded = new Uint8Array([72, 101, 108, 108, 111, 44, 32, 206, 167, 206, 168, 206, 169, 208, 171]);
@@ -30592,19 +30595,6 @@ var $;
     });
 })($ || ($ = {}));
 //decode.test.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_test({
-        'encode utf8 string'() {
-            const str = 'Hello, ΧΨΩЫ';
-            const encoded = new Uint8Array([72, 101, 108, 108, 111, 44, 32, 206, 167, 206, 168, 206, 169, 208, 171]);
-            $.$mol_assert_like($.$mol_charset_encode(str), encoded);
-        },
-    });
-})($ || ($ = {}));
-//encode.test.js.map
 ;
 "use strict";
 var $;
