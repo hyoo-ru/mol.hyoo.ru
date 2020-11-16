@@ -844,6 +844,7 @@ declare namespace $ {
             wrap?: 'wrap' | 'nowrap' | 'wrap-reverse' | Common;
         };
         zIndex: number;
+        opacity: number;
     }
     export {};
 }
@@ -4141,7 +4142,7 @@ declare namespace $ {
         label(): readonly any[];
         Trigger(): $$.$mol_check_expand;
         Tools(): any;
-        Label(): $mol_view;
+        Label(): $mol_float;
         content(): readonly any[];
         Content(): $mol_view;
     }
@@ -5768,6 +5769,60 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_text_code extends $mol_list {
+        text(): string;
+        text_lines(): readonly string[];
+        Row(id: any): $mol_view;
+        Token(id: any): $mol_text_code_token;
+        row_content(id: any): readonly any[];
+        token_type(id: any): string;
+        token_content(id: any): readonly any[];
+    }
+    class $mol_text_code_token extends $mol_view {
+        attr(): {
+            mol_text_code_token_type: string;
+        };
+        sub(): readonly any[];
+        type(): string;
+        content(): readonly any[];
+    }
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $.$$ {
+    class $mol_text_code extends $.$mol_text_code {
+        tokens(path: number[]): readonly {
+            name: string;
+            found: string;
+            chunks: string[];
+        }[];
+        text_lines(): readonly string[];
+        rows(): $mol_view[];
+        row_content(path: number[]): (string | $mol_text_code_token)[];
+        token_type(path: number[]): string;
+        token_content(path: number[]): (string | $mol_text_code_token)[];
+    }
+}
+
+declare namespace $ {
+    class $mol_text_code_demo extends $mol_demo_large {
+        title(): string;
+        sub(): readonly any[];
+        source(): string;
+        Text(): $$.$mol_text_code;
+        Scroll(): $$.$mol_scroll;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_text_code_demo extends $.$mol_text_code_demo {
+        source(): string;
+    }
+}
+
+declare namespace $ {
     class $mol_text_demo extends $mol_demo_large {
         title(): string;
         sub(): readonly any[];
@@ -5787,8 +5842,7 @@ declare namespace $ {
         hint(): string;
         enabled(): boolean;
         Edit(): $$.$mol_string;
-        text(): string;
-        View(): $$.$mol_text;
+        View(): $$.$mol_text_code;
     }
 }
 
@@ -5797,7 +5851,6 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_textarea extends $.$mol_textarea {
-        text(): any;
         indent_inc(): void;
         indent_dec(): void;
         press(event: KeyboardEvent): void;
@@ -5805,7 +5858,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_textarea_demo extends $mol_demo_small {
+    class $mol_textarea_demo extends $mol_demo_large {
         title(): string;
         sub(): readonly any[];
         empty_descr(val?: any): any;
@@ -5813,6 +5866,7 @@ declare namespace $ {
         filled_descr(val?: any): any;
         Filled_descr(): $$.$mol_textarea;
         Disabled(): $$.$mol_textarea;
+        Scroll(): $$.$mol_scroll;
     }
 }
 
