@@ -3000,6 +3000,12 @@ $hyoo_habhub $mol_book2
 		minimal_width 400
 		title <= menu_title @ \HabHub
 		tools <= tools_root /
+			<= Add $mol_link
+				uri \https://github.com/nin-jin/habhub
+				sub /
+					<= Add_icon $mol_icon_plus
+			<= Search $mol_search
+				query?val <=> search?val \
 			<= Lights $mol_lights_toggle
 			<= Source_link $mol_link_source
 				uri \https://github.com/hyoo-ru/habhub.hyoo.ru
@@ -3011,7 +3017,11 @@ $hyoo_habhub $mol_book2
 		title <= gist_current_title \
 		tools /
 			<= Close $mol_link
-				arg <= close_arg * gist null
+				arg <= close_arg *
+					author null
+					repo null
+					article null
+					gist null
 				sub /
 					<= Close_icon $mol_icon_cross
 		body_scroll_top?val <=> details_scroll_top?val 0
@@ -3023,7 +3033,10 @@ $hyoo_habhub $mol_book2
 					- <= Details_chat $mol_chat
 						issue <= gist_current_issue $mol_github_issue
 	Menu_row!id $mol_link
-		title <= gist_title!id \
+		sub /
+			<= Menu_row_title!id $mol_dimmer
+				needle <= search
+				haystack <= gist_title!id \
 		arg <= gist_arg!id *
 
 $hyoo_slides_page $mol_book

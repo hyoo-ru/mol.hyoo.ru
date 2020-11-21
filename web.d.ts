@@ -400,7 +400,7 @@ declare namespace $ {
     function $mol_mem_persist(): void;
     function $mol_mem<Host extends object, Field extends keyof Host, Prop extends Extract<Host[Field], (next?: any) => any>>(proto: Host, name: Field, descr?: TypedPropertyDescriptor<Prop>): {
         value: ((this: Host, next?: $mol_type_param<Prop, 0> | undefined, force?: $mol_mem_force | undefined) => any) & {
-            orig: NonNullable<Prop>;
+            orig: Function;
         };
         enumerable?: boolean | undefined;
         configurable?: boolean | undefined;
@@ -596,9 +596,9 @@ declare namespace $ {
             [key: string]: (event: Event) => void;
         };
         plugins(): readonly $mol_view[];
-        view_find(check: (text: string, path: $mol_view[]) => boolean, path?: $mol_view[]): Generator<$mol_view>;
-        force_render(path: Set<$mol_view>): number;
-        ensure_visible(view: $mol_view): void;
+        view_find(check: (path: $mol_view, text?: string) => boolean, path?: $mol_view[]): Generator<$mol_view[]>;
+        force_render(path: Set<$mol_view>): void;
+        ensure_visible(view: $mol_view): Promise<void>;
     }
     type $mol_view_all = $mol_type_pick<$mol_ambient_context, typeof $mol_view>;
 }
@@ -840,6 +840,10 @@ declare namespace $ {
         maxHeight?: Size;
         margin?: Directions<Length | 'auto'>;
         padding?: Directions<Length | 'auto'>;
+        border?: {
+            radius?: Length | [Length, Length];
+            style?: 'none' | 'hidden' | 'dotted' | 'dashed' | 'solid' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | Common;
+        };
         flex?: 'none' | 'auto' | {
             grow?: number | Common;
             shrink?: number | Common;
@@ -1616,7 +1620,7 @@ declare namespace $.$$ {
         gap_after(): number;
         sub_visible(): $mol_view[];
         minimal_height(): number;
-        force_render(path: Set<$mol_view>): number;
+        force_render(path: Set<$mol_view>): void;
     }
 }
 
@@ -2081,7 +2085,7 @@ declare namespace $.$$ {
         parts(): any[];
         strings(): string[];
         string(index: number): string;
-        view_find(check: (text: string, path: $mol_view[]) => boolean, path?: $mol_view[]): Generator<this, void, unknown>;
+        view_find(check: (path: $mol_view, text?: string) => boolean, path?: $mol_view[]): Generator<$mol_view[]>;
     }
 }
 
@@ -5851,7 +5855,7 @@ declare namespace $.$$ {
         token_type(path: number[]): string;
         token_content(path: number[]): (string | $mol_text_code_token)[];
         token_text(path: number[]): string;
-        view_find(check: (text: string, path: $mol_view[]) => boolean, path?: $mol_view[]): Generator<this, void, unknown>;
+        view_find(check: (path: $mol_view, text?: string) => boolean, path?: $mol_view[]): Generator<$mol_view[]>;
     }
 }
 
@@ -6779,6 +6783,7 @@ declare namespace $ {
         json_update(patch: Partial<$mol_github_issue_json>): $mol_github_issue_json;
         repository(): $mol_github_repository;
         author(): $mol_github_user;
+        number(): number;
         title(): string;
         text(): string;
         closer(): $mol_github_user;
@@ -7249,6 +7254,10 @@ declare namespace $ {
         Menu_row(id: any): $$.$mol_link;
         Theme(): $$.$mol_theme_auto;
         menu_title(): string;
+        Add_icon(): $mol_icon_plus;
+        Add(): $$.$mol_link;
+        search(val?: any): any;
+        Search(): $$.$mol_search;
         Lights(): $$.$mol_lights_toggle;
         Source_link(): $mol_link_source;
         tools_root(): readonly any[];
@@ -7256,6 +7265,9 @@ declare namespace $ {
         Menu(): $$.$mol_list;
         gist_current_title(): string;
         close_arg(): {
+            author: any;
+            repo: any;
+            article: any;
             gist: any;
         };
         Close_icon(): $mol_icon_cross;
@@ -7267,6 +7279,7 @@ declare namespace $ {
         Details_chat(): $$.$mol_chat;
         Details_content(): $$.$mol_list;
         gist_title(id: any): string;
+        Menu_row_title(id: any): $$.$mol_dimmer;
         gist_arg(id: any): {};
     }
 }
@@ -7277,17 +7290,24 @@ declare namespace $ {
 declare namespace $.$$ {
     class $hyoo_habhub extends $.$hyoo_habhub {
         uriSource(): string;
+        search(next?: string): string;
         gists(): $mol_github_issue[];
         gists_dict(): {
             [key: string]: $mol_github_issue;
         };
         gist(id: number): $mol_github_issue;
-        gist_current(): $mol_github_issue;
+        gist_current(): $mol_github_issue | null;
+        author(): string | null;
+        repo(): string | null;
+        article(): string | null;
         pages(): $mol_page[];
         menu_rows(): $mol_view[];
         gist_title(id: number): string;
         gist_arg(id: number): {
-            gist: number;
+            author: string;
+            repo: string;
+            article: number;
+            gist: null;
         };
         gist_current_title(): string;
         gist_current_content(): string;

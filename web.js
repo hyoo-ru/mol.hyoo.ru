@@ -915,7 +915,7 @@ var $;
                     await $mol_fiber.tick();
                 });
             }
-            const promise = new this.$.Promise(done => this.queue.push(() => (done(), promise)));
+            const promise = new this.$.Promise(done => this.queue.push(() => (done(null), promise)));
             return promise;
         }
         get value() { return this._value; }
@@ -2251,12 +2251,11 @@ var $;
             return $.$mol_dev_format_span({}, $.$mol_dev_format_native(this), $.$mol_dev_format_shade('/'), $.$mol_dev_format_auto($.$mol_mem_cached(() => this.sub())));
         }
         *view_find(check, path = []) {
-            path = [...path, this];
-            if (check('', path))
-                return yield this;
+            if (check(this))
+                return yield [...path, this];
             for (const item of this.sub()) {
                 if (item instanceof $mol_view) {
-                    yield* item.view_find(check, path);
+                    yield* item.view_find(check, [...path, this]);
                 }
             }
         }
@@ -2273,23 +2272,12 @@ var $;
             if (index >= 0) {
                 kids[index].force_render(path);
             }
-            return index;
         }
-        ensure_visible(view) {
-            this.view_find((_, path) => {
-                if (path[path.length - 1] !== view)
-                    return false;
-                $.$mol_fiber_defer(() => {
-                    this.force_render(new Set(path));
-                    $.$mol_fiber_defer(() => {
-                        view.dom_node().scrollIntoView({
-                            block: 'center',
-                            inline: 'center',
-                        });
-                    });
-                });
-                return true;
-            }).next().value;
+        async ensure_visible(view) {
+            const path = this.view_find(v => v === view).next().value;
+            this.force_render(new Set(path));
+            await $.$mol_fiber_warp();
+            view.dom_node().scrollIntoView();
         }
     }
     $mol_view.watchers = new Set();
@@ -4941,14 +4929,15 @@ var $;
                 }, 0);
             }
             force_render(path) {
-                const index = super.force_render(path);
-                if (index) {
+                const kids = this.rows();
+                const index = kids.findIndex(item => path.has(item));
+                if (index >= 0) {
                     const win = this.view_window();
                     if (index < win[0] || index >= win[1]) {
                         $.$mol_mem_cached(() => this.view_window(), [index, index + 1]);
                     }
+                    kids[index].force_render(path);
                 }
-                return index;
             }
         }
         __decorate([
@@ -5887,7 +5876,7 @@ var $;
                 return Math.max(Math.min(this.$.$mol_window.size().width, this.maximal_width()), this.letter_width());
             }
             minimal_height() {
-                return Math.ceil(this.maximal_width() / this.minimal_width()) * this.line_height();
+                return Math.max(1, Math.ceil(this.maximal_width() / this.minimal_width())) * this.line_height();
             }
         }
         __decorate([
@@ -6105,9 +6094,9 @@ var $;
                 return this.strings()[index];
             }
             *view_find(check, path = []) {
-                path = [...path, this];
-                if (check(this.haystack(), path))
-                    yield this;
+                if (check(this, this.haystack())) {
+                    yield [...path, this];
+                }
             }
         }
         __decorate([
@@ -15694,7 +15683,9 @@ var $;
 var $;
 (function ($) {
     $.$mol_style_define($.$mol_frame, {
-        border: 'none',
+        border: {
+            style: 'none',
+        },
         flex: 'auto',
     });
 })($ || ($ = {}));
@@ -21181,9 +21172,9 @@ var $;
                 return token.found;
             }
             *view_find(check, path = []) {
-                path = [...path, this];
-                if (check(this.text(), path))
-                    yield this;
+                if (check(this, this.text())) {
+                    yield [...path, this];
+                }
             }
         }
         __decorate([
@@ -25333,6 +25324,9 @@ var $;
         author() {
             return $.$mol_github_user.item(this.json().user.url);
         }
+        number() {
+            return this.json().number;
+        }
         title() {
             return this.json().title;
         }
@@ -27242,7 +27236,9 @@ var $;
         }
         Menu_row(id) {
             const obj = new this.$.$mol_link();
-            obj.title = () => this.gist_title(id);
+            obj.sub = () => [
+                this.Menu_row_title(id)
+            ];
             obj.arg = () => this.gist_arg(id);
             return obj;
         }
@@ -27252,6 +27248,28 @@ var $;
         }
         menu_title() {
             return this.$.$mol_locale.text('$hyoo_habhub_menu_title');
+        }
+        Add_icon() {
+            const obj = new this.$.$mol_icon_plus();
+            return obj;
+        }
+        Add() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "https://github.com/nin-jin/habhub";
+            obj.sub = () => [
+                this.Add_icon()
+            ];
+            return obj;
+        }
+        search(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Search() {
+            const obj = new this.$.$mol_search();
+            obj.query = (val) => this.search(val);
+            return obj;
         }
         Lights() {
             const obj = new this.$.$mol_lights_toggle();
@@ -27264,6 +27282,8 @@ var $;
         }
         tools_root() {
             return [
+                this.Add(),
+                this.Search(),
                 this.Lights(),
                 this.Source_link()
             ];
@@ -27281,6 +27301,9 @@ var $;
         }
         close_arg() {
             return {
+                author: null,
+                repo: null,
+                article: null,
                 gist: null
             };
         }
@@ -27328,6 +27351,12 @@ var $;
         gist_title(id) {
             return "";
         }
+        Menu_row_title(id) {
+            const obj = new this.$.$mol_dimmer();
+            obj.needle = () => this.search();
+            obj.haystack = () => this.gist_title(id);
+            return obj;
+        }
         gist_arg(id) {
             return {};
         }
@@ -27344,6 +27373,18 @@ var $;
     __decorate([
         $.$mol_mem
     ], $hyoo_habhub.prototype, "Theme", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Add_icon", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Add", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "search", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Search", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_habhub.prototype, "Lights", null);
@@ -27374,6 +27415,9 @@ var $;
     __decorate([
         $.$mol_mem
     ], $hyoo_habhub.prototype, "Details_content", null);
+    __decorate([
+        $.$mol_mem_key
+    ], $hyoo_habhub.prototype, "Menu_row_title", null);
     $.$hyoo_habhub = $hyoo_habhub;
 })($ || ($ = {}));
 //habhub.view.tree.js.map
@@ -27394,6 +27438,10 @@ var $;
             uriSource() {
                 return 'https://api.github.com/search/issues?q=label:HabHub+is:open&sort=reactions';
             }
+            search(next) {
+                var _a;
+                return (_a = this.$.$mol_state_arg.value('search', next)) !== null && _a !== void 0 ? _a : '';
+            }
             gists() {
                 return $.$mol_github_search_issues.item(this.uriSource()).items();
             }
@@ -27408,7 +27456,26 @@ var $;
                 return this.gists_dict()[id];
             }
             gist_current() {
-                return $.$mol_maybe($.$mol_state_arg.value('gist')).map(uri => this.gists_dict()[uri])[0] || null;
+                var _a, _b;
+                const uri = this.$.$mol_state_arg.value('gist');
+                if (uri)
+                    return (_a = this.gists_dict()[uri]) !== null && _a !== void 0 ? _a : null;
+                if (!this.author())
+                    return null;
+                if (!this.repo())
+                    return null;
+                if (!this.article())
+                    return null;
+                return (_b = this.gists_dict()[`https://api.github.com/repos/${this.author()}/${this.repo()}/issues/${this.article()}`]) !== null && _b !== void 0 ? _b : null;
+            }
+            author() {
+                return $.$mol_state_arg.value('author');
+            }
+            repo() {
+                return $.$mol_state_arg.value('repo');
+            }
+            article() {
+                return $.$mol_state_arg.value('article');
             }
             pages() {
                 return [
@@ -27417,13 +27484,21 @@ var $;
                 ];
             }
             menu_rows() {
-                return this.gists().map((gist, index) => this.Menu_row(gist.uri()));
+                return this.gists()
+                    .filter($.$mol_match_text(this.search(), gist => [gist.title()]))
+                    .map((gist, index) => this.Menu_row(gist.uri()));
             }
             gist_title(id) {
                 return this.gist(id).title();
             }
             gist_arg(id) {
-                return { gist: id };
+                const gist = this.gist(id);
+                return {
+                    author: gist.author().name(),
+                    repo: gist.repository().name(),
+                    article: gist.number(),
+                    gist: null,
+                };
             }
             gist_current_title() {
                 return this.gist_current().title();
@@ -27439,6 +27514,9 @@ var $;
                 return $.$mol_state_session.value(`${this}.details_scroll_top(${current.uri()})`, next);
             }
         }
+        __decorate([
+            $.$mol_mem
+        ], $hyoo_habhub.prototype, "gist_current", null);
         $$.$hyoo_habhub = $hyoo_habhub;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
