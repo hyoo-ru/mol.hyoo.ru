@@ -15,6 +15,41 @@ $mol_book2 $mol_scroll
 	minimal_width 0
 	Placeholder $mol_view
 
+$mol_page $mol_view
+	sub /
+		<= Head $mol_view
+			sub <= head /
+				<= Title $mol_view
+					sub /
+						<= title
+				<= Tools $mol_view
+					sub <= tools /$mol_view_content
+		<= Body $mol_scroll
+			scroll_top?val <=> body_scroll_top?val 0
+			sub <= body /$mol_view_content
+		<= Foot $mol_view
+			sub <= foot /$mol_view
+
+$mol_link $mol_view
+	dom_name \a
+	attr *
+		^
+		href <= uri \
+		title <= hint \
+		target <= target \_self
+		download <= file_name \
+		mol_link_current <= current false
+		mol_theme <= theme null
+	sub /$mol_view_content
+		<= title
+	arg *
+	event *
+		^
+		click?event <=> click?event <=> event_click?event null
+
+$mol_theme_auto $mol_plugin
+	attr * mol_theme <= theme \
+
 $mol_speck $mol_view
 	attr *
 		^
@@ -43,42 +78,6 @@ $mol_button $mol_view
 	sub /$mol_view_content
 		<= title
 	Speck $mol_speck
-
-$mol_page $mol_view
-	sub /
-		<= Head $mol_view
-			sub <= head /
-				<= Title $mol_button
-					sub /
-						<= title
-					event_click?val <=> event_top?val null
-				<= Tools $mol_view
-					sub <= tools /$mol_view_content
-		<= Body $mol_scroll
-			scroll_top?val <=> body_scroll_top?val 0
-			sub <= body /$mol_view_content
-		<= Foot $mol_view
-			sub <= foot /$mol_view
-
-$mol_link $mol_view
-	dom_name \a
-	attr *
-		^
-		href <= uri \
-		title <= hint \
-		target <= target \_self
-		download <= file_name \
-		mol_link_current <= current false
-		mol_theme <= theme null
-	sub /$mol_view_content
-		<= title
-	arg *
-	event *
-		^
-		click?event <=> click?event <=> event_click?event null
-
-$mol_theme_auto $mol_plugin
-	attr * mol_theme <= theme \
 
 $mol_button_typed $mol_button
 
@@ -1549,7 +1548,7 @@ $mol_float_demo $mol_demo_large
 
 $mol_labeler $mol_list
 	rows /
-		<= Title $mol_view
+		<= Label $mol_view
 			minimal_height 24
 			sub <= label /$mol_view_content
 				<= title
@@ -2778,7 +2777,6 @@ $mol_app_studio $mol_book
 					patterns <= speech_filter_patterns /
 						\find (.+?)
 			title <= editor_title @ \Properties
-			event_top?val <=> event_front_up?val
 			tools /
 				- <= Speech_toggle $mol_check_icon
 					Icon <= Speech_toggle_icon $mol_icon_microphone
@@ -3055,7 +3053,6 @@ $hyoo_slides_page $mol_book
 		<= Listener $mol_page
 			tools <= tools /
 			minimal_width <= listener_width 600
-			event_top?event <=> event_front_up?event
 			title <= title
 			body /
 				<= Listener_content $mol_text
