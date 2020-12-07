@@ -514,7 +514,7 @@ $mol_calendar_demo_holiday $mol_demo_small
 		<= Calendar $mol_calendar
 			month_string <= month \2018-01
 			day_holiday!day <= holiday!day false
-			
+
 $mol_calendar_demo_selection $mol_demo_small
 	title @ \Days of month 2018-01 with custom selection
 	interval_config *
@@ -524,7 +524,7 @@ $mol_calendar_demo_selection $mol_demo_small
 		<= Calendar $mol_calendar
 			month_string <= month \2018-01
 			day_selected!day <= selected!day false
-			
+
 $mol_calendar_demo_simple $mol_demo_small
 	title @ \Days of curret month
 	sub /
@@ -1882,7 +1882,7 @@ $mol_map_yandex_mark $mol_object
 	title <= address \
 	content \
 	object null
-	
+
 $mol_map_yandex $mol_view
 	zoom?val 2
 	center?val /
@@ -2558,7 +2558,7 @@ $mol_toolbar_demo $mol_demo_small
 					<= Paste_icon $mol_icon_content_paste
 				<= Delete $mol_button_minor sub /
 					<= Delete_icon $mol_icon_delete
-			
+
 $mol_app_demo_main $mol_page
 	minimal_width 400
 	title \$mol libs for web ui
