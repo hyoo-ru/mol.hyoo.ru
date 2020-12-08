@@ -2986,7 +2986,7 @@ $hyoo_tree $mol_book2
 			body /
 				<= Result_text $mol_text
 					text <= result \
-		
+
 $hyoo_habhub $mol_book2
 	plugins /
 		<= Theme $mol_theme_auto
