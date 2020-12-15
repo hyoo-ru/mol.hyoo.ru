@@ -3345,11 +3345,13 @@ var $;
             },
             Title: {
                 minHeight: rem(2),
+                margin: 0,
                 padding: $.$mol_gap.text,
                 wordBreak: 'normal',
                 textShadow: '0 0',
                 font: {
                     size: 'inherit',
+                    weight: 'normal',
                 },
                 flex: {
                     grow: 1000,
@@ -6012,7 +6014,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/check/expand/expand.view.css", "[mol_check_expand] {\n}\n\n[mol_check_expand][disabled] [mol_check_expand_icon] {\n\tvisibility: hidden;\n}\n\n[mol_check_expand_icon] {\n\tbox-shadow: none;\n\tmargin: .25rem 0;\n}\n[mol_check_expand_icon] {\n\ttransform: rotateZ(0deg);\n}\n\n[mol_check_checked] > [mol_check_expand_icon] {\n\ttransform: rotateZ(90deg);\n}\n\n[mol_check_expand_icon] {\n\tvertical-align: text-top;\n}\n\n[mol_check_expand_label] {\n\tmargin-left: 0;\n}\n");
+    $.$mol_style_attach("mol/check/expand/expand.view.css", "[mol_check_expand] {\n\tmin-width: 20px;\n}\n\n[mol_check_expand][disabled] [mol_check_expand_icon] {\n\tvisibility: hidden;\n}\n\n[mol_check_expand_icon] {\n\tbox-shadow: none;\n\tmargin: .25rem 0;\n}\n[mol_check_expand_icon] {\n\ttransform: rotateZ(0deg);\n}\n\n[mol_check_checked] > [mol_check_expand_icon] {\n\ttransform: rotateZ(90deg);\n}\n\n[mol_check_expand_icon] {\n\tvertical-align: text-top;\n}\n\n[mol_check_expand_label] {\n\tmargin-left: 0;\n}\n");
 })($ || ($ = {}));
 //expand.view.css.js.map
 ;
@@ -25892,7 +25894,7 @@ var $;
             return this.detail_title();
         }
         source_prefix() {
-            return "https://github.com/eigenmethod/mol/tree/master/";
+            return "https://github.com/hyoo-ru/mam_mol/tree/master/";
         }
         Main() {
             const obj = new this.$.$mol_app_demo_main();
