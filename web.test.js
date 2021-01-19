@@ -400,7 +400,7 @@ var $;
                 while (true) {
                     const a_next = a_iter.next();
                     const b_next = b_iter.next();
-                    if (a_next.done !== a_next.done)
+                    if (a_next.done !== b_next.done)
                         return result = false;
                     if (a_next.done)
                         break;
@@ -2375,7 +2375,7 @@ var $;
         },
         'only groups'() {
             const regexp = $.$mol_regexp.from({ dog: '@' });
-            $.$mol_assert_like([...regexp.parse('#')], []);
+            $.$mol_assert_like([...regexp.parse('#')], [{ 0: '#' }]);
             $.$mol_assert_like([...regexp.parse('@')], [{ dog: '@' }]);
         },
         'catch skipped'() {
@@ -2460,10 +2460,10 @@ var $;
         },
         'variants'() {
             const { begin, or, end } = $.$mol_regexp;
-            const sexism = $.$mol_regexp.from([begin, 'sex = ', [{ sex: 'male' }, or, { sex: 'female' }], end]);
+            const sexism = $.$mol_regexp.from([begin, 'sex = ', { sex: ['male', or, 'female'] }, end]);
             $.$mol_assert_like([...sexism.parse('sex = male')], [{ sex: 'male' }]);
             $.$mol_assert_like([...sexism.parse('sex = female')], [{ sex: 'female' }]);
-            $.$mol_assert_like([...sexism.parse('sex = malefemale')], []);
+            $.$mol_assert_like([...sexism.parse('sex = malefemale')], [{ 0: 'sex = malefemale' }]);
         },
         'force after'() {
             const { letter, force_after } = $.$mol_regexp;
@@ -2476,6 +2476,13 @@ var $;
             const regexp = $.$mol_regexp.from([letter, forbid_after('.')]);
             $.$mol_assert_equal(regexp.exec('x.'), null);
             $.$mol_assert_equal(regexp.exec('x5')[0], 'x');
+        },
+        'byte except'() {
+            const { byte_except, letter, tab } = $.$mol_regexp;
+            const name = byte_except(letter, tab);
+            $.$mol_assert_equal(name.exec('a'), null);
+            $.$mol_assert_equal(name.exec('\t'), null);
+            $.$mol_assert_equal(name.exec('(')[0], '(');
         },
     });
 })($ || ($ = {}));
@@ -3222,13 +3229,13 @@ var $;
         },
         'slice span - regular'($) {
             const span = new $_1.$mol_span('test.ts', 1, 3, 5);
-            const child = span.slice(1, 3);
+            const child = span.slice(1, 4);
             $_1.$mol_assert_equal(child.row, 1);
             $_1.$mol_assert_equal(child.col, 4);
             $_1.$mol_assert_equal(child.length, 3);
             const child2 = span.slice(2, 2);
             $_1.$mol_assert_equal(child2.col, 5);
-            $_1.$mol_assert_equal(child2.length, 2);
+            $_1.$mol_assert_equal(child2.length, 0);
         },
         'slice span - out of range'($) {
             const span = new $_1.$mol_span('test.ts', 1, 3, 5);
@@ -3273,8 +3280,8 @@ var $;
         'hack'() {
             const res = $.$mol_tree2.fromString(`foo bar xxx\n`)
                 .hack({
-                '': (tree, context) => [tree.clone(tree.hack(context))],
-                'bar': (tree, context) => [tree.struct('777', tree.hack(context))],
+                '': (tree, belt) => [tree.clone(tree.hack(belt))],
+                'bar': (tree, belt) => [tree.struct('777', tree.hack(belt))],
             });
             $.$mol_assert_equal(res.toString(), 'foo 777 xxx\n');
         },

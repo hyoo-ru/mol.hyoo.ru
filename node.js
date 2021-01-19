@@ -2484,7 +2484,7 @@ var $;
         }
         dom_node_actual() {
             const node = this.dom_node();
-            node.style.minHeight = this.minimal_height() + 'px';
+            $.$mol_dom_render_styles(node, { minHeight: this.minimal_height() });
             const attr = this.attr();
             const style = this.style();
             const fields = this.field();
@@ -3037,6 +3037,60 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_dom_listener extends $.$mol_object {
+        constructor(_node, _event, _handler, _config = { passive: true }) {
+            super();
+            this._node = _node;
+            this._event = _event;
+            this._handler = _handler;
+            this._config = _config;
+            this._node.addEventListener(this._event, this._handler, this._config);
+        }
+        destructor() {
+            this._node.removeEventListener(this._event, this._handler, this._config);
+            super.destructor();
+        }
+    }
+    $.$mol_dom_listener = $mol_dom_listener;
+})($ || ($ = {}));
+//listener.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_print extends $.$mol_object {
+        static before() {
+            return new $.$mol_dom_listener(this.$.$mol_dom_context, 'beforeprint', () => {
+                this.active(true);
+            });
+        }
+        static after() {
+            return new $.$mol_dom_listener(this.$.$mol_dom_context, 'afterprint', () => {
+                this.active(false);
+            });
+        }
+        static active(next) {
+            this.before();
+            this.after();
+            return next || false;
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $mol_print, "before", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_print, "after", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_print, "active", null);
+    $.$mol_print = $mol_print;
+})($ || ($ = {}));
+//print.js.map
+;
+"use strict";
+var $;
+(function ($) {
     var $$;
     (function ($$) {
         const { per, rem, px } = $.$mol_style_unit;
@@ -3087,6 +3141,8 @@ var $;
             '@media': {
                 'print': {
                     overflow: 'visible',
+                    contain: 'none',
+                    maxHeight: 'unset',
                 },
             },
         });
@@ -3117,6 +3173,9 @@ var $;
                     this.scroll_top(Math.max(0, el.scrollTop));
                     this.scroll_left(Math.max(0, el.scrollLeft));
                 })));
+            }
+            minimal_height() {
+                return this.$.$mol_print.active() ? null : 0;
             }
         }
         __decorate([
@@ -4970,60 +5029,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_dom_listener extends $.$mol_object {
-        constructor(_node, _event, _handler, _config = { passive: true }) {
-            super();
-            this._node = _node;
-            this._event = _event;
-            this._handler = _handler;
-            this._config = _config;
-            this._node.addEventListener(this._event, this._handler, this._config);
-        }
-        destructor() {
-            this._node.removeEventListener(this._event, this._handler, this._config);
-            super.destructor();
-        }
-    }
-    $.$mol_dom_listener = $mol_dom_listener;
-})($ || ($ = {}));
-//listener.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_print extends $.$mol_object {
-        static before() {
-            return new $.$mol_dom_listener(this.$.$mol_dom_context, 'beforeprint', () => {
-                this.active(true);
-            });
-        }
-        static after() {
-            return new $.$mol_dom_listener(this.$.$mol_dom_context, 'afterprint', () => {
-                this.active(false);
-            });
-        }
-        static active(next) {
-            this.before();
-            this.after();
-            return next || false;
-        }
-    }
-    __decorate([
-        $.$mol_mem
-    ], $mol_print, "before", null);
-    __decorate([
-        $.$mol_mem
-    ], $mol_print, "after", null);
-    __decorate([
-        $.$mol_mem
-    ], $mol_print, "active", null);
-    $.$mol_print = $mol_print;
-})($ || ($ = {}));
-//print.js.map
-;
-"use strict";
-var $;
-(function ($) {
     $.$mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: block;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\tmin-height: .5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n \n[mol_list] > * {\n\tdisplay: flex;\n}\n");
 })($ || ($ = {}));
 //list.view.css.js.map
@@ -6046,6 +6051,9 @@ var $;
         letter_width() {
             return 8;
         }
+        width_limit() {
+            return Infinity;
+        }
     }
     $.$mol_paragraph = $mol_paragraph;
 })($ || ($ = {}));
@@ -6072,8 +6080,11 @@ var $;
                 }
                 return width;
             }
+            width_limit() {
+                return this.$.$mol_window.size().width;
+            }
             minimal_width() {
-                return Math.max(Math.min(this.$.$mol_window.size().width, this.maximal_width()), this.letter_width());
+                return Math.max(Math.min(this.width_limit(), this.maximal_width()), this.letter_width());
             }
             minimal_height() {
                 return Math.max(1, Math.ceil(this.maximal_width() / this.minimal_width())) * this.line_height();
@@ -6205,7 +6216,7 @@ var $;
             if (ignoreCase)
                 flags += 'i';
             if (typeof source === 'string') {
-                return new this(source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
+                return new $mol_regexp(source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), flags);
             }
             else if (source instanceof RegExp) {
                 if (source instanceof $mol_regexp)
@@ -6230,7 +6241,7 @@ var $;
                         }
                     }
                 }
-                return new this(`(?:${sources.join('')})`, flags, groups);
+                return new $mol_regexp(sources.join(''), flags, groups);
             }
             else {
                 const groups = [];
@@ -6240,17 +6251,23 @@ var $;
                     groups.push(...regexp.groups);
                     return `(${regexp.source})`;
                 });
-                return new this(`(?:${chunks.join('|')})`, flags, groups);
+                return new $mol_regexp(`(?:${chunks.join('|')})`, flags, groups);
             }
         }
         static char_code(code) {
-            return new this(`\\u${code.toString(16).padStart(4, '0')}`);
+            return new $mol_regexp(`\\u${code.toString(16).padStart(4, '0')}`);
+        }
+        static byte_except(...forbidden) {
+            const regexp = forbidden.map(f => $mol_regexp.from(f).source).join('');
+            return new $mol_regexp(`[^${regexp}]`);
         }
     }
     $mol_regexp.byte = $mol_regexp.from(/[\s\S]/);
     $mol_regexp.digit = $mol_regexp.from(/\d/);
     $mol_regexp.letter = $mol_regexp.from(/\w/);
     $mol_regexp.space = $mol_regexp.from(/\s/);
+    $mol_regexp.tab = $mol_regexp.from(/\t/);
+    $mol_regexp.slash_back = $mol_regexp.from(/\\/);
     $mol_regexp.word_break = $mol_regexp.from(/\b/);
     $mol_regexp.line_end = $mol_regexp.from(/\r?\n/);
     $mol_regexp.begin = $mol_regexp.from(/^/);
@@ -21434,6 +21451,9 @@ var $;
         text() {
             return "";
         }
+        minimal_height() {
+            return 24;
+        }
         Token(id) {
             const obj = new this.$.$mol_text_code_token();
             obj.type = () => this.token_type(id);
@@ -21743,6 +21763,7 @@ var $;
         View() {
             const obj = new this.$.$mol_text_code();
             obj.text = () => this.value();
+            obj.render_visible_only = () => false;
             return obj;
         }
     }
@@ -21765,7 +21786,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/textarea/textarea.view.css", "[mol_textarea] {\n\tflex: 1 0 auto;\n\tdisplay: flex;\n\tflex-direction: column;\n\tposition: relative;\n\tz-index: 0;\n\tvertical-align: top;\n\tmin-width: max-content;\n\tmin-height: max-content;\n}\n\n[mol_textarea_view] {\n\tpointer-events: none;\n\tz-index: 1;\n\twhite-space: pre;\n}\n\n[mol_textarea_edit] {\n\tfont-family: monospace;\n\tz-index: -1 !important;\n\tpadding: var(--mol_gap_text);\n\tposition: absolute;\n\tleft: 0;\n\ttop: 0;\n\twidth: 100%;\n\theight: 100%;\n\tcolor: transparent;\n\tcaret-color: var(--mol_theme_text);\n\tresize: none;\n\twhite-space: pre;\n\ttab-size: 4;\n\toverflow-anchor: none;\n}\n");
+    $.$mol_style_attach("mol/textarea/textarea.view.css", "[mol_textarea] {\n\tflex: 1 0 auto;\n\tdisplay: flex;\n\tflex-direction: column;\n\tposition: relative;\n\tz-index: 0;\n\tvertical-align: top;\n\tmin-height: max-content;\n\twhite-space: pre-wrap;\n}\n\n[mol_textarea_view] {\n\tpointer-events: none;\n\tz-index: 1;\n\twhite-space: inherit;\n}\n\n[mol_textarea_edit] {\n\tfont-family: monospace;\n\tz-index: -1 !important;\n\tpadding: var(--mol_gap_text);\n\tposition: absolute;\n\tleft: 0;\n\ttop: 0;\n\twidth: 100%;\n\theight: 100%;\n\tcolor: transparent;\n\tcaret-color: var(--mol_theme_text);\n\tresize: none;\n\twhite-space: inherit;\n\ttab-size: 4;\n\toverflow-anchor: none;\n}\n");
 })($ || ($ = {}));
 //textarea.view.css.js.map
 ;
@@ -23523,6 +23544,9 @@ var $;
         static begin(uri) {
             return new $mol_span(uri, 0, 0, 0);
         }
+        static end(uri, length) {
+            return new $mol_span(uri, 0, length, length);
+        }
         static entire(uri, length) {
             return new $mol_span(uri, 0, 0, length);
         }
@@ -23550,10 +23574,9 @@ var $;
             let len = this.length;
             if (begin < 0 || begin > len)
                 this.$.$mol_fail(`Begin value '${begin}' out of range ${this}`);
-            len = len - begin;
             if (end < 0 || end > len)
                 this.$.$mol_fail(`End value '${end}' out of range ${this}`);
-            return this.span(this.row, this.col + begin, end);
+            return this.span(this.row, this.col + begin, end - begin);
         }
     }
     $mol_span.unknown = $mol_span.begin('');
