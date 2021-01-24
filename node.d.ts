@@ -5856,6 +5856,16 @@ declare namespace $ {
         };
         type(): string;
     }
+    class $mol_text_code_token_link extends $mol_text_code_token {
+        dom_name(): string;
+        type(): string;
+        attr(): {
+            href: string;
+            target: string;
+            mol_text_code_token_type: string;
+        };
+        haystack(): string;
+    }
 }
 
 declare namespace $.$$ {
@@ -5866,6 +5876,7 @@ declare namespace $ {
         text(): string;
         minimal_height(): number;
         Token(id: any): $mol_text_code_token;
+        Token_link(id: any): $mol_text_code_token_link;
         token_type(id: any): string;
         token_text(id: any): string;
         highlight(): string;
@@ -5882,6 +5893,7 @@ declare namespace $.$$ {
         }[];
         sub(): $mol_text_code_token[];
         row_content(path: number[]): $mol_text_code_token[];
+        Token(path: number[]): $mol_text_code_token;
         token_type(path: number[]): string;
         token_content(path: number[]): (string | $mol_text_code_token)[];
         token_text(path: number[]): string;
