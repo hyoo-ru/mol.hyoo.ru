@@ -6357,14 +6357,16 @@ declare namespace $.$$ {
 declare namespace $ {
     class $mol_span extends $mol_object2 {
         readonly uri: string;
+        readonly source: string;
         readonly row: number;
         readonly col: number;
         readonly length: number;
-        constructor(uri: string, row: number, col: number, length: number);
+        constructor(uri: string, source: string, row: number, col: number, length: number);
+        [Symbol.toStringTag]: string;
         static unknown: $mol_span;
-        static begin(uri: string): $mol_span;
-        static end(uri: string, length: number): $mol_span;
-        static entire(uri: string, length: number): $mol_span;
+        static begin(uri: string, source?: string): $mol_span;
+        static end(uri: string, source: string): $mol_span;
+        static entire(uri: string, source: string): $mol_span;
         toString(): string;
         toJSON(): {
             uri: string;
@@ -6374,8 +6376,8 @@ declare namespace $ {
         };
         error(message: string, Class?: ErrorConstructor): Error;
         span(row: number, col: number, length: number): $mol_span;
-        after(length: number): $mol_span;
-        slice(begin: number, end: number): $mol_span;
+        after(length?: number): $mol_span;
+        slice(begin: number, end?: number): $mol_span;
     }
 }
 
@@ -7136,23 +7138,36 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $hyoo_tree extends $mol_book2 {
-        plugins(): readonly any[];
-        pages(): readonly any[];
-        Theme(): $$.$mol_theme_auto;
-        Lights(): $$.$mol_lights_toggle;
-        compile_label(): string;
-        Compile(): $$.$mol_link;
-        source(val?: any): any;
-        source_hint(): string;
-        Source_text(): $$.$mol_textarea;
-        Source(): $$.$mol_page;
-        Close_icon(): $mol_icon_cross;
-        Close(): $$.$mol_link;
-        result(): string;
-        Result_text(): $$.$mol_text;
-        Result(): $$.$mol_page;
-    }
+    let $hyoo_marked_line_content: $mol_regexp<{}>;
+    let $hyoo_marked_line: $mol_regexp<{
+        content: string;
+    } & {
+        marker: string;
+    } & {
+        content: string;
+    } & {
+        uri: string;
+    } & {
+        marker: string;
+    } & {
+        link: string;
+        code: string;
+        embed: string;
+        strong: string;
+        emphasis: string;
+        insertion: string;
+        deletion: string;
+    } & {
+        inline: string;
+    }>;
+}
+
+declare namespace $ {
+    function $hyoo_marked_tree_from_line(this: $, code: string, span_entire?: $mol_span): $mol_tree2;
+}
+
+declare namespace $ {
+    function $hyoo_marked_tree_to_js(this: $, mt: $mol_tree2): $mol_tree2;
 }
 
 declare namespace $ {
@@ -7270,18 +7285,85 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_view_tree2_to_text(this: $, tree2_module: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_from_json(json: any, span?: $mol_span): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_json_from_string(str: string): any;
+    function $mol_json_to_string(str: string): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_js_to_text(this: $, js: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_text_to_string(this: $, text: $mol_tree2): string;
+}
+
+declare namespace $ {
+    function $mol_vlq_encode(val: number): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_text_to_sourcemap(this: $, tree: $mol_tree2): {
+        version: number;
+        sources: string[];
+        sourcesContent: string[];
+        mappings: string;
+    };
+}
+
+declare namespace $ {
+    function $mol_tree2_text_to_sourcemap_vis(this: $, text: $mol_tree2): string;
+}
+
+declare namespace $ {
+    class $hyoo_tree extends $mol_book2 {
+        plugins(): readonly any[];
+        Placeholder(): any;
+        pages(): readonly any[];
+        Result(index: any): $$.$mol_page;
+        Theme(): $$.$mol_theme_auto;
+        Lights(): $$.$mol_lights_toggle;
+        Github(): $mol_link_source;
+        View(): $$.$mol_link;
+        JSON(): $$.$mol_link;
+        MT(): $$.$mol_link;
+        Presets_list(): $$.$mol_list;
+        Presets(): $$.$mol_page;
+        source(val?: any): any;
+        source_hint(): string;
+        Source_text(): $$.$mol_textarea;
+        Source(): $$.$mol_page;
+        transform(index: any, val?: any): any;
+        Transform(index: any): $$.$mol_select;
+        Close_icon(index: any): $mol_icon_cross;
+        close(index: any, event?: any): any;
+        Close(index: any): $mol_button_minor;
+        result_head(index: any): readonly any[];
+        result_text(index: any): any;
+        Result_text(index: any): $$.$mol_text_code;
+    }
+}
+
+declare namespace $ {
 }
 
 declare namespace $.$$ {
     class $hyoo_tree extends $.$hyoo_tree {
-        compile(): boolean;
+        pipeline(next?: string[]): string[];
         pages(): $mol_page[];
-        compiled(): {
-            script: string;
-            locales: Record<string, string>;
-        };
-        result(): string;
+        result_head(index: number): ($mol_button_minor | $mol_select)[];
         source(next?: string): string;
+        transform(index: number, next?: string): string;
+        result(index: number): string | $mol_tree2;
+        result_text(index: number): string;
+        close(index: number): void;
     }
 }
 

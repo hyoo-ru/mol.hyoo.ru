@@ -2976,31 +2976,58 @@ $mol_app_demo_nav $mol_grid
 $hyoo_tree $mol_book2
 	plugins /
 		<= Theme $mol_theme_auto
+	Placeholder null
 	pages /
-		<= Source $mol_page
-			title @ \View.Tree
+		<= Presets $mol_page
+			title @ \Presets
 			tools /
 				<= Lights $mol_lights_toggle
-				<= Compile $mol_link 
-					sub /
-						<= compile_label @ \Compile
-					arg *
-						compile \
+				<= Github $mol_link_source
+					uri \https://github.com/hyoo-ru/tree.hyoo.ru/
+			body /
+				<= Presets_list $mol_list
+					rows /
+						<= View $mol_link
+							title \view.tree ⇒ TS
+							uri \#source=%24my_app%20%24mol_page%0A%09title%20%40%20%5CExample%0A%09params%20*%20foo%20<%3D%20changable%3Fval%20%2Fstring%0A%09body%20%2F%0A%09%09<%3D%20Info%20%24my_widget%0A%09%09%09empty%20%40%20%5CNo%20content%0A%09%09%09value%3Fval%20<%3D>%20info_value%3Fval%20NaN%0A%09%09%09kids%20<%3D%20info_kids%20%2F%24mol_view_content%0A/pipeline=%24mol_tree2_from_string~%24mol_view_tree2_to_text~%24mol_tree2_text_to_string
+						<= JSON $mol_link
+							title \JSON ⇒ json.tree
+							uri \#source=%7B%0A%09"foo"%3A%20%5B%0A%09%09"bar"%2C%0A%09%09true%2C%0A%09%09777%2C%0A%09%09null%0A%09%5D%2C%0A%09"foo%5Cnbar"%3A"xxx%5Cnyy"%0A%7D/pipeline=%24mol_json_from_string~%24mol_tree2_from_json
+						<= MT $mol_link
+							title \MarkedText ⇒ JS + SM
+							uri \#source=foo**%3B%3B%2B%2Bbar%2B%2B%3B%3B**%2B%2B777%2B%2B/pipeline=%24hyoo_marked_tree_from_line~%24hyoo_marked_tree_to_js~%24mol_tree2_js_to_text~%24mol_tree2_text_to_sourcemap_vis
+		<= Source $mol_page
+			title @ \Tree pipeline source
 			body /
 				<= Source_text $mol_textarea
 					value?val <=> source?val \
 					hint <= source_hint @ \view.tree source
-		<= Result $mol_page
-			title @ \Compiled
-			tools /
-				<= Close $mol_link 
-					sub /
-						<= Close_icon $mol_icon_cross
-					arg *
-						compile null
-			body /
-				<= Result_text $mol_text
-					text <= result \
+	Result!index $mol_page
+		Title null
+		head <= result_head!index /
+			<= Transform!index $mol_select
+				hint @ \Search transform..
+				value?val <=> transform!index?val \$mol_tree2_from_string
+				options /
+					\$hyoo_marked_tree_from_line
+					\$hyoo_marked_tree_to_js
+					\$mol_view_tree2_to_text
+					\$mol_tree2_from_string
+					\$mol_tree2_from_json
+					\$mol_json_from_string
+					\$mol_json_to_string
+					\$mol_tree2_js_to_text
+					\$mol_tree2_text_to_string
+					\$mol_tree2_text_to_sourcemap
+					\$mol_tree2_text_to_sourcemap_vis
+			<= Close!index $mol_button_minor 
+				sub /
+					<= Close_icon!index $mol_icon_cross
+				click?event <=> close!index?event null
+		body /
+			<= Result_text!index $mol_text_code
+				render_visible_only false
+				text <= result_text!index null
 
 $hyoo_habhub $mol_book2
 	plugins /

@@ -3240,7 +3240,7 @@ var $;
 (function ($_1) {
     $_1.$mol_test({
         'span for same uri'($) {
-            const span = new $_1.$mol_span('test.ts', 1, 3, 4);
+            const span = new $_1.$mol_span('test.ts', '', 1, 3, 4);
             const child = span.span(4, 5, 8);
             $_1.$mol_assert_equal(child.uri, 'test.ts');
             $_1.$mol_assert_equal(child.row, 4);
@@ -3248,7 +3248,7 @@ var $;
             $_1.$mol_assert_equal(child.length, 8);
         },
         'span after of given position'($) {
-            const span = new $_1.$mol_span('test.ts', 1, 3, 4);
+            const span = new $_1.$mol_span('test.ts', '', 1, 3, 4);
             const child = span.after(11);
             $_1.$mol_assert_equal(child.uri, 'test.ts');
             $_1.$mol_assert_equal(child.row, 1);
@@ -3256,7 +3256,7 @@ var $;
             $_1.$mol_assert_equal(child.length, 11);
         },
         'slice span - regular'($) {
-            const span = new $_1.$mol_span('test.ts', 1, 3, 5);
+            const span = new $_1.$mol_span('test.ts', '', 1, 3, 5);
             const child = span.slice(1, 4);
             $_1.$mol_assert_equal(child.row, 1);
             $_1.$mol_assert_equal(child.col, 4);
@@ -3265,15 +3265,21 @@ var $;
             $_1.$mol_assert_equal(child2.col, 5);
             $_1.$mol_assert_equal(child2.length, 0);
         },
+        'slice span - negative'($) {
+            const span = new $_1.$mol_span('test.ts', '', 1, 3, 5);
+            const child = span.slice(-3, -1);
+            $_1.$mol_assert_equal(child.row, 1);
+            $_1.$mol_assert_equal(child.col, 5);
+            $_1.$mol_assert_equal(child.length, 2);
+        },
         'slice span - out of range'($) {
-            const span = new $_1.$mol_span('test.ts', 1, 3, 5);
-            $_1.$mol_assert_fail(() => span.slice(-1, 4));
+            const span = new $_1.$mol_span('test.ts', '', 1, 3, 5);
+            $_1.$mol_assert_fail(() => span.slice(-1, 3));
             $_1.$mol_assert_fail(() => span.slice(1, 6));
             $_1.$mol_assert_fail(() => span.slice(1, 10));
-            $_1.$mol_assert_fail(() => span.slice(1, -1));
         },
         'error handling'($) {
-            const span = new $_1.$mol_span('test.ts', 1, 3, 4);
+            const span = new $_1.$mol_span('test.ts', '', 1, 3, 4);
             const error = span.error('some error');
             $_1.$mol_assert_equal(error.message, 'some error\ntest.ts#1:3/4');
         }
@@ -3415,7 +3421,7 @@ var $;
 	`);
         $_1.$mol_test({
             'props'($) {
-                const span = $_1.$mol_span.entire('/mol/view/tree2/class/props.test.ts', src.length);
+                const span = $_1.$mol_span.entire('/mol/view/tree2/class/props.test.ts', src);
                 const mod = $_1.$mol_tree2.fromString(src, span);
                 const result = $.$mol_view_tree2_class_props(mod.kids[0]).toString();
                 $_1.$mol_assert_equal(result, dest.toString());
@@ -3535,6 +3541,78 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    $.$mol_test({
+        'strong'() {
+            const res = $.$hyoo_marked_line.parse('**text**').next().value;
+            $.$mol_assert_equal(res.strong, '**text**');
+            $.$mol_assert_equal(res.marker, '**');
+            $.$mol_assert_equal(res.content, 'text');
+        },
+        'emphasis'() {
+            const res = $.$hyoo_marked_line.parse('//text//').next().value;
+            $.$mol_assert_equal(res.emphasis, '//text//');
+            $.$mol_assert_equal(res.marker, '//');
+            $.$mol_assert_equal(res.content, 'text');
+        },
+        'insertion'() {
+            const res = $.$hyoo_marked_line.parse('++text++').next().value;
+            $.$mol_assert_equal(res.insertion, '++text++');
+            $.$mol_assert_equal(res.marker, '++');
+            $.$mol_assert_equal(res.content, 'text');
+        },
+        'deletion'() {
+            const res = $.$hyoo_marked_line.parse('--text--').next().value;
+            $.$mol_assert_equal(res.deletion, '--text--');
+            $.$mol_assert_equal(res.marker, '--');
+            $.$mol_assert_equal(res.content, 'text');
+        },
+        'code'() {
+            const res = $.$hyoo_marked_line.parse(';;text;;').next().value;
+            $.$mol_assert_equal(res.code, ';;text;;');
+            $.$mol_assert_equal(res.marker, ';;');
+            $.$mol_assert_equal(res.content, 'text');
+        },
+        'nested simple'() {
+            const res = $.$hyoo_marked_line.parse('**//foo//bar**').next().value;
+            $.$mol_assert_equal(res.strong, '**//foo//bar**');
+            $.$mol_assert_equal(res.marker, '**');
+            $.$mol_assert_equal(res.content, '//foo//bar');
+        },
+        'nested simple overlap'() {
+            const res = [...$.$hyoo_marked_line.parse('**//foo**bar//')];
+            $.$mol_assert_equal(res[0].strong, '**//foo**');
+            $.$mol_assert_equal(res[0].marker, '**');
+            $.$mol_assert_equal(res[0].content, '//foo');
+            $.$mol_assert_equal(res[1][0], 'bar//');
+        },
+        'link'() {
+            const res = $.$hyoo_marked_line.parse('\\\\text\\url\\\\').next().value;
+            $.$mol_assert_equal(res.link, '\\\\text\\url\\\\');
+            $.$mol_assert_equal(res.marker, '\\\\');
+            $.$mol_assert_equal(res.content, 'text');
+            $.$mol_assert_equal(res.uri, 'url');
+        },
+        'embed'() {
+            const res = $.$hyoo_marked_line.parse('""text\\url""').next().value;
+            $.$mol_assert_equal(res.embed, '""text\\url""');
+            $.$mol_assert_equal(res.marker, '""');
+            $.$mol_assert_equal(res.content, 'text');
+            $.$mol_assert_equal(res.uri, 'url');
+        },
+        'link with embed'() {
+            const res = $.$hyoo_marked_line.parse('\\\\""text\\url1""\\url2\\\\').next().value;
+            $.$mol_assert_equal(res.link, '\\\\""text\\url1""\\url2\\\\');
+            $.$mol_assert_equal(res.marker, '\\\\');
+            $.$mol_assert_equal(res.content, '""text\\url1""');
+            $.$mol_assert_equal(res.uri, 'url2');
+        },
+    });
+})($ || ($ = {}));
+//line.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_base64_decode(base64) {
         throw new Error('Not implemented');
     }
@@ -3628,7 +3706,7 @@ var $;
             async 'localized - simple'($) {
                 const view = text(require('/mol/view/tree2/ts/test/simple.view.tree.bin'));
                 const ts = text(require('/mol/view/tree2/ts/test/simple.view.ts.bin'));
-                const tree = $_1.$mol_tree2.fromString(view, $_1.$mol_span.entire('factory.view.tree', view.length));
+                const tree = $_1.$mol_tree2.fromString(view, $_1.$mol_span.entire('factory.view.tree', view));
                 const res = $.$mol_view_tree2_ts_compile(tree);
                 $_1.$mol_assert_equal(res.locales['$mol_view_tree2_ts_test_simple_localized'], 'localized value');
                 $_1.$mol_assert_equal(res.script, ts);
@@ -3636,7 +3714,7 @@ var $;
             async 'localized - factory'($) {
                 const view = text(require('/mol/view/tree2/ts/test/factory.view.tree.bin'));
                 const ts = text(require('/mol/view/tree2/ts/test/factory.view.ts.bin'));
-                const tree = $_1.$mol_tree2.fromString(view, $_1.$mol_span.entire('factory.view.tree', view.length));
+                const tree = $_1.$mol_tree2.fromString(view, $_1.$mol_span.entire('factory.view.tree', view));
                 const res = $.$mol_view_tree2_ts_compile(tree);
                 $_1.$mol_assert_equal(res.locales['$mol_view_tree2_ts_test_factory_Simple_localized'], 'localized value');
                 $_1.$mol_assert_equal(res.script, ts);
@@ -3681,7 +3759,7 @@ var $;
                     ],
                 ]);
                 for (const [view, ts] of samples) {
-                    const tree = $_1.$mol_tree2.fromString(view, $_1.$mol_span.entire('factory.view.tree', view.length));
+                    const tree = $_1.$mol_tree2.fromString(view, $_1.$mol_span.entire('factory.view.tree', view));
                     const res = $.$mol_view_tree2_ts_compile(tree);
                     $_1.$mol_assert_equal(res.script, ts);
                 }
@@ -3690,6 +3768,342 @@ var $;
     })($$ = $_1.$$ || ($_1.$$ = {}));
 })($ || ($ = {}));
 //ts.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        'fromJSON'() {
+            $.$mol_assert_equal($.$mol_tree2_from_json([]).toString(), '/\n');
+            $.$mol_assert_equal($.$mol_tree2_from_json([false, true]).toString(), '/\n\tfalse\n\ttrue\n');
+            $.$mol_assert_equal($.$mol_tree2_from_json([0, 1, 2.3]).toString(), '/\n\t0\n\t1\n\t2.3\n');
+            $.$mol_assert_equal($.$mol_tree2_from_json(['', 'foo', 'bar\nbaz']).toString(), '/\n\t\\\n\t\\foo\n\t\\\n\t\t\\bar\n\t\t\\baz\n');
+            $.$mol_assert_equal($.$mol_tree2_from_json({ 'foo': false, 'bar\nbaz': 'lol' }).toString(), '*\n\tfoo false\n\t\\\n\t\t\\bar\n\t\t\\baz\n\t\t\\lol\n');
+        },
+    });
+})($ || ($ = {}));
+//json.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    const convert = $.$mol_data_pipe($.$mol_tree2_from_string, $.$mol_tree2_js_to_text, $.$mol_tree2_text_to_string);
+    $.$mol_test({
+        'boolean'() {
+            $.$mol_assert_equal(convert(`
+					true
+				`), 'true\n');
+        },
+        'number'() {
+            $.$mol_assert_equal(convert(`
+					1.2
+				`), '1.2\n');
+            $.$mol_assert_equal(convert(`
+					1e+2
+				`), '1e+2\n');
+            $.$mol_assert_equal(convert(`
+					-Infinity
+				`), '-Infinity\n');
+            $.$mol_assert_equal(convert(`
+					NaN
+				`), 'NaN\n');
+        },
+        'variable'() {
+            $.$mol_assert_equal(convert(`
+					a
+				`), 'a\n');
+            $.$mol_assert_equal(convert(`
+					$
+				`), '$\n');
+            $.$mol_assert_equal(convert(`
+					a0
+				`), 'a0\n');
+        },
+        'string'() {
+            $.$mol_assert_equal(convert(`
+					\\
+						\\foo
+						\\bar
+				`), '"foo\\nbar"\n');
+            $.$mol_assert_equal(convert(`
+					\`\`
+						\\foo
+						bar
+				`), '`foo${bar}`\n');
+        },
+        'wrong name'() {
+            $.$mol_assert_fail(() => convert(`
+					foo+bar
+				`), 'Wrong node type "foo+bar"');
+        },
+        'array'() {
+            $.$mol_assert_equal(convert(`
+					[,]
+				`), '[]\n');
+            $.$mol_assert_equal(convert(`
+					[,]
+						1
+						2
+				`), '[1,2]\n');
+        },
+        'last'() {
+            $.$mol_assert_equal(convert(`
+					(,)
+						1
+						2
+				`), '(1,2)\n');
+        },
+        'scope'() {
+            $.$mol_assert_equal(convert(`
+					{;}
+						1
+						2
+				`), '{1;2}\n');
+        },
+        'object'() {
+            $.$mol_assert_equal(convert(`
+					{,}
+				`), '{}\n');
+            $.$mol_assert_equal(convert(`
+					{,}
+						foo
+						bar
+				`), '{foo,bar}\n');
+            $.$mol_assert_equal(convert(`
+					{,}
+						:
+							\\foo
+							1
+						:
+							bar
+							2
+				`), '{["foo"]:1,[bar]:2}\n');
+        },
+        'regexp'() {
+            $.$mol_assert_equal(convert(`
+					/./
+						.source \\foo\\n
+						.multiline
+						.ignoreCase
+						.global
+				`), '/foo\\\\n/mig\n');
+        },
+        'unary'() {
+            $.$mol_assert_equal(convert(`
+					void yield* yield await ~ ! - + 1
+				`), 'void yield* yield await ~!-+1\n');
+        },
+        'binary'() {
+            $.$mol_assert_equal(convert(`
+					(+)
+						1
+						2
+						3
+				`), '(1+2+3)\n');
+            $.$mol_assert_equal(convert(`
+					@++ foo
+				`), 'foo++\n');
+        },
+        'chain'() {
+            $.$mol_assert_equal(convert(`
+					()
+						foo
+						[,] \\bar
+						[,] 1
+				`), '(foo["bar"][1])\n');
+            $.$mol_assert_equal(convert(`
+					()
+						foo
+						[,] 1
+						(,)
+				`), '(foo[1]())\n');
+            $.$mol_assert_equal(convert(`
+					()
+						[,] 0
+						[,] 1
+						(,)
+							2
+							3
+				`), '([0][1](2,3))\n');
+        },
+        'function'() {
+            $.$mol_assert_equal(convert(`
+					=>
+						(,)
+						1
+				`), '()=>1\n');
+            $.$mol_assert_equal(convert(`
+					async=>
+						(,)
+						1
+				`), 'async ()=>1\n');
+            $.$mol_assert_equal(convert(`
+					function
+						foo
+						(,)
+						{;}
+				`), 'function foo(){}\n');
+            $.$mol_assert_equal(convert(`
+					function
+						(,) foo
+						{;} debugger
+				`), 'function (foo){debugger}\n');
+            $.$mol_assert_equal(convert(`
+					function*
+						(,)
+						{;}
+				`), 'function* (){}\n');
+            $.$mol_assert_equal(convert(`
+					async
+						(,)
+						{;}
+				`), 'async function (){}\n');
+            $.$mol_assert_equal(convert(`
+					async*
+						(,) foo
+						{;} debugger
+				`), 'async function* (foo){debugger}\n');
+        },
+        'class'() {
+            $.$mol_assert_equal(convert(`
+					class {}
+						.
+							\\foo
+							(,)
+							{;}
+				`), 'class {["foo"](){}}\n');
+            $.$mol_assert_equal(convert(`
+					class {}
+						static
+							\\foo
+							(,)
+							{;}
+				`), 'class {static ["foo"](){}}\n');
+            $.$mol_assert_equal(convert(`
+					class {}
+						get
+							\\foo
+							(,)
+							{;}
+				`), 'class {get ["foo"](){}}\n');
+            $.$mol_assert_equal(convert(`
+					class {}
+						set
+							\\foo
+							(,) bar
+							{;}
+				`), 'class {set ["foo"](bar){}}\n');
+        },
+        'if'() {
+            $.$mol_assert_equal(convert(`
+					?:
+						1
+						2
+						3
+				`), '1?2:3\n');
+            $.$mol_assert_equal(convert(`
+					if
+						() 1
+						{;} 2
+				`), 'if(1){2}\n');
+            $.$mol_assert_equal(convert(`
+					if
+						() 1
+						{;} 2
+						{;} 3
+				`), 'if(1){2}else{3}\n');
+        },
+        'assign'() {
+            $.$mol_assert_equal(convert(`
+					=
+						foo
+						bar
+				`), 'foo=bar\n');
+            $.$mol_assert_equal(convert(`
+					=
+						[,]
+							foo
+							bar
+						[,]
+							1
+							2
+				`), '[foo,bar]=[1,2]\n');
+            $.$mol_assert_equal(convert(`
+					let foo
+				`), 'let foo\n');
+            $.$mol_assert_equal(convert(`
+					let
+						foo
+						bar
+				`), 'let foo=bar\n');
+            $.$mol_assert_equal(convert(`
+					+=
+						foo
+						bar
+				`), 'foo+=bar\n');
+        },
+    });
+})($ || ($ = {}));
+//js.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        'min'() {
+            $.$mol_assert_equal($.$mol_vlq_encode(Number.MIN_SAFE_INTEGER), '//////H');
+        },
+        'negative'() {
+            $.$mol_assert_equal($.$mol_vlq_encode(-1), 'D');
+        },
+        'zero'() {
+            $.$mol_assert_equal($.$mol_vlq_encode(0), 'A');
+        },
+        'binom'() {
+            $.$mol_assert_equal($.$mol_vlq_encode(67), 'mE');
+        },
+        'max'() {
+            $.$mol_assert_equal($.$mol_vlq_encode(Number.MAX_SAFE_INTEGER), '+/////H');
+        },
+    });
+})($ || ($ = {}));
+//vlq.test.js.map
+;
+"use strict";
+var $;
+(function ($_1) {
+    $_1.$mol_test({
+        'sample source mapped lang'($) {
+            const source = {
+                script1: `1@\n2`,
+                script2: `***`
+            };
+            const span = {
+                script1: $_1.$mol_span.entire('script1', source.script1),
+                script2: $_1.$mol_span.entire('script2', source.script2),
+            };
+            const tree = $_1.$mol_tree2.list([
+                $_1.$mol_tree2.struct('line', [
+                    $_1.$mol_tree2.data('"use strict";', [], span.script1.after()),
+                    $_1.$mol_tree2.data('console.log(11);', [], span.script1.slice(0, 1)),
+                    $_1.$mol_tree2.data('console.log(21);', [], span.script2),
+                    $_1.$mol_tree2.data('console.log(12);', [], span.script1.span(2, 1, 1)),
+                ]),
+            ]);
+            $_1.$mol_assert_like($.$mol_tree2_text_to_string(tree), '"use strict";console.log(11);console.log(21);console.log(12);\n');
+            $_1.$mol_assert_like($.$mol_tree2_text_to_sourcemap(tree), {
+                "version": 3,
+                "sources": [
+                    "script1",
+                    "script2"
+                ],
+                "sourcesContent": [source.script1, source.script2],
+                "mappings": "AAAI,aAAJ,gBCAA,gBDCA"
+            });
+        }
+    });
+})($ || ($ = {}));
+//sourcemap.test.js.map
 ;
 "use strict";
 var $;
