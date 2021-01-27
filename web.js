@@ -23665,8 +23665,8 @@ var $;
         struct(type, kids = []) {
             return $mol_tree2.struct(type, kids, this.span);
         }
-        clone(kids) {
-            return new $mol_tree2(this.type, this.value, kids, this.span);
+        clone(kids, span = this.span) {
+            return new $mol_tree2(this.type, this.value, kids, span);
         }
         text() {
             var values = [];
@@ -23677,8 +23677,8 @@ var $;
             }
             return this.value + values.join('\n');
         }
-        static fromString(str, span = $.$mol_span.unknown) {
-            return this.$.$mol_tree2_from_string(str, span);
+        static fromString(str, uri = 'unknown') {
+            return this.$.$mol_tree2_from_string(str, uri);
         }
         toString() {
             return this.$.$mol_tree2_to_string(this);
@@ -23749,11 +23749,13 @@ var $;
             });
             return this.clone(sub);
         }
-        hack(belt, context) {
+        hack(belt, context = {}) {
             return [].concat(...this.kids.map(child => {
-                const handle = belt[Reflect.ownKeys(belt).includes(child.type) ? child.type : ''];
+                let handle = belt[Reflect.ownKeys(belt).includes(child.type) ? child.type : ''];
                 if (!handle) {
-                    this.$.$mol_fail(child.error(`Hack not found.\nAllowed: ${Object.keys(belt)}`));
+                    handle = (input, belt, context) => [
+                        input.clone(input.hack(belt, context), context.span)
+                    ];
                 }
                 return handle(child, belt, context);
             }));
@@ -23762,6 +23764,9 @@ var $;
             return this.span.error(`${message}\n${this}`, Class);
         }
     }
+    __decorate([
+        $.$mol_deprecated('Use $mol_tree2_from_string')
+    ], $mol_tree2, "fromString", null);
     $.$mol_tree2 = $mol_tree2;
     class $mol_tree2_empty extends $mol_tree2 {
         constructor() {
@@ -24478,7 +24483,8 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_tree2_from_string(str, span = $.$mol_span.unknown) {
+    function $mol_tree2_from_string(str, uri = 'unknown') {
+        const span = $.$mol_span.entire(uri, str);
         var root = $.$mol_tree2.list([], span);
         var stack = [root];
         var pos = 0, row = 0, min_indent = 0;
@@ -24603,9 +24609,6 @@ var $;
                 if (defs.length)
                     props_inner.push(prop.clone(defs));
                 return [operator.clone([prop.clone([])])];
-            },
-            '': (node, belt) => {
-                return [node.clone(node.hack(belt))];
             },
         });
         return klass.list([...props_root, ...props_inner]);
@@ -24778,8 +24781,7 @@ var $;
             classes_static() {
                 const view_tree = '$mol_view $mol_object\n\ttitle \\\n\tsub /\n\tstyle *\n\tattr *\n\tevent *\n\tdom_name \\\n\n';
                 const source = view_tree + $.$mol_fetch.text('web.view.tree');
-                const span = $.$mol_span.entire('web.view.tree', source);
-                return this.$.$mol_view_tree2_classes($.$mol_tree2.fromString(source, span));
+                return this.$.$mol_view_tree2_classes(this.$.$mol_tree2_from_string(source, 'web.view.tree'));
             }
             classes(next) {
                 if (next)
@@ -26606,181 +26608,563 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const { optional, slash_back, byte, byte_except, repeat } = $.$mol_regexp;
-    $.$hyoo_marked_line_content = repeat(byte, 1);
-    const uri = repeat(byte_except(slash_back));
-    function with_marker(marker, content = $.$mol_regexp.from({
-        content: $.$hyoo_marked_line_content
-    })) {
-        return $.$mol_regexp.from([{ marker }, content, marker]);
-    }
-    const strong = with_marker('**');
-    const emphasis = with_marker('//');
-    const insertion = with_marker('++');
-    const deletion = with_marker('--');
-    const code = with_marker(';;');
-    function with_uri(content = $.$mol_regexp.from({
-        content: $.$hyoo_marked_line_content
-    })) {
-        return $.$mol_regexp.from([
-            optional([content, slash_back]),
-            { uri },
-        ]);
-    }
-    const link = with_marker('\\\\', with_uri());
-    const embed = with_marker('""', with_uri());
-    const inline = $.$mol_regexp.from({ strong, emphasis, insertion, deletion, code, link, embed });
-    $.$hyoo_marked_line = $.$mol_regexp.from({ inline });
-})($ || ($ = {}));
-//line.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    const marker2name = {
-        '**': 'strong',
-        '//': 'emphasis',
-        '++': 'insertion',
-        '--': 'deletion',
-        ';;': 'code',
-        '\\\\': 'link',
-        '""': 'embed',
-    };
-    function $hyoo_marked_tree_from_line(code, span_entire = $.$mol_span.unknown) {
-        let span = span_entire.slice(0, 0);
-        const nodes = [];
-        for (const token of $.$hyoo_marked_line.parse(code)) {
-            if (token.inline) {
-                span = span.after(token.marker.length * 2 + token.content.length + token.uri.length + (token.uri && token.content ? 1 : 0));
-                const span_content = span.slice(token.marker.length, -token.marker.length);
-                const content = token.code
-                    ? [$.$mol_tree2.data(token.content, [], span_content)]
-                    : [
-                        ...token.uri ? [$.$mol_tree2.data(token.uri, [], span_content)] : [],
-                        ...this.$hyoo_marked_tree_from_line(token.content, span_content).kids,
-                    ];
-                const name = marker2name[token.marker];
-                if (!name)
-                    this.$mol_fail(`Undefined name for marker ${token.marker}`);
-                nodes.push($.$mol_tree2.struct(name, content, span));
+    function $mol_tree2_to_string(tree) {
+        let output = [];
+        function dump(tree, prefix = '') {
+            if (tree.type.length) {
+                if (!prefix.length) {
+                    prefix = "\t";
+                }
+                output.push(tree.type);
+                if (tree.kids.length == 1) {
+                    output.push(' ');
+                    dump(tree.kids[0], prefix);
+                    return;
+                }
+                output.push("\n");
             }
-            else {
-                span = span.after(token[0].length);
-                nodes.push($.$mol_tree2.data(token[0], [], span));
+            else if (tree.value.length || prefix.length) {
+                output.push("\\" + tree.value + "\n");
+            }
+            for (const kid of tree.kids) {
+                output.push(prefix);
+                dump(kid, prefix + "\t");
             }
         }
-        return $.$mol_tree2.list(nodes, span_entire);
+        dump(tree);
+        return output.join('');
     }
-    $.$hyoo_marked_tree_from_line = $hyoo_marked_tree_from_line;
+    $.$mol_tree2_to_string = $mol_tree2_to_string;
 })($ || ($ = {}));
-//line.js.map
+//string.js.map
 ;
 "use strict";
 var $;
 (function ($) {
-    function hack_inline(name, link_attr) {
-        return (input, belt) => {
-            const uri = link_attr ? input.kids[0] : null;
-            const content = link_attr ? input.kids.slice(1) : input.kids;
-            const end = new $.$mol_tree2(input.type, input.value, input.kids, input.span.slice(-2, -1));
-            return [
-                input.struct('{;}', [
-                    input.struct('const', [
-                        input.struct('child'),
-                        input.struct('()', [
-                            input.struct('document'),
-                            input.struct('[]', [
-                                input.data('createElement'),
-                            ]),
-                            input.struct('(,)', [
-                                input.data(name),
-                            ]),
-                        ]),
-                    ]),
-                    ...uri ? [
-                        uri.struct('()', [
-                            uri.struct('child'),
-                            uri.struct('[]', [
-                                uri.data('setAttribute'),
-                            ]),
-                            uri.struct('(,)', [
-                                uri.data(link_attr),
-                                uri,
-                            ]),
-                        ])
-                    ] : [],
-                    ...content.length ? [
-                        input.struct('()', [
-                            input.struct('(,)', [
-                                input.struct('=>', [
-                                    input.struct('parent'),
-                                    ...input.list(content).hack(belt),
-                                ]),
-                            ]),
-                            end.struct('(,)', [
-                                end.struct('child'),
-                            ]),
-                        ])
-                    ] : [],
-                    end.struct('()', [
-                        end.struct('parent'),
-                        end.struct('[]', [
-                            end.data('appendChild'),
-                        ]),
-                        end.struct('(,)', [
-                            end.struct('child'),
-                        ]),
-                    ]),
-                ])
-            ];
+    function $mol_tree2_from_json(json, span = $.$mol_span.unknown) {
+        if (typeof json === 'boolean' || typeof json === 'number' || json === null) {
+            return new $.$mol_tree2(String(json), '', [], span);
+        }
+        if (typeof json === 'string') {
+            return $.$mol_tree2.data(json, [], span);
+        }
+        if (Array.isArray(json)) {
+            const sub = json.map(json => $mol_tree2_from_json(json, span));
+            return new $.$mol_tree2('/', '', sub, span);
+        }
+        if (json instanceof Date) {
+            return new $.$mol_tree2('', json.toISOString(), [], span);
+        }
+        if (typeof json.toJSON === 'function') {
+            return $mol_tree2_from_json(json.toJSON());
+        }
+        if (json instanceof Error) {
+            const { name, message, stack } = json;
+            json = Object.assign(Object.assign({}, json), { name, message, stack });
+        }
+        const sub = [];
+        for (var key in json) {
+            const val = json[key];
+            if (val === undefined)
+                continue;
+            const subsub = $mol_tree2_from_json(val, span);
+            if (/^[^\n\t\\ ]+$/.test(key)) {
+                sub.push(new $.$mol_tree2(key, '', [subsub], span));
+            }
+            else {
+                sub.push($.$mol_tree2.data(key, [subsub], span));
+            }
+        }
+        return new $.$mol_tree2('*', '', sub, span);
+    }
+    $.$mol_tree2_from_json = $mol_tree2_from_json;
+})($ || ($ = {}));
+//json.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    const keywords = new Set([
+        '',
+        '.byte',
+        '.sequence',
+        '.set_of',
+        '.optional',
+        '.list_of',
+        '.any_of',
+        '.except',
+        '.with_delimiter',
+    ]);
+    function $mol_tree2_grammar_check(grammar) {
+        function visit(node) {
+            check: {
+                if (keywords.has(node.type))
+                    break check;
+                if (grammar.select(node.type).kids.length)
+                    break check;
+                $.$mol_fail(node.error(`wrong pattern name`));
+            }
+            for (const kid of node.kids) {
+                visit(kid);
+            }
+        }
+        visit(grammar);
+        return grammar;
+    }
+    $.$mol_tree2_grammar_check = $mol_tree2_grammar_check;
+})($ || ($ = {}));
+//check.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    const mapping = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        '&': '&amp;',
+    };
+    function $mol_html_encode(text) {
+        return text.replace(/[&<">]/gi, str => mapping[str]);
+    }
+    $.$mol_html_encode = $mol_html_encode;
+})($ || ($ = {}));
+//encode.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function attrs_belt(separator) {
+        return {
+            '': (input) => [
+                input.data(' '),
+                input.data($.$mol_html_encode(input.type)),
+                ...input.value ? [
+                    input.data('"'),
+                    input.data($.$mol_html_encode(input.value)),
+                    input.data('"'),
+                ] : [],
+                ...input.hack({
+                    '': (input) => {
+                        if (!input.type)
+                            return [
+                                input.data(separator),
+                                input.data('"'),
+                                input.data($.$mol_html_encode(input.text())),
+                                input.data('"'),
+                            ];
+                        $.$mol_fail(input.error('Wrong attribute value'));
+                    },
+                }),
+            ],
         };
     }
-    function hack_text(input, belt) {
-        return [
-            input.struct('{;}', [
-                input.struct('const', [
-                    input.struct('child'),
-                    input.struct('()', [
-                        input.struct('document'),
-                        input.struct('[]', [
-                            input.data('createTextNode'),
-                        ]),
-                        input.struct('(,)', [input]),
-                    ]),
-                ]),
-                input.struct('()', [
-                    input.struct('parent'),
-                    input.struct('[]', [
-                        input.data('appendChild'),
-                    ]),
-                    input.struct('(,)', [
-                        input.struct('child'),
-                    ]),
-                ]),
-            ]),
-        ];
-    }
-    function $hyoo_marked_tree_to_js(mt) {
-        return mt.list([
-            mt.struct('function', [
-                mt.struct('make_dom'),
-                mt.struct('(,)', [mt.struct('parent'),]),
-                mt.struct('{;}', mt.hack({
-                    'strong': hack_inline('strong'),
-                    'emphasis': hack_inline('em'),
-                    'insertion': hack_inline('ins'),
-                    'deletion': hack_inline('del'),
-                    'code': hack_inline('code'),
-                    'link': hack_inline('a', 'href'),
-                    'embed': hack_inline('object', 'data'),
-                    '': hack_text,
-                })),
-            ]),
+    function $mol_tree2_xml_to_text(xml) {
+        return xml.list([
+            xml.struct('line', xml.hack({
+                '@': (input, belt) => [],
+                '--': (input, belt) => [
+                    input.data('<!-- '),
+                    ...input.hack(belt),
+                    input.data(' -->'),
+                ],
+                '?': (input, belt) => [
+                    input.data('<?'),
+                    input.kids[0].data(input.kids[0].type),
+                    ...input.kids[0].hack(attrs_belt('=')),
+                    input.data('?>'),
+                ],
+                '!': (input, belt) => [
+                    input.data('<!'),
+                    input.kids[0].data(input.kids[0].type),
+                    ...input.kids[0].hack(attrs_belt(' ')),
+                    input.data('>'),
+                ],
+                '': (input, belt) => {
+                    if (!input.type)
+                        return [
+                            input.data($.$mol_html_encode(input.text())),
+                        ];
+                    const attrs = input.select('@', '').hack(attrs_belt('='));
+                    const content = input.hack(belt);
+                    return [
+                        input.data(`<`),
+                        input.data(input.type),
+                        ...attrs,
+                        ...content.length ? [
+                            input.data(`>`),
+                            ...content,
+                            input.data(`</`),
+                            input.data(input.type),
+                            input.data(`>`),
+                        ] : [
+                            input.data(` />`),
+                        ]
+                    ];
+                },
+            })),
         ]);
     }
-    $.$hyoo_marked_tree_to_js = $hyoo_marked_tree_to_js;
+    $.$mol_tree2_xml_to_text = $mol_tree2_xml_to_text;
+})($ || ($ = {}));
+//text.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_js_to_text(js) {
+        function sequence(open, separator, close) {
+            return (input, belt) => [
+                ...open ? [input.data(open)] : [],
+                ...[].concat(...input.kids.map((kid, index) => [
+                    ...(index && separator) ? [kid.data(separator)] : [],
+                    ...kid.list([kid]).hack(belt),
+                ])),
+                ...close ? [input.data(close)] : [],
+            ];
+        }
+        function duplet(open, separator, close) {
+            return (input, belt) => [
+                ...open ? [input.data(open)] : [],
+                ...input.list(input.kids.slice(0, 1)).hack(belt),
+                ...(separator && input.kids.length > 1) ? [input.data(separator)] : [],
+                ...input.list(input.kids.slice(1, 2)).hack(belt),
+                ...close ? [input.data(close)] : [],
+            ];
+        }
+        function triplet(open, separator12, separator23, close) {
+            return (input, belt) => [
+                ...open ? [input.data(open)] : [],
+                ...input.list(input.kids.slice(0, 1)).hack(belt),
+                ...(separator12 && input.kids.length > 1) ? [input.data(separator12)] : [],
+                ...input.list(input.kids.slice(1, 2)).hack(belt),
+                ...(separator23 && input.kids.length > 2) ? [input.data(separator23)] : [],
+                ...input.list(input.kids.slice(2, 3)).hack(belt),
+                ...close ? [input.data(close)] : [],
+            ];
+        }
+        return js.list([js.struct('line', js.hack({
+                '+': sequence('+'),
+                '-': sequence('-'),
+                '!': sequence('!'),
+                '~': sequence('~'),
+                'return': sequence('return '),
+                'break': sequence('break '),
+                'continue': sequence('continue '),
+                'yield': sequence('yield '),
+                'yield*': sequence('yield* '),
+                'await': sequence('await '),
+                'void': sequence('void '),
+                'delete': sequence('delete '),
+                'typeof': sequence('typeof '),
+                'new': sequence('new '),
+                '...': sequence('...'),
+                '@++': sequence('', '', '++'),
+                '@--': sequence('', '', '--'),
+                '(in)': sequence('(', 'in', ')'),
+                '(instanceof)': sequence('(', 'instanceof', ')'),
+                '(+)': sequence('(', '+', ')'),
+                '(-)': sequence('(', '-', ')'),
+                '(*)': sequence('(', '*', ')'),
+                '(/)': sequence('(', '/', ')'),
+                '(%)': sequence('(', '%', ')'),
+                '(**)': sequence('(', '**', ')'),
+                '(<)': sequence('(', '<', ')'),
+                '(<=)': sequence('(', '<=', ')'),
+                '(>)': sequence('(', '>', ')'),
+                '(>=)': sequence('(', '>=', ')'),
+                '(==)': sequence('(', '==', ')'),
+                '(===)': sequence('(', '===', ')'),
+                '(<<)': sequence('(', '<<', ')'),
+                '(>>)': sequence('(', '>>', ')'),
+                '(>>>)': sequence('(', '>>>', ')'),
+                '(&)': sequence('(', '&', ')'),
+                '(|)': sequence('(', '|', ')'),
+                '(^)': sequence('(', '^', ')'),
+                '(&&)': sequence('(', '&&', ')'),
+                '(||)': sequence('(', '||', ')'),
+                '(,)': sequence('(', ',', ')'),
+                '{;}': sequence('{', ';', '}'),
+                '[,]': sequence('[', ',', ']'),
+                '{,}': sequence('{', ',', '}'),
+                ':': sequence('[', ']:'),
+                '()': sequence('(', '', ')'),
+                '[]': sequence('[', '', ']'),
+                '{}': sequence('{', '', '}'),
+                'let': duplet('let ', '='),
+                'const': duplet('const ', '='),
+                'var': duplet('var ', '='),
+                '=': duplet('', '='),
+                '+=': duplet('', '+='),
+                '-=': duplet('', '-='),
+                '*=': duplet('', '*='),
+                '/=': duplet('', '/='),
+                '%=': duplet('', '%='),
+                '**=': duplet('', '**='),
+                '<<=': duplet('', '<<='),
+                '>>=': duplet('', '>>='),
+                '>>>=': duplet('', '>>>='),
+                '&=': duplet('', '&='),
+                '|=': duplet('', '|='),
+                '^=': duplet('', '^='),
+                '&&=': duplet('', '&&='),
+                '||=': duplet('', '||='),
+                '=>': duplet('', '=>'),
+                'async=>': duplet('async ', '=>'),
+                'function': triplet('function '),
+                'function*': triplet('function* '),
+                'async': triplet('async function '),
+                'async*': triplet('async function* '),
+                'class': triplet('class '),
+                'if': triplet('if', '', 'else'),
+                '?:': triplet('', '?', ':'),
+                '.': triplet('[', ']'),
+                'get': triplet('get [', ']'),
+                'set': triplet('set [', ']'),
+                'static': triplet('static [', ']'),
+                '/./': sequence(),
+                '.global': sequence('g'),
+                '.multiline': sequence('m'),
+                '.ignoreCase': sequence('i'),
+                '.source': (input, belt) => [
+                    input.data('/'),
+                    input.data(JSON.stringify(input.text()).slice(1, -1)),
+                    input.data('/'),
+                ],
+                '``': (input, belt) => {
+                    return [
+                        input.data('`'),
+                        ...[].concat(...input.kids.map(kid => {
+                            if (kid.type) {
+                                return [
+                                    kid.data('${'),
+                                    ...kid.list([kid]).hack(belt),
+                                    kid.data('}'),
+                                ];
+                            }
+                            else {
+                                return [
+                                    input.data(JSON.stringify(kid.text()).slice(1, -1)),
+                                ];
+                            }
+                        })),
+                        input.data('`'),
+                    ];
+                },
+                '': (input, belt) => {
+                    if (!input.type)
+                        return [
+                            input.data(JSON.stringify(input.text())),
+                        ];
+                    if (/^[\w$#][\w0-9$]*$/i.test(input.type))
+                        return [
+                            input.data(input.type),
+                        ];
+                    if (input.type === 'NaN' || !Number.isNaN(Number(input.type)))
+                        return [
+                            input.data(input.type)
+                        ];
+                    throw new SyntaxError(`Wrong node type ${JSON.stringify(input.type)}`);
+                },
+            }))]);
+    }
+    $.$mol_tree2_js_to_text = $mol_tree2_js_to_text;
 })($ || ($ = {}));
 //js.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_text_to_string(text) {
+        let res = '';
+        function visit(text, prefix, inline) {
+            if (text.type === 'indent') {
+                if (inline)
+                    res += '\n';
+                for (let kid of text.kids) {
+                    visit(kid, prefix + '\t', false);
+                }
+                if (inline)
+                    res += prefix.slice(0, -1);
+            }
+            else if (text.type === 'line') {
+                if (!inline)
+                    res += prefix;
+                for (let kid of text.kids) {
+                    visit(kid, prefix, true);
+                }
+                if (!inline)
+                    res += '\n';
+            }
+            else {
+                if (!inline)
+                    res += prefix;
+                res += text.text();
+                if (!inline)
+                    res += '\n';
+            }
+        }
+        for (let kid of text.kids) {
+            visit(kid, '', false);
+        }
+        return res;
+    }
+    $.$mol_tree2_text_to_string = $mol_tree2_text_to_string;
+})($ || ($ = {}));
+//string.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    function $mol_vlq_encode(val) {
+        const sign = val < 0 ? 1 : 0;
+        if (sign)
+            val = -val;
+        let index = sign | ((val & 0b1111) << 1);
+        val >>>= 4;
+        let res = '';
+        while (val) {
+            index |= 1 << 5;
+            res += alphabet[index];
+            if (!val)
+                break;
+            index = val & 0b11111;
+            val >>>= 5;
+        }
+        res += alphabet[index];
+        return res;
+    }
+    $.$mol_vlq_encode = $mol_vlq_encode;
+})($ || ($ = {}));
+//vlq.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_text_to_sourcemap(tree) {
+        var _a, _b;
+        tree = tree.clone(tree.hack({
+            indent: (input, belt) => input.hack(belt),
+            line: (input, belt) => input.hack(belt),
+            '': (input, belt) => [input],
+        }));
+        let offset = 0;
+        let prev;
+        let prev_index = 0;
+        const mappings = [];
+        const file_indexes = new Map();
+        const file_sources = new Map();
+        function span2index(span) {
+            if (file_indexes.has(span.uri))
+                return file_indexes.get(span.uri);
+            const index = file_indexes.size;
+            file_indexes.set(span.uri, index);
+            file_sources.set(span.uri, span.source);
+            return index;
+        }
+        for (const chunk of tree.kids) {
+            const text = chunk.text();
+            if (prev !== chunk.span) {
+                const index = span2index(chunk.span);
+                mappings.push($.$mol_vlq_encode(offset) +
+                    $.$mol_vlq_encode(index - prev_index) +
+                    $.$mol_vlq_encode(chunk.span.row - ((_a = prev === null || prev === void 0 ? void 0 : prev.row) !== null && _a !== void 0 ? _a : 1)) +
+                    $.$mol_vlq_encode(chunk.span.col - ((_b = prev === null || prev === void 0 ? void 0 : prev.col) !== null && _b !== void 0 ? _b : 1)));
+                offset = text.length;
+                prev = chunk.span;
+                prev_index = index;
+            }
+            else {
+                offset += text.length;
+            }
+        }
+        const map = {
+            version: 3,
+            sources: [...file_sources.keys()],
+            sourcesContent: [...file_sources.values()],
+            mappings: mappings.join(','),
+        };
+        return map;
+    }
+    $.$mol_tree2_text_to_sourcemap = $mol_tree2_text_to_sourcemap;
+})($ || ($ = {}));
+//sourcemap.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_text_to_sourcemap_vis(text) {
+        const code = this.$mol_tree2_text_to_string(text);
+        const map = this.$mol_tree2_text_to_sourcemap(text);
+        const uri = [
+            'https://sokra.github.io/source-map-visualization/#base64',
+            btoa(code),
+            btoa(JSON.stringify(map)),
+            ...map.sourcesContent.map(btoa),
+        ].join(',');
+        return uri;
+    }
+    $.$mol_tree2_text_to_sourcemap_vis = $mol_tree2_text_to_sourcemap_vis;
+})($ || ($ = {}));
+//vis.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_span_imprint(tree) {
+        const sources = new Map();
+        const res = tree.clone(tree.hack({
+            '': (input, belt) => {
+                if (!sources.has(input.span.uri)) {
+                    sources.set(input.span.uri, tree.struct(input.span.uri, [
+                        tree.data(input.span.source)
+                    ]));
+                }
+                return [
+                    input.clone([
+                        input.data(input.span.toString()),
+                        ...input.hack(belt),
+                    ]),
+                ];
+            },
+        }));
+        return tree.clone([
+            ...sources.values(),
+            res,
+        ]);
+    }
+    $.$mol_tree2_span_imprint = $mol_tree2_span_imprint;
+})($ || ($ = {}));
+//imprint.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_span_reuse(tree) {
+        const sources = new Map();
+        return tree.clone(tree.hack({
+            '': (input, belt) => {
+                if (input.type) {
+                    sources.set(input.type, input.kids[0].text());
+                    return [];
+                }
+                return input.hack({
+                    '': (input, belt) => {
+                        const kids = input.list(input.kids.slice(1)).hack(belt);
+                        const [_, uri, row, col, length] = /^(.*)#(\d+):(\d+)\/(\d+)$/.exec(input.kids[0].text());
+                        const span = new $.$mol_span(uri, sources.get(uri), Number(row), Number(col), Number(length));
+                        return [
+                            new $.$mol_tree2(input.type, input.value, kids, span),
+                        ];
+                    },
+                });
+            },
+        }));
+    }
+    $.$mol_tree2_span_reuse = $mol_tree2_span_reuse;
+})($ || ($ = {}));
+//reuse.js.map
 ;
 "use strict";
 var $;
@@ -27345,45 +27729,181 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_tree2_from_json(json, span = $.$mol_span.unknown) {
-        if (typeof json === 'boolean' || typeof json === 'number' || json === null) {
-            return new $.$mol_tree2(String(json), '', [], span);
-        }
-        if (typeof json === 'string') {
-            return $.$mol_tree2.data(json, [], span);
-        }
-        if (Array.isArray(json)) {
-            const sub = json.map(json => $mol_tree2_from_json(json, span));
-            return new $.$mol_tree2('/', '', sub, span);
-        }
-        if (json instanceof Date) {
-            return new $.$mol_tree2('', json.toISOString(), [], span);
-        }
-        if (typeof json.toJSON === 'function') {
-            return $mol_tree2_from_json(json.toJSON());
-        }
-        if (json instanceof Error) {
-            const { name, message, stack } = json;
-            json = Object.assign(Object.assign({}, json), { name, message, stack });
-        }
-        const sub = [];
-        for (var key in json) {
-            const val = json[key];
-            if (val === undefined)
-                continue;
-            const subsub = $mol_tree2_from_json(val, span);
-            if (/^[^\n\t\\ ]+$/.test(key)) {
-                sub.push(new $.$mol_tree2(key, '', [subsub], span));
+    const { optional, slash_back, byte, byte_except, repeat } = $.$mol_regexp;
+    $.$hyoo_marked_line_content = repeat(byte, 1);
+    const uri = repeat(byte_except(slash_back));
+    function with_marker(marker, content = $.$mol_regexp.from({
+        content: $.$hyoo_marked_line_content
+    })) {
+        return $.$mol_regexp.from([{ marker }, content, marker]);
+    }
+    const strong = with_marker('**');
+    const emphasis = with_marker('//');
+    const insertion = with_marker('++');
+    const deletion = with_marker('--');
+    const code = with_marker(';;');
+    function with_uri(content = $.$mol_regexp.from({
+        content: $.$hyoo_marked_line_content
+    })) {
+        return $.$mol_regexp.from([
+            optional([content, slash_back]),
+            { uri },
+        ]);
+    }
+    const link = with_marker('\\\\', with_uri());
+    const embed = with_marker('""', with_uri());
+    const inline = $.$mol_regexp.from({ strong, emphasis, insertion, deletion, code, link, embed });
+    $.$hyoo_marked_line = $.$mol_regexp.from({ inline });
+})($ || ($ = {}));
+//line.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    const marker2name = {
+        '**': 'strong',
+        '//': 'emphasis',
+        '++': 'insertion',
+        '--': 'deletion',
+        ';;': 'code',
+        '\\\\': 'link',
+        '""': 'embed',
+    };
+    function $hyoo_marked_tree_from_line(code, span_entire = $.$mol_span.unknown) {
+        let span = span_entire.slice(0, 0);
+        const nodes = [];
+        for (const token of $.$hyoo_marked_line.parse(code)) {
+            if (token.inline) {
+                span = span.after(token.marker.length * 2 + token.content.length + token.uri.length + (token.uri && token.content ? 1 : 0));
+                const span_content = span.slice(token.marker.length, -token.marker.length);
+                const content = token.code
+                    ? [$.$mol_tree2.data(token.content, [], span_content)]
+                    : [
+                        ...token.uri ? [$.$mol_tree2.data(token.uri, [], span_content)] : [],
+                        ...this.$hyoo_marked_tree_from_line(token.content, span_content).kids,
+                    ];
+                const name = marker2name[token.marker];
+                if (!name)
+                    this.$mol_fail(`Undefined name for marker ${token.marker}`);
+                nodes.push($.$mol_tree2.struct(name, content, span));
             }
             else {
-                sub.push($.$mol_tree2.data(key, [subsub], span));
+                span = span.after(token[0].length);
+                nodes.push($.$mol_tree2.data(token[0], [], span));
             }
         }
-        return new $.$mol_tree2('*', '', sub, span);
+        return $.$mol_tree2.list(nodes, span_entire);
     }
-    $.$mol_tree2_from_json = $mol_tree2_from_json;
+    $.$hyoo_marked_tree_from_line = $hyoo_marked_tree_from_line;
 })($ || ($ = {}));
-//json.js.map
+//line.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function hack_inline(name, link_attr) {
+        return (input, belt) => {
+            const uri = link_attr ? input.kids[0] : null;
+            const content = link_attr ? input.kids.slice(1) : input.kids;
+            const end = new $.$mol_tree2(input.type, input.value, input.kids, input.span.slice(-2, -1));
+            return [
+                input.struct('{;}', [
+                    input.struct('const', [
+                        input.struct('child'),
+                        input.struct('()', [
+                            input.struct('document'),
+                            input.struct('[]', [
+                                input.data('createElement'),
+                            ]),
+                            input.struct('(,)', [
+                                input.data(name),
+                            ]),
+                        ]),
+                    ]),
+                    ...uri ? [
+                        uri.struct('()', [
+                            uri.struct('child'),
+                            uri.struct('[]', [
+                                uri.data('setAttribute'),
+                            ]),
+                            uri.struct('(,)', [
+                                uri.data(link_attr),
+                                uri,
+                            ]),
+                        ])
+                    ] : [],
+                    ...content.length ? [
+                        input.struct('()', [
+                            input.struct('(,)', [
+                                input.struct('=>', [
+                                    input.struct('parent'),
+                                    ...input.list(content).hack(belt),
+                                ]),
+                            ]),
+                            end.struct('(,)', [
+                                end.struct('child'),
+                            ]),
+                        ])
+                    ] : [],
+                    end.struct('()', [
+                        end.struct('parent'),
+                        end.struct('[]', [
+                            end.data('appendChild'),
+                        ]),
+                        end.struct('(,)', [
+                            end.struct('child'),
+                        ]),
+                    ]),
+                ])
+            ];
+        };
+    }
+    function hack_text(input, belt) {
+        return [
+            input.struct('{;}', [
+                input.struct('const', [
+                    input.struct('child'),
+                    input.struct('()', [
+                        input.struct('document'),
+                        input.struct('[]', [
+                            input.data('createTextNode'),
+                        ]),
+                        input.struct('(,)', [input]),
+                    ]),
+                ]),
+                input.struct('()', [
+                    input.struct('parent'),
+                    input.struct('[]', [
+                        input.data('appendChild'),
+                    ]),
+                    input.struct('(,)', [
+                        input.struct('child'),
+                    ]),
+                ]),
+            ]),
+        ];
+    }
+    function $hyoo_marked_tree_to_js(mt) {
+        return mt.list([
+            mt.struct('function', [
+                mt.struct('make_dom'),
+                mt.struct('(,)', [mt.struct('parent'),]),
+                mt.struct('{;}', mt.hack({
+                    'strong': hack_inline('strong'),
+                    'emphasis': hack_inline('em'),
+                    'insertion': hack_inline('ins'),
+                    'deletion': hack_inline('del'),
+                    'code': hack_inline('code'),
+                    'link': hack_inline('a', 'href'),
+                    'embed': hack_inline('object', 'data'),
+                    '': hack_text,
+                })),
+            ]),
+        ]);
+    }
+    $.$hyoo_marked_tree_to_js = $hyoo_marked_tree_to_js;
+})($ || ($ = {}));
+//js.js.map
 ;
 "use strict";
 var $;
@@ -27398,434 +27918,6 @@ var $;
     $.$mol_json_to_string = $mol_json_to_string;
 })($ || ($ = {}));
 //json.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    const keywords = new Set([
-        '',
-        '.byte',
-        '.sequence',
-        '.set_of',
-        '.optional',
-        '.list_of',
-        '.any_of',
-        '.except',
-        '.with_delimiter',
-    ]);
-    function $mol_tree2_grammar_check(grammar) {
-        function visit(node) {
-            check: {
-                if (keywords.has(node.type))
-                    break check;
-                if (grammar.select(node.type).kids.length)
-                    break check;
-                $.$mol_fail(node.error(`wrong pattern name`));
-            }
-            for (const kid of node.kids) {
-                visit(kid);
-            }
-        }
-        visit(grammar);
-        return grammar;
-    }
-    $.$mol_tree2_grammar_check = $mol_tree2_grammar_check;
-})($ || ($ = {}));
-//check.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    const mapping = {
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        '&': '&amp;',
-    };
-    function $mol_html_encode(text) {
-        return text.replace(/[&<">]/gi, str => mapping[str]);
-    }
-    $.$mol_html_encode = $mol_html_encode;
-})($ || ($ = {}));
-//encode.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function attrs_belt(separator) {
-        return {
-            '': (input) => [
-                input.data(' '),
-                input.data($.$mol_html_encode(input.type)),
-                ...input.value ? [
-                    input.data('"'),
-                    input.data($.$mol_html_encode(input.value)),
-                    input.data('"'),
-                ] : [],
-                ...input.hack({
-                    '': (input) => {
-                        if (!input.type)
-                            return [
-                                input.data(separator),
-                                input.data('"'),
-                                input.data($.$mol_html_encode(input.text())),
-                                input.data('"'),
-                            ];
-                        $.$mol_fail(input.error('Wrong attribute value'));
-                    },
-                }),
-            ],
-        };
-    }
-    function $mol_tree2_xml_to_text(xml) {
-        return xml.list([
-            xml.struct('line', xml.hack({
-                '@': (input, belt) => [],
-                '--': (input, belt) => [
-                    input.data('<!-- '),
-                    ...input.hack(belt),
-                    input.data(' -->'),
-                ],
-                '?': (input, belt) => [
-                    input.data('<?'),
-                    input.kids[0].data(input.kids[0].type),
-                    ...input.kids[0].hack(attrs_belt('=')),
-                    input.data('?>'),
-                ],
-                '!': (input, belt) => [
-                    input.data('<!'),
-                    input.kids[0].data(input.kids[0].type),
-                    ...input.kids[0].hack(attrs_belt(' ')),
-                    input.data('>'),
-                ],
-                '': (input, belt) => {
-                    if (!input.type)
-                        return [
-                            input.data($.$mol_html_encode(input.text())),
-                        ];
-                    const attrs = input.select('@', '').hack(attrs_belt('='));
-                    const content = input.hack(belt);
-                    return [
-                        input.data(`<`),
-                        input.data(input.type),
-                        ...attrs,
-                        ...content.length ? [
-                            input.data(`>`),
-                            ...content,
-                            input.data(`</`),
-                            input.data(input.type),
-                            input.data(`>`),
-                        ] : [
-                            input.data(` />`),
-                        ]
-                    ];
-                },
-            })),
-        ]);
-    }
-    $.$mol_tree2_xml_to_text = $mol_tree2_xml_to_text;
-})($ || ($ = {}));
-//text.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_js_to_text(js) {
-        function sequence(open, separator, close) {
-            return (input, context) => [
-                ...open ? [input.data(open)] : [],
-                ...[].concat(...input.kids.map((kid, index) => [
-                    ...(index && separator) ? [kid.data(separator)] : [],
-                    ...kid.list([kid]).hack(context),
-                ])),
-                ...close ? [input.data(close)] : [],
-            ];
-        }
-        function duplet(open, separator, close) {
-            return (input, context) => [
-                ...open ? [input.data(open)] : [],
-                ...input.list(input.kids.slice(0, 1)).hack(context),
-                ...(separator && input.kids.length > 1) ? [input.data(separator)] : [],
-                ...input.list(input.kids.slice(1, 2)).hack(context),
-                ...close ? [input.data(close)] : [],
-            ];
-        }
-        function triplet(open, separator12, separator23, close) {
-            return (input, context) => [
-                ...open ? [input.data(open)] : [],
-                ...input.list(input.kids.slice(0, 1)).hack(context),
-                ...(separator12 && input.kids.length > 1) ? [input.data(separator12)] : [],
-                ...input.list(input.kids.slice(1, 2)).hack(context),
-                ...(separator23 && input.kids.length > 2) ? [input.data(separator23)] : [],
-                ...input.list(input.kids.slice(2, 3)).hack(context),
-                ...close ? [input.data(close)] : [],
-            ];
-        }
-        return js.list([js.struct('line', js.hack({
-                '+': sequence('+'),
-                '-': sequence('-'),
-                '!': sequence('!'),
-                '~': sequence('~'),
-                'return': sequence('return '),
-                'break': sequence('break '),
-                'continue': sequence('continue '),
-                'yield': sequence('yield '),
-                'yield*': sequence('yield* '),
-                'await': sequence('await '),
-                'void': sequence('void '),
-                'delete': sequence('delete '),
-                'typeof': sequence('typeof '),
-                'new': sequence('new '),
-                '...': sequence('...'),
-                '@++': sequence('', '', '++'),
-                '@--': sequence('', '', '--'),
-                '(in)': sequence('(', 'in', ')'),
-                '(instanceof)': sequence('(', 'instanceof', ')'),
-                '(+)': sequence('(', '+', ')'),
-                '(-)': sequence('(', '-', ')'),
-                '(*)': sequence('(', '*', ')'),
-                '(/)': sequence('(', '/', ')'),
-                '(%)': sequence('(', '%', ')'),
-                '(**)': sequence('(', '**', ')'),
-                '(<)': sequence('(', '<', ')'),
-                '(<=)': sequence('(', '<=', ')'),
-                '(>)': sequence('(', '>', ')'),
-                '(>=)': sequence('(', '>=', ')'),
-                '(==)': sequence('(', '==', ')'),
-                '(===)': sequence('(', '===', ')'),
-                '(<<)': sequence('(', '<<', ')'),
-                '(>>)': sequence('(', '>>', ')'),
-                '(>>>)': sequence('(', '>>>', ')'),
-                '(&)': sequence('(', '&', ')'),
-                '(|)': sequence('(', '|', ')'),
-                '(^)': sequence('(', '^', ')'),
-                '(&&)': sequence('(', '&&', ')'),
-                '(||)': sequence('(', '||', ')'),
-                '(,)': sequence('(', ',', ')'),
-                '{;}': sequence('{', ';', '}'),
-                '[,]': sequence('[', ',', ']'),
-                '{,}': sequence('{', ',', '}'),
-                ':': sequence('[', ']:'),
-                '()': sequence('(', '', ')'),
-                '[]': sequence('[', '', ']'),
-                '{}': sequence('{', '', '}'),
-                'let': duplet('let ', '='),
-                'const': duplet('const ', '='),
-                'var': duplet('var ', '='),
-                '=': duplet('', '='),
-                '+=': duplet('', '+='),
-                '-=': duplet('', '-='),
-                '*=': duplet('', '*='),
-                '/=': duplet('', '/='),
-                '%=': duplet('', '%='),
-                '**=': duplet('', '**='),
-                '<<=': duplet('', '<<='),
-                '>>=': duplet('', '>>='),
-                '>>>=': duplet('', '>>>='),
-                '&=': duplet('', '&='),
-                '|=': duplet('', '|='),
-                '^=': duplet('', '^='),
-                '&&=': duplet('', '&&='),
-                '||=': duplet('', '||='),
-                '=>': duplet('', '=>'),
-                'async=>': duplet('async ', '=>'),
-                'function': triplet('function '),
-                'function*': triplet('function* '),
-                'async': triplet('async function '),
-                'async*': triplet('async function* '),
-                'class': triplet('class '),
-                'if': triplet('if', '', 'else'),
-                '?:': triplet('', '?', ':'),
-                '.': triplet('[', ']'),
-                'get': triplet('get [', ']'),
-                'set': triplet('set [', ']'),
-                'static': triplet('static [', ']'),
-                '/./': sequence(),
-                '.global': sequence('g'),
-                '.multiline': sequence('m'),
-                '.ignoreCase': sequence('i'),
-                '.source': (input, context) => [
-                    input.data('/'),
-                    input.data(JSON.stringify(input.text()).slice(1, -1)),
-                    input.data('/'),
-                ],
-                '``': (input, context) => {
-                    return [
-                        input.data('`'),
-                        ...[].concat(...input.kids.map(kid => {
-                            if (kid.type) {
-                                return [
-                                    kid.data('${'),
-                                    ...kid.list([kid]).hack(context),
-                                    kid.data('}'),
-                                ];
-                            }
-                            else {
-                                return [
-                                    input.data(JSON.stringify(kid.text()).slice(1, -1)),
-                                ];
-                            }
-                        })),
-                        input.data('`'),
-                    ];
-                },
-                '': (input, context) => {
-                    if (!input.type)
-                        return [
-                            input.data(JSON.stringify(input.text())),
-                        ];
-                    if (/^[\w$#][\w0-9$]*$/i.test(input.type))
-                        return [
-                            input.data(input.type),
-                        ];
-                    if (input.type === 'NaN' || !Number.isNaN(Number(input.type)))
-                        return [
-                            input.data(input.type)
-                        ];
-                    throw new SyntaxError(`Wrong node type ${JSON.stringify(input.type)}`);
-                },
-            }))]);
-    }
-    $.$mol_tree2_js_to_text = $mol_tree2_js_to_text;
-})($ || ($ = {}));
-//js.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_text_to_string(text) {
-        let res = '';
-        function visit(text, prefix, inline) {
-            if (text.type === 'indent') {
-                if (inline)
-                    res += '\n';
-                for (let kid of text.kids) {
-                    visit(kid, prefix + '\t', false);
-                }
-                if (inline)
-                    res += prefix.slice(0, -1);
-            }
-            else if (text.type === 'line') {
-                if (!inline)
-                    res += prefix;
-                for (let kid of text.kids) {
-                    visit(kid, prefix, true);
-                }
-                if (!inline)
-                    res += '\n';
-            }
-            else {
-                if (!inline)
-                    res += prefix;
-                res += text.text();
-                if (!inline)
-                    res += '\n';
-            }
-        }
-        for (let kid of text.kids) {
-            visit(kid, '', false);
-        }
-        return res;
-    }
-    $.$mol_tree2_text_to_string = $mol_tree2_text_to_string;
-})($ || ($ = {}));
-//string.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    function $mol_vlq_encode(val) {
-        const sign = val < 0 ? 1 : 0;
-        if (sign)
-            val = -val;
-        let index = sign | ((val & 0b1111) << 1);
-        val >>>= 4;
-        let res = '';
-        while (val) {
-            index |= 1 << 5;
-            res += alphabet[index];
-            if (!val)
-                break;
-            index = val & 0b11111;
-            val >>>= 5;
-        }
-        res += alphabet[index];
-        return res;
-    }
-    $.$mol_vlq_encode = $mol_vlq_encode;
-})($ || ($ = {}));
-//vlq.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_text_to_sourcemap(tree) {
-        var _a, _b;
-        tree = tree.clone(tree.hack({
-            indent: (input, belt) => input.hack(belt),
-            line: (input, belt) => input.hack(belt),
-            '': (input, belt) => [input],
-        }));
-        let offset = 0;
-        let prev;
-        let prev_index = 0;
-        const mappings = [];
-        const file_indexes = new Map();
-        const file_sources = new Map();
-        function span2index(span) {
-            if (file_indexes.has(span.uri))
-                return file_indexes.get(span.uri);
-            const index = file_indexes.size;
-            file_indexes.set(span.uri, index);
-            file_sources.set(span.uri, span.source);
-            return index;
-        }
-        for (const chunk of tree.kids) {
-            const text = chunk.text();
-            if (prev !== chunk.span) {
-                const index = span2index(chunk.span);
-                mappings.push($.$mol_vlq_encode(offset) +
-                    $.$mol_vlq_encode(index - prev_index) +
-                    $.$mol_vlq_encode(chunk.span.row - ((_a = prev === null || prev === void 0 ? void 0 : prev.row) !== null && _a !== void 0 ? _a : 1)) +
-                    $.$mol_vlq_encode(chunk.span.col - ((_b = prev === null || prev === void 0 ? void 0 : prev.col) !== null && _b !== void 0 ? _b : 1)));
-                offset = text.length;
-                prev = chunk.span;
-                prev_index = index;
-            }
-            else {
-                offset += text.length;
-            }
-        }
-        const map = {
-            version: 3,
-            sources: [...file_sources.keys()],
-            sourcesContent: [...file_sources.values()],
-            mappings: mappings.join(','),
-        };
-        return map;
-    }
-    $.$mol_tree2_text_to_sourcemap = $mol_tree2_text_to_sourcemap;
-})($ || ($ = {}));
-//sourcemap.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_text_to_sourcemap_vis(text) {
-        const code = this.$mol_tree2_text_to_string(text);
-        const map = this.$mol_tree2_text_to_sourcemap(text);
-        const uri = [
-            'https://sokra.github.io/source-map-visualization/#base64',
-            btoa(code),
-            btoa(JSON.stringify(map)),
-            ...map.sourcesContent.map(btoa),
-        ].join(',');
-        return uri;
-    }
-    $.$mol_tree2_text_to_sourcemap_vis = $mol_tree2_text_to_sourcemap_vis;
-})($ || ($ = {}));
-//vis.js.map
 ;
 "use strict";
 var $;
@@ -27870,31 +27962,37 @@ var $;
         View() {
             const obj = new this.$.$mol_link();
             obj.title = () => "view.tree ⇒ TS";
-            obj.uri = () => "#source=%24my_app%20%24mol_page%0A%09title%20%40%20%5CExample%0A%09params%20*%20foo%20<%3D%20changable%3Fval%20%2Fstring%0A%09body%20%2F%0A%09%09<%3D%20Info%20%24my_widget%0A%09%09%09empty%20%40%20%5CNo%20content%0A%09%09%09value%3Fval%20<%3D>%20info_value%3Fval%20NaN%0A%09%09%09kids%20<%3D%20info_kids%20%2F%24mol_view_content%0A/pipeline=%24mol_tree2_from_string~%24mol_view_tree2_to_text~%24mol_tree2_text_to_string";
+            obj.uri = () => "#source=%24my_app%20%24mol_page%0A%09spec%20%5Chttps%3A%2F%2Fgithub.com%2Fhyoo-ru%2Fmam_mol%2Ftree%2Fmaster%2Fview%23viewtree%0A%09params%20*%20foo%20<%3D%20changable%3Fval%20%2Fstring%0A%09body%20%2F%0A%09%09<%3D%20Info%20%24my_widget%0A%09%09%09empty%20%40%20%5CNo%20content%0A%09%09%09value%3Fval%20<%3D>%20info_value%3Fval%20NaN%0A%09%09%09kids%20<%3D%20info_kids%20%2F%24mol_view_content%0A/pipeline=%24mol_tree2_from_string~%24mol_view_tree2_to_text~%24mol_tree2_text_to_string";
             return obj;
         }
         Json() {
             const obj = new this.$.$mol_link();
             obj.title = () => "JSON ⇒ json.tree";
-            obj.uri = () => "#source=%7B%0A%09\"foo\"%3A%20%5B%0A%09%09\"bar\"%2C%0A%09%09true%2C%0A%09%09777%2C%0A%09%09null%0A%09%5D%2C%0A%09\"foo%5Cnbar\"%3A\"xxx%5Cnyy\"%0A%7D/pipeline=%24mol_json_from_string~%24mol_tree2_from_json";
+            obj.uri = () => "#source=%7B%0A%09\"primitives\"%3A%20%5B%0A%09%09\"https%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fjson.tree\"%2C%0A%09%09true%2C%0A%09%09777%2C%0A%09%09null%0A%09%5D%2C%0A%09\"foo%5Cnbar\"%3A\"xxx%5Cnyyy\"%0A%7D/pipeline=%24mol_json_from_string~%24mol_tree2_from_json";
             return obj;
         }
         Xml() {
             const obj = new this.$.$mol_link();
             obj.title = () => "xml.tree ⇒ XML";
-            obj.uri = () => "#source=!%20doctype%20html%0A%3F%20xml%20version%20%5C1.0%0A--%20%5Centry%20point%0Ahtml%0A%09meta%20%40%20charset%20%5Cutf-8%0A%09link%0A%09%09%40%20href%20%5Cweb.css%0A%09%09%40%20rel%20%5Cstylesheet%0A%09script%20%40%20src%20%5Cweb.js%0A%09body%0A%09%09div%20%40%20mol_view_root%20%5C%24my_app%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_xml_to_text~%24mol_tree2_text_to_string";
+            obj.uri = () => "#source=!%20doctype%20html%0A%3F%20xml%20version%20%5C1.0%0A--%20%5Centry%20point%0Ahtml%0A%09meta%20%40%20charset%20%5Cutf-8%0A%09body%0A%09%09a%0A%09%09%09%40%20href%20%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fxml.tree%0A%09%09%09%5Cxml.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_xml_to_text~%24mol_tree2_text_to_string";
             return obj;
         }
         Mt() {
             const obj = new this.$.$mol_link();
             obj.title = () => "MarkedText ⇒ JS + SM";
-            obj.uri = () => "#source=foo**%3B%3B%2B%2Bbar%2B%2B%3B%3B**%2B%2B777%2B%2B/pipeline=%24hyoo_marked_tree_from_line~%24hyoo_marked_tree_to_js~%24mol_tree2_js_to_text~%24mol_tree2_text_to_sourcemap_vis";
+            obj.uri = () => "#source=%5C%5C**MarkedText**%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2FHabHub%2Fissues%2F39%5C%5C/pipeline=%24hyoo_marked_tree_from_line~%24hyoo_marked_tree_to_js~%24mol_tree2_js_to_text~%24mol_tree2_text_to_sourcemap_vis";
             return obj;
         }
         Grammar() {
             const obj = new this.$.$mol_link();
             obj.title = () => "grammar.tree check";
-            obj.uri = () => "#source=tree%20.optional%20.list_of%20line%0A%0Aline%20.sequence%0A%09.optional%20indent%0A%09.optional%20nodes%0A%09new_line%0A%0Anodes%20.sequence%0A%09.optional%20.list_of%20struct%0A%09.optional%20data%0A%09.with_delimiter%20space%0A%0Astruct%20.list_of%20.byte%0A%09.except%20special%0A%0Adata%20.sequence%0A%09data_prefix%0A%09.optional%20.list_of%20.byte%0A%09%09.except%20new_line%0A%0Aspecial%20.any_of%0A%09new_line%0A%09data_prefix%0A%09indent%0A%09space%0A%0Anew_line%20.byte%20%5C0A%0Aindent%20.list_of%20.byte%20%5C09%0Adata_prefix%20.byte%20%5C5C%0Aspace%20.byte%20%5C20%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_grammar_check";
+            obj.uri = () => "#source=%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fgrammar.tree%0A%0Atree%20.optional%20.list_of%20line%0A%0Aline%20.sequence%0A%09.optional%20indent%0A%09.optional%20nodes%0A%09new_line%0A%0Anodes%20.sequence%0A%09.optional%20.list_of%20struct%0A%09.optional%20data%0A%09.with_delimiter%20space%0A%0Astruct%20.list_of%20.byte%0A%09.except%20special%0A%0Adata%20.sequence%0A%09data_prefix%0A%09.optional%20.list_of%20.byte%0A%09%09.except%20new_line%0A%0Aspecial%20.any_of%0A%09new_line%0A%09data_prefix%0A%09indent%0A%09space%0A%0Anew_line%20.byte%20%5C0A%0Aindent%20.list_of%20.byte%20%5C09%0Adata_prefix%20.byte%20%5C5C%0Aspace%20.byte%20%5C20%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_grammar_check";
+            return obj;
+        }
+        Span() {
+            const obj = new this.$.$mol_link();
+            obj.title = () => "span.tree imprint/reuse";
+            obj.uri = () => "#source=foo%0A%09bar%0A%09%09%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fspan.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_span_imprint~%24mol_tree2_span_reuse~%24mol_tree2_span_imprint";
             return obj;
         }
         Presets_list() {
@@ -27904,7 +28002,8 @@ var $;
                 this.Json(),
                 this.Xml(),
                 this.Mt(),
-                this.Grammar()
+                this.Grammar(),
+                this.Span()
             ];
             return obj;
         }
@@ -27952,19 +28051,22 @@ var $;
             obj.hint = () => this.$.$mol_locale.text('$hyoo_tree_Transform_hint');
             obj.value = (val) => this.transform(index, val);
             obj.options = () => [
-                "$hyoo_marked_tree_from_line",
-                "$hyoo_marked_tree_to_js",
-                "$mol_view_tree2_to_text",
                 "$mol_tree2_from_string",
+                "$mol_tree2_to_string",
                 "$mol_tree2_from_json",
-                "$mol_json_from_string",
-                "$mol_json_to_string",
                 "$mol_tree2_grammar_check",
                 "$mol_tree2_xml_to_text",
                 "$mol_tree2_js_to_text",
                 "$mol_tree2_text_to_string",
                 "$mol_tree2_text_to_sourcemap",
-                "$mol_tree2_text_to_sourcemap_vis"
+                "$mol_tree2_text_to_sourcemap_vis",
+                "$mol_tree2_span_imprint",
+                "$mol_tree2_span_reuse",
+                "$mol_view_tree2_to_text",
+                "$hyoo_marked_tree_from_line",
+                "$hyoo_marked_tree_to_js",
+                "$mol_json_from_string",
+                "$mol_json_to_string"
             ];
             return obj;
         }
@@ -28028,6 +28130,9 @@ var $;
     __decorate([
         $.$mol_mem
     ], $hyoo_tree.prototype, "Grammar", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "Span", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_tree.prototype, "Presets_list", null);
@@ -29634,39 +29739,6 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //mol.view.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_to_string(tree) {
-        let output = [];
-        function dump(tree, prefix = '') {
-            if (tree.type.length) {
-                if (!prefix.length) {
-                    prefix = "\t";
-                }
-                output.push(tree.type);
-                if (tree.kids.length == 1) {
-                    output.push(' ');
-                    dump(tree.kids[0], prefix);
-                    return;
-                }
-                output.push("\n");
-            }
-            else if (tree.value.length || prefix.length) {
-                output.push("\\" + tree.value + "\n");
-            }
-            for (const kid of tree.kids) {
-                output.push(prefix);
-                dump(kid, prefix + "\t");
-            }
-        }
-        dump(tree);
-        return output.join('');
-    }
-    $.$mol_tree2_to_string = $mol_tree2_to_string;
-})($ || ($ = {}));
-//string.js.map
 ;
 "use strict";
 var $;

@@ -6397,14 +6397,17 @@ declare namespace $ {
         data(value: string, kids?: readonly $mol_tree2[]): $mol_tree2;
         static struct(type: string, kids?: readonly $mol_tree2[], span?: $mol_span): $mol_tree2;
         struct(type: string, kids?: readonly $mol_tree2[]): $mol_tree2;
-        clone(kids: readonly $mol_tree2[]): $mol_tree2;
+        clone(kids: readonly $mol_tree2[], span?: $mol_span): $mol_tree2;
         text(): string;
-        static fromString(str: string, span?: $mol_span): $mol_tree2;
+        static fromString(str: string, uri?: string): $mol_tree2;
         toString(): string;
         insert(value: $mol_tree2, ...path: $mol_tree2_path): $mol_tree2;
         select(...path: $mol_tree2_path): $mol_tree2;
         filter(path: string[], value?: string): $mol_tree2;
-        hack<Context = never>(belt: $mol_tree2_belt<Context>, context?: Context): $mol_tree2[];
+        hack<Context extends {
+            span?: $mol_span;
+            [key: string]: unknown;
+        } = {}>(belt: $mol_tree2_belt<Context>, context?: Context): $mol_tree2[];
         error(message: string, Class?: ErrorConstructor): Error;
     }
     class $mol_tree2_empty extends $mol_tree2 {
@@ -6574,7 +6577,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_tree2_from_string(this: $, str: string, span?: $mol_span): $mol_tree2;
+    function $mol_tree2_from_string(this: $, str: string, uri?: string): $mol_tree2;
 }
 
 declare namespace $ {
@@ -7138,36 +7141,56 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    let $hyoo_marked_line_content: $mol_regexp<{}>;
-    let $hyoo_marked_line: $mol_regexp<{
-        content: string;
-    } & {
-        marker: string;
-    } & {
-        content: string;
-    } & {
-        uri: string;
-    } & {
-        marker: string;
-    } & {
-        link: string;
-        code: string;
-        embed: string;
-        strong: string;
-        emphasis: string;
-        insertion: string;
-        deletion: string;
-    } & {
-        inline: string;
-    }>;
+    function $mol_tree2_to_string(this: $, tree: $mol_tree2): string;
 }
 
 declare namespace $ {
-    function $hyoo_marked_tree_from_line(this: $, code: string, span_entire?: $mol_span): $mol_tree2;
+    function $mol_tree2_from_json(json: any, span?: $mol_span): $mol_tree2;
 }
 
 declare namespace $ {
-    function $hyoo_marked_tree_to_js(this: $, mt: $mol_tree2): $mol_tree2;
+    function $mol_tree2_grammar_check(grammar: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_html_encode(text: string): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_xml_to_text(xml: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_js_to_text(this: $, js: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_text_to_string(this: $, text: $mol_tree2): string;
+}
+
+declare namespace $ {
+    function $mol_vlq_encode(val: number): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_text_to_sourcemap(this: $, tree: $mol_tree2): {
+        version: number;
+        sources: string[];
+        sourcesContent: string[];
+        mappings: string;
+    };
+}
+
+declare namespace $ {
+    function $mol_tree2_text_to_sourcemap_vis(this: $, text: $mol_tree2): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_span_imprint(tree: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_span_reuse(tree: $mol_tree2): $mol_tree2;
 }
 
 declare namespace $ {
@@ -7289,49 +7312,41 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_tree2_from_json(json: any, span?: $mol_span): $mol_tree2;
+    let $hyoo_marked_line_content: $mol_regexp<{}>;
+    let $hyoo_marked_line: $mol_regexp<{
+        content: string;
+    } & {
+        marker: string;
+    } & {
+        content: string;
+    } & {
+        uri: string;
+    } & {
+        marker: string;
+    } & {
+        link: string;
+        code: string;
+        embed: string;
+        strong: string;
+        emphasis: string;
+        insertion: string;
+        deletion: string;
+    } & {
+        inline: string;
+    }>;
+}
+
+declare namespace $ {
+    function $hyoo_marked_tree_from_line(this: $, code: string, span_entire?: $mol_span): $mol_tree2;
+}
+
+declare namespace $ {
+    function $hyoo_marked_tree_to_js(this: $, mt: $mol_tree2): $mol_tree2;
 }
 
 declare namespace $ {
     function $mol_json_from_string(str: string): any;
     function $mol_json_to_string(str: string): string;
-}
-
-declare namespace $ {
-    function $mol_tree2_grammar_check(grammar: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_html_encode(text: string): string;
-}
-
-declare namespace $ {
-    function $mol_tree2_xml_to_text(xml: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_tree2_js_to_text(this: $, js: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_tree2_text_to_string(this: $, text: $mol_tree2): string;
-}
-
-declare namespace $ {
-    function $mol_vlq_encode(val: number): string;
-}
-
-declare namespace $ {
-    function $mol_tree2_text_to_sourcemap(this: $, tree: $mol_tree2): {
-        version: number;
-        sources: string[];
-        sourcesContent: string[];
-        mappings: string;
-    };
-}
-
-declare namespace $ {
-    function $mol_tree2_text_to_sourcemap_vis(this: $, text: $mol_tree2): string;
 }
 
 declare namespace $ {
@@ -7348,6 +7363,7 @@ declare namespace $ {
         Xml(): $$.$mol_link;
         Mt(): $$.$mol_link;
         Grammar(): $$.$mol_link;
+        Span(): $$.$mol_link;
         Presets_list(): $$.$mol_list;
         Presets(): $$.$mol_page;
         source(val?: any): any;
@@ -7657,10 +7673,6 @@ declare namespace $.$$ {
     class $hyoo_mol extends $.$hyoo_mol {
         pages(): any[];
     }
-}
-
-declare namespace $ {
-    function $mol_tree2_to_string(this: $, tree: $mol_tree2): string;
 }
 
 declare namespace $ {
