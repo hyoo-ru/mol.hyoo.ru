@@ -2954,9 +2954,9 @@ declare namespace $ {
         graphs_sorted(): readonly $mol_svg[];
         graphs(): readonly $mol_plot_graph[];
         graphs_positioned(): readonly $mol_plot_graph[];
-        Meter(): $$.$mol_meter;
         width(): number;
         height(): number;
+        Meter(): $$.$mol_meter;
         Touch(): $$.$mol_touch;
         reset(event?: any): any;
     }
@@ -3002,8 +3002,8 @@ declare namespace $ {
         Legend(): $$.$mol_chart_legend;
         hue_base(): number;
         hue_shift(): number;
-        Plot(): $$.$mol_plot_pane;
         graphs_colored(): readonly $mol_plot_graph[];
+        Plot(): $$.$mol_plot_pane;
     }
 }
 
@@ -3631,11 +3631,11 @@ declare namespace $ {
         plugins(): readonly $mol_plugin[];
         sub(): readonly any[];
         keydown(event?: any): any;
-        Meter(): $$.$mol_meter;
         top(): number;
         bottom(): number;
         left(): number;
         right(): number;
+        Meter(): $$.$mol_meter;
         Anchor(): any;
         align(): string;
         bubble_content(): readonly (string | number | boolean | $mol_view | Node)[];
@@ -3870,8 +3870,8 @@ declare namespace $ {
         Next_icon(): $mol_icon_chevron_right;
         Next(): $mol_button_minor;
         Calendar_tools(): $mol_view;
-        Calendar(): $mol_date_calendar;
         Calendar_title(): $mol_view;
+        Calendar(): $mol_date_calendar;
     }
     class $mol_date_calendar extends $mol_calendar {
         day_content(day: any): readonly any[];
@@ -5147,9 +5147,9 @@ declare namespace $ {
         title(): string;
         plugins(): readonly any[];
         sub(): readonly any[];
-        Meter(): $$.$mol_meter;
         top(): number;
         height(): number;
+        Meter(): $$.$mol_meter;
         Top(): $mol_view;
         Height(): $mol_view;
     }
@@ -5167,11 +5167,11 @@ declare namespace $ {
         hint(): string;
         Hint(): $mol_view;
         tab_current(val?: any): any;
-        Tab_list(): $$.$mol_switch;
         tab_list(): string[];
+        Tab_list(): $$.$mol_switch;
         row_current(val?: any): any;
-        Row_list(): $$.$mol_switch;
         row_list(): string[];
+        Row_list(): $$.$mol_switch;
     }
 }
 
@@ -5431,8 +5431,8 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         suggests(): readonly any[];
-        Search(): $$.$mol_search;
         query(): any;
+        Search(): $$.$mol_search;
     }
 }
 
@@ -6091,8 +6091,8 @@ declare namespace $ {
         Page(index: any): $mol_book_page;
         Placeholder(): $mol_book_placeholder;
         pages_wrapped(): readonly $mol_view[];
-        Meter(): $$.$mol_meter;
         width(): number;
+        Meter(): $$.$mol_meter;
         event_front_up(val?: any): any;
         event_front_down(val?: any): any;
         Touch(): $$.$mol_touch;
@@ -6257,8 +6257,8 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_view_tree_test_binding_right extends $mol_view {
-        Test(): $mol_view_tree_test_binding_right_test;
         outer_width(v?: any): any;
+        Test(): $mol_view_tree_test_binding_right_test;
     }
     class $mol_view_tree_test_binding_right_test extends $mol_view {
         width(val?: any): any;
@@ -6540,14 +6540,10 @@ declare namespace $ {
         } | undefined;
         check_scope_vars({ name, key, next }: $mol_view_tree2_prop): undefined;
         index(owner: $mol_view_tree2_prop): number;
-        method(index: number, method: $mol_tree2): void;
+        method(index: number, method: $mol_tree2[]): void;
         protected locale_nodes: Map<string, $mol_tree2>;
         locale(operator: $mol_tree2): $mol_tree2;
     }
-}
-
-declare namespace $ {
-    function $mol_view_tree2_serialize(this: $, node: $mol_tree2, prefix?: string, parent_is_inline?: boolean): string;
 }
 
 declare namespace $ {
@@ -6568,7 +6564,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_class_props(this: $, klass: $mol_tree2): $mol_tree2;
+    function $mol_view_tree2_class_props(this: $, klass: $mol_tree2): $mol_tree2[];
 }
 
 declare namespace $ {
@@ -7218,11 +7214,11 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_ts_bind_both(this: $, operator: $mol_tree2, context: $mol_view_tree2_context): $mol_tree2;
+    function $mol_view_tree2_ts_bind_both(this: $, operator: $mol_tree2, context: $mol_view_tree2_context): $mol_tree2[];
 }
 
 declare namespace $ {
-    function $mol_view_tree2_ts_bind_left(this: $, operator: $mol_tree2, context: $mol_view_tree2_context, having_parts?: $mol_view_tree2_prop): $mol_tree2;
+    function $mol_view_tree2_ts_bind_left(this: $, operator: $mol_tree2, context: $mol_view_tree2_context, having_parts?: $mol_view_tree2_prop): $mol_tree2[];
 }
 
 declare namespace $ {
@@ -7230,8 +7226,8 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_ts_comment(this: $, item: $mol_tree2): $mol_tree2;
-    function $mol_view_tree2_ts_comment_doc(this: $, item: $mol_tree2): $mol_tree2;
+    function $mol_view_tree2_ts_comment(this: $, item: $mol_tree2): $mol_tree2[];
+    function $mol_view_tree2_ts_comment_doc(this: $, item: $mol_tree2): $mol_tree2[];
 }
 
 declare namespace $ {
@@ -7275,15 +7271,15 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_ts_locale(operator: $mol_tree2, context: $mol_view_tree2_context): $mol_tree2;
+    function $mol_view_tree2_ts_locale(operator: $mol_tree2, context: $mol_view_tree2_context): $mol_tree2[];
 }
 
 declare namespace $ {
-    function $mol_view_tree2_ts_value(this: $, src: $mol_tree2): $mol_tree2;
+    function $mol_view_tree2_ts_value(this: $, src: $mol_tree2): $mol_tree2[];
 }
 
 declare namespace $ {
-    function $mol_view_tree2_ts_dictionary(this: $, dictionary: $mol_tree2, dictionary_context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop): $mol_tree2;
+    function $mol_view_tree2_ts_dictionary(this: $, dictionary: $mol_tree2, dictionary_context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop): $mol_tree2[];
 }
 
 declare namespace $ {
@@ -7344,6 +7340,7 @@ declare namespace $ {
         View(): $$.$mol_link;
         Json(): $$.$mol_link;
         Xml(): $$.$mol_link;
+        Js(): $$.$mol_link;
         Mt(): $$.$mol_link;
         Grammar(): $$.$mol_link;
         Span(): $$.$mol_link;
@@ -7674,7 +7671,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_ts_array(this: $, operator: $mol_tree2, context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop | undefined): $mol_tree2;
+    function $mol_view_tree2_ts_array(this: $, operator: $mol_tree2, context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop | undefined): $mol_tree2[];
 }
 
 declare namespace $ {
@@ -7682,5 +7679,5 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_ts_method(this: $, owner_parts: $mol_view_tree2_prop, body: $mol_tree2, types?: boolean): $mol_tree2;
+    function $mol_view_tree2_ts_method(this: $, owner_parts: $mol_view_tree2_prop, body: $mol_tree2, types?: boolean): $mol_tree2[];
 }
