@@ -3875,6 +3875,72 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    $.$mol_test({
+        '$mol_leb128'() {
+            $.$mol_assert_like($.$mol_leb128_encode(0), new Uint8Array([0]));
+            $.$mol_assert_like($.$mol_leb128_encode(624485), new Uint8Array([0xE5, 0x8E, 0x26]));
+            $.$mol_assert_equal($.$mol_leb128_decode(new Uint8Array([0xE5, 0x8E, 0x26])), 624485);
+        },
+    });
+})($ || ($ = {}));
+//leb128.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_test({
+        'hello world'() {
+            const buffer = new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 133, 128, 128, 128, 0, 1, 96, 0, 1, 127, 3, 130, 128, 128, 128, 0, 1, 0, 4, 132, 128, 128, 128, 0, 1, 112, 0, 0, 5, 131, 128, 128, 128, 0, 1, 0, 1, 6, 129, 128, 128, 128, 0, 0, 7, 146, 128, 128, 128, 0, 2, 6, 109, 101, 109, 111, 114, 121, 2, 0, 5, 104, 101, 108, 108, 111, 0, 0, 10, 138, 128, 128, 128, 0, 1, 132, 128, 128, 128, 0, 0, 65, 16, 11, 11, 146, 128, 128, 128, 0, 1, 0, 65, 16, 11, 12, 72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100, 0]);
+            const wasm = new $.$mol_wasm_module(buffer).instance();
+            const hello = wasm.get('hello');
+            $.$mol_assert_equal(wasm.string(hello(), 11), 'Hello World');
+        },
+    });
+})($ || ($ = {}));
+//wasm.test.js.map
+;
+"use strict";
+var $;
+(function ($_1) {
+    $_1.$mol_test({
+        'module'($) {
+            const code = $.$mol_tree2_from_string(``);
+            $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([0, 0x61, 0x73, 0x6d, 0x1, 0, 0, 0]));
+        },
+        'custom section'($) {
+            const code = $.$mol_tree2_from_string(`
+				custom xxx
+			`);
+            $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([0, 0x61, 0x73, 0x6d, 0x1, 0, 0, 0, 0, 0x4, 0x3, 0x78, 0x78, 0x78]));
+        },
+        'type section with value types'($) {
+            const code = $.$mol_tree2_from_string(`
+				type xxx
+					=> i32
+					=> i64
+					=> f32
+					<= f64
+			`);
+            $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([0, 0x61, 0x73, 0x6d, 0x01, 0, 0, 0, 0x01, 0x08, 0x01, 0x60, 0x03, 0x7f, 0x7e, 0x7d, 0x01, 0x7c]));
+        },
+        'import section'($) {
+            const code = $.$mol_tree2_from_string(`
+				type xxx
+				import foo.bar func xxx
+			`);
+            $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([
+                0, 0x61, 0x73, 0x6d, 0x01, 0, 0, 0,
+                0x01, 0x04, 0x01, 0x60, 0, 0,
+                0x02, 0x0b, 0x01, 0x03, 0x66, 0x6f, 0x6f, 0x03, 0x62, 0x61, 0x72, 0, 0
+            ]));
+        },
+    });
+})($ || ($ = {}));
+//bin.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_base64_decode(base64) {
         throw new Error('Not implemented');
     }
@@ -4106,6 +4172,21 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
+    $.$mol_test({
+        'base64 encode string'() {
+            $.$mol_assert_equal($.$mol_base64_encode('Hello, ΧΨΩЫ'), 'SGVsbG8sIM6nzqjOqdCr');
+        },
+        'base64 encode binary'() {
+            $.$mol_assert_equal($.$mol_base64_encode(png), 'GgoASUh42g==');
+        },
+    });
+})($ || ($ = {}));
+//encode.test.js.map
+;
+"use strict";
+var $;
+(function ($) {
     $.$mol_test({
         'Attach to document'() {
             const doc = $.$mol_dom_parse('<html><body id="/foo"></body></html>');
@@ -4257,5 +4338,19 @@ var $;
 ;
 "use strict";
 //equals.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_tree2_wasm_to_bytes = $.$mol_data_pipe($.$mol_tree2_wasm_to_bin, $.$mol_tree2_bin_to_bytes);
+})($ || ($ = {}));
+//bytes.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_tree2_wasm_to_module = $.$mol_data_pipe($.$mol_tree2_wasm_to_bytes, $.$mol_wasm_module);
+})($ || ($ = {}));
+//module.js.map
 
 //# sourceMappingURL=web.test.js.map

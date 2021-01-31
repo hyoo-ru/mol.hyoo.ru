@@ -4788,7 +4788,7 @@ declare namespace $ {
     type Guard<Funcs extends $mol_type_unary[]> = {
         [Index in keyof Funcs]: (Funcs[Index] extends $mol_type_unary_func ? (input: $mol_type_param<Funcs[Index], 0>) => Guard_value<Funcs, Index> : new (input: $mol_type_param<Funcs[Index], 0>) => Guard_value<Funcs, Index>);
     };
-    export function $mol_data_pipe<Funcs extends $mol_type_unary[]>(...funcs: Funcs & Guard<Funcs>): ((input: $mol_type_param<Funcs[0], 0>) => $mol_type_result<$mol_type_foot<Funcs>>) & {
+    export function $mol_data_pipe<Funcs extends $mol_type_unary[]>(...funcs: Funcs & Guard<Funcs>): ((this: any, input: $mol_type_param<Funcs[0], 0>) => $mol_type_result<$mol_type_foot<Funcs>>) & {
         config: {
             funcs: Funcs & Guard<Funcs>;
         };
@@ -7173,6 +7173,81 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_tree2_bin_to_bytes(tree: $mol_tree2): Uint8Array;
+    function $mol_tree2_bin_from_bytes(bytes: ArrayLike<number>, span: $mol_span): $mol_tree2;
+    function $mol_tree2_bin_from_string(str: string, span: $mol_span): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_leb128_encode(val: number): Uint8Array;
+    function $mol_leb128_decode(bytes: Uint8Array): number;
+}
+
+declare namespace $ {
+    enum $mol_wasm_section_types {
+        custom = 0,
+        type = 1,
+        import = 2,
+        function = 3,
+        table = 4,
+        memory = 5,
+        global = 6,
+        export = 7,
+        start = 8,
+        element = 9,
+        code = 10,
+        data = 11
+    }
+}
+
+declare namespace $ {
+    enum $mol_wasm_value_types {
+        i32 = 127,
+        i64 = 126,
+        f32 = 125,
+        f64 = 124
+    }
+}
+
+declare namespace $ {
+    enum $mol_wasm_import_types {
+        func = 0,
+        table = 1,
+        mem = 2,
+        global = 3
+    }
+}
+
+declare namespace $ {
+    function $mol_tree2_wasm_to_bin(this: $, code: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    class $mol_wasm_instance extends $mol_object2 {
+        readonly module: WebAssembly.Module;
+        readonly imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined;
+        native: WebAssembly.Instance;
+        constructor(module: WebAssembly.Module, imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined);
+        memory(offset: number, length: number): Uint8Array;
+        string(offset: number, length: number, encoding?: string): string;
+        get(name: string): WebAssembly.ExportValue;
+    }
+}
+
+declare namespace $ {
+    class $mol_wasm_module extends $mol_object2 {
+        readonly buffer: ArrayBuffer;
+        native: WebAssembly.Module;
+        constructor(buffer: ArrayBuffer);
+        instance<Imports extends {
+            [mod in string]: {
+                [func in string]: WebAssembly.ImportValue;
+            };
+        }>(imports?: Imports): $mol_wasm_instance;
+    }
+}
+
+declare namespace $ {
     function $mol_view_tree2_bind_both_parts(this: $, operator: $mol_tree2): {
         owner_parts: {
             src: $mol_tree2;
@@ -7341,6 +7416,7 @@ declare namespace $ {
         Json(): $$.$mol_link;
         Xml(): $$.$mol_link;
         Js(): $$.$mol_link;
+        Wasm(): $$.$mol_link;
         Mt(): $$.$mol_link;
         Grammar(): $$.$mol_link;
         Span(): $$.$mol_link;
@@ -7362,6 +7438,14 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_base64_encode(src: string | Uint8Array): string;
+}
+
+declare namespace $ {
+    function $mol_base64_encode_node(str: string | Uint8Array): string;
+}
+
+declare namespace $ {
 }
 
 declare namespace $.$$ {
@@ -7371,7 +7455,7 @@ declare namespace $.$$ {
         result_head(index: number): ($mol_button_minor | $mol_select)[];
         source(next?: string): string;
         transform(index: number, next?: string): string;
-        result(index: number): string | $mol_tree2;
+        result(index: number): string | $mol_tree2 | Uint8Array | $mol_wasm_module;
         result_text(index: number): string;
         close(index: number): void;
     }
