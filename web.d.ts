@@ -7421,6 +7421,28 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_compare_deep<Value>(a: Value, b: Value): boolean;
+}
+
+declare namespace $ {
+    function $mol_assert_ok(value: any): void;
+    function $mol_assert_not(value: any): void;
+    function $mol_assert_fail(handler: () => any, ErrorRight?: any): any;
+    function $mol_assert_equal<Value>(...args: [Value, Value, ...Value[]]): void;
+    function $mol_assert_unique(...args: [any, any, ...any[]]): void;
+    function $mol_assert_like<Value>(head: Value, ...tail: Value[]): undefined;
+}
+
+declare namespace $ {
+    const $mol_jack: Record<string, $mol_tree2_belt<{}>>;
+    function $mol_jack_transform(code: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_js_eval(this: $, code: string): any;
+}
+
+declare namespace $ {
     class $hyoo_tree extends $mol_book2 {
         plugins(): readonly any[];
         Placeholder(): any;
@@ -7434,6 +7456,7 @@ declare namespace $ {
         Xml(): $$.$mol_link;
         Js(): $$.$mol_link;
         Wasm(): $$.$mol_link;
+        jack(): $$.$mol_link;
         Mt(): $$.$mol_link;
         Grammar(): $$.$mol_link;
         Span(): $$.$mol_link;

@@ -26950,7 +26950,7 @@ var $;
                         return [
                             input.data(input.type)
                         ];
-                    throw new SyntaxError(`Wrong node type ${JSON.stringify(input.type)}`);
+                    $.$mol_fail(input.error(`wrong node type`));
                 },
             }))]);
     }
@@ -28132,6 +28132,251 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    const a_stack = [];
+    const b_stack = [];
+    let cache = null;
+    function $mol_compare_deep(a, b) {
+        if (Object.is(a, b))
+            return true;
+        const a_type = typeof a;
+        const b_type = typeof b;
+        if (a_type !== b_type)
+            return false;
+        if (a_type === 'function')
+            return String(a) === String(b);
+        if (a_type !== 'object')
+            return false;
+        if (!a || !b)
+            return false;
+        if (a instanceof Error)
+            return false;
+        if (a['constructor'] !== b['constructor'])
+            return false;
+        if (a instanceof RegExp)
+            return Object.is(String(a), String(b));
+        const ref = a_stack.indexOf(a);
+        if (ref >= 0) {
+            return Object.is(b_stack[ref], b);
+        }
+        if (!cache)
+            cache = new WeakMap;
+        let a_cache = cache.get(a);
+        if (a_cache) {
+            const b_cache = a_cache.get(b);
+            if (typeof b_cache === 'boolean')
+                return b_cache;
+        }
+        else {
+            a_cache = new WeakMap();
+            cache.set(a, a_cache);
+        }
+        a_stack.push(a);
+        b_stack.push(b);
+        let result;
+        try {
+            if (a[Symbol.iterator]) {
+                const a_iter = a[Symbol.iterator]();
+                const b_iter = b[Symbol.iterator]();
+                while (true) {
+                    const a_next = a_iter.next();
+                    const b_next = b_iter.next();
+                    if (a_next.done !== b_next.done)
+                        return result = false;
+                    if (a_next.done)
+                        break;
+                    if (!$mol_compare_deep(a_next.value, b_next.value))
+                        return result = false;
+                }
+                return result = true;
+            }
+            let count = 0;
+            for (let key in a) {
+                try {
+                    if (!$mol_compare_deep(a[key], b[key]))
+                        return result = false;
+                }
+                catch (error) {
+                    $.$mol_fail_hidden(new $.$mol_error_mix(`Failed ${JSON.stringify(key)} fields comparison of ${a} and ${b}`, error));
+                }
+                ++count;
+            }
+            for (let key in b) {
+                --count;
+                if (count < 0)
+                    return result = false;
+            }
+            const a_val = a['valueOf']();
+            if (Object.is(a_val, a))
+                return result = true;
+            const b_val = b['valueOf']();
+            if (!Object.is(a_val, b_val))
+                return result = false;
+            return result = true;
+        }
+        finally {
+            a_stack.pop();
+            b_stack.pop();
+            if (a_stack.length === 0) {
+                cache = null;
+            }
+            else {
+                a_cache.set(b, result);
+            }
+        }
+    }
+    $.$mol_compare_deep = $mol_compare_deep;
+})($ || ($ = {}));
+//deep.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_assert_ok(value) {
+        if (value)
+            return;
+        $.$mol_fail(new Error(`${value} ≠ true`));
+    }
+    $.$mol_assert_ok = $mol_assert_ok;
+    function $mol_assert_not(value) {
+        if (!value)
+            return;
+        $.$mol_fail(new Error(`${value} ≠ false`));
+    }
+    $.$mol_assert_not = $mol_assert_not;
+    function $mol_assert_fail(handler, ErrorRight) {
+        const fail = $.$mol_fail;
+        try {
+            $.$mol_fail = $.$mol_fail_hidden;
+            handler();
+        }
+        catch (error) {
+            if (!ErrorRight)
+                return error;
+            $.$mol_fail = fail;
+            if (typeof ErrorRight === 'string') {
+                $mol_assert_equal(error.message, ErrorRight);
+            }
+            else {
+                $mol_assert_ok(error instanceof ErrorRight);
+            }
+            return error;
+        }
+        finally {
+            $.$mol_fail = fail;
+        }
+        $.$mol_fail(new Error('Not failed'));
+    }
+    $.$mol_assert_fail = $mol_assert_fail;
+    function $mol_assert_equal(...args) {
+        for (let i = 0; i < args.length; ++i) {
+            for (let j = 0; j < args.length; ++j) {
+                if (i === j)
+                    continue;
+                if (Number.isNaN(args[i]) && Number.isNaN(args[j]))
+                    continue;
+                if (args[i] !== args[j])
+                    $.$mol_fail(new Error(`Not equal\n${args[i]}\n${args[j]}`));
+            }
+        }
+    }
+    $.$mol_assert_equal = $mol_assert_equal;
+    function $mol_assert_unique(...args) {
+        for (let i = 0; i < args.length; ++i) {
+            for (let j = 0; j < args.length; ++j) {
+                if (i === j)
+                    continue;
+                if (args[i] === args[j] || (Number.isNaN(args[i]) && Number.isNaN(args[j]))) {
+                    $.$mol_fail(new Error(`args[${i}] = args[${j}] = ${args[i]}`));
+                }
+            }
+        }
+    }
+    $.$mol_assert_unique = $mol_assert_unique;
+    function $mol_assert_like(head, ...tail) {
+        for (let value of tail) {
+            if ($.$mol_compare_deep(value, head)) {
+                head = value;
+            }
+            else {
+                const print = (val) => {
+                    if (!val)
+                        return val;
+                    if (typeof val !== 'object')
+                        return val;
+                    if ('outerHTML' in val)
+                        return val.outerHTML;
+                    return JSON.stringify(val);
+                };
+                return $.$mol_fail(new Error(`Not like\n${print(head)}\n---\n${print(value)}`));
+            }
+        }
+    }
+    $.$mol_assert_like = $mol_assert_like;
+})($ || ($ = {}));
+//assert.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_jack = {
+        meta: {
+            no: (input, belt) => [],
+            list: (input, belt) => input.hack(belt),
+            tree: input => input.kids,
+            type: (input, belt) => input.hack(belt).map(kid => kid.data(kid.type)),
+            kids: (input, belt) => [].concat(...input.hack(belt).map(kid => kid.kids)),
+            head: (input, belt) => input.hack(belt).slice(0, 1),
+            headless: (input, belt) => input.hack(belt).slice(1),
+            reversed: (input, belt) => input.hack(belt).reverse(),
+            struct: (input, belt) => {
+                const res = input.hack(belt);
+                return [res[0].struct(res[0].value, res.slice(1))];
+            },
+            data: (input, belt) => {
+                const res = input.hack(belt);
+                return [res[0].data(res[0].value, res.slice(1))];
+            },
+            jack: (input, belt) => input.hack(Object.assign({}, belt)),
+            hack: (input, belt) => {
+                const def = input.kids[0];
+                belt[def.type] = (arg, belt_inner) => {
+                    return def.hack(Object.assign(Object.assign({}, belt_inner), { from: (i, b) => arg.hack(b) }));
+                };
+                return [];
+            },
+            test: (input, belt) => {
+                const cases = input.select('case').kids;
+                const results = cases.map(Case => Case.hack(belt));
+                try {
+                    $.$mol_assert_equal(...results.map(String));
+                }
+                catch (error) {
+                    return $.$mol_fail_hidden(input.error(error.message));
+                }
+                return [input];
+            },
+        },
+    };
+    function $mol_jack_transform(code) {
+        return code.list(code.hack(Object.assign({}, $.$mol_jack.meta)));
+    }
+    $.$mol_jack_transform = $mol_jack_transform;
+})($ || ($ = {}));
+//jack.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_js_eval(code) {
+        return new Function('', code)();
+    }
+    $.$mol_js_eval = $mol_js_eval;
+})($ || ($ = {}));
+//eval.js.map
+;
+"use strict";
+var $;
+(function ($) {
     class $hyoo_tree extends $.$mol_book2 {
         plugins() {
             return [
@@ -28199,6 +28444,12 @@ var $;
             obj.uri = () => "#source=custom%20xxx%0A%0Atype%20xxx%0A%09%3D>%20i32%0A%09%3D>%20i64%0A%09%3D>%20f32%0A%09<%3D%20f64%0A%0Aimport%20foo.bar%20func%20xxx%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_wasm_to_bin~%24mol_tree2_bin_to_bytes~%24mol_wasm_module";
             return obj;
         }
+        jack() {
+            const obj = new this.$.$mol_link();
+            obj.title = () => "jack.tree ⇒ JS eval";
+            obj.uri = () => "#pipeline=%24mol_tree2_from_string~%24mol_jack_transform~%24mol_tree2_js_to_text~%24mol_tree2_text_to_string~%24mol_js_eval/source=hack%20%2Bpipe%0A%09hack%20%7C>%20var%0A%09%09pipe%0A%09%09from%0A%09hack%20<%7C%20pipe%0A%09from%0A%0Ahack%20%2Bmath%0A%09hack%20square%20%28**%29%0A%09%09<%7C%0A%09%092%0A%09hack%20next%20%28%2B%29%0A%09%09<%7C%0A%09%091%0A%09from%0A%0Ahack%20%2Bdebug%0A%09hack%20log%20%28%29%0A%09%09console%0A%09%09%5B%5D%20%5Clog%0A%09%09%28%2C%29%20from%0A%09from%0A%0A%2Bpipe%20%2Bmath%20%2Bdebug%20%7B%3B%7D%0A%09%7C>%203%0A%09%7C>%20square%0A%09%7C>%20next%0A%09log%20<%7C%0A%09return%20<%7C%0A";
+            return obj;
+        }
         Mt() {
             const obj = new this.$.$mol_link();
             obj.title = () => "MarkedText ⇒ JS + SM";
@@ -28225,6 +28476,7 @@ var $;
                 this.Xml(),
                 this.Js(),
                 this.Wasm(),
+                this.jack(),
                 this.Mt(),
                 this.Grammar(),
                 this.Span()
@@ -28295,7 +28547,9 @@ var $;
                 "$hyoo_marked_tree_from_line",
                 "$hyoo_marked_tree_to_js",
                 "$mol_json_from_string",
-                "$mol_json_to_string"
+                "$mol_json_to_string",
+                "$mol_jack_transform",
+                "$mol_js_eval"
             ];
             return obj;
         }
@@ -28359,6 +28613,9 @@ var $;
     __decorate([
         $.$mol_mem
     ], $hyoo_tree.prototype, "Wasm", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "jack", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_tree.prototype, "Mt", null);
@@ -30576,105 +30833,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const a_stack = [];
-    const b_stack = [];
-    let cache = null;
-    function $mol_compare_deep(a, b) {
-        if (Object.is(a, b))
-            return true;
-        const a_type = typeof a;
-        const b_type = typeof b;
-        if (a_type !== b_type)
-            return false;
-        if (a_type === 'function')
-            return String(a) === String(b);
-        if (a_type !== 'object')
-            return false;
-        if (!a || !b)
-            return false;
-        if (a instanceof Error)
-            return false;
-        if (a['constructor'] !== b['constructor'])
-            return false;
-        if (a instanceof RegExp)
-            return Object.is(String(a), String(b));
-        const ref = a_stack.indexOf(a);
-        if (ref >= 0) {
-            return Object.is(b_stack[ref], b);
-        }
-        if (!cache)
-            cache = new WeakMap;
-        let a_cache = cache.get(a);
-        if (a_cache) {
-            const b_cache = a_cache.get(b);
-            if (typeof b_cache === 'boolean')
-                return b_cache;
-        }
-        else {
-            a_cache = new WeakMap();
-            cache.set(a, a_cache);
-        }
-        a_stack.push(a);
-        b_stack.push(b);
-        let result;
-        try {
-            if (a[Symbol.iterator]) {
-                const a_iter = a[Symbol.iterator]();
-                const b_iter = b[Symbol.iterator]();
-                while (true) {
-                    const a_next = a_iter.next();
-                    const b_next = b_iter.next();
-                    if (a_next.done !== b_next.done)
-                        return result = false;
-                    if (a_next.done)
-                        break;
-                    if (!$mol_compare_deep(a_next.value, b_next.value))
-                        return result = false;
-                }
-                return result = true;
-            }
-            let count = 0;
-            for (let key in a) {
-                try {
-                    if (!$mol_compare_deep(a[key], b[key]))
-                        return result = false;
-                }
-                catch (error) {
-                    $.$mol_fail_hidden(new $.$mol_error_mix(`Failed ${JSON.stringify(key)} fields comparison of ${a} and ${b}`, error));
-                }
-                ++count;
-            }
-            for (let key in b) {
-                --count;
-                if (count < 0)
-                    return result = false;
-            }
-            const a_val = a['valueOf']();
-            if (Object.is(a_val, a))
-                return result = true;
-            const b_val = b['valueOf']();
-            if (!Object.is(a_val, b_val))
-                return result = false;
-            return result = true;
-        }
-        finally {
-            a_stack.pop();
-            b_stack.pop();
-            if (a_stack.length === 0) {
-                cache = null;
-            }
-            else {
-                a_cache.set(b, result);
-            }
-        }
-    }
-    $.$mol_compare_deep = $mol_compare_deep;
-})($ || ($ = {}));
-//deep.js.map
-;
-"use strict";
-var $;
-(function ($) {
     $.$mol_test({
         'must be false'() {
             $.$mol_assert_not(0);
@@ -30703,93 +30861,6 @@ var $;
     });
 })($ || ($ = {}));
 //assert.test.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_assert_ok(value) {
-        if (value)
-            return;
-        $.$mol_fail(new Error(`${value} ≠ true`));
-    }
-    $.$mol_assert_ok = $mol_assert_ok;
-    function $mol_assert_not(value) {
-        if (!value)
-            return;
-        $.$mol_fail(new Error(`${value} ≠ false`));
-    }
-    $.$mol_assert_not = $mol_assert_not;
-    function $mol_assert_fail(handler, ErrorRight) {
-        const fail = $.$mol_fail;
-        try {
-            $.$mol_fail = $.$mol_fail_hidden;
-            handler();
-        }
-        catch (error) {
-            if (!ErrorRight)
-                return error;
-            $.$mol_fail = fail;
-            if (typeof ErrorRight === 'string') {
-                $mol_assert_equal(error.message, ErrorRight);
-            }
-            else {
-                $mol_assert_ok(error instanceof ErrorRight);
-            }
-            return error;
-        }
-        finally {
-            $.$mol_fail = fail;
-        }
-        $.$mol_fail(new Error('Not failed'));
-    }
-    $.$mol_assert_fail = $mol_assert_fail;
-    function $mol_assert_equal(...args) {
-        for (let i = 0; i < args.length; ++i) {
-            for (let j = 0; j < args.length; ++j) {
-                if (i === j)
-                    continue;
-                if (Number.isNaN(args[i]) && Number.isNaN(args[j]))
-                    continue;
-                if (args[i] !== args[j])
-                    $.$mol_fail(new Error(`Not equal\n${args[i]}\n${args[j]}`));
-            }
-        }
-    }
-    $.$mol_assert_equal = $mol_assert_equal;
-    function $mol_assert_unique(...args) {
-        for (let i = 0; i < args.length; ++i) {
-            for (let j = 0; j < args.length; ++j) {
-                if (i === j)
-                    continue;
-                if (args[i] === args[j] || (Number.isNaN(args[i]) && Number.isNaN(args[j]))) {
-                    $.$mol_fail(new Error(`args[${i}] = args[${j}] = ${args[i]}`));
-                }
-            }
-        }
-    }
-    $.$mol_assert_unique = $mol_assert_unique;
-    function $mol_assert_like(head, ...tail) {
-        for (let value of tail) {
-            if ($.$mol_compare_deep(value, head)) {
-                head = value;
-            }
-            else {
-                const print = (val) => {
-                    if (!val)
-                        return val;
-                    if (typeof val !== 'object')
-                        return val;
-                    if ('outerHTML' in val)
-                        return val.outerHTML;
-                    return JSON.stringify(val);
-                };
-                return $.$mol_fail(new Error(`Not like\n${print(head)}\n---\n${print(value)}`));
-            }
-        }
-    }
-    $.$mol_assert_like = $mol_assert_like;
-})($ || ($ = {}));
-//assert.js.map
 ;
 "use strict";
 var $;
@@ -33794,7 +33865,7 @@ var $;
         'wrong name'() {
             $.$mol_assert_fail(() => convert(`
 					foo+bar
-				`), 'Wrong node type "foo+bar"');
+				`), 'wrong node type\nfoo+bar\n\nunknown#2:6/7');
         },
         'array'() {
             $.$mol_assert_equal(convert(`
@@ -34362,6 +34433,128 @@ var $;
     });
 })($ || ($ = {}));
 //line.test.js.map
+;
+"use strict";
+var $;
+(function ($_1) {
+    $_1.$mol_test({
+        'test'($) {
+            const root = {
+                'foo': input => [input.struct('777')],
+                'test': $_1.$mol_jack.meta.test,
+            };
+            $_1.$mol_assert_like($.$mol_tree2_from_string(`
+					test
+						case foo
+						case 777
+				`)
+                .hack(root)
+                .toString(), $.$mol_tree2_from_string(`
+					test
+						case foo
+						case 777
+				`)
+                .toString());
+            $_1.$mol_assert_fail(() => {
+                $.$mol_tree2_from_string(`
+					test
+						case \\foo
+						case \\bar
+				`)
+                    .hack(root);
+            });
+        },
+        'jack test'($) {
+            const tests = $.$mol_tree2_from_string(`
+				test
+					name \\commented code
+					case
+						one
+						no two
+					case tree
+						ONE
+				test
+					name \\name of struct node as value node
+					case type
+						one
+						\\one
+					case tree
+						\\ONE
+						\\
+				test
+					name \\kids of struct node
+					case kids tree one two
+					case tree two
+				test
+					name \\first element of list
+					case head
+						one
+						two
+						three
+					case tree ONE
+				test
+					name \\list without first element
+					case headless
+						one
+						two
+						three
+					case tree
+						TWO
+						THREE
+				test
+					name \\reversed list
+					case reversed
+						one
+						two
+						three
+					case tree
+						THREE
+						TWO
+						ONE
+				test
+					name \\quote tree
+					name \\make tree node by type, value and sub list
+					case tree head
+						\\
+						\\one
+							\\two
+						three
+					case struct
+						\\head
+						struct \\
+						data
+							\\one
+							\\two
+						struct \\three
+				test
+					name \\evaluated jack code
+					case jack head
+						one
+						two
+						three
+					case tree ONE
+				test
+					name \\define and use custom simple macro
+					case jack
+						hack PI float 3.14
+						hack pi PI
+						pi
+					case float 3.14
+				test
+					name \\define and use custom macro with arguments
+					case jack
+						hack tail head reversed from
+						tail
+							one
+							two
+							three
+					case tree THREE
+			`);
+            const res = tests.hack(Object.assign(Object.assign({}, $_1.$mol_jack.meta), { 'one': input => [input.struct('ONE')], 'two': input => [input.struct('TWO')], 'three': input => [input.struct('THREE')], 'ONE': input => [input.struct('XXX')], 'TWO': input => [input.struct('XXX')], 'THREE': input => [input.struct('XXX')] }));
+        },
+    });
+})($ || ($ = {}));
+//jack.test.js.map
 ;
 "use strict";
 var $;
