@@ -7138,131 +7138,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    function $mol_tree2_to_string(this: $, tree: $mol_tree2): string;
-}
-
-declare namespace $ {
-    function $mol_tree2_from_json(json: any, span?: $mol_span): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_tree2_grammar_check(grammar: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_html_encode(text: string): string;
-}
-
-declare namespace $ {
-    function $mol_tree2_xml_to_text(xml: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_tree2_js_to_text(this: $, js: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
     function $mol_tree2_text_to_string(this: $, text: $mol_tree2): string;
-}
-
-declare namespace $ {
-    function $mol_vlq_encode(val: number): string;
-}
-
-declare namespace $ {
-    function $mol_tree2_text_to_sourcemap(this: $, tree: $mol_tree2): {
-        version: number;
-        sources: string[];
-        sourcesContent: string[];
-        mappings: string;
-    };
-}
-
-declare namespace $ {
-    function $mol_tree2_text_to_sourcemap_vis(this: $, text: $mol_tree2): string;
-}
-
-declare namespace $ {
-    function $mol_tree2_span_imprint(tree: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_tree2_span_reuse(tree: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_tree2_bin_to_bytes(tree: $mol_tree2): Uint8Array;
-    function $mol_tree2_bin_from_bytes(bytes: ArrayLike<number>, span: $mol_span): $mol_tree2;
-    function $mol_tree2_bin_from_string(str: string, span: $mol_span): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_leb128_encode(val: number): Uint8Array;
-    function $mol_leb128_decode(bytes: Uint8Array): number;
-}
-
-declare namespace $ {
-    enum $mol_wasm_section_types {
-        custom = 0,
-        type = 1,
-        import = 2,
-        function = 3,
-        table = 4,
-        memory = 5,
-        global = 6,
-        export = 7,
-        start = 8,
-        element = 9,
-        code = 10,
-        data = 11
-    }
-}
-
-declare namespace $ {
-    enum $mol_wasm_value_types {
-        i32 = 127,
-        i64 = 126,
-        f32 = 125,
-        f64 = 124
-    }
-}
-
-declare namespace $ {
-    enum $mol_wasm_import_types {
-        func = 0,
-        table = 1,
-        mem = 2,
-        global = 3
-    }
-}
-
-declare namespace $ {
-    function $mol_tree2_wasm_to_bin(this: $, code: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    class $mol_wasm_instance extends $mol_object2 {
-        readonly module: WebAssembly.Module;
-        readonly imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined;
-        native: WebAssembly.Instance;
-        constructor(module: WebAssembly.Module, imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined);
-        memory(offset: number, length: number): Uint8Array;
-        string(offset: number, length: number, encoding?: string): string;
-        get(name: string): WebAssembly.ExportValue;
-    }
-}
-
-declare namespace $ {
-    class $mol_wasm_module extends $mol_object2 {
-        readonly buffer: ArrayBuffer;
-        native: WebAssembly.Module;
-        constructor(buffer: ArrayBuffer);
-        instance<Imports extends {
-            [mod in string]: {
-                [func in string]: WebAssembly.ImportValue;
-            };
-        }>(imports?: Imports): $mol_wasm_instance;
-    }
 }
 
 declare namespace $ {
@@ -7384,6 +7260,130 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_tree2_to_string(this: $, tree: $mol_tree2): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_from_json(json: any, span?: $mol_span): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_grammar_check(grammar: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_html_encode(text: string): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_xml_to_text(xml: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_js_to_text(this: $, js: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_vlq_encode(val: number): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_text_to_sourcemap(this: $, tree: $mol_tree2): {
+        version: number;
+        sources: string[];
+        sourcesContent: string[];
+        mappings: string;
+    };
+}
+
+declare namespace $ {
+    function $mol_tree2_text_to_sourcemap_vis(this: $, text: $mol_tree2): string;
+}
+
+declare namespace $ {
+    function $mol_tree2_span_imprint(tree: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_span_reuse(tree: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_bin_to_bytes(tree: $mol_tree2): Uint8Array;
+    function $mol_tree2_bin_from_bytes(bytes: ArrayLike<number>, span: $mol_span): $mol_tree2;
+    function $mol_tree2_bin_from_string(str: string, span: $mol_span): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_leb128_encode(val: number): Uint8Array;
+    function $mol_leb128_decode(bytes: Uint8Array): number;
+}
+
+declare namespace $ {
+    enum $mol_wasm_section_types {
+        custom = 0,
+        type = 1,
+        import = 2,
+        function = 3,
+        table = 4,
+        memory = 5,
+        global = 6,
+        export = 7,
+        start = 8,
+        element = 9,
+        code = 10,
+        data = 11
+    }
+}
+
+declare namespace $ {
+    enum $mol_wasm_value_types {
+        i32 = 127,
+        i64 = 126,
+        f32 = 125,
+        f64 = 124
+    }
+}
+
+declare namespace $ {
+    enum $mol_wasm_import_types {
+        func = 0,
+        table = 1,
+        mem = 2,
+        global = 3
+    }
+}
+
+declare namespace $ {
+    function $mol_tree2_wasm_to_bin(this: $, code: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    class $mol_wasm_instance extends $mol_object2 {
+        readonly module: WebAssembly.Module;
+        readonly imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined;
+        native: WebAssembly.Instance;
+        constructor(module: WebAssembly.Module, imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined);
+        memory(offset: number, length: number): Uint8Array;
+        string(offset: number, length: number, encoding?: string): string;
+        get(name: string): WebAssembly.ExportValue;
+    }
+}
+
+declare namespace $ {
+    class $mol_wasm_module extends $mol_object2 {
+        readonly buffer: ArrayBuffer;
+        native: WebAssembly.Module;
+        constructor(buffer: ArrayBuffer);
+        instance<Imports extends {
+            [mod in string]: {
+                [func in string]: WebAssembly.ImportValue;
+            };
+        }>(imports?: Imports): $mol_wasm_instance;
+    }
+}
+
+declare namespace $ {
     let $hyoo_marked_line_content: $mol_regexp<{}>;
     let $hyoo_marked_line: $mol_regexp<{
         content: string;
@@ -7446,6 +7446,7 @@ declare namespace $ {
 declare namespace $ {
     class $hyoo_tree extends $mol_book2 {
         plugins(): readonly any[];
+        pipeline(val?: any): any;
         Placeholder(): any;
         pages(): readonly any[];
         Result(index: any): $$.$mol_page;
@@ -7764,6 +7765,8 @@ declare namespace $ {
         Slides_link(): $$.$mol_link;
         Close_app_icon(): $mol_icon_cross;
         Components_app(): $$.$mol_app_demo;
+        tree_pipeline(val?: any): any;
+        tree_source(val?: any): any;
         View_tree_app(): $$.$hyoo_tree;
         Articles_app(): $$.$hyoo_habhub;
         Icons_app(): $$.$mol_frame;

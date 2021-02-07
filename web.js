@@ -2933,7 +2933,7 @@ var $;
     (function ($$) {
         class $mol_book2 extends $.$mol_book2 {
             title() {
-                return this.pages().map(page => page.title()).reverse().join(' | ');
+                return this.pages().map(page => page === null || page === void 0 ? void 0 : page.title()).reverse().filter(Boolean).join(' | ');
             }
             sub() {
                 var _a;
@@ -26594,381 +26594,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_tree2_to_string(tree) {
-        let output = [];
-        function dump(tree, prefix = '') {
-            if (tree.type.length) {
-                if (!prefix.length) {
-                    prefix = "\t";
-                }
-                output.push(tree.type);
-                if (tree.kids.length == 1) {
-                    output.push(' ');
-                    dump(tree.kids[0], prefix);
-                    return;
-                }
-                output.push("\n");
-            }
-            else if (tree.value.length || prefix.length) {
-                output.push("\\" + tree.value + "\n");
-            }
-            for (const kid of tree.kids) {
-                output.push(prefix);
-                dump(kid, prefix + "\t");
-            }
-        }
-        dump(tree);
-        return output.join('');
-    }
-    $.$mol_tree2_to_string = $mol_tree2_to_string;
-})($ || ($ = {}));
-//string.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_from_json(json, span = $.$mol_span.unknown) {
-        if (typeof json === 'boolean' || typeof json === 'number' || json === null) {
-            return new $.$mol_tree2(String(json), '', [], span);
-        }
-        if (typeof json === 'string') {
-            return $.$mol_tree2.data(json, [], span);
-        }
-        if (Array.isArray(json)) {
-            const sub = json.map(json => $mol_tree2_from_json(json, span));
-            return new $.$mol_tree2('/', '', sub, span);
-        }
-        if (json instanceof Date) {
-            return new $.$mol_tree2('', json.toISOString(), [], span);
-        }
-        if (typeof json.toJSON === 'function') {
-            return $mol_tree2_from_json(json.toJSON());
-        }
-        if (json instanceof Error) {
-            const { name, message, stack } = json;
-            json = Object.assign(Object.assign({}, json), { name, message, stack });
-        }
-        const sub = [];
-        for (var key in json) {
-            const val = json[key];
-            if (val === undefined)
-                continue;
-            const subsub = $mol_tree2_from_json(val, span);
-            if (/^[^\n\t\\ ]+$/.test(key)) {
-                sub.push(new $.$mol_tree2(key, '', [subsub], span));
-            }
-            else {
-                sub.push($.$mol_tree2.data(key, [subsub], span));
-            }
-        }
-        return new $.$mol_tree2('*', '', sub, span);
-    }
-    $.$mol_tree2_from_json = $mol_tree2_from_json;
-})($ || ($ = {}));
-//json.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    const keywords = new Set([
-        '',
-        '.byte',
-        '.sequence',
-        '.set_of',
-        '.optional',
-        '.list_of',
-        '.any_of',
-        '.except',
-        '.with_delimiter',
-    ]);
-    function $mol_tree2_grammar_check(grammar) {
-        function visit(node) {
-            check: {
-                if (keywords.has(node.type))
-                    break check;
-                if (grammar.select(node.type).kids.length)
-                    break check;
-                $.$mol_fail(node.error(`wrong pattern name`));
-            }
-            for (const kid of node.kids) {
-                visit(kid);
-            }
-        }
-        visit(grammar);
-        return grammar;
-    }
-    $.$mol_tree2_grammar_check = $mol_tree2_grammar_check;
-})($ || ($ = {}));
-//check.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    const mapping = {
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        '&': '&amp;',
-    };
-    function $mol_html_encode(text) {
-        return text.replace(/[&<">]/gi, str => mapping[str]);
-    }
-    $.$mol_html_encode = $mol_html_encode;
-})($ || ($ = {}));
-//encode.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function attrs_belt(separator) {
-        return {
-            '': (input) => [
-                input.data(' '),
-                input.data($.$mol_html_encode(input.type)),
-                ...input.value ? [
-                    input.data('"'),
-                    input.data($.$mol_html_encode(input.value)),
-                    input.data('"'),
-                ] : [],
-                ...input.hack({
-                    '': (input) => {
-                        if (!input.type)
-                            return [
-                                input.data(separator),
-                                input.data('"'),
-                                input.data($.$mol_html_encode(input.text())),
-                                input.data('"'),
-                            ];
-                        $.$mol_fail(input.error('Wrong attribute value'));
-                    },
-                }),
-            ],
-        };
-    }
-    function $mol_tree2_xml_to_text(xml) {
-        return xml.list(xml.hack({
-            '@': (input, belt) => [],
-            '--': (input, belt) => [
-                xml.struct('line', [
-                    input.data('<!-- '),
-                    ...input.hack(belt),
-                    input.data(' -->'),
-                ]),
-            ],
-            '?': (input, belt) => [
-                xml.struct('line', [
-                    input.data('<?'),
-                    input.kids[0].data(input.kids[0].type),
-                    ...input.kids[0].hack(attrs_belt('=')),
-                    input.data('?>'),
-                ]),
-            ],
-            '!': (input, belt) => [
-                xml.struct('line', [
-                    input.data('<!'),
-                    input.kids[0].data(input.kids[0].type),
-                    ...input.kids[0].hack(attrs_belt(' ')),
-                    input.data('>'),
-                ]),
-            ],
-            '': (input, belt) => {
-                if (!input.type)
-                    return [
-                        input.data($.$mol_html_encode(input.text())),
-                    ];
-                const attrs = input.select('@', '').hack(attrs_belt('='));
-                const content = input.hack(belt);
-                return [
-                    input.struct('line', [
-                        input.data(`<`),
-                        input.data(input.type),
-                        ...attrs,
-                        ...content.length ? [
-                            input.data(`>`),
-                            input.struct('indent', content),
-                            input.data(`</`),
-                            input.data(input.type),
-                            input.data(`>`),
-                        ] : [
-                            input.data(` />`),
-                        ]
-                    ]),
-                ];
-            },
-        }));
-    }
-    $.$mol_tree2_xml_to_text = $mol_tree2_xml_to_text;
-})($ || ($ = {}));
-//text.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_js_to_text(js) {
-        function sequence(open, separator, close) {
-            return (input, belt) => [
-                ...open ? [input.data(open)] : [],
-                input.struct(separator && input.kids.length > 1 ? 'indent' : 'line', [].concat(...input.kids.map((kid, index) => [
-                    kid.struct('line', [
-                        ...kid.list([kid]).hack(belt),
-                        ...(separator && index < input.kids.length - 1) ? [kid.data(separator)] : [],
-                    ]),
-                ]))),
-                ...close ? [input.data(close)] : [],
-            ];
-        }
-        function duplet(open, separator, close) {
-            return (input, belt) => [
-                ...open ? [input.data(open)] : [],
-                ...input.list(input.kids.slice(0, 1)).hack(belt),
-                ...(separator && input.kids.length > 1) ? [input.data(separator)] : [],
-                ...input.list(input.kids.slice(1, 2)).hack(belt),
-                ...close ? [input.data(close)] : [],
-            ];
-        }
-        function triplet(open, separator12, separator23, close) {
-            return (input, belt) => [
-                ...open ? [input.data(open)] : [],
-                ...input.list(input.kids.slice(0, 1)).hack(belt),
-                ...(separator12 && input.kids.length > 1) ? [input.data(separator12)] : [],
-                ...input.list(input.kids.slice(1, 2)).hack(belt),
-                ...(separator23 && input.kids.length > 2) ? [input.data(separator23)] : [],
-                ...input.list(input.kids.slice(2, 3)).hack(belt),
-                ...close ? [input.data(close)] : [],
-            ];
-        }
-        return js.list([js.struct('line', js.hack({
-                '+': sequence('+'),
-                '-': sequence('-'),
-                '!': sequence('!'),
-                '~': sequence('~'),
-                'return': sequence('return '),
-                'break': sequence('break '),
-                'continue': sequence('continue '),
-                'yield': sequence('yield '),
-                'yield*': sequence('yield* '),
-                'await': sequence('await '),
-                'void': sequence('void '),
-                'delete': sequence('delete '),
-                'typeof': sequence('typeof '),
-                'new': sequence('new '),
-                '...': sequence('...'),
-                '@++': sequence('', '', '++'),
-                '@--': sequence('', '', '--'),
-                '(in)': sequence('(', ' in ', ')'),
-                '(instanceof)': sequence('(', ' instanceof ', ')'),
-                '(+)': sequence('(', ' + ', ')'),
-                '(-)': sequence('(', ' - ', ')'),
-                '(*)': sequence('(', ' * ', ')'),
-                '(/)': sequence('(', ' / ', ')'),
-                '(%)': sequence('(', ' % ', ')'),
-                '(**)': sequence('(', ' ** ', ')'),
-                '(<)': sequence('(', ' < ', ')'),
-                '(<=)': sequence('(', ' <= ', ')'),
-                '(>)': sequence('(', ' > ', ')'),
-                '(>=)': sequence('(', ' >= ', ')'),
-                '(==)': sequence('(', ' == ', ')'),
-                '(===)': sequence('(', ' === ', ')'),
-                '(<<)': sequence('(', ' << ', ')'),
-                '(>>)': sequence('(', ' >> ', ')'),
-                '(>>>)': sequence('(', ' >>> ', ')'),
-                '(&)': sequence('(', ' & ', ')'),
-                '(|)': sequence('(', ' | ', ')'),
-                '(^)': sequence('(', ' ^ ', ')'),
-                '(&&)': sequence('(', ' && ', ')'),
-                '(||)': sequence('(', ' || ', ')'),
-                '(,)': sequence('(', ',', ')'),
-                '{;}': sequence('{', ';', '}'),
-                '[,]': sequence('[', ',', ']'),
-                '{,}': sequence('{', ',', '}'),
-                ':': duplet('[', ']: '),
-                '()': sequence('(', '', ')'),
-                '[]': sequence('[', '', ']'),
-                '{}': sequence('{', '', '}'),
-                'let': duplet('let ', ' = '),
-                'const': duplet('const ', ' = '),
-                'var': duplet('var ', ' = '),
-                '=': duplet('', ' = '),
-                '+=': duplet('', ' += '),
-                '-=': duplet('', ' -= '),
-                '*=': duplet('', ' *= '),
-                '/=': duplet('', ' /= '),
-                '%=': duplet('', ' %= '),
-                '**=': duplet('', ' **= '),
-                '<<=': duplet('', ' <<= '),
-                '>>=': duplet('', ' >>= '),
-                '>>>=': duplet('', ' >>>= '),
-                '&=': duplet('', ' &= '),
-                '|=': duplet('', ' |= '),
-                '^=': duplet('', ' ^= '),
-                '&&=': duplet('', ' &&= '),
-                '||=': duplet('', ' ||= '),
-                '=>': duplet('', ' => '),
-                'async=>': duplet('async ', ' => '),
-                'function': triplet('function '),
-                'function*': triplet('function* '),
-                'async': triplet('async function '),
-                'async*': triplet('async function* '),
-                'class': triplet('class '),
-                'if': triplet('if', '', 'else'),
-                '?:': triplet('', ' ? ', ' : '),
-                '.': triplet('[', ']'),
-                'get': triplet('get [', ']'),
-                'set': triplet('set [', ']'),
-                'static': triplet('static [', ']'),
-                '/./': sequence(),
-                '.global': sequence('g'),
-                '.multiline': sequence('m'),
-                '.ignoreCase': sequence('i'),
-                '.source': (input, belt) => [
-                    input.data('/'),
-                    input.data(JSON.stringify(input.text()).slice(1, -1)),
-                    input.data('/'),
-                ],
-                '``': (input, belt) => {
-                    return [
-                        input.data('`'),
-                        ...[].concat(...input.kids.map(kid => {
-                            if (kid.type) {
-                                return [
-                                    kid.data('${'),
-                                    ...kid.list([kid]).hack(belt),
-                                    kid.data('}'),
-                                ];
-                            }
-                            else {
-                                return [
-                                    input.data(JSON.stringify(kid.text()).slice(1, -1)),
-                                ];
-                            }
-                        })),
-                        input.data('`'),
-                    ];
-                },
-                '': (input, belt) => {
-                    if (!input.type)
-                        return [
-                            input.data(JSON.stringify(input.text())),
-                        ];
-                    if (/^[\w$#][\w0-9$]*$/i.test(input.type))
-                        return [
-                            input.data(input.type),
-                        ];
-                    if (input.type === 'NaN' || !Number.isNaN(Number(input.type)))
-                        return [
-                            input.data(input.type)
-                        ];
-                    $.$mol_fail(input.error(`wrong node type`));
-                },
-            }))]);
-    }
-    $.$mol_tree2_js_to_text = $mol_tree2_js_to_text;
-})($ || ($ = {}));
-//text.js.map
-;
-"use strict";
-var $;
-(function ($) {
     function $mol_tree2_text_to_string(text) {
         let res = '';
         function visit(text, prefix, inline) {
@@ -27006,412 +26631,6 @@ var $;
     $.$mol_tree2_text_to_string = $mol_tree2_text_to_string;
 })($ || ($ = {}));
 //string.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-    function $mol_vlq_encode(val) {
-        const sign = val < 0 ? 1 : 0;
-        if (sign)
-            val = -val;
-        let index = sign | ((val & 0b1111) << 1);
-        val >>>= 4;
-        let res = '';
-        while (val) {
-            index |= 1 << 5;
-            res += alphabet[index];
-            if (!val)
-                break;
-            index = val & 0b11111;
-            val >>>= 5;
-        }
-        res += alphabet[index];
-        return res;
-    }
-    $.$mol_vlq_encode = $mol_vlq_encode;
-})($ || ($ = {}));
-//vlq.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_text_to_sourcemap(tree) {
-        let col = 1;
-        let prev_span;
-        let prev_index = 0;
-        let prev_col = 1;
-        let mappings = '';
-        const file_indexes = new Map();
-        const file_sources = new Map();
-        function span2index(span) {
-            if (file_indexes.has(span.uri))
-                return file_indexes.get(span.uri);
-            const index = file_indexes.size;
-            file_indexes.set(span.uri, index);
-            file_sources.set(span.uri, span.source);
-            return index;
-        }
-        function next_line() {
-            mappings += ';';
-            col = 1;
-            prev_col = 1;
-        }
-        function visit(text, prefix, inline) {
-            var _a, _b;
-            function indent() {
-                col += prefix;
-            }
-            if (inline && text.type === 'indent')
-                next_line();
-            if (prev_span !== text.span || col === 1) {
-                const index = span2index(text.span);
-                mappings +=
-                    $.$mol_vlq_encode(col - prev_col) +
-                        $.$mol_vlq_encode(index - prev_index) +
-                        $.$mol_vlq_encode(text.span.row - ((_a = prev_span === null || prev_span === void 0 ? void 0 : prev_span.row) !== null && _a !== void 0 ? _a : 1)) +
-                        $.$mol_vlq_encode(text.span.col - ((_b = prev_span === null || prev_span === void 0 ? void 0 : prev_span.col) !== null && _b !== void 0 ? _b : 1)) +
-                        ',';
-                prev_col = col;
-                prev_span = text.span;
-                prev_index = index;
-            }
-            if (text.type === 'indent') {
-                for (let kid of text.kids) {
-                    visit(kid, prefix + 1, false);
-                }
-                if (inline)
-                    indent();
-            }
-            else if (text.type === 'line') {
-                if (!inline)
-                    indent();
-                for (let kid of text.kids) {
-                    visit(kid, prefix, true);
-                }
-                if (!inline)
-                    next_line();
-            }
-            else {
-                if (!inline)
-                    indent();
-                col += text.text().length;
-                if (!inline)
-                    next_line();
-            }
-        }
-        for (let kid of tree.kids) {
-            visit(kid, 0, false);
-        }
-        const map = {
-            version: 3,
-            sources: [...file_sources.keys()],
-            sourcesContent: [...file_sources.values()],
-            mappings,
-        };
-        return map;
-    }
-    $.$mol_tree2_text_to_sourcemap = $mol_tree2_text_to_sourcemap;
-})($ || ($ = {}));
-//sourcemap.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_text_to_sourcemap_vis(text) {
-        const code = this.$mol_tree2_text_to_string(text);
-        const map = this.$mol_tree2_text_to_sourcemap(text);
-        const uri = [
-            'https://sokra.github.io/source-map-visualization/#base64',
-            btoa(code),
-            btoa(JSON.stringify(map)),
-            ...map.sourcesContent.map(btoa),
-        ].join(',');
-        return uri;
-    }
-    $.$mol_tree2_text_to_sourcemap_vis = $mol_tree2_text_to_sourcemap_vis;
-})($ || ($ = {}));
-//vis.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_span_imprint(tree) {
-        const sources = new Map();
-        const res = tree.clone(tree.hack({
-            '': (input, belt) => {
-                if (!sources.has(input.span.uri)) {
-                    sources.set(input.span.uri, tree.struct(input.span.uri, [
-                        tree.data(input.span.source)
-                    ]));
-                }
-                return [
-                    input.clone([
-                        input.data(input.span.toString()),
-                        ...input.hack(belt),
-                    ]),
-                ];
-            },
-        }));
-        return tree.clone([
-            ...sources.values(),
-            res,
-        ]);
-    }
-    $.$mol_tree2_span_imprint = $mol_tree2_span_imprint;
-})($ || ($ = {}));
-//imprint.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_span_reuse(tree) {
-        const sources = new Map();
-        return tree.clone(tree.hack({
-            '': (input, belt) => {
-                if (input.type) {
-                    sources.set(input.type, input.kids[0].text());
-                    return [];
-                }
-                return input.hack({
-                    '': (input, belt) => {
-                        const kids = input.list(input.kids.slice(1)).hack(belt);
-                        const [_, uri, row, col, length] = /^(.*)#(\d+):(\d+)\/(\d+)$/.exec(input.kids[0].text());
-                        const span = new $.$mol_span(uri, sources.get(uri), Number(row), Number(col), Number(length));
-                        return [
-                            new $.$mol_tree2(input.type, input.value, kids, span),
-                        ];
-                    },
-                });
-            },
-        }));
-    }
-    $.$mol_tree2_span_reuse = $mol_tree2_span_reuse;
-})($ || ($ = {}));
-//reuse.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_bin_to_bytes(tree) {
-        return Uint8Array.from(tree.kids, kid => parseInt(kid.value, 16));
-    }
-    $.$mol_tree2_bin_to_bytes = $mol_tree2_bin_to_bytes;
-    function $mol_tree2_bin_from_bytes(bytes, span) {
-        return $.$mol_tree2.list(Array.from(bytes, code => {
-            return $.$mol_tree2.data(code.toString(16).padStart(2, '0'), [], span);
-        }), span);
-    }
-    $.$mol_tree2_bin_from_bytes = $mol_tree2_bin_from_bytes;
-    function $mol_tree2_bin_from_string(str, span) {
-        return $mol_tree2_bin_from_bytes([...new TextEncoder().encode(str)], span);
-    }
-    $.$mol_tree2_bin_from_string = $mol_tree2_bin_from_string;
-})($ || ($ = {}));
-//bin.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_leb128_encode(val) {
-        const length = Math.max(1, Math.ceil(Math.log2(val) / 7));
-        const bytes = new Uint8Array(length);
-        for (let i = 0; i < bytes.length; ++i) {
-            bytes[i] = ((val >> (7 * i)) & 0xFF) | (1 << 7);
-        }
-        bytes[bytes.length - 1] ^= (1 << 7);
-        return bytes;
-    }
-    $.$mol_leb128_encode = $mol_leb128_encode;
-    function $mol_leb128_decode(bytes) {
-        let val = 0;
-        for (let i = 0; i < bytes.length; ++i) {
-            val |= (bytes[i] & ~(1 << 7)) << (7 * i);
-        }
-        return val;
-    }
-    $.$mol_leb128_decode = $mol_leb128_decode;
-})($ || ($ = {}));
-//leb128.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    let $mol_wasm_section_types;
-    (function ($mol_wasm_section_types) {
-        $mol_wasm_section_types[$mol_wasm_section_types["custom"] = 0] = "custom";
-        $mol_wasm_section_types[$mol_wasm_section_types["type"] = 1] = "type";
-        $mol_wasm_section_types[$mol_wasm_section_types["import"] = 2] = "import";
-        $mol_wasm_section_types[$mol_wasm_section_types["function"] = 3] = "function";
-        $mol_wasm_section_types[$mol_wasm_section_types["table"] = 4] = "table";
-        $mol_wasm_section_types[$mol_wasm_section_types["memory"] = 5] = "memory";
-        $mol_wasm_section_types[$mol_wasm_section_types["global"] = 6] = "global";
-        $mol_wasm_section_types[$mol_wasm_section_types["export"] = 7] = "export";
-        $mol_wasm_section_types[$mol_wasm_section_types["start"] = 8] = "start";
-        $mol_wasm_section_types[$mol_wasm_section_types["element"] = 9] = "element";
-        $mol_wasm_section_types[$mol_wasm_section_types["code"] = 10] = "code";
-        $mol_wasm_section_types[$mol_wasm_section_types["data"] = 11] = "data";
-    })($mol_wasm_section_types = $.$mol_wasm_section_types || ($.$mol_wasm_section_types = {}));
-})($ || ($ = {}));
-//section.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    let $mol_wasm_value_types;
-    (function ($mol_wasm_value_types) {
-        $mol_wasm_value_types[$mol_wasm_value_types["i32"] = 127] = "i32";
-        $mol_wasm_value_types[$mol_wasm_value_types["i64"] = 126] = "i64";
-        $mol_wasm_value_types[$mol_wasm_value_types["f32"] = 125] = "f32";
-        $mol_wasm_value_types[$mol_wasm_value_types["f64"] = 124] = "f64";
-    })($mol_wasm_value_types = $.$mol_wasm_value_types || ($.$mol_wasm_value_types = {}));
-})($ || ($ = {}));
-//value.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    let $mol_wasm_import_types;
-    (function ($mol_wasm_import_types) {
-        $mol_wasm_import_types[$mol_wasm_import_types["func"] = 0] = "func";
-        $mol_wasm_import_types[$mol_wasm_import_types["table"] = 1] = "table";
-        $mol_wasm_import_types[$mol_wasm_import_types["mem"] = 2] = "mem";
-        $mol_wasm_import_types[$mol_wasm_import_types["global"] = 3] = "global";
-    })($mol_wasm_import_types = $.$mol_wasm_import_types || ($.$mol_wasm_import_types = {}));
-})($ || ($ = {}));
-//import.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_tree2_wasm_to_bin(code) {
-        const bytes = (bytes, span) => $.$mol_tree2_bin_from_bytes(bytes, span).kids;
-        const int = (int, span) => bytes($.$mol_leb128_encode(int), span);
-        const dyn = (items, span) => [...int(items.length, span), ...items];
-        const str = (str, span) => dyn($.$mol_tree2_bin_from_string(str, span).kids, span);
-        const array_prolog = (input, span = input.span) => int(input.kids.length, span);
-        const pending = (input) => $.$mol_fail(input.error('pending to impement'));
-        const prolog = this.$mol_tree2_from_string(`
-			\\00
-			\\61
-			\\73
-			\\6D
-			\\01
-			\\00
-			\\00
-			\\00
-		`, '$mol_tree2_wasm_to_bin_prolog');
-        const body = [];
-        const types_mapping = new Map();
-        customs: {
-            const customs = code.select('custom');
-            for (const custom of customs.kids) {
-                const name = custom.kids[0];
-                const section = [];
-                section.push(...str(name.type, name.span));
-                body.push(...bytes([$.$mol_wasm_section_types.custom], custom.span));
-                body.push(...dyn(section, custom.span));
-            }
-        }
-        types: {
-            const types = code.select('type');
-            if (types.kids.length === 0)
-                break types;
-            const section = [];
-            for (const type of types.kids) {
-                section.push(...bytes([0x60], type.span));
-                const name = type.kids[0];
-                types_mapping.set(name.type, types_mapping.size);
-                const params = name.select('=>', '');
-                section.push(...array_prolog(params));
-                for (const param of params.kids) {
-                    section.push(...bytes([$.$mol_wasm_value_types[param.type]], param.span));
-                }
-                const results = name.select('<=', '');
-                section.push(...array_prolog(results));
-                for (const result of results.kids) {
-                    section.push(...bytes([$.$mol_wasm_value_types[result.type]], result.span));
-                }
-            }
-            body.push(...bytes([$.$mol_wasm_section_types.type], prolog.span), ...dyn([
-                ...array_prolog(types, prolog.span),
-                ...section,
-            ], prolog.span));
-        }
-        imports: {
-            const imports = code.select('import');
-            if (imports.kids.length === 0)
-                break imports;
-            const section = [];
-            for (const import_ of imports.kids) {
-                const path = import_.kids[0];
-                const kind = path.kids[0];
-                for (const name of path.type.split('.')) {
-                    section.push(...str(name, path.span));
-                }
-                if (kind.type === 'func') {
-                    const name = kind.kids[0];
-                    const index = types_mapping.get(name.type);
-                    if (index === undefined)
-                        this.$mol_fail(name.error('unknown type'));
-                    section.push(...bytes([$.$mol_wasm_import_types.func], kind.span), ...int(index, name.span));
-                }
-            }
-            body.push(...bytes([$.$mol_wasm_section_types.import], prolog.span), ...dyn([
-                ...array_prolog(imports, prolog.span),
-                ...section,
-            ], prolog.span));
-        }
-        return code.list([
-            ...prolog.kids,
-            ...body,
-        ]);
-    }
-    $.$mol_tree2_wasm_to_bin = $mol_tree2_wasm_to_bin;
-})($ || ($ = {}));
-//bin.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wasm_instance extends $.$mol_object2 {
-        constructor(module, imports) {
-            super();
-            this.module = module;
-            this.imports = imports;
-            this.native = new WebAssembly.Instance(module, imports);
-        }
-        memory(offset, length) {
-            const memory = this.native['exports'].memory;
-            return new Uint8Array(memory.buffer, offset, length);
-        }
-        string(offset, length, encoding = 'utf-8') {
-            return new TextDecoder(encoding).decode(this.memory(offset, length));
-        }
-        get(name) {
-            return this.native.exports[name];
-        }
-    }
-    $.$mol_wasm_instance = $mol_wasm_instance;
-})($ || ($ = {}));
-//instance.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wasm_module extends $.$mol_object2 {
-        constructor(buffer) {
-            super();
-            this.buffer = buffer;
-            this.native = new WebAssembly.Module(buffer);
-        }
-        instance(imports) {
-            return new $.$mol_wasm_instance(this.native, imports);
-        }
-    }
-    $.$mol_wasm_module = $mol_wasm_module;
-})($ || ($ = {}));
-//module.js.map
 ;
 "use strict";
 var $;
@@ -27962,6 +27181,787 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_tree2_to_string(tree) {
+        let output = [];
+        function dump(tree, prefix = '') {
+            if (tree.type.length) {
+                if (!prefix.length) {
+                    prefix = "\t";
+                }
+                output.push(tree.type);
+                if (tree.kids.length == 1) {
+                    output.push(' ');
+                    dump(tree.kids[0], prefix);
+                    return;
+                }
+                output.push("\n");
+            }
+            else if (tree.value.length || prefix.length) {
+                output.push("\\" + tree.value + "\n");
+            }
+            for (const kid of tree.kids) {
+                output.push(prefix);
+                dump(kid, prefix + "\t");
+            }
+        }
+        dump(tree);
+        return output.join('');
+    }
+    $.$mol_tree2_to_string = $mol_tree2_to_string;
+})($ || ($ = {}));
+//string.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_from_json(json, span = $.$mol_span.unknown) {
+        if (typeof json === 'boolean' || typeof json === 'number' || json === null) {
+            return new $.$mol_tree2(String(json), '', [], span);
+        }
+        if (typeof json === 'string') {
+            return $.$mol_tree2.data(json, [], span);
+        }
+        if (Array.isArray(json)) {
+            const sub = json.map(json => $mol_tree2_from_json(json, span));
+            return new $.$mol_tree2('/', '', sub, span);
+        }
+        if (json instanceof Date) {
+            return new $.$mol_tree2('', json.toISOString(), [], span);
+        }
+        if (typeof json.toJSON === 'function') {
+            return $mol_tree2_from_json(json.toJSON());
+        }
+        if (json instanceof Error) {
+            const { name, message, stack } = json;
+            json = Object.assign(Object.assign({}, json), { name, message, stack });
+        }
+        const sub = [];
+        for (var key in json) {
+            const val = json[key];
+            if (val === undefined)
+                continue;
+            const subsub = $mol_tree2_from_json(val, span);
+            if (/^[^\n\t\\ ]+$/.test(key)) {
+                sub.push(new $.$mol_tree2(key, '', [subsub], span));
+            }
+            else {
+                sub.push($.$mol_tree2.data(key, [subsub], span));
+            }
+        }
+        return new $.$mol_tree2('*', '', sub, span);
+    }
+    $.$mol_tree2_from_json = $mol_tree2_from_json;
+})($ || ($ = {}));
+//json.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    const keywords = new Set([
+        '',
+        '.byte',
+        '.sequence',
+        '.set_of',
+        '.optional',
+        '.list_of',
+        '.any_of',
+        '.except',
+        '.with_delimiter',
+    ]);
+    function $mol_tree2_grammar_check(grammar) {
+        function visit(node) {
+            check: {
+                if (keywords.has(node.type))
+                    break check;
+                if (grammar.select(node.type).kids.length)
+                    break check;
+                $.$mol_fail(node.error(`wrong pattern name`));
+            }
+            for (const kid of node.kids) {
+                visit(kid);
+            }
+        }
+        visit(grammar);
+        return grammar;
+    }
+    $.$mol_tree2_grammar_check = $mol_tree2_grammar_check;
+})($ || ($ = {}));
+//check.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    const mapping = {
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        '&': '&amp;',
+    };
+    function $mol_html_encode(text) {
+        return text.replace(/[&<">]/gi, str => mapping[str]);
+    }
+    $.$mol_html_encode = $mol_html_encode;
+})($ || ($ = {}));
+//encode.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function attrs_belt(separator) {
+        return {
+            '': (input) => [
+                input.data(' '),
+                input.data($.$mol_html_encode(input.type)),
+                ...input.value ? [
+                    input.data('"'),
+                    input.data($.$mol_html_encode(input.value)),
+                    input.data('"'),
+                ] : [],
+                ...input.hack({
+                    '': (input) => {
+                        if (!input.type)
+                            return [
+                                input.data(separator),
+                                input.data('"'),
+                                input.data($.$mol_html_encode(input.text())),
+                                input.data('"'),
+                            ];
+                        $.$mol_fail(input.error('Wrong attribute value'));
+                    },
+                }),
+            ],
+        };
+    }
+    function $mol_tree2_xml_to_text(xml) {
+        return xml.list(xml.hack({
+            '@': (input, belt) => [],
+            '--': (input, belt) => [
+                xml.struct('line', [
+                    input.data('<!-- '),
+                    ...input.hack(belt),
+                    input.data(' -->'),
+                ]),
+            ],
+            '?': (input, belt) => [
+                xml.struct('line', [
+                    input.data('<?'),
+                    input.kids[0].data(input.kids[0].type),
+                    ...input.kids[0].hack(attrs_belt('=')),
+                    input.data('?>'),
+                ]),
+            ],
+            '!': (input, belt) => [
+                xml.struct('line', [
+                    input.data('<!'),
+                    input.kids[0].data(input.kids[0].type),
+                    ...input.kids[0].hack(attrs_belt(' ')),
+                    input.data('>'),
+                ]),
+            ],
+            '': (input, belt) => {
+                if (!input.type)
+                    return [
+                        input.data($.$mol_html_encode(input.text())),
+                    ];
+                const attrs = input.select('@', '').hack(attrs_belt('='));
+                const content = input.hack(belt);
+                return [
+                    input.struct('line', [
+                        input.data(`<`),
+                        input.data(input.type),
+                        ...attrs,
+                        ...content.length ? [
+                            input.data(`>`),
+                            input.struct('indent', content),
+                            input.data(`</`),
+                            input.data(input.type),
+                            input.data(`>`),
+                        ] : [
+                            input.data(` />`),
+                        ]
+                    ]),
+                ];
+            },
+        }));
+    }
+    $.$mol_tree2_xml_to_text = $mol_tree2_xml_to_text;
+})($ || ($ = {}));
+//text.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_js_to_text(js) {
+        function sequence(open, separator, close) {
+            return (input, belt) => [
+                ...open ? [input.data(open)] : [],
+                input.struct(separator && input.kids.length > 1 ? 'indent' : 'line', [].concat(...input.kids.map((kid, index) => [
+                    kid.struct('line', [
+                        ...kid.list([kid]).hack(belt),
+                        ...(separator && index < input.kids.length - 1) ? [kid.data(separator)] : [],
+                    ]),
+                ]))),
+                ...close ? [input.data(close)] : [],
+            ];
+        }
+        function duplet(open, separator, close) {
+            return (input, belt) => [
+                ...open ? [input.data(open)] : [],
+                ...input.list(input.kids.slice(0, 1)).hack(belt),
+                ...(separator && input.kids.length > 1) ? [input.data(separator)] : [],
+                ...input.list(input.kids.slice(1, 2)).hack(belt),
+                ...close ? [input.data(close)] : [],
+            ];
+        }
+        function triplet(open, separator12, separator23, close) {
+            return (input, belt) => [
+                ...open ? [input.data(open)] : [],
+                ...input.list(input.kids.slice(0, 1)).hack(belt),
+                ...(separator12 && input.kids.length > 1) ? [input.data(separator12)] : [],
+                ...input.list(input.kids.slice(1, 2)).hack(belt),
+                ...(separator23 && input.kids.length > 2) ? [input.data(separator23)] : [],
+                ...input.list(input.kids.slice(2, 3)).hack(belt),
+                ...close ? [input.data(close)] : [],
+            ];
+        }
+        return js.list([js.struct('line', js.hack({
+                '+': sequence('+'),
+                '-': sequence('-'),
+                '!': sequence('!'),
+                '~': sequence('~'),
+                'return': sequence('return '),
+                'break': sequence('break '),
+                'continue': sequence('continue '),
+                'yield': sequence('yield '),
+                'yield*': sequence('yield* '),
+                'await': sequence('await '),
+                'void': sequence('void '),
+                'delete': sequence('delete '),
+                'typeof': sequence('typeof '),
+                'new': sequence('new '),
+                '...': sequence('...'),
+                '@++': sequence('', '', '++'),
+                '@--': sequence('', '', '--'),
+                '(in)': sequence('(', ' in ', ')'),
+                '(instanceof)': sequence('(', ' instanceof ', ')'),
+                '(+)': sequence('(', ' + ', ')'),
+                '(-)': sequence('(', ' - ', ')'),
+                '(*)': sequence('(', ' * ', ')'),
+                '(/)': sequence('(', ' / ', ')'),
+                '(%)': sequence('(', ' % ', ')'),
+                '(**)': sequence('(', ' ** ', ')'),
+                '(<)': sequence('(', ' < ', ')'),
+                '(<=)': sequence('(', ' <= ', ')'),
+                '(>)': sequence('(', ' > ', ')'),
+                '(>=)': sequence('(', ' >= ', ')'),
+                '(==)': sequence('(', ' == ', ')'),
+                '(===)': sequence('(', ' === ', ')'),
+                '(<<)': sequence('(', ' << ', ')'),
+                '(>>)': sequence('(', ' >> ', ')'),
+                '(>>>)': sequence('(', ' >>> ', ')'),
+                '(&)': sequence('(', ' & ', ')'),
+                '(|)': sequence('(', ' | ', ')'),
+                '(^)': sequence('(', ' ^ ', ')'),
+                '(&&)': sequence('(', ' && ', ')'),
+                '(||)': sequence('(', ' || ', ')'),
+                '(,)': sequence('(', ',', ')'),
+                '{;}': sequence('{', ';', '}'),
+                '[,]': sequence('[', ',', ']'),
+                '{,}': sequence('{', ',', '}'),
+                ':': duplet('[', ']: '),
+                '()': sequence('(', '', ')'),
+                '[]': sequence('[', '', ']'),
+                '{}': sequence('{', '', '}'),
+                'let': duplet('let ', ' = '),
+                'const': duplet('const ', ' = '),
+                'var': duplet('var ', ' = '),
+                '=': duplet('', ' = '),
+                '+=': duplet('', ' += '),
+                '-=': duplet('', ' -= '),
+                '*=': duplet('', ' *= '),
+                '/=': duplet('', ' /= '),
+                '%=': duplet('', ' %= '),
+                '**=': duplet('', ' **= '),
+                '<<=': duplet('', ' <<= '),
+                '>>=': duplet('', ' >>= '),
+                '>>>=': duplet('', ' >>>= '),
+                '&=': duplet('', ' &= '),
+                '|=': duplet('', ' |= '),
+                '^=': duplet('', ' ^= '),
+                '&&=': duplet('', ' &&= '),
+                '||=': duplet('', ' ||= '),
+                '=>': duplet('', ' => '),
+                'async=>': duplet('async ', ' => '),
+                'function': triplet('function '),
+                'function*': triplet('function* '),
+                'async': triplet('async function '),
+                'async*': triplet('async function* '),
+                'class': triplet('class '),
+                'if': triplet('if', '', 'else'),
+                '?:': triplet('', ' ? ', ' : '),
+                '.': triplet('[', ']'),
+                'get': triplet('get [', ']'),
+                'set': triplet('set [', ']'),
+                'static': triplet('static [', ']'),
+                '/./': sequence(),
+                '.global': sequence('g'),
+                '.multiline': sequence('m'),
+                '.ignoreCase': sequence('i'),
+                '.source': (input, belt) => [
+                    input.data('/'),
+                    input.data(JSON.stringify(input.text()).slice(1, -1)),
+                    input.data('/'),
+                ],
+                '``': (input, belt) => {
+                    return [
+                        input.data('`'),
+                        ...[].concat(...input.kids.map(kid => {
+                            if (kid.type) {
+                                return [
+                                    kid.data('${'),
+                                    ...kid.list([kid]).hack(belt),
+                                    kid.data('}'),
+                                ];
+                            }
+                            else {
+                                return [
+                                    input.data(JSON.stringify(kid.text()).slice(1, -1)),
+                                ];
+                            }
+                        })),
+                        input.data('`'),
+                    ];
+                },
+                '': (input, belt) => {
+                    if (!input.type)
+                        return [
+                            input.data(JSON.stringify(input.text())),
+                        ];
+                    if (/^[\w$#][\w0-9$]*$/i.test(input.type))
+                        return [
+                            input.data(input.type),
+                        ];
+                    if (input.type === 'NaN' || !Number.isNaN(Number(input.type)))
+                        return [
+                            input.data(input.type)
+                        ];
+                    $.$mol_fail(input.error(`wrong node type`));
+                },
+            }))]);
+    }
+    $.$mol_tree2_js_to_text = $mol_tree2_js_to_text;
+})($ || ($ = {}));
+//text.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    function $mol_vlq_encode(val) {
+        const sign = val < 0 ? 1 : 0;
+        if (sign)
+            val = -val;
+        let index = sign | ((val & 0b1111) << 1);
+        val >>>= 4;
+        let res = '';
+        while (val) {
+            index |= 1 << 5;
+            res += alphabet[index];
+            if (!val)
+                break;
+            index = val & 0b11111;
+            val >>>= 5;
+        }
+        res += alphabet[index];
+        return res;
+    }
+    $.$mol_vlq_encode = $mol_vlq_encode;
+})($ || ($ = {}));
+//vlq.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_text_to_sourcemap(tree) {
+        let col = 1;
+        let prev_span;
+        let prev_index = 0;
+        let prev_col = 1;
+        let mappings = '';
+        const file_indexes = new Map();
+        const file_sources = new Map();
+        function span2index(span) {
+            if (file_indexes.has(span.uri))
+                return file_indexes.get(span.uri);
+            const index = file_indexes.size;
+            file_indexes.set(span.uri, index);
+            file_sources.set(span.uri, span.source);
+            return index;
+        }
+        function next_line() {
+            mappings += ';';
+            col = 1;
+            prev_col = 1;
+        }
+        function visit(text, prefix, inline) {
+            var _a, _b;
+            function indent() {
+                col += prefix;
+            }
+            if (inline && text.type === 'indent')
+                next_line();
+            if (prev_span !== text.span || col === 1) {
+                const index = span2index(text.span);
+                mappings +=
+                    $.$mol_vlq_encode(col - prev_col) +
+                        $.$mol_vlq_encode(index - prev_index) +
+                        $.$mol_vlq_encode(text.span.row - ((_a = prev_span === null || prev_span === void 0 ? void 0 : prev_span.row) !== null && _a !== void 0 ? _a : 1)) +
+                        $.$mol_vlq_encode(text.span.col - ((_b = prev_span === null || prev_span === void 0 ? void 0 : prev_span.col) !== null && _b !== void 0 ? _b : 1)) +
+                        ',';
+                prev_col = col;
+                prev_span = text.span;
+                prev_index = index;
+            }
+            if (text.type === 'indent') {
+                for (let kid of text.kids) {
+                    visit(kid, prefix + 1, false);
+                }
+                if (inline)
+                    indent();
+            }
+            else if (text.type === 'line') {
+                if (!inline)
+                    indent();
+                for (let kid of text.kids) {
+                    visit(kid, prefix, true);
+                }
+                if (!inline)
+                    next_line();
+            }
+            else {
+                if (!inline)
+                    indent();
+                col += text.text().length;
+                if (!inline)
+                    next_line();
+            }
+        }
+        for (let kid of tree.kids) {
+            visit(kid, 0, false);
+        }
+        const map = {
+            version: 3,
+            sources: [...file_sources.keys()],
+            sourcesContent: [...file_sources.values()],
+            mappings,
+        };
+        return map;
+    }
+    $.$mol_tree2_text_to_sourcemap = $mol_tree2_text_to_sourcemap;
+})($ || ($ = {}));
+//sourcemap.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_text_to_sourcemap_vis(text) {
+        const code = this.$mol_tree2_text_to_string(text);
+        const map = this.$mol_tree2_text_to_sourcemap(text);
+        const uri = [
+            'https://sokra.github.io/source-map-visualization/#base64',
+            btoa(code),
+            btoa(JSON.stringify(map)),
+            ...map.sourcesContent.map(btoa),
+        ].join(',');
+        return uri;
+    }
+    $.$mol_tree2_text_to_sourcemap_vis = $mol_tree2_text_to_sourcemap_vis;
+})($ || ($ = {}));
+//vis.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_span_imprint(tree) {
+        const sources = new Map();
+        const res = tree.clone(tree.hack({
+            '': (input, belt) => {
+                if (!sources.has(input.span.uri)) {
+                    sources.set(input.span.uri, tree.struct(input.span.uri, [
+                        tree.data(input.span.source)
+                    ]));
+                }
+                return [
+                    input.clone([
+                        input.data(input.span.toString()),
+                        ...input.hack(belt),
+                    ]),
+                ];
+            },
+        }));
+        return tree.clone([
+            ...sources.values(),
+            res,
+        ]);
+    }
+    $.$mol_tree2_span_imprint = $mol_tree2_span_imprint;
+})($ || ($ = {}));
+//imprint.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_span_reuse(tree) {
+        const sources = new Map();
+        return tree.clone(tree.hack({
+            '': (input, belt) => {
+                if (input.type) {
+                    sources.set(input.type, input.kids[0].text());
+                    return [];
+                }
+                return input.hack({
+                    '': (input, belt) => {
+                        const kids = input.list(input.kids.slice(1)).hack(belt);
+                        const [_, uri, row, col, length] = /^(.*)#(\d+):(\d+)\/(\d+)$/.exec(input.kids[0].text());
+                        const span = new $.$mol_span(uri, sources.get(uri), Number(row), Number(col), Number(length));
+                        return [
+                            new $.$mol_tree2(input.type, input.value, kids, span),
+                        ];
+                    },
+                });
+            },
+        }));
+    }
+    $.$mol_tree2_span_reuse = $mol_tree2_span_reuse;
+})($ || ($ = {}));
+//reuse.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_bin_to_bytes(tree) {
+        return Uint8Array.from(tree.kids, kid => parseInt(kid.value, 16));
+    }
+    $.$mol_tree2_bin_to_bytes = $mol_tree2_bin_to_bytes;
+    function $mol_tree2_bin_from_bytes(bytes, span) {
+        return $.$mol_tree2.list(Array.from(bytes, code => {
+            return $.$mol_tree2.data(code.toString(16).padStart(2, '0'), [], span);
+        }), span);
+    }
+    $.$mol_tree2_bin_from_bytes = $mol_tree2_bin_from_bytes;
+    function $mol_tree2_bin_from_string(str, span) {
+        return $mol_tree2_bin_from_bytes([...new TextEncoder().encode(str)], span);
+    }
+    $.$mol_tree2_bin_from_string = $mol_tree2_bin_from_string;
+})($ || ($ = {}));
+//bin.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_leb128_encode(val) {
+        const length = Math.max(1, Math.ceil(Math.log2(val) / 7));
+        const bytes = new Uint8Array(length);
+        for (let i = 0; i < bytes.length; ++i) {
+            bytes[i] = ((val >> (7 * i)) & 0xFF) | (1 << 7);
+        }
+        bytes[bytes.length - 1] ^= (1 << 7);
+        return bytes;
+    }
+    $.$mol_leb128_encode = $mol_leb128_encode;
+    function $mol_leb128_decode(bytes) {
+        let val = 0;
+        for (let i = 0; i < bytes.length; ++i) {
+            val |= (bytes[i] & ~(1 << 7)) << (7 * i);
+        }
+        return val;
+    }
+    $.$mol_leb128_decode = $mol_leb128_decode;
+})($ || ($ = {}));
+//leb128.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    let $mol_wasm_section_types;
+    (function ($mol_wasm_section_types) {
+        $mol_wasm_section_types[$mol_wasm_section_types["custom"] = 0] = "custom";
+        $mol_wasm_section_types[$mol_wasm_section_types["type"] = 1] = "type";
+        $mol_wasm_section_types[$mol_wasm_section_types["import"] = 2] = "import";
+        $mol_wasm_section_types[$mol_wasm_section_types["function"] = 3] = "function";
+        $mol_wasm_section_types[$mol_wasm_section_types["table"] = 4] = "table";
+        $mol_wasm_section_types[$mol_wasm_section_types["memory"] = 5] = "memory";
+        $mol_wasm_section_types[$mol_wasm_section_types["global"] = 6] = "global";
+        $mol_wasm_section_types[$mol_wasm_section_types["export"] = 7] = "export";
+        $mol_wasm_section_types[$mol_wasm_section_types["start"] = 8] = "start";
+        $mol_wasm_section_types[$mol_wasm_section_types["element"] = 9] = "element";
+        $mol_wasm_section_types[$mol_wasm_section_types["code"] = 10] = "code";
+        $mol_wasm_section_types[$mol_wasm_section_types["data"] = 11] = "data";
+    })($mol_wasm_section_types = $.$mol_wasm_section_types || ($.$mol_wasm_section_types = {}));
+})($ || ($ = {}));
+//section.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    let $mol_wasm_value_types;
+    (function ($mol_wasm_value_types) {
+        $mol_wasm_value_types[$mol_wasm_value_types["i32"] = 127] = "i32";
+        $mol_wasm_value_types[$mol_wasm_value_types["i64"] = 126] = "i64";
+        $mol_wasm_value_types[$mol_wasm_value_types["f32"] = 125] = "f32";
+        $mol_wasm_value_types[$mol_wasm_value_types["f64"] = 124] = "f64";
+    })($mol_wasm_value_types = $.$mol_wasm_value_types || ($.$mol_wasm_value_types = {}));
+})($ || ($ = {}));
+//value.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    let $mol_wasm_import_types;
+    (function ($mol_wasm_import_types) {
+        $mol_wasm_import_types[$mol_wasm_import_types["func"] = 0] = "func";
+        $mol_wasm_import_types[$mol_wasm_import_types["table"] = 1] = "table";
+        $mol_wasm_import_types[$mol_wasm_import_types["mem"] = 2] = "mem";
+        $mol_wasm_import_types[$mol_wasm_import_types["global"] = 3] = "global";
+    })($mol_wasm_import_types = $.$mol_wasm_import_types || ($.$mol_wasm_import_types = {}));
+})($ || ($ = {}));
+//import.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_wasm_to_bin(code) {
+        const bytes = (bytes, span) => $.$mol_tree2_bin_from_bytes(bytes, span).kids;
+        const int = (int, span) => bytes($.$mol_leb128_encode(int), span);
+        const dyn = (items, span) => [...int(items.length, span), ...items];
+        const str = (str, span) => dyn($.$mol_tree2_bin_from_string(str, span).kids, span);
+        const array_prolog = (input, span = input.span) => int(input.kids.length, span);
+        const pending = (input) => $.$mol_fail(input.error('pending to impement'));
+        const prolog = this.$mol_tree2_from_string(`
+			\\00
+			\\61
+			\\73
+			\\6D
+			\\01
+			\\00
+			\\00
+			\\00
+		`, '$mol_tree2_wasm_to_bin_prolog');
+        const body = [];
+        const types_mapping = new Map();
+        customs: {
+            const customs = code.select('custom');
+            for (const custom of customs.kids) {
+                const name = custom.kids[0];
+                const section = [];
+                section.push(...str(name.type, name.span));
+                body.push(...bytes([$.$mol_wasm_section_types.custom], custom.span));
+                body.push(...dyn(section, custom.span));
+            }
+        }
+        types: {
+            const types = code.select('type');
+            if (types.kids.length === 0)
+                break types;
+            const section = [];
+            for (const type of types.kids) {
+                section.push(...bytes([0x60], type.span));
+                const name = type.kids[0];
+                types_mapping.set(name.type, types_mapping.size);
+                const params = name.select('=>', '');
+                section.push(...array_prolog(params));
+                for (const param of params.kids) {
+                    section.push(...bytes([$.$mol_wasm_value_types[param.type]], param.span));
+                }
+                const results = name.select('<=', '');
+                section.push(...array_prolog(results));
+                for (const result of results.kids) {
+                    section.push(...bytes([$.$mol_wasm_value_types[result.type]], result.span));
+                }
+            }
+            body.push(...bytes([$.$mol_wasm_section_types.type], prolog.span), ...dyn([
+                ...array_prolog(types, prolog.span),
+                ...section,
+            ], prolog.span));
+        }
+        imports: {
+            const imports = code.select('import');
+            if (imports.kids.length === 0)
+                break imports;
+            const section = [];
+            for (const import_ of imports.kids) {
+                const path = import_.kids[0];
+                const kind = path.kids[0];
+                for (const name of path.type.split('.')) {
+                    section.push(...str(name, path.span));
+                }
+                if (kind.type === 'func') {
+                    const name = kind.kids[0];
+                    const index = types_mapping.get(name.type);
+                    if (index === undefined)
+                        this.$mol_fail(name.error('unknown type'));
+                    section.push(...bytes([$.$mol_wasm_import_types.func], kind.span), ...int(index, name.span));
+                }
+            }
+            body.push(...bytes([$.$mol_wasm_section_types.import], prolog.span), ...dyn([
+                ...array_prolog(imports, prolog.span),
+                ...section,
+            ], prolog.span));
+        }
+        return code.list([
+            ...prolog.kids,
+            ...body,
+        ]);
+    }
+    $.$mol_tree2_wasm_to_bin = $mol_tree2_wasm_to_bin;
+})($ || ($ = {}));
+//bin.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wasm_instance extends $.$mol_object2 {
+        constructor(module, imports) {
+            super();
+            this.module = module;
+            this.imports = imports;
+            this.native = new WebAssembly.Instance(module, imports);
+        }
+        memory(offset, length) {
+            const memory = this.native['exports'].memory;
+            return new Uint8Array(memory.buffer, offset, length);
+        }
+        string(offset, length, encoding = 'utf-8') {
+            return new TextDecoder(encoding).decode(this.memory(offset, length));
+        }
+        get(name) {
+            return this.native.exports[name];
+        }
+    }
+    $.$mol_wasm_instance = $mol_wasm_instance;
+})($ || ($ = {}));
+//instance.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wasm_module extends $.$mol_object2 {
+        constructor(buffer) {
+            super();
+            this.buffer = buffer;
+            this.native = new WebAssembly.Module(buffer);
+        }
+        instance(imports) {
+            return new $.$mol_wasm_instance(this.native, imports);
+        }
+    }
+    $.$mol_wasm_module = $mol_wasm_module;
+})($ || ($ = {}));
+//module.js.map
+;
+"use strict";
+var $;
+(function ($) {
     const { optional, slash_back, byte, byte_except, repeat } = $.$mol_regexp;
     $.$hyoo_marked_line_content = repeat(byte, 1);
     const uri = repeat(byte_except(slash_back));
@@ -28391,6 +28391,11 @@ var $;
                 this.Theme()
             ];
         }
+        pipeline(val) {
+            if (val !== undefined)
+                return val;
+            return [];
+        }
         Placeholder() {
             return null;
         }
@@ -28403,6 +28408,7 @@ var $;
         Result(index) {
             const obj = new this.$.$mol_page();
             obj.Title = () => null;
+            obj.title = () => this.transform(index);
             obj.head = () => this.result_head(index);
             obj.body = () => [
                 this.Result_text(index)
@@ -28594,6 +28600,9 @@ var $;
             return obj;
         }
     }
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "pipeline", null);
     __decorate([
         $.$mol_mem_key
     ], $hyoo_tree.prototype, "Result", null);
@@ -30181,8 +30190,25 @@ var $;
             const obj = new this.$.$mol_app_demo();
             return obj;
         }
+        tree_pipeline(val) {
+            if (val !== undefined)
+                return val;
+            return [
+                "$mol_tree2_from_string",
+                "$mol_view_tree2_to_text",
+                "$mol_tree2_text_to_string"
+            ];
+        }
+        tree_source(val) {
+            if (val !== undefined)
+                return val;
+            return "$hyoo_mol_example $mol_page\n\ttitle \\Example\n\tparams * foo <= changable?val /string\n\tbody /\n\t\t<= Select $hyoo_mol_example_selector\n\t\t\tempty @ \\No content\n\t\t\tvalue?val <=> info_value?val NaN\n\t\t\tkids <= info_kids /$mol_view_content\n";
+        }
         View_tree_app() {
             const obj = new this.$.$hyoo_tree();
+            obj.Presets = () => null;
+            obj.pipeline = (val) => this.tree_pipeline(val);
+            obj.source = (val) => this.tree_source(val);
             return obj;
         }
         Articles_app() {
@@ -30244,6 +30270,12 @@ var $;
     ], $hyoo_mol.prototype, "Components_app", null);
     __decorate([
         $.$mol_mem
+    ], $hyoo_mol.prototype, "tree_pipeline", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_mol.prototype, "tree_source", null);
+    __decorate([
+        $.$mol_mem
     ], $hyoo_mol.prototype, "View_tree_app", null);
     __decorate([
         $.$mol_mem
@@ -30261,7 +30293,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("hyoo/mol/mol.view.css", "[hyoo_mol_menu] {\n\tflex: 0 0 15rem;\n}\n\n[hyoo_mol_menu_body] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: .75rem;\n}\n\n[hyoo_mol_slides_app] {\n\tflex: 1000 0 80rem;\n}\n\n[hyoo_mol_view_tree_app] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_mol_icons_app] {\n\tflex: 1000 0 40rem;\n}\n");
+    $.$mol_style_attach("hyoo/mol/mol.view.css", "[hyoo_mol_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_mol_menu_body] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_mol_slides_app] {\n\tflex: 1000 0 80rem;\n}\n\n[hyoo_mol_view_tree_app] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_mol_icons_app] {\n\tflex: 1000 0 40rem;\n}\n");
 })($ || ($ = {}));
 //mol.view.css.js.map
 ;

@@ -2977,6 +2977,7 @@ $mol_app_demo_nav $mol_grid
 $hyoo_tree $mol_book2
 	plugins /
 		<= Theme $mol_theme_auto
+	pipeline?val /string
 	Placeholder null
 	pages /
 		<= Presets $mol_page
@@ -3023,6 +3024,7 @@ $hyoo_tree $mol_book2
 					hint <= source_hint @ \view.tree source
 	Result!index $mol_page
 		Title null
+		title <= transform!index
 		head <= result_head!index /
 			<= Transform!index $mol_select
 				hint @ \Search transform..
@@ -3287,7 +3289,7 @@ $hyoo_mol $mol_book2
 				title <= components_title @ \Components
 				arg * app \components
 			<= View_tree_link $mol_link
-				title <= view_tree_title @ \View.Tree
+				title <= view_tree_title @ \View.Tree Sandbox
 				arg * app \view.tree
 			<= Articles_link $mol_link
 				title <= articles_title @ \Articles
@@ -3304,6 +3306,21 @@ $hyoo_mol $mol_book2
 	pages /
 		<= Components_app $mol_app_demo
 		<= View_tree_app $hyoo_tree
+			Presets null
+			pipeline?val <=> tree_pipeline?val /
+				\$mol_tree2_from_string
+				\$mol_view_tree2_to_text
+				\$mol_tree2_text_to_string
+			source?val <=> tree_source?val \
+				\$hyoo_mol_example $mol_page
+				\	title \Example
+				\	params * foo <= changable?val /string
+				\	body /
+				\		<= Select $hyoo_mol_example_selector
+				\			empty @ \No content
+				\			value?val <=> info_value?val NaN
+				\			kids <= info_kids /$mol_view_content
+				\
 		<= Articles_app $hyoo_habhub
 			menu_title <= articles_title
 			tools_root / <= Close_app
