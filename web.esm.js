@@ -30471,7 +30471,8 @@ var $;
             const obj = new this.$.$mol_link();
             obj.title = () => this.apps_title();
             obj.arg = () => ({
-                section: "apps"
+                section: "apps",
+                app: null
             });
             return obj;
         }
