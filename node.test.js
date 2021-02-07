@@ -29600,9 +29600,6 @@ var $;
 var $;
 (function ($) {
     class $hyoo_slides extends $.$mol_view {
-        uri_slides_default() {
-            return "https://nin-jin.github.io/slides/slides/";
-        }
         attr() {
             return Object.assign(Object.assign({}, super.attr()), { hyoo_slides_role: this.role() });
         }
@@ -29613,6 +29610,36 @@ var $;
             if (val !== undefined)
                 return val;
             return "";
+        }
+        Menu() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "Slides";
+            obj.tools = () => this.menu_tools();
+            obj.body = () => [
+                this.Menu_items()
+            ];
+            return obj;
+        }
+        Menu_item(id) {
+            const obj = new this.$.$mol_link();
+            obj.title = () => this.menu_item_title(id);
+            obj.arg = () => ({
+                slides: this.menu_item_uri(id)
+            });
+            return obj;
+        }
+        menu_options() {
+            return {
+                "https://nin-jin.github.io/slides/slides/": "Презентация приложения для проведения презентаций",
+                "https://nin-jin.github.io/slides/fibers/": "Квантовая механика вычисления на JS",
+                "https://nin-jin.github.io/slides/mol/": "$mol - лучшее средство от геморроя",
+                "https://nin-jin.github.io/slides/orp/": "Объектное Реактивное Программирование",
+                "https://nin-jin.github.io/slides/tree/": "Tree - единый AST чтобы править всеми",
+                "https://nin-jin.github.io/slides/virt/": "Автоматическая виртуализация рендеринга произвольной вёрстки",
+                "https://nin-jin.github.io/slides/css-in-ts/": "Продвинутый CSS-in-TS",
+                "https://nin-jin.github.io/slides/testing/": "Фрактальное тестирование",
+                "https://nin-jin.github.io/slides/absurd/": "Проблема останова лжеца Гёделя и брадобрея Кантора"
+            };
         }
         Loader() {
             const obj = new this.$.$mol_frame();
@@ -29654,8 +29681,25 @@ var $;
         role() {
             return "";
         }
+        menu_tools() {
+            return [];
+        }
+        menu_items() {
+            return [];
+        }
+        Menu_items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.menu_items();
+            return obj;
+        }
+        menu_item_title(id) {
+            return "";
+        }
+        menu_item_uri(id) {
+            return "";
+        }
         uri_slides() {
-            return this.uri_slides_default();
+            return "";
         }
         tools() {
             return [];
@@ -29709,10 +29753,6 @@ var $;
             ];
             return obj;
         }
-        Lights() {
-            const obj = new this.$.$mol_lights_toggle();
-            return obj;
-        }
         open_listener_hint() {
             return this.$.$mol_locale.text('$hyoo_slides_open_listener_hint');
         }
@@ -29733,12 +29773,31 @@ var $;
             ];
             return obj;
         }
+        Lights() {
+            const obj = new this.$.$mol_lights_toggle();
+            return obj;
+        }
+        Close_icon() {
+            const obj = new this.$.$mol_icon_cross();
+            return obj;
+        }
+        Close() {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => ({
+                slides: null
+            });
+            obj.sub = () => [
+                this.Close_icon()
+            ];
+            return obj;
+        }
         speaker_tools() {
             return [
                 this.Speech_toggle(),
                 this.Speech_text(),
+                this.Open_listener(),
                 this.Lights(),
-                this.Open_listener()
+                this.Close()
             ];
         }
         Theme() {
@@ -30002,10 +30061,19 @@ var $;
     ], $hyoo_slides.prototype, "contents", null);
     __decorate([
         $.$mol_mem
+    ], $hyoo_slides.prototype, "Menu", null);
+    __decorate([
+        $.$mol_mem_key
+    ], $hyoo_slides.prototype, "Menu_item", null);
+    __decorate([
+        $.$mol_mem
     ], $hyoo_slides.prototype, "Loader", null);
     __decorate([
         $.$mol_mem_key
     ], $hyoo_slides.prototype, "Page", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_slides.prototype, "Menu_items", null);
     __decorate([
         $.$mol_mem_key
     ], $hyoo_slides.prototype, "page_slide", null);
@@ -30023,13 +30091,19 @@ var $;
     ], $hyoo_slides.prototype, "Speech_text", null);
     __decorate([
         $.$mol_mem
-    ], $hyoo_slides.prototype, "Lights", null);
-    __decorate([
-        $.$mol_mem
     ], $hyoo_slides.prototype, "Open_listener_icon", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_slides.prototype, "Open_listener", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_slides.prototype, "Lights", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_slides.prototype, "Close_icon", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_slides.prototype, "Close", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_slides.prototype, "Theme", null);
@@ -30118,7 +30192,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("hyoo/slides/slides.view.css", "[hyoo_slides] {\n\t-webkit-print-color-adjust: exact;\n\tflex-direction: column;\n}\n[hyoo_slides][hyoo_slides_role=\"listener\"] {\n\tfont-size: 3vmin;\n}\n\n[hyoo_slides_loader] {\n\tposition: fixed;\n\tleft: 0;\n\ttop: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 100%;\n\theight: 100%;\n}\n[hyoo_slides_loader]:not([mol_view_error]) {\n\tdisplay: none;\n}\n\n[hyoo_slides_speech_toggle] {\n\talign-items: center;\n}\n\n[hyoo_slides_speech_text] {\n\tline-height: 1;\n\tdisplay: flex;\n\talign-items: flex-end;\n\talign-self: center;\n\tflex: 1 1 auto;\n\tmax-height: 2rem;\n}\n");
+    $.$mol_style_attach("hyoo/slides/slides.view.css", "[hyoo_slides] {\n\t-webkit-print-color-adjust: exact;\n\tflex-direction: column;\n}\n[hyoo_slides][hyoo_slides_role=\"listener\"] {\n\tfont-size: 3vmin;\n}\n\n[hyoo_slides_menu_items] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_slides_loader] {\n\tposition: fixed;\n\tleft: 0;\n\ttop: 0;\n\tright: 0;\n\tbottom: 0;\n\twidth: 100%;\n\theight: 100%;\n}\n[hyoo_slides_loader]:not([mol_view_error]) {\n\tdisplay: none;\n}\n\n[hyoo_slides_speech_toggle] {\n\talign-items: center;\n}\n\n[hyoo_slides_speech_text] {\n\tline-height: 1;\n\tdisplay: flex;\n\talign-items: flex-end;\n\talign-self: center;\n\tflex: 1 1 auto;\n\tmax-height: 2rem;\n}\n");
 })($ || ($ = {}));
 //slides.view.css.js.map
 ;
@@ -30129,6 +30203,9 @@ var $;
     (function ($$) {
         class $hyoo_slides extends $.$hyoo_slides {
             sub() {
+                if (!this.uri_slides()) {
+                    return [this.Menu()];
+                }
                 return [
                     this.Loader(),
                     ...this.$.$mol_print.active()
@@ -30139,7 +30216,18 @@ var $;
             uri_base() {
                 return this.uri_slides().replace(/[^/]*$/, '');
             }
+            menu_items() {
+                return Object.keys(this.menu_options()).map(uri => this.Menu_item(uri));
+            }
+            menu_item_uri(uri) {
+                return uri;
+            }
+            menu_item_title(uri) {
+                return this.menu_options()[uri];
+            }
             contents() {
+                if (!this.uri_slides())
+                    return '';
                 const remote = this.Loader().window();
                 return $.$mol_fiber_sync(() => new Promise(done => {
                     remote.postMessage(['content'], '*');
@@ -30218,7 +30306,8 @@ var $;
                 return $.$mol_state_arg.value(this.state_key('role'), next) || 'speaker';
             }
             uri_slides() {
-                return $.$mol_state_arg.value(this.state_key('slides')) || this.uri_slides_default();
+                var _a;
+                return (_a = $.$mol_state_arg.value(this.state_key('slides'))) !== null && _a !== void 0 ? _a : '';
             }
             event_next(next) {
                 this.slide(this.slide() + 1);
@@ -30307,6 +30396,9 @@ var $;
                 return [suffix];
             }
         }
+        __decorate([
+            $.$mol_mem
+        ], $hyoo_slides.prototype, "menu_items", null);
         __decorate([
             $.$mol_mem
         ], $hyoo_slides.prototype, "contents", null);
@@ -30574,7 +30666,7 @@ var $;
         }
         Slides_app() {
             const obj = new this.$.$hyoo_slides();
-            obj.tools = () => [
+            obj.menu_tools = () => [
                 this.Close_app()
             ];
             return obj;

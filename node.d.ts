@@ -7745,7 +7745,6 @@ declare namespace $ {
 
 declare namespace $ {
     class $hyoo_slides extends $mol_view {
-        uri_slides_default(): string;
         attr(): {
             hyoo_slides_role: string;
         };
@@ -7753,10 +7752,28 @@ declare namespace $ {
             "touch-action": string;
         };
         contents(val?: any): any;
+        Menu(): $$.$mol_page;
+        Menu_item(id: any): $$.$mol_link;
+        menu_options(): {
+            "https://nin-jin.github.io/slides/slides/": string;
+            "https://nin-jin.github.io/slides/fibers/": string;
+            "https://nin-jin.github.io/slides/mol/": string;
+            "https://nin-jin.github.io/slides/orp/": string;
+            "https://nin-jin.github.io/slides/tree/": string;
+            "https://nin-jin.github.io/slides/virt/": string;
+            "https://nin-jin.github.io/slides/css-in-ts/": string;
+            "https://nin-jin.github.io/slides/testing/": string;
+            "https://nin-jin.github.io/slides/absurd/": string;
+        };
         Loader(): $$.$mol_frame;
         Page(index: any): $$.$hyoo_slides_page;
         plugins(): readonly any[];
         role(): string;
+        menu_tools(): readonly any[];
+        menu_items(): readonly $mol_view[];
+        Menu_items(): $$.$mol_list;
+        menu_item_title(id: any): string;
+        menu_item_uri(id: any): string;
         uri_slides(): string;
         tools(): readonly any[];
         page_title(index: any): string;
@@ -7771,10 +7788,12 @@ declare namespace $ {
         Speech_toggle(): $mol_check_icon;
         speech_text(): string;
         Speech_text(): $mol_view;
-        Lights(): $$.$mol_lights_toggle;
         open_listener_hint(): string;
         Open_listener_icon(): $mol_icon_external;
         Open_listener(): $$.$mol_link;
+        Lights(): $$.$mol_lights_toggle;
+        Close_icon(): $mol_icon_cross;
+        Close(): $$.$mol_link;
         speaker_tools(): readonly any[];
         Theme(): $$.$mol_theme_auto;
         slide_keys(): readonly any[];
@@ -7824,8 +7843,11 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $hyoo_slides extends $.$hyoo_slides {
-        sub(): ($mol_frame | $hyoo_slides_page)[];
+        sub(): $mol_page[] | ($mol_frame | $hyoo_slides_page)[];
         uri_base(): string;
+        menu_items(): $mol_link[];
+        menu_item_uri(uri: string): string;
+        menu_item_title(uri: string): any;
         contents(): string;
         content_pages(): string[];
         page_tokens(index: number): readonly {
