@@ -35,11 +35,11 @@ $hyoo_mol $mol_book2
 				\$mol_view_tree2_to_text
 				\$mol_tree2_text_to_string
 			source?val <=> tree_source?val \
-				\$my_app $mol_page
+				\$hyoo_mol_example $mol_page
 				\	title \Example
 				\	params * foo <= changable?val /string
 				\	body /
-				\		<= Info $my_widgets
+				\		<= Select $hyoo_mol_example_selector
 				\			empty @ \No content
 				\			value?val <=> info_value?val NaN
 				\			kids <= info_kids /$mol_view_content
