@@ -12,7 +12,7 @@ $hyoo_mol $mol_book2
 				title <= components_title @ \Components
 				arg * app \components
 			<= View_tree_link $mol_link
-				title <= view_tree_title @ \View.Tree
+				title <= view_tree_title @ \View.Tree Sandbox
 				arg * app \view.tree
 			<= Articles_link $mol_link
 				title <= articles_title @ \Articles
@@ -29,6 +29,21 @@ $hyoo_mol $mol_book2
 	pages /
 		<= Components_app $mol_app_demo
 		<= View_tree_app $hyoo_tree
+			Presets null
+			pipeline?val <=> tree_pipeline?val /
+				\$mol_tree2_from_string
+				\$mol_view_tree2_to_text
+				\$mol_tree2_text_to_string
+			source?val <=> tree_source?val \
+				\$my_app $mol_page
+				\	title \Example
+				\	params * foo <= changable?val /string
+				\	body /
+				\		<= Info $my_widgets
+				\			empty @ \No content
+				\			value?val <=> info_value?val NaN
+				\			kids <= info_kids /$mol_view_content
+				\
 		<= Articles_app $hyoo_habhub
 			menu_title <= articles_title
 			tools_root / <= Close_app

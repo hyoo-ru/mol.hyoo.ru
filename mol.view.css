@@ -1,11 +1,11 @@
 [hyoo_mol_menu] {
-	flex: 0 0 15rem;
+	flex: 0 0 20rem;
 }
 
 [hyoo_mol_menu_body] {
 	display: flex;
 	flex-direction: column;
-	padding: .75rem;
+	padding: var(--mol_gap_block);
 }
 
 [hyoo_mol_slides_app] {
