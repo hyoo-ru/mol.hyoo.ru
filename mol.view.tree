@@ -20,7 +20,9 @@ $hyoo_mol $mol_book2
 				arg * section \slides
 			<= Apps_link $mol_link
 				title <= apps_title @ \Applications
-				arg * section \apps
+				arg *
+					section \apps
+					app null
 			<= Components_link $mol_link
 				title <= components_title @ \Components
 				arg * section \components
