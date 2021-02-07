@@ -7721,7 +7721,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $hyoo_slides_page extends $mol_book {
+    class $hyoo_slides_page extends $mol_book2 {
         role(): string;
         contents(val?: any): any;
         slide(val?: any): any;
@@ -7749,8 +7749,8 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $hyoo_slides_page extends $.$hyoo_slides_page {
-        listener_width(): number;
         uri_page(): string;
+        pages(): $mol_page[];
     }
 }
 
