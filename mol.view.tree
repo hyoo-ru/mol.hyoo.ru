@@ -6,7 +6,7 @@ $hyoo_mol $mol_book2
 			<= Lights $mol_lights_toggle
 			<= Sources $mol_link_source
 				uri \https://github.com/hyoo-ru/portal.hyoo.ru
-		title <= menu_title @ \$mol portal
+		title <= menu_title @ \$mol ui framework
 		body /
 			<= Components_link $mol_link
 				title <= components_title @ \Components
