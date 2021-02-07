@@ -1,5 +1,9 @@
 [hyoo_mol_menu] {
-	flex: 0 0 20rem;
+	flex: 0 0 16rem;
+}
+
+[hyoo_mol_main] {
+	flex: 0 0 60rem;
 }
 
 [hyoo_mol_menu_body] {
