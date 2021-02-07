@@ -71,4 +71,4 @@ $hyoo_mol $mol_book2
 		<= Icons_app $mol_frame
 			uri \https://nin-jin.github.io/mol_icon/
 		<= Slides_app $hyoo_slides
-			tools / <= Close_app
+			menu_tools / <= Close_app
