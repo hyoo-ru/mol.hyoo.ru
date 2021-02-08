@@ -3076,18 +3076,20 @@ $hyoo_habhub $mol_book2
 				uri \https://github.com/nin-jin/habhub
 				sub /
 					<= Add_icon $mol_icon_plus
-			<= Search $mol_search
-				query?val <=> search?val \
-			<= Lights $mol_lights_toggle
 			<= Source_link $mol_link_source
 				uri \https://github.com/hyoo-ru/habhub.hyoo.ru
+			<= Lights $mol_lights_toggle
 		body /
+			<= Search $mol_search
+				query?val <=> search?val \
 			<= Menu $mol_list
 				rows <= menu_rows /
 	Details!id $mol_page
 		minimal_width 600
 		title <= gist_current_title \
 		tools /
+			<= Details_link $mol_link_source
+				uri <= details_link \
 			<= Close $mol_link
 				arg <= close_arg *
 					author null

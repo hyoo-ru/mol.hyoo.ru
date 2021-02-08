@@ -7518,14 +7518,16 @@ declare namespace $ {
         menu_title(): string;
         Add_icon(): $mol_icon_plus;
         Add(): $$.$mol_link;
+        Source_link(): $mol_link_source;
+        Lights(): $$.$mol_lights_toggle;
+        tools_root(): readonly any[];
         search(val?: any): any;
         Search(): $$.$mol_search;
-        Lights(): $$.$mol_lights_toggle;
-        Source_link(): $mol_link_source;
-        tools_root(): readonly any[];
         menu_rows(): readonly any[];
         Menu(): $$.$mol_list;
         gist_current_title(): string;
+        details_link(): string;
+        Details_link(): $mol_link_source;
         close_arg(): {
             author: any;
             repo: any;
@@ -7559,6 +7561,7 @@ declare namespace $.$$ {
         };
         gist(id: number): $mol_github_issue;
         gist_current(): $mol_github_issue | null;
+        details_link(): string;
         author(): string | null;
         repo(): string | null;
         article(): string | null;
