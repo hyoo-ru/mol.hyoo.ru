@@ -5276,6 +5276,11 @@ var $;
         width_limit() {
             return Infinity;
         }
+        sub() {
+            return [
+                this.title()
+            ];
+        }
     }
     $.$mol_paragraph = $mol_paragraph;
 })($ || ($ = {}));
