@@ -28666,7 +28666,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("hyoo/tree/tree.view.css", "[hyoo_tree_body] {\n\tdisplay: flex;\n}\n\n[hyoo_tree_presets_list] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_source] {\n\tflex: 1 0 auto;\n\tmax-width: 80rem;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_source_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_result] {\n\tflex: 1 0 auto;\n\tmax-width: 80rem;\n\toutline: 0 0 0 1px var(--mol_theme_line);\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_result_head] {\n\tjustify-content: space-between;\n}\n\n[hyoo_tree_result_body] {\n\tpadding: var(--mol_gap_block);\n}\n");
+    $.$mol_style_attach("hyoo/tree/tree.view.css", "[hyoo_tree_body] {\n\tdisplay: flex;\n}\n\n[hyoo_tree_presets_list] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_source] {\n\tflex: 1 0 auto;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_source_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_result] {\n\tflex: 1 0 auto;\n\toutline: 0 0 0 1px var(--mol_theme_line);\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_result_head] {\n\tjustify-content: space-between;\n}\n\n[hyoo_tree_result_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_source_text],\n[hyoo_tree_result_text] {\n\tmax-width: 40rem;\n}\n");
 })($ || ($ = {}));
 //tree.view.css.js.map
 ;
