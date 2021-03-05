@@ -3958,10 +3958,10 @@ declare namespace $.$$ {
         options(): readonly string[];
         options_filtered(): readonly string[];
         option_label(id: string): any;
-        option_rows(): $mol_view[];
+        option_rows(): $mol_button_minor[];
         option_focused(component?: $mol_view): $mol_view | $mol_string | null;
         event_select(id: string, event?: MouseEvent): void;
-        nav_components(): ($mol_view | $mol_string)[];
+        nav_components(): ($mol_button_minor | $mol_string)[];
         trigger_content(): readonly $mol_view_content[];
         menu_content(): ($mol_view | $mol_string)[];
     }
@@ -3981,7 +3981,7 @@ declare namespace $ {
         submit(event?: any): any;
         enabled(): boolean;
         Suggest_filter(): $$.$mol_string;
-        suggest_option_rows(): $mol_view[];
+        suggest_option_rows(): $mol_button_minor[];
         Suggest(): $$.$mol_select;
         Clear_icon(): $mol_icon_cross;
         clear_hint(): string;
@@ -5683,18 +5683,19 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_select_list extends $mol_bar {
+    class $mol_select_list extends $mol_view {
         value(val?: any): any;
         dictionary(): {};
-        Badge(key: any): $mol_button_minor;
+        Badge(index: any): $mol_button_minor;
         Pick(): $$.$mol_select;
-        option_title(key: any): string;
-        remove(key: any, event?: any): any;
+        badge_title(index: any): string;
+        remove(index: any, event?: any): any;
         badge_hint(): string;
         enabled(): boolean;
         options(): readonly string[];
         options_pickable(): readonly string[];
         pick(val?: any): any;
+        option_title(key: any): string;
         pick_hint(): string;
         Pick_icon(): $mol_icon_plus;
     }
@@ -5705,13 +5706,15 @@ declare namespace $.$$ {
 
 declare namespace $.$$ {
     class $mol_select_list extends $.$mol_select_list {
-        value(val?: string[]): string[];
+        value(val?: string[]): readonly string[];
         pick(key: string): string;
         options(): string[];
-        options_pickable(): string[];
+        options_pickable(): readonly string[];
         option_title(key: string): string;
+        badge_title(index: number): string;
         sub(): ($mol_button_minor | $mol_select)[];
-        remove(key: string): void;
+        title(): string;
+        remove(index: number): void;
     }
 }
 
@@ -7022,31 +7025,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_wasm_instance extends $mol_object2 {
-        readonly module: WebAssembly.Module;
-        readonly imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined;
-        native: WebAssembly.Instance;
-        constructor(module: WebAssembly.Module, imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined);
-        memory(offset: number, length: number): Uint8Array;
-        string(offset: number, length: number, encoding?: string): string;
-        get(name: string): WebAssembly.ExportValue;
-    }
-}
-
-declare namespace $ {
-    class $mol_wasm_module extends $mol_object2 {
-        readonly buffer: ArrayBuffer;
-        native: WebAssembly.Module;
-        constructor(buffer: ArrayBuffer);
-        instance<Imports extends {
-            [mod in string]: {
-                [func in string]: WebAssembly.ImportValue;
-            };
-        }>(imports?: Imports): $mol_wasm_instance;
-    }
-}
-
-declare namespace $ {
     function $mol_guard_defined<T>(value: T): value is NonNullable<T>;
 }
 
@@ -7119,16 +7097,138 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_wasm_instance extends $mol_object2 {
+        readonly module: WebAssembly.Module;
+        readonly imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined;
+        native: WebAssembly.Instance;
+        constructor(module: WebAssembly.Module, imports?: Record<string, Record<string, WebAssembly.ImportValue>> | undefined);
+        memory(offset: number, length: number): Uint8Array;
+        string(offset: number, length: number, encoding?: string): string;
+        get(name: string): WebAssembly.ExportValue;
+    }
+}
+
+declare namespace $ {
+    class $mol_wasm_module extends $mol_object2 {
+        readonly buffer: ArrayBuffer;
+        native: WebAssembly.Module;
+        constructor(buffer: ArrayBuffer);
+        instance<Imports extends {
+            [mod in string]: {
+                [func in string]: WebAssembly.ImportValue;
+            };
+        }>(imports?: Imports): $mol_wasm_instance;
+    }
+}
+
+declare namespace $ {
     function $mol_js_eval(this: $, code: string): any;
 }
 
 declare namespace $ {
     class $hyoo_tree extends $mol_book2 {
+        transform_map(): {
+            $mol_tree2_from_string: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_to_string: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_from_json: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_grammar_check: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_xml_to_text: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_js_to_text: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_text_to_string: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_text_to_sourcemap: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_text_to_sourcemap_vis: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_span_imprint: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_span_reuse: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_wasm_to_bin: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_bin_from_string: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_bin_from_bytes: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_bin_to_bytes: {
+                input: string;
+                output: string;
+            };
+            $mol_view_tree2_to_text: {
+                input: string;
+                output: string;
+            };
+            $mol_view_tree2_to_dts: {
+                input: string;
+                output: string;
+            };
+            $hyoo_marked_tree_from_line: {
+                input: string;
+                output: string;
+            };
+            $hyoo_marked_tree_to_js: {
+                input: string;
+                output: string;
+            };
+            $mol_json_from_string: {
+                input: string;
+                output: string;
+            };
+            $mol_json_to_string: {
+                input: string;
+                output: string;
+            };
+            $mol_jack_transform: {
+                input: string;
+                output: string;
+            };
+            $mol_wasm_module: {
+                input: string;
+                output: string;
+            };
+            $mol_js_eval: {
+                input: string;
+                output: string;
+            };
+        };
         plugins(): readonly any[];
         pipeline(val?: any): readonly string[];
         Placeholder(): any;
         pages(): readonly any[];
-        Result(index: any): $$.$mol_page;
         Theme(): $$.$mol_theme_auto;
         pipeline_default(): readonly string[];
         Lights(): $$.$mol_lights_toggle;
@@ -7144,23 +7244,19 @@ declare namespace $ {
         Span(): $$.$mol_link;
         Presets_list(): $$.$mol_list;
         Presets(): $$.$mol_page;
-        Add_first(): $mol_view;
         source_tools(): readonly $mol_view_content[];
         source_default(): string;
         source(val?: any): string;
         source_hint(): string;
         Source_text(): $$.$mol_textarea;
         Source(): $$.$mol_page;
-        transform(index: any): string;
-        Close_icon(index: any): $mol_icon_cross;
-        close(index: any, event?: any): any;
-        Close(index: any): $mol_button_minor;
-        Add_icon(index: any): $mol_icon_plus;
-        add(index: any, val?: any): any;
-        transform_options(): readonly any[];
-        Add(index: any): $$.$mol_select;
-        result_text(index: any): any;
-        Result_text(index: any): $$.$mol_text_code;
+        transform_options(): readonly string[];
+        add_hint(): string;
+        result_title(): string;
+        Pipeline(): $$.$mol_select_list;
+        result_text(): any;
+        Result_text(): $$.$mol_text_code;
+        Result(): $$.$mol_page;
     }
 }
 
@@ -7179,12 +7275,11 @@ declare namespace $.$$ {
     class $hyoo_tree extends $.$hyoo_tree {
         pipeline(next?: string[]): readonly string[];
         add(index: number, next?: string): string;
-        Add_first(): $mol_select;
-        pages(): $mol_page[];
         source(next?: string): string;
         transform(index: number, next?: string): string;
+        transform_options(): string[];
         result(index: number): string | $mol_tree2 | Uint8Array | $mol_wasm_module;
-        result_text(index: number): string;
+        result_text(): string;
         close(index: number): void;
     }
 }

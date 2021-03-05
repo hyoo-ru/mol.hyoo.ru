@@ -2324,18 +2324,18 @@ $mol_select_demo_priority $mol_demo_small
 				\Low
 				\Lowest
 
-$mol_select_list $mol_bar
+$mol_select_list $mol_view
 	value?val /string
 	dictionary *
-	Badge!key $mol_button_minor
-		title <= option_title!key \badge
-		click?event <=> remove!key?event null
+	Badge!index $mol_button_minor
+		title <= badge_title!index \badge
+		click?event <=> remove!index?event null
 		hint <= badge_hint @ \Drop
 		enabled <= enabled true
 	Pick $mol_select
 		options <= options_pickable <= options /string
 		value?val <=> pick?val \
-		option_label!key <= option_title!key
+		option_label!key <= option_title!key \
 		hint <= pick_hint @ \Add..
 		Trigger_icon <= Pick_icon $mol_icon_plus
 
@@ -2959,6 +2959,82 @@ $mol_app_demo_main $mol_page
 			uri_base <= project_uri
 
 $hyoo_tree $mol_book2
+	transform_map *
+		$mol_tree2_from_string *
+			input \text
+			output \tree
+		$mol_tree2_to_string *
+			input \tree
+			output \text
+		$mol_tree2_from_json *
+			input \json
+			output \tree
+		$mol_tree2_grammar_check *
+			input \grammar.tree
+			output \grammar.tree
+		$mol_tree2_xml_to_text *
+			input \xml.tree
+			output \text.tree
+		- $mol_tree2_js_from_string *
+			input \text
+			output \js.tree
+		$mol_tree2_js_to_text *
+			input \js.tree
+			output \text.tree
+		$mol_tree2_text_to_string *
+			input \text.tree
+			output \text
+		$mol_tree2_text_to_sourcemap *
+			input \text.tree
+			output \map.json
+		$mol_tree2_text_to_sourcemap_vis *
+			input \text.tree
+			output \map.vis.url
+		$mol_tree2_span_imprint *
+			input \tree
+			output \span.tree
+		$mol_tree2_span_reuse *
+			input \span.tree
+			output \tree
+		$mol_tree2_wasm_to_bin *
+			input \wasm.tree
+			output \bin.tree
+		$mol_tree2_bin_from_string *
+			input \text
+			output \bin.tree
+		$mol_tree2_bin_from_bytes *
+			input \bytes.json
+			output \bin.tree
+		$mol_tree2_bin_to_bytes *
+			input \bin.tree
+			output \bin
+		$mol_view_tree2_to_text *
+			input \view.tree
+			output \text.tree
+		$mol_view_tree2_to_dts *
+			input \view.tree
+			output \dts
+		$hyoo_marked_tree_from_line *
+			input \text
+			output \marked.tree
+		$hyoo_marked_tree_to_js *
+			input \marked.tree
+			output \js.tree
+		$mol_json_from_string *
+			input \text
+			output \json
+		$mol_json_to_string *
+			input \json
+			output \text
+		$mol_jack_transform *
+			input \jack.tree
+			output \tree
+		$mol_wasm_module *
+			input \wasm.bin
+			output \wasm.module
+		$mol_js_eval *
+			input \text
+			output \any
 	plugins /
 		<= Theme $mol_theme_auto
 	pipeline?val <= pipeline_default /string
@@ -3001,54 +3077,24 @@ $hyoo_tree $mol_book2
 							title \span.tree imprint/reuse
 							uri \#source=foo%0A%09bar%0A%09%09%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fspan.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_span_imprint~%24mol_tree2_span_reuse~%24mol_tree2_span_imprint
 		<= Source $mol_page
-			title @ \Tree pipeline source
+			title @ \Tree sandbox
 			tools <= source_tools /$mol_view_content
-				<= Add_first $mol_view
 			body /
 				<= Source_text $mol_textarea
 					value?val <=> source?val <= source_default \
 					hint <= source_hint @ \view.tree source
-	Result!index $mol_page
-		title <= transform!index \
-		tools /
-			<= Close!index $mol_button_minor
-				hint @ \Remove step
-				sub /
-					<= Close_icon!index $mol_icon_cross
-				click?event <=> close!index?event null
-			<= Add!index $mol_select
-				hint @ \Add step..
-				Trigger_icon <= Add_icon!index $mol_icon_plus
-				value?val <=> add!index?val \
-				options <= transform_options /
-					\$mol_tree2_from_string
-					\$mol_tree2_to_string
-					\$mol_tree2_from_json
-					\$mol_tree2_grammar_check
-					\$mol_tree2_xml_to_text
-					\$mol_tree2_js_to_text
-					\$mol_tree2_text_to_string
-					\$mol_tree2_text_to_sourcemap
-					\$mol_tree2_text_to_sourcemap_vis
-					\$mol_tree2_span_imprint
-					\$mol_tree2_span_reuse
-					\$mol_tree2_wasm_to_bin
-					\$mol_wasm_module
-					\$mol_tree2_bin_from_string
-					\$mol_tree2_bin_from_bytes
-					\$mol_tree2_bin_to_bytes
-					\$mol_view_tree2_to_text
-					\$mol_view_tree2_to_dts
-					\$hyoo_marked_tree_from_line
-					\$hyoo_marked_tree_to_js
-					\$mol_json_from_string
-					\$mol_json_to_string
-					\$mol_jack_transform
-					\$mol_js_eval
-		body /
-			<= Result_text!index $mol_text_code
-				render_visible_only false
-				text <= result_text!index null
+		<= Result $mol_page
+			title <= result_title
+			head /
+				<= Pipeline $mol_select_list
+					title => result_title
+					value?val <=> pipeline?val
+					options_pickable <= transform_options /string
+					pick_hint <= add_hint @ \Add step..
+			body /
+				<= Result_text $mol_text_code
+					render_visible_only false
+					text <= result_text null
 
 $mol_chat $mol_list
 	rows /

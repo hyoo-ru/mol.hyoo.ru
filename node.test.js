@@ -13467,7 +13467,7 @@ var $;
                 if (!event)
                     return event;
                 const keys = this.keys_y();
-                if (keys.length < 2)
+                if (keys.length < 1)
                     return;
                 const index_y = this.index_y();
                 const index_old = index_y === null ? 0 : index_y;
@@ -13481,7 +13481,7 @@ var $;
                 if (!event)
                     return event;
                 const keys = this.keys_y();
-                if (keys.length < 2)
+                if (keys.length < 1)
                     return;
                 const index_y = this.index_y();
                 const index_old = index_y === null ? keys.length - 1 : index_y;
@@ -13495,7 +13495,7 @@ var $;
                 if (!event)
                     return event;
                 const keys = this.keys_x();
-                if (keys.length < 2)
+                if (keys.length < 1)
                     return;
                 const index_x = this.index_x();
                 const index_old = index_x === null ? 0 : index_x;
@@ -13509,7 +13509,7 @@ var $;
                 if (!event)
                     return event;
                 const keys = this.keys_x();
-                if (keys.length < 2)
+                if (keys.length < 1)
                     return;
                 const index_x = this.index_x();
                 const index_old = index_x === null ? keys.length - 1 : index_x;
@@ -13789,10 +13789,7 @@ var $;
                 return value == null ? id : value;
             }
             option_rows() {
-                if (this.options_filtered().length === 0)
-                    return [this.No_options()];
-                let options = this.options_filtered().map((option) => this.Option_row(option));
-                return options;
+                return this.options_filtered().map((option) => this.Option_row(option));
             }
             option_focused(component) {
                 if (component == null) {
@@ -13812,7 +13809,12 @@ var $;
                 this.focused(false);
             }
             nav_components() {
-                return [this.Filter(), ...this.option_rows()];
+                if (this.options().length > 1 && this.Filter()) {
+                    return [this.Filter(), ...this.option_rows()];
+                }
+                else {
+                    return this.option_rows();
+                }
             }
             trigger_content() {
                 return [
@@ -13821,9 +13823,10 @@ var $;
                 ];
             }
             menu_content() {
-                return (this.options().length > 1 && this.Filter())
-                    ? [this.Filter(), ...this.option_rows()]
-                    : this.option_rows();
+                return [
+                    ...this.nav_components(),
+                    ...(this.options_filtered().length === 0) ? [this.No_options()] : []
+                ];
             }
         }
         __decorate([
@@ -20622,7 +20625,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_select_list extends $.$mol_bar {
+    class $mol_select_list extends $.$mol_view {
         value(val) {
             if (val !== undefined)
                 return val;
@@ -20631,10 +20634,10 @@ var $;
         dictionary() {
             return {};
         }
-        Badge(key) {
+        Badge(index) {
             const obj = new this.$.$mol_button_minor();
-            obj.title = () => this.option_title(key);
-            obj.click = (event) => this.remove(key, event);
+            obj.title = () => this.badge_title(index);
+            obj.click = (event) => this.remove(index, event);
             obj.hint = () => this.badge_hint();
             obj.enabled = () => this.enabled();
             return obj;
@@ -20648,10 +20651,10 @@ var $;
             obj.Trigger_icon = () => this.Pick_icon();
             return obj;
         }
-        option_title(key) {
+        badge_title(index) {
             return "badge";
         }
-        remove(key, event) {
+        remove(index, event) {
             if (event !== undefined)
                 return event;
             return null;
@@ -20671,6 +20674,9 @@ var $;
         pick(val) {
             if (val !== undefined)
                 return val;
+            return "";
+        }
+        option_title(key) {
             return "";
         }
         pick_hint() {
@@ -20713,18 +20719,7 @@ var $;
             flex: {
                 wrap: 'wrap',
                 shrink: 1,
-            },
-            '>': {
-                $mol_view: {
-                    margin: {
-                        right: rem(-.75),
-                    },
-                    ':last-child': {
-                        margin: {
-                            right: 0,
-                        },
-                    },
-                },
+                grow: 1,
             },
         });
     })($$ = $.$$ || ($.$$ = {}));
@@ -20763,14 +20758,24 @@ var $;
                 const value = this.dictionary()[key];
                 return value == null ? key : value;
             }
+            badge_title(index) {
+                return this.option_title(this.value()[index]);
+            }
             sub() {
                 return [
-                    ...this.value().map(key => this.Badge(key)),
+                    ...this.value().map((_, index) => this.Badge(index)),
                     ...this.options_pickable().length ? [this.Pick()] : [],
                 ];
             }
-            remove(key) {
-                this.value(this.value().filter(val => val !== key));
+            title() {
+                return this.value().map(key => this.option_title(key)).join(' + ');
+            }
+            remove(index) {
+                const value = this.value();
+                this.value([
+                    ...value.slice(0, index),
+                    ...value.slice(index + 1),
+                ]);
             }
         }
         __decorate([
@@ -20782,6 +20787,9 @@ var $;
         __decorate([
             $.$mol_mem
         ], $mol_select_list.prototype, "sub", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_select_list.prototype, "title", null);
         $$.$mol_select_list = $mol_select_list;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -27106,48 +27114,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_wasm_instance extends $.$mol_object2 {
-        constructor(module, imports) {
-            super();
-            this.module = module;
-            this.imports = imports;
-            this.native = new WebAssembly.Instance(module, imports);
-        }
-        memory(offset, length) {
-            const memory = this.native['exports'].memory;
-            return new Uint8Array(memory.buffer, offset, length);
-        }
-        string(offset, length, encoding = 'utf-8') {
-            return new TextDecoder(encoding).decode(this.memory(offset, length));
-        }
-        get(name) {
-            return this.native.exports[name];
-        }
-    }
-    $.$mol_wasm_instance = $mol_wasm_instance;
-})($ || ($ = {}));
-//instance.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_wasm_module extends $.$mol_object2 {
-        constructor(buffer) {
-            super();
-            this.buffer = buffer;
-            this.native = new WebAssembly.Module(buffer);
-        }
-        instance(imports) {
-            return new $.$mol_wasm_instance(this.native, imports);
-        }
-    }
-    $.$mol_wasm_module = $mol_wasm_module;
-})($ || ($ = {}));
-//module.js.map
-;
-"use strict";
-var $;
-(function ($) {
     function $mol_guard_defined(value) {
         return value !== null && value !== undefined;
     }
@@ -27760,6 +27726,48 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_wasm_instance extends $.$mol_object2 {
+        constructor(module, imports) {
+            super();
+            this.module = module;
+            this.imports = imports;
+            this.native = new WebAssembly.Instance(module, imports);
+        }
+        memory(offset, length) {
+            const memory = this.native['exports'].memory;
+            return new Uint8Array(memory.buffer, offset, length);
+        }
+        string(offset, length, encoding = 'utf-8') {
+            return new TextDecoder(encoding).decode(this.memory(offset, length));
+        }
+        get(name) {
+            return this.native.exports[name];
+        }
+    }
+    $.$mol_wasm_instance = $mol_wasm_instance;
+})($ || ($ = {}));
+//instance.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wasm_module extends $.$mol_object2 {
+        constructor(buffer) {
+            super();
+            this.buffer = buffer;
+            this.native = new WebAssembly.Module(buffer);
+        }
+        instance(imports) {
+            return new $.$mol_wasm_instance(this.native, imports);
+        }
+    }
+    $.$mol_wasm_module = $mol_wasm_module;
+})($ || ($ = {}));
+//module.js.map
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_js_eval(code) {
         return new Function('', code)();
     }
@@ -27771,6 +27779,106 @@ var $;
 var $;
 (function ($) {
     class $hyoo_tree extends $.$mol_book2 {
+        transform_map() {
+            return {
+                "$mol_tree2_from_string": {
+                    input: "text",
+                    output: "tree"
+                },
+                "$mol_tree2_to_string": {
+                    input: "tree",
+                    output: "text"
+                },
+                "$mol_tree2_from_json": {
+                    input: "json",
+                    output: "tree"
+                },
+                "$mol_tree2_grammar_check": {
+                    input: "grammar.tree",
+                    output: "grammar.tree"
+                },
+                "$mol_tree2_xml_to_text": {
+                    input: "xml.tree",
+                    output: "text.tree"
+                },
+                "$mol_tree2_js_to_text": {
+                    input: "js.tree",
+                    output: "text.tree"
+                },
+                "$mol_tree2_text_to_string": {
+                    input: "text.tree",
+                    output: "text"
+                },
+                "$mol_tree2_text_to_sourcemap": {
+                    input: "text.tree",
+                    output: "map.json"
+                },
+                "$mol_tree2_text_to_sourcemap_vis": {
+                    input: "text.tree",
+                    output: "map.vis.url"
+                },
+                "$mol_tree2_span_imprint": {
+                    input: "tree",
+                    output: "span.tree"
+                },
+                "$mol_tree2_span_reuse": {
+                    input: "span.tree",
+                    output: "tree"
+                },
+                "$mol_tree2_wasm_to_bin": {
+                    input: "wasm.tree",
+                    output: "bin.tree"
+                },
+                "$mol_tree2_bin_from_string": {
+                    input: "text",
+                    output: "bin.tree"
+                },
+                "$mol_tree2_bin_from_bytes": {
+                    input: "bytes.json",
+                    output: "bin.tree"
+                },
+                "$mol_tree2_bin_to_bytes": {
+                    input: "bin.tree",
+                    output: "bin"
+                },
+                "$mol_view_tree2_to_text": {
+                    input: "view.tree",
+                    output: "text.tree"
+                },
+                "$mol_view_tree2_to_dts": {
+                    input: "view.tree",
+                    output: "dts"
+                },
+                "$hyoo_marked_tree_from_line": {
+                    input: "text",
+                    output: "marked.tree"
+                },
+                "$hyoo_marked_tree_to_js": {
+                    input: "marked.tree",
+                    output: "js.tree"
+                },
+                "$mol_json_from_string": {
+                    input: "text",
+                    output: "json"
+                },
+                "$mol_json_to_string": {
+                    input: "json",
+                    output: "text"
+                },
+                "$mol_jack_transform": {
+                    input: "jack.tree",
+                    output: "tree"
+                },
+                "$mol_wasm_module": {
+                    input: "wasm.bin",
+                    output: "wasm.module"
+                },
+                "$mol_js_eval": {
+                    input: "text",
+                    output: "any"
+                }
+            };
+        }
         plugins() {
             return [
                 this.Theme()
@@ -27785,20 +27893,9 @@ var $;
         pages() {
             return [
                 this.Presets(),
-                this.Source()
+                this.Source(),
+                this.Result()
             ];
-        }
-        Result(index) {
-            const obj = new this.$.$mol_page();
-            obj.title = () => this.transform(index);
-            obj.tools = () => [
-                this.Close(index),
-                this.Add(index)
-            ];
-            obj.body = () => [
-                this.Result_text(index)
-            ];
-            return obj;
         }
         Theme() {
             const obj = new this.$.$mol_theme_auto();
@@ -27897,14 +27994,8 @@ var $;
             ];
             return obj;
         }
-        Add_first() {
-            const obj = new this.$.$mol_view();
-            return obj;
-        }
         source_tools() {
-            return [
-                this.Add_first()
-            ];
+            return [];
         }
         source_default() {
             return "";
@@ -27930,85 +28021,43 @@ var $;
             ];
             return obj;
         }
-        transform(index) {
-            return "";
-        }
-        Close_icon(index) {
-            const obj = new this.$.$mol_icon_cross();
-            return obj;
-        }
-        close(index, event) {
-            if (event !== undefined)
-                return event;
-            return null;
-        }
-        Close(index) {
-            const obj = new this.$.$mol_button_minor();
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_tree_Close_hint');
-            obj.sub = () => [
-                this.Close_icon(index)
-            ];
-            obj.click = (event) => this.close(index, event);
-            return obj;
-        }
-        Add_icon(index) {
-            const obj = new this.$.$mol_icon_plus();
-            return obj;
-        }
-        add(index, val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
         transform_options() {
-            return [
-                "$mol_tree2_from_string",
-                "$mol_tree2_to_string",
-                "$mol_tree2_from_json",
-                "$mol_tree2_grammar_check",
-                "$mol_tree2_xml_to_text",
-                "$mol_tree2_js_to_text",
-                "$mol_tree2_text_to_string",
-                "$mol_tree2_text_to_sourcemap",
-                "$mol_tree2_text_to_sourcemap_vis",
-                "$mol_tree2_span_imprint",
-                "$mol_tree2_span_reuse",
-                "$mol_tree2_wasm_to_bin",
-                "$mol_wasm_module",
-                "$mol_tree2_bin_from_string",
-                "$mol_tree2_bin_from_bytes",
-                "$mol_tree2_bin_to_bytes",
-                "$mol_view_tree2_to_text",
-                "$mol_view_tree2_to_dts",
-                "$hyoo_marked_tree_from_line",
-                "$hyoo_marked_tree_to_js",
-                "$mol_json_from_string",
-                "$mol_json_to_string",
-                "$mol_jack_transform",
-                "$mol_js_eval"
-            ];
+            return [];
         }
-        Add(index) {
-            const obj = new this.$.$mol_select();
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_tree_Add_hint');
-            obj.Trigger_icon = () => this.Add_icon(index);
-            obj.value = (val) => this.add(index, val);
-            obj.options = () => this.transform_options();
+        add_hint() {
+            return this.$.$mol_locale.text('$hyoo_tree_add_hint');
+        }
+        result_title() {
+            return this.Pipeline().title();
+        }
+        Pipeline() {
+            const obj = new this.$.$mol_select_list();
+            obj.value = (val) => this.pipeline(val);
+            obj.options_pickable = () => this.transform_options();
+            obj.pick_hint = () => this.add_hint();
             return obj;
         }
-        result_text(index) {
+        result_text() {
             return null;
         }
-        Result_text(index) {
+        Result_text() {
             const obj = new this.$.$mol_text_code();
             obj.render_visible_only = () => false;
-            obj.text = () => this.result_text(index);
+            obj.text = () => this.result_text();
+            return obj;
+        }
+        Result() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => this.result_title();
+            obj.head = () => [
+                this.Pipeline()
+            ];
+            obj.body = () => [
+                this.Result_text()
+            ];
             return obj;
         }
     }
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_tree.prototype, "Result", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_tree.prototype, "Theme", null);
@@ -28053,34 +28102,19 @@ var $;
     ], $hyoo_tree.prototype, "Presets", null);
     __decorate([
         $.$mol_mem
-    ], $hyoo_tree.prototype, "Add_first", null);
-    __decorate([
-        $.$mol_mem
     ], $hyoo_tree.prototype, "Source_text", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_tree.prototype, "Source", null);
     __decorate([
-        $.$mol_mem_key
-    ], $hyoo_tree.prototype, "Close_icon", null);
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "Pipeline", null);
     __decorate([
-        $.$mol_mem_key
-    ], $hyoo_tree.prototype, "close", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_tree.prototype, "Close", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_tree.prototype, "Add_icon", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_tree.prototype, "add", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_tree.prototype, "Add", null);
-    __decorate([
-        $.$mol_mem_key
+        $.$mol_mem
     ], $hyoo_tree.prototype, "Result_text", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_tree.prototype, "Result", null);
     $.$hyoo_tree = $hyoo_tree;
 })($ || ($ = {}));
 //tree.view.tree.js.map
@@ -28113,7 +28147,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("hyoo/tree/tree.view.css", "[hyoo_tree_body] {\n\tdisplay: flex;\n}\n\n[hyoo_tree_presets_list] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_source] {\n\tflex: 1 0 auto;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_source_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_result] {\n\tflex: 1 0 auto;\n\toutline: 0 0 0 1px var(--mol_theme_line);\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_result_head] {\n}\n\n[hyoo_tree_result_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_source_text],\n[hyoo_tree_result_text] {\n\tmax-width: 40rem;\n}\n");
+    $.$mol_style_attach("hyoo/tree/tree.view.css", "[hyoo_tree_body] {\n\tdisplay: flex;\n}\n\n[hyoo_tree_presets_list] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_source] {\n\tflex: 1 0 30rem;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_source_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_tree_result] {\n\tflex: 1 0 30rem;\n\toutline: 0 0 0 1px var(--mol_theme_line);\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_tree_result_body] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //tree.view.css.js.map
 ;
@@ -28136,16 +28170,6 @@ var $;
                 }
                 return '';
             }
-            Add_first() {
-                return this.Add(-1);
-            }
-            pages() {
-                return [
-                    this.Presets(),
-                    this.Source(),
-                    ...this.pipeline().map((transform, index) => this.Result(index)),
-                ];
-            }
             source(next) {
                 var _a;
                 return (_a = this.$.$mol_state_arg.value('source', next)) !== null && _a !== void 0 ? _a : super.source();
@@ -28161,6 +28185,20 @@ var $;
                     ]);
                 return (_a = pipeline[index]) !== null && _a !== void 0 ? _a : null;
             }
+            transform_options() {
+                const map = this.transform_map();
+                const pipeline = this.pipeline();
+                const last = pipeline[pipeline.length - 1];
+                const type = last ? map[last].output.split('.').reverse() : ['text'];
+                return Object.keys(map).filter(id => {
+                    const diff = $.$mol_diff_path(type, map[id].input.split('.').reverse());
+                    if (!diff.prefix.length)
+                        return false;
+                    if (diff.suffix.every(s => s.length))
+                        return false;
+                    return true;
+                });
+            }
             result(index) {
                 var _a, _b;
                 const func = this.pipeline()[index];
@@ -28174,8 +28212,8 @@ var $;
                     return (_b = this.$[func](arg)) !== null && _b !== void 0 ? _b : null;
                 }
             }
-            result_text(index) {
-                let res = $.$mol_try(() => this.result(index));
+            result_text() {
+                let res = $.$mol_try(() => this.result(this.pipeline().length - 1));
                 if (res instanceof Promise)
                     $.$mol_fail_hidden(res);
                 if (typeof res === 'string')
@@ -28208,18 +28246,18 @@ var $;
         ], $hyoo_tree.prototype, "pipeline", null);
         __decorate([
             $.$mol_mem
-        ], $hyoo_tree.prototype, "pages", null);
-        __decorate([
-            $.$mol_mem
         ], $hyoo_tree.prototype, "source", null);
         __decorate([
             $.$mol_mem_key
         ], $hyoo_tree.prototype, "transform", null);
         __decorate([
+            $.$mol_mem
+        ], $hyoo_tree.prototype, "transform_options", null);
+        __decorate([
             $.$mol_mem_key
         ], $hyoo_tree.prototype, "result", null);
         __decorate([
-            $.$mol_mem_key
+            $.$mol_mem
         ], $hyoo_tree.prototype, "result_text", null);
         $$.$hyoo_tree = $hyoo_tree;
     })($$ = $.$$ || ($.$$ = {}));
