@@ -1263,12 +1263,6 @@ $mol_check_icon_demo $mol_demo_small
 $mol_pop $mol_view
 	event * keydown?event <=> keydown?event null
 	showed?val false
-	plugins /$mol_plugin
-		<= Meter $mol_meter
-			top => top
-			bottom => bottom
-			left => left
-			right => right
 	sub /
 		<= Anchor null
 		<= Bubble $mol_pop_bubble
@@ -1285,6 +1279,8 @@ $mol_pop_bubble $mol_scroll
 		^
 		mol_pop_align <= align \
 		tabindex 0
+
+$mol_icon_dots_vertical $mol_icon path \M12,16C13.1,16 14,16.9 14,18C14,19.1 13.1,20 12,20C10.9,20 10,19.1 10,18C10,16.9 10.9,16 12,16M12,10C13.1,10 14,10.9 14,12C14,13.1 13.1,14 12,14C10.9,14 10,13.1 10,12C10,10.9 10.9,10 12,10M12,4C13.1,4 14,4.9 14,6C14,7.1 13.1,8 12,8C10.9,8 10,7.1 10,6C10,4.9 10.9,4 12,4Z
 
 $mol_nav $mol_plugin
 	cycle?val false
@@ -1329,17 +1325,17 @@ $mol_select $mol_pop
 	showed?val <=> options_showed?val false
 	Anchor <= Trigger $mol_button_minor
 		click?event <=> open?event null
-		sub <= trigger_content /$mol_view_content
+		sub <= trigger_content /
+		hint <= hint @ \Pick..
 	bubble_content /
 		<= Menu $mol_list
 			rows <= menu_content /$mol_view
-	option_content_current /$mol_view_content
 	Filter $mol_string
 		value?val <=> filter_pattern?val \
-		hint <= filter_hint <= hint @ \Search..
+		hint @ \Filter..
 		submit?event <=> submit?event null
 		enabled <= enabled true
-	Trigger_icon $mol_icon_chevron
+	Trigger_icon $mol_icon_dots_vertical
 
 $mol_search $mol_bar
 	query?val \
@@ -1354,10 +1350,14 @@ $mol_search $mol_bar
 			filter_pattern?val <=> query?val
 			options_showed <= suggests_showed false
 			options <= suggests /string
-			Trigger_icon null
 			submit?event <=> submit?event null
 			No_options null
 			enabled <= enabled true
+			Filter => Suggest_filter
+			option_rows => suggest_option_rows
+			menu_content <= suggest_option_rows
+			trigger_content /
+				<= Suggest_filter
 		<= Clear $mol_button_minor
 			sub /
 				<= Clear_icon $mol_icon_cross
@@ -1714,7 +1714,7 @@ $mol_form_demo_bids $mol_demo_small
 $mol_frame $mol_view
 	dom_name \iframe
 	attr *
-		src <= uri \
+		src <= uri?val \
 		allow <= allow \
 	fullscreen true
 	accelerometer true
@@ -2272,15 +2272,18 @@ $mol_select_demo_colors $mol_demo_small
 	title @ \Color picker with filter and custom rows
 	sub /
 		<= Color $mol_select
+			filter_pattern => color_filter
 			value?val <=> color?val \
 			dictionary <= colors *
 			option_label!id <= color_name!id \
 			option_content!id <= option_content!id /
-				<= Color_option!id $mol_row
+				<= Color_option!id $mol_view
 					sub /
 						<= Color_preview!id $mol_select_colors_color_preview
 							color <= option_color!id \
-						<= color_name!id \
+						<= Color_name!id $mol_dimmer
+							haystack <= color_name!id \
+							needle <= color_filter
 					minimal_height 40
 
 $mol_select_colors_color_preview $mol_view
@@ -2334,6 +2337,7 @@ $mol_select_list $mol_bar
 		value?val <=> pick?val \
 		option_label!key <= option_title!key
 		hint <= pick_hint @ \Add..
+		Trigger_icon <= Pick_icon $mol_icon_plus
 
 $mol_select_list_demo $mol_demo_small
 	title @ \Friends picker
@@ -2507,8 +2511,11 @@ $mol_text_demo $mol_demo_large
 					\
 
 $mol_textarea $mol_view
+	attr *
+		mol_textarea_clickable <= clickable?val false
 	event *
 		keydown?event <=> press?event null
+		pointermove?event <=> hover?event null
 	sub /
 		<= Edit $mol_string
 			dom_name \textarea
@@ -2843,34 +2850,6 @@ $mol_status $mol_view
 	sub /
 		<= message \
 
-$mol_chat $mol_list
-	rows /
-		<= Add_link $mol_link
-			uri <= add_uri \
-			title <= add_label @ \Add comment..
-		- <= Add_status $mol_status status <= adding?next null
-		- <= Add $mol_view
-			sub <= add_content /
-				<= Add_body $mol_textarea
-					hint <= add_hint @ \New message..
-					value?val <=> add_body?val \
-				<= Add_submit $mol_button_major
-					enabled <= add_submit_enabled false
-					title <= add_submit_label @ \Post
-					event_click?event <=> add?event null
-	Post!index $mol_message
-		name <= post_user_name!index \
-		moment <= post_updated!index $mol_time_moment
-		avatar_link <= post_user_link!index \
-		avatar <= post_user_ava!index \
-		text <= post_body!index \
-	repository $mol_github_repository
-	repository_name \
-	link \
-	seed \
-	teaser \
-	issue $mol_github_issue
-
 $mol_icon_code_braces $mol_icon path \M8,3C6.9,3 6,3.9 6,5V9C6,10.1 5.1,11 4,11H3V13H4C5.1,13 6,13.9 6,15V19C6,20.1 6.9,21 8,21H10V19H8V14C8,12.9 7.1,12 6,12C7.1,12 8,11.1 8,10V5H10V3M16,3C17.1,3 18,3.9 18,5V9C18,10.1 18.9,11 20,11H21V13H20C18.9,13 18,13.9 18,15V19C18,20.1 17.1,21 16,21H14V19H16V14C16,12.9 16.9,12 18,12C16.9,12 16,11.1 16,10V5H14V3H16Z
 
 $mol_app_demo $mol_book2
@@ -3024,18 +3003,24 @@ $hyoo_tree $mol_book2
 		<= Source $mol_page
 			title @ \Tree pipeline source
 			tools <= source_tools /$mol_view_content
+				<= Add_first $mol_view
 			body /
 				<= Source_text $mol_textarea
 					value?val <=> source?val <= source_default \
 					hint <= source_hint @ \view.tree source
 	Result!index $mol_page
-		Title null
-		title <= transform!index
-		head <= result_head!index /
-			<= Transform!index $mol_select
-				hint @ \Search transform..
-				value?val <=> transform!index?val \$mol_tree2_from_string
-				options /
+		title <= transform!index \
+		tools /
+			<= Close!index $mol_button_minor
+				hint @ \Remove step
+				sub /
+					<= Close_icon!index $mol_icon_cross
+				click?event <=> close!index?event null
+			<= Add!index $mol_select
+				hint @ \Add step..
+				Trigger_icon <= Add_icon!index $mol_icon_plus
+				value?val <=> add!index?val \
+				options <= transform_options /
 					\$mol_tree2_from_string
 					\$mol_tree2_to_string
 					\$mol_tree2_from_json
@@ -3053,20 +3038,45 @@ $hyoo_tree $mol_book2
 					\$mol_tree2_bin_from_bytes
 					\$mol_tree2_bin_to_bytes
 					\$mol_view_tree2_to_text
+					\$mol_view_tree2_to_dts
 					\$hyoo_marked_tree_from_line
 					\$hyoo_marked_tree_to_js
 					\$mol_json_from_string
 					\$mol_json_to_string
 					\$mol_jack_transform
 					\$mol_js_eval
-			<= Close!index $mol_button_minor 
-				sub /
-					<= Close_icon!index $mol_icon_cross
-				click?event <=> close!index?event null
 		body /
 			<= Result_text!index $mol_text_code
 				render_visible_only false
 				text <= result_text!index null
+
+$mol_chat $mol_list
+	rows /
+		<= Add_link $mol_link
+			uri <= add_uri \
+			title <= add_label @ \Add comment..
+		- <= Add_status $mol_status status <= adding?next null
+		- <= Add $mol_view
+			sub <= add_content /
+				<= Add_body $mol_textarea
+					hint <= add_hint @ \New message..
+					value?val <=> add_body?val \
+				<= Add_submit $mol_button_major
+					enabled <= add_submit_enabled false
+					title <= add_submit_label @ \Post
+					event_click?event <=> add?event null
+	Post!index $mol_message
+		name <= post_user_name!index \
+		moment <= post_updated!index $mol_time_moment
+		avatar_link <= post_user_link!index \
+		avatar <= post_user_ava!index \
+		text <= post_body!index \
+	repository $mol_github_repository
+	repository_name \
+	link \
+	seed \
+	teaser \
+	issue $mol_github_issue
 
 $hyoo_habhub $mol_book2
 	plugins /
@@ -3137,12 +3147,12 @@ $hyoo_apps $mol_book2
 				title <= app_title!id \
 				arg <= app_arg!id *
 			<= Menu_link_out!id $mol_link
-				uri <= app_uri!id \
+				uri <= app_uri!id
 				target \_blank
 				sub /
 					<= Menu_link_out_icon!id $mol_icon_open_in_new
 	App!id $mol_frame
-		uri <= app_uri!id \
+		uri?val <=> app_uri!id?val \
 	data *
 		offer *
 			title @ \HyOO Business Offer
