@@ -27847,7 +27847,7 @@ var $;
                 },
                 "$mol_view_tree2_to_dts": {
                     input: "view.tree",
-                    output: "dts"
+                    output: "text.tree"
                 },
                 "$hyoo_marked_tree_from_line": {
                     input: "text",
