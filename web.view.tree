@@ -2442,11 +2442,12 @@ $mol_text_code_token_link $mol_text_code_token
 		target \_blank
 
 $mol_text_code_row $mol_paragraph
-	attr *
-		^
-		mol_text_code_row_numb <= numb 0
 	text \
 	minimal_height 24
+	numb_showed true
+	Numb $mol_view
+		sub /
+			<= numb 0
 	Token!id $mol_text_code_token
 		type <= token_type!id \
 		haystack <= token_text!id \
@@ -2459,6 +2460,7 @@ $mol_text_code $mol_list
 	text \
 	text_lines /string
 	Row!id $mol_text_code_row
+		numb_showed <= sidebar_showed false
 		numb <= row_numb!id 0
 		text <= row_text!id \
 		highlight <= highlight \
@@ -2517,6 +2519,7 @@ $mol_text_demo $mol_demo_large
 $mol_textarea $mol_view
 	attr *
 		mol_textarea_clickable <= clickable?val false
+		mol_textarea_sidebar_showed <= sidebar_showed false
 	event *
 		keydown?event <=> press?event null
 		pointermove?event <=> hover?event null
@@ -2530,6 +2533,8 @@ $mol_textarea $mol_view
 		<= View $mol_text_code
 			text <= value
 			render_visible_only false
+			row_numb!index <= row_numb!index 0
+			sidebar_showed <= sidebar_showed
 
 $mol_textarea_demo $mol_demo_large
 	title @ \Text input field in various states
@@ -3087,6 +3092,7 @@ $hyoo_tree $mol_book2
 				<= Source_text $mol_textarea
 					value?val <=> source?val <= source_default \
 					hint <= source_hint @ \view.tree source
+					sidebar_showed true
 		<= Result $mol_page
 			title <= result_title
 			head /
