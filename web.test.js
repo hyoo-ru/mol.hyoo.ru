@@ -3094,8 +3094,8 @@ var $;
         },
         'error handling'($) {
             const span = new $_1.$mol_span('test.ts', '', 1, 3, 4);
-            const error = span.error('some error');
-            $_1.$mol_assert_equal(error.message, 'some error\ntest.ts#1:3/4');
+            const error = span.error('Some error\n');
+            $_1.$mol_assert_equal(error.message, 'Some error\ntest.ts#1:3/4');
         }
     });
 })($ || ($ = {}));
@@ -3574,7 +3574,7 @@ var $;
         'wrong name'() {
             $.$mol_assert_fail(() => convert(`
 					foo+bar
-				`), 'wrong node type\nfoo+bar\n\nunknown#2:6/7');
+				`), 'Wrong node type\nfoo+bar\nunknown#2:6/7');
         },
         'array'() {
             $.$mol_assert_equal(convert(`
@@ -3991,20 +3991,17 @@ var $;
 (function ($_1) {
     $_1.$mol_test({
         'test'($) {
-            const root = {
-                'foo': input => [input.struct('777')],
-                'test': $_1.$mol_jack.meta.test,
-            };
+            const root = Object.assign(Object.assign({}, $_1.$mol_jack), { 'foo': input => [input.struct('FOO')], 'FOO': input => [input.struct('FAIL')] });
             $_1.$mol_assert_like($.$mol_tree2_from_string(`
 					test
 						case foo
-						case 777
+						case tree FOO
 				`)
                 .hack(root)
                 .toString(), $.$mol_tree2_from_string(`
 					test
 						case foo
-						case 777
+						case tree FOO
 				`)
                 .toString());
             $_1.$mol_assert_fail(() => {

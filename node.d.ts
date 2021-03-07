@@ -7101,7 +7101,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    const $mol_jack: Record<string, $mol_tree2_belt<{}>>;
+    const $mol_jack: $mol_tree2_belt<{}>;
     function $mol_jack_transform(code: $mol_tree2): $mol_tree2;
 }
 
