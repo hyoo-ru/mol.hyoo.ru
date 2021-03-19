@@ -27295,9 +27295,9 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_guid(exists = () => false) {
+    function $mol_guid(length = 8, exists = () => false) {
         for (;;) {
-            let id = Math.random().toString(36).substring(2, 10).toUpperCase();
+            let id = Math.random().toString(36).substring(2, length + 2).toUpperCase();
             if (exists(id))
                 continue;
             return id;
