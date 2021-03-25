@@ -3196,7 +3196,7 @@ $hyoo_apps $mol_book2
 		<= Menu $mol_page
 			title @ \HyOO Apps
 			tools /
-				<= Source $mol_link_source uri \https://github.com/hyoo-ru/showcase.hyoo.ru
+				<= Source $mol_link_source uri \https://github.com/hyoo-ru/apps.hyoo.ru
 				<= Lights $mol_lights_toggle
 			body /
 				<= Menu_items $mol_list
