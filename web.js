@@ -6960,7 +6960,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/string/string.view.css", "[mol_string] {\n\tbox-sizing: border-box;\n\toutline-offset: 0;\n\tborder: none;\n\tborder-radius: var(--mol_skin_round);\n\twhite-space: nowrap;\n\toverflow: hidden;\n\tpadding: var(--mol_gap_text);\n\ttext-align: left;\n\tposition: relative;\n\tz-index: 0;\n\tfont: inherit;\n\tflex: 0 1 auto;\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n}\n\n[mol_string]:disabled {\n\tbackground-color: transparent;\n}\n\n[mol_string]:focus {\n\toutline: none;\n\tz-index: 1;\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_focus);\n}\n\n[mol_string]::-ms-clear {\n\tdisplay: none;\n}\n");
+    $.$mol_style_attach("mol/string/string.view.css", "[mol_string] {\n\tbox-sizing: border-box;\n\toutline-offset: 0;\n\tborder: none;\n\tborder-radius: var(--mol_skin_round);\n\twhite-space: nowrap;\n\toverflow: hidden;\n\tpadding: var(--mol_gap_text);\n\ttext-align: left;\n\tposition: relative;\n\tz-index: 0;\n\tfont: inherit;\n\tflex: 1 0 auto;\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n}\n\n[mol_string]:disabled {\n\tbackground-color: transparent;\n}\n\n[mol_string]:focus {\n\toutline: none;\n\tz-index: 1;\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_focus);\n}\n\n[mol_string]::-ms-clear {\n\tdisplay: none;\n}\n");
 })($ || ($ = {}));
 //string.view.css.js.map
 ;
@@ -7884,27 +7884,33 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function numb(str, max) {
+        const numb = Number(str);
+        if (numb < max)
+            return numb;
+        $.$mol_fail(new Error(`Wrong time component ${str}`));
+    }
     class $mol_time_moment extends $.$mol_time_base {
         constructor(config = new Date) {
             super();
             if (typeof config === 'number')
                 config = new Date(config);
             if (typeof config === 'string') {
-                const parsed = /^(?:(\d\d\d\d)(?:-?(\d\d)(?:-?(\d\d))?)?)?(?:[T ](\d\d)(?::?(\d\d)(?::?(\d\d(?:\.\d+)?))?)?(Z|[\+\-]\d\d(?::?(?:\d\d)?)?)?)?$/.exec(config);
+                const parsed = /^(?:(\d\d?\d?\d?)(?:-?(\d\d?)(?:-?(\d\d?))?)?)?(?:[T ](\d\d?)(?::?(\d\d?)(?::?(\d\d?(?:\.\d+)?))?)?(Z|[\+\-]\d\d?(?::?(?:\d\d?)?)?)?)?$/.exec(config);
                 if (!parsed)
                     throw new Error(`Can not parse time moment (${config})`);
                 if (parsed[1])
-                    this.year = Number(parsed[1]);
+                    this.year = numb(parsed[1], 9999);
                 if (parsed[2])
-                    this.month = Number(parsed[2]) - 1;
+                    this.month = numb(parsed[2], 13) - 1;
                 if (parsed[3])
-                    this.day = Number(parsed[3]) - 1;
+                    this.day = numb(parsed[3], 32) - 1;
                 if (parsed[4])
-                    this.hour = Number(parsed[4]);
+                    this.hour = numb(parsed[4], 60);
                 if (parsed[5])
-                    this.minute = Number(parsed[5]);
+                    this.minute = numb(parsed[5], 60);
                 if (parsed[6])
-                    this.second = Number(parsed[6]);
+                    this.second = numb(parsed[6], 60);
                 if (parsed[7])
                     this.offset = new $.$mol_time_duration(parsed[7]);
                 return;
@@ -13126,16 +13132,31 @@ var $;
                 ];
             }
             height_max() {
-                return this.$.$mol_window.size().height * 0.33;
+                const viewport = this.$.$mol_window.size();
+                const rect_bubble = this.view_rect();
+                const align = this.align_vert();
+                if (align === 'bottom')
+                    return viewport.height - rect_bubble.bottom;
+                if (align === 'top')
+                    return rect_bubble.top;
+                return 0;
             }
             align() {
+                return `${this.align_vert()}_${this.align_hor()}`;
+            }
+            align_vert() {
                 const viewport = this.$.$mol_window.size();
                 const rect_bubble = this.view_rect();
                 if (!rect_bubble)
                     return 'suspense';
-                const vert = rect_bubble.top > (viewport.height - rect_bubble.bottom) ? 'top' : 'bottom';
-                const hor = rect_bubble.left > (viewport.width - rect_bubble.right) ? 'left' : 'right';
-                return `${vert}_${hor}`;
+                return rect_bubble.top > (viewport.height - rect_bubble.bottom) ? 'top' : 'bottom';
+            }
+            align_hor() {
+                const viewport = this.$.$mol_window.size();
+                const rect_bubble = this.view_rect();
+                if (!rect_bubble)
+                    return 'suspense';
+                return rect_bubble.left > (viewport.width - rect_bubble.right) ? 'left' : 'right';
             }
             keydown(event) {
                 if (event.defaultPrevented)
@@ -13148,6 +13169,18 @@ var $;
                 }
             }
         }
+        __decorate([
+            $.$mol_mem
+        ], $mol_pop.prototype, "height_max", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_pop.prototype, "align", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_pop.prototype, "align_vert", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_pop.prototype, "align_hor", null);
         $$.$mol_pop = $mol_pop;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -13779,6 +13812,18 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_icon_calendar extends $.$mol_icon {
+        path() {
+            return "M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3H18V1M17,12H12V17H17V12Z";
+        }
+    }
+    $.$mol_icon_calendar = $mol_icon_calendar;
+})($ || ($ = {}));
+//calendar.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_icon_chevron_left extends $.$mol_icon {
         path() {
             return "M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z";
@@ -13804,11 +13849,16 @@ var $;
 var $;
 (function ($) {
     class $mol_date extends $.$mol_pop {
+        Icon() {
+            const obj = new this.$.$mol_icon_calendar();
+            return obj;
+        }
         Anchor() {
-            return this.Input();
+            return this.View();
         }
         bubble_content() {
             return [
+                this.Manual(),
                 this.Calendar()
             ];
         }
@@ -13823,7 +13873,15 @@ var $;
             const obj = new this.$.$mol_time_moment();
             return obj;
         }
-        value(val) {
+        view_content() {
+            return [];
+        }
+        View() {
+            const obj = new this.$.$mol_button_minor();
+            obj.sub = () => this.view_content();
+            return obj;
+        }
+        date(val) {
             if (val !== undefined)
                 return val;
             return "";
@@ -13834,16 +13892,40 @@ var $;
         enabled() {
             return true;
         }
-        Input() {
+        Date_input() {
             const obj = new this.$.$mol_string();
-            obj.value = (val) => this.value(val);
+            obj.value = (val) => this.date(val);
             obj.hint = () => this.hint();
             obj.enabled = () => this.enabled();
             obj.length_max = () => 10;
             return obj;
         }
+        time(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        time_hint() {
+            return "hh:mm";
+        }
+        Time_input() {
+            const obj = new this.$.$mol_string();
+            obj.value = (val) => this.time(val);
+            obj.hint = () => this.time_hint();
+            obj.enabled = () => this.enabled();
+            obj.length_max = () => 10;
+            return obj;
+        }
+        Manual() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Date_input(),
+                this.Time_input()
+            ];
+            return obj;
+        }
         month_moment() {
-            return this.value();
+            return this.value_moment();
         }
         day_selected(day) {
             return false;
@@ -13920,16 +14002,31 @@ var $;
     }
     __decorate([
         $.$mol_mem
+    ], $mol_date.prototype, "Icon", null);
+    __decorate([
+        $.$mol_mem
     ], $mol_date.prototype, "value_number", null);
     __decorate([
         $.$mol_mem
     ], $mol_date.prototype, "value_moment", null);
     __decorate([
         $.$mol_mem
-    ], $mol_date.prototype, "value", null);
+    ], $mol_date.prototype, "View", null);
     __decorate([
         $.$mol_mem
-    ], $mol_date.prototype, "Input", null);
+    ], $mol_date.prototype, "date", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_date.prototype, "Date_input", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_date.prototype, "time", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_date.prototype, "Time_input", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_date.prototype, "Manual", null);
     __decorate([
         $.$mol_mem_key
     ], $mol_date.prototype, "day_click", null);
@@ -14017,7 +14114,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/date/date.view.css", "[mol_date_input] {\n\twidth: 13.5ch;\n\tflex-grow: 1;\n}\n\n[mol_date_bubble] {\n\tpadding: .5rem;\n}\n\n[mol_date_prev] ,\n[mol_date_next] {\n\tflex-grow: 1;\n}\n\n[mol_date_calendar_title] {\n\tpadding: .25rem .5rem;\n}\n\n[mol_date_calendar_day] {\n\tpadding: 0;\n}\n\n[mol_date_calendar_day_button] {\n\twidth: 100%;\n\tpadding: .25rem .5rem;\n\tjustify-content: center;\n\tcursor: pointer;\n\tcolor: inherit;\n}\n");
+    $.$mol_style_attach("mol/date/date.view.css", "[mol_date_bubble] {\n\tpadding: .5rem;\n}\n\n[mol_date_date_input] {\n\twidth: 12ch;\n}\n[mol_date_time_input] {\n\twidth: 12ch;\n}\n\n[mol_date_prev] ,\n[mol_date_next] {\n\tflex-grow: 1;\n}\n\n[mol_date_calendar_title] {\n\tpadding: var(--mol_gap_text);\n}\n\n[mol_date_calendar_day] {\n\tpadding: 0;\n}\n\n[mol_date_calendar_day_button] {\n\twidth: 100%;\n\tpadding: .25rem .5rem;\n\tjustify-content: center;\n\tcursor: pointer;\n\tcolor: inherit;\n}\n");
 })($ || ($ = {}));
 //date.view.css.js.map
 ;
@@ -14027,12 +14124,43 @@ var $;
     var $$;
     (function ($$) {
         class $mol_date extends $.$mol_date {
-            value(val) {
-                const moment1 = $.$mol_try(() => val && new $.$mol_time_moment(val.replace(/-$/, ''))) || null;
-                if (moment1 instanceof Error)
-                    return val || '';
-                const moment2 = this.value_moment(val === undefined ? undefined : moment1);
-                return moment2 && moment2.toString('YYYY-MM-DD') || '';
+            view_content() {
+                var _a, _b;
+                return [(_b = (_a = this.value_moment()) === null || _a === void 0 ? void 0 : _a.toString('YYYY-MM-DD hh:mm')) !== null && _b !== void 0 ? _b : this.Icon()];
+            }
+            date(val) {
+                var _a;
+                let moment = this.value_moment();
+                if (val === undefined)
+                    return (_a = moment === null || moment === void 0 ? void 0 : moment.toString('YYYY-MM-DD')) !== null && _a !== void 0 ? _a : '';
+                let date = $.$mol_try(() => val && new $.$mol_time_moment(val.replace(/-$/, ''))) || null;
+                if (date instanceof Error)
+                    return val;
+                if (moment) {
+                    if (date)
+                        moment = moment.merge(date);
+                    else
+                        moment = moment.mask('T11:11');
+                }
+                this.value_moment(moment !== null && moment !== void 0 ? moment : date);
+                return val;
+            }
+            time(val) {
+                var _a;
+                let moment = this.value_moment();
+                if (val === undefined)
+                    return (_a = moment === null || moment === void 0 ? void 0 : moment.toString('hh:mm')) !== null && _a !== void 0 ? _a : '';
+                let time = $.$mol_try(() => val && new $.$mol_time_moment('T' + val.replace(/:$/, ''))) || null;
+                if (time instanceof Error)
+                    return val;
+                if (moment) {
+                    if (time)
+                        moment = moment.merge(time);
+                    else
+                        moment = moment.mask('1111-11-11');
+                }
+                this.value_moment(moment !== null && moment !== void 0 ? moment : time);
+                return val;
             }
             value_moment(val) {
                 const stamp = this.value_number(val && val.valueOf());
@@ -14041,7 +14169,7 @@ var $;
             month_moment(next) {
                 if (next)
                     return next;
-                let moment = $.$mol_try(() => new $.$mol_time_moment(this.value()));
+                let moment = $.$mol_try(() => new $.$mol_time_moment(this.date()));
                 if (moment instanceof Error || !moment.year)
                     return new $.$mol_time_moment;
                 if (moment.month === undefined) {
@@ -14053,10 +14181,10 @@ var $;
                 return this.focused(next);
             }
             day_selected(day) {
-                return this.value() === day;
+                return this.date() === day;
             }
             day_click(day) {
-                this.value(day);
+                this.date(day);
                 this.showed(false);
             }
             prev() {
@@ -14068,7 +14196,10 @@ var $;
         }
         __decorate([
             $.$mol_mem
-        ], $mol_date.prototype, "value", null);
+        ], $mol_date.prototype, "date", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_date.prototype, "time", null);
         __decorate([
             $.$mol_mem
         ], $mol_date.prototype, "value_moment", null);
