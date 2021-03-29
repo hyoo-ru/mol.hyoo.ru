@@ -3052,7 +3052,7 @@ $hyoo_tree $mol_book2
 			output \wasm.module
 		$mol_js_eval *
 			input \text
-			output \any
+			output \
 	plugins /
 		<= Theme $mol_theme_auto
 	pipeline?val <= pipeline_default /string

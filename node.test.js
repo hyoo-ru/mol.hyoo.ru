@@ -28113,7 +28113,7 @@ var $;
                 },
                 "$mol_js_eval": {
                     input: "text",
-                    output: "any"
+                    output: ""
                 }
             };
         }
@@ -28428,7 +28428,9 @@ var $;
                 const map = this.transform_map();
                 const pipeline = this.pipeline();
                 const last = pipeline[pipeline.length - 1];
-                const type = last ? map[last].output.split('.').reverse() : ['text'];
+                const type = last ? map[last].output.split('.').filter(Boolean).reverse() : ['text'];
+                if (!type.length)
+                    return Object.keys(map);
                 return Object.keys(map).filter(id => {
                     const diff = $.$mol_diff_path(type, map[id].input.split('.').reverse());
                     if (!diff.prefix.length)
