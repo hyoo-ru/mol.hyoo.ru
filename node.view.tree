@@ -3151,6 +3151,7 @@ $hyoo_habhub $mol_book2
 		title <= menu_title @ \HabHub
 		tools <= tools_root /
 			<= Add $mol_link
+				hint \Add article
 				uri \https://github.com/nin-jin/habhub
 				sub /
 					<= Add_icon $mol_icon_plus

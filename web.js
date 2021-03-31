@@ -29211,6 +29211,7 @@ var $;
         }
         Add() {
             const obj = new this.$.$mol_link();
+            obj.hint = () => "Add article";
             obj.uri = () => "https://github.com/nin-jin/habhub";
             obj.sub = () => [
                 this.Add_icon()
