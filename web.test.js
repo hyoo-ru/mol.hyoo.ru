@@ -3839,7 +3839,7 @@ var $;
                     "script2"
                 ],
                 "sourcesContent": [source.script1, source.script2],
-                "mappings": "AAAA,AAAI,aAAJ,gBCAA,gBDCA,;"
+                "mappings": "AAAA,AAAI,aAAJ,gBCAA,gBDCA;"
             });
         }
     });

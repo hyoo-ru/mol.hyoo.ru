@@ -3002,6 +3002,12 @@ $hyoo_tree $mol_book2
 		$mol_tree2_text_to_string *
 			input \text.tree
 			output \text
+		$mol_tree2_text_to_string_mapped_js *
+			input \text.tree
+			output \text
+		$mol_tree2_text_to_string_mapped_css *
+			input \text.tree
+			output \text
 		$mol_tree2_text_to_sourcemap *
 			input \text.tree
 			output \map.json

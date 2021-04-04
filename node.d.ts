@@ -7007,6 +7007,12 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_tree2_text_to_string_mapped(this: $, text: $mol_tree2, type: 'js' | 'css'): string;
+    function $mol_tree2_text_to_string_mapped_js(this: $, text: $mol_tree2): string;
+    function $mol_tree2_text_to_string_mapped_css(this: $, text: $mol_tree2): string;
+}
+
+declare namespace $ {
     function $mol_tree2_text_to_sourcemap_vis(this: $, text: $mol_tree2): string;
 }
 
@@ -7197,6 +7203,14 @@ declare namespace $ {
                 output: string;
             };
             $mol_tree2_text_to_string: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_text_to_string_mapped_js: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_text_to_string_mapped_css: {
                 input: string;
                 output: string;
             };

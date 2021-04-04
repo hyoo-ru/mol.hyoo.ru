@@ -27013,6 +27013,7 @@ var $;
         let prev_index = 0;
         let prev_col = 1;
         let mappings = '';
+        let line = [];
         const file_indexes = new Map();
         const file_sources = new Map();
         function span2index(span) {
@@ -27024,7 +27025,10 @@ var $;
             return index;
         }
         function next_line() {
-            mappings += ';';
+            if (!line.length)
+                return;
+            mappings += line.join(',') + ';';
+            line = [];
             col = 1;
             prev_col = 1;
         }
@@ -27037,12 +27041,10 @@ var $;
                 next_line();
             if (prev_span !== text.span || col === 1) {
                 const index = span2index(text.span);
-                mappings +=
-                    $.$mol_vlq_encode(col - prev_col) +
-                        $.$mol_vlq_encode(index - prev_index) +
-                        $.$mol_vlq_encode(text.span.row - ((_a = prev_span === null || prev_span === void 0 ? void 0 : prev_span.row) !== null && _a !== void 0 ? _a : 1)) +
-                        $.$mol_vlq_encode(text.span.col - ((_b = prev_span === null || prev_span === void 0 ? void 0 : prev_span.col) !== null && _b !== void 0 ? _b : 1)) +
-                        ',';
+                line.push($.$mol_vlq_encode(col - prev_col) +
+                    $.$mol_vlq_encode(index - prev_index) +
+                    $.$mol_vlq_encode(text.span.row - ((_a = prev_span === null || prev_span === void 0 ? void 0 : prev_span.row) !== null && _a !== void 0 ? _a : 1)) +
+                    $.$mol_vlq_encode(text.span.col - ((_b = prev_span === null || prev_span === void 0 ? void 0 : prev_span.col) !== null && _b !== void 0 ? _b : 1)));
                 prev_col = col;
                 prev_span = text.span;
                 prev_index = index;
@@ -27074,6 +27076,7 @@ var $;
         for (let kid of tree.kids) {
             visit(kid, 0, false);
         }
+        next_line();
         const map = {
             version: 3,
             sources: [...file_sources.keys()],
@@ -27085,6 +27088,33 @@ var $;
     $.$mol_tree2_text_to_sourcemap = $mol_tree2_text_to_sourcemap;
 })($ || ($ = {}));
 //sourcemap.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_tree2_text_to_string_mapped(text, type) {
+        const code = this.$mol_tree2_text_to_string(text);
+        const map = this.$mol_tree2_text_to_sourcemap(text);
+        map.mappings = ';;' + map.mappings;
+        let res = code;
+        const map_uri = `data:application/json,${this.encodeURIComponent(JSON.stringify(map))}`;
+        if (type === 'js')
+            res += `\n//# sourceMappingURL=${map_uri}`;
+        else
+            res += `\n/*# sourceMappingURL=${map_uri} */`;
+        return res;
+    }
+    $.$mol_tree2_text_to_string_mapped = $mol_tree2_text_to_string_mapped;
+    function $mol_tree2_text_to_string_mapped_js(text) {
+        return this.$mol_tree2_text_to_string_mapped(text, 'js');
+    }
+    $.$mol_tree2_text_to_string_mapped_js = $mol_tree2_text_to_string_mapped_js;
+    function $mol_tree2_text_to_string_mapped_css(text) {
+        return this.$mol_tree2_text_to_string_mapped(text, 'css');
+    }
+    $.$mol_tree2_text_to_string_mapped_css = $mol_tree2_text_to_string_mapped_css;
+})($ || ($ = {}));
+//mapped.js.map
 ;
 "use strict";
 var $;
@@ -27939,8 +27969,8 @@ var $;
                 return def.hack(Object.create(Object.assign(Object.create(belt), {
                     from: (input, b, c) => {
                         return arg.hack(Object.assign(Object.create(belt_inner), b), c);
-                    }
-                })), context);
+                    },
+                })), Object.assign(Object.assign({}, context), { span: arg.span }));
             };
             return [];
         },
@@ -28046,6 +28076,14 @@ var $;
                     output: "text.tree"
                 },
                 "$mol_tree2_text_to_string": {
+                    input: "text.tree",
+                    output: "text"
+                },
+                "$mol_tree2_text_to_string_mapped_js": {
+                    input: "text.tree",
+                    output: "text"
+                },
+                "$mol_tree2_text_to_string_mapped_css": {
                     input: "text.tree",
                     output: "text"
                 },
