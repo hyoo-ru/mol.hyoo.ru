@@ -9,7 +9,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 	return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 
-var globalThis = globalThis || global || self || this
+var globalThis = globalThis || ( typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this )
 var $ = ( typeof module === 'object' ) ? Object.setPrototypeOf( module['export'+'s'] , globalThis ) : globalThis
 $.$$ = $
 $.$mol = $  // deprecated
@@ -27389,6 +27389,18 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_view_tree2_to_locale(tree2_module) {
+        const locales = {};
+        this.$mol_view_tree2_ts_module(tree2_module, locales);
+        return locales;
+    }
+    $.$mol_view_tree2_to_locale = $mol_view_tree2_to_locale;
+})($ || ($ = {}));
+//locale.js.map
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_guard_defined(value) {
         return value !== null && value !== undefined;
     }
@@ -28140,6 +28152,10 @@ var $;
                 "$mol_view_tree2_to_text": {
                     input: "view.tree",
                     output: "text.tree"
+                },
+                "$mol_view_tree2_to_locale": {
+                    input: "view.tree",
+                    output: "json"
                 },
                 "$mol_view_tree2_to_dts": {
                     input: "view.tree",

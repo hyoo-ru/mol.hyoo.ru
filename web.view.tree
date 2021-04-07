@@ -3035,6 +3035,9 @@ $hyoo_tree $mol_book2
 		$mol_view_tree2_to_text *
 			input \view.tree
 			output \text.tree
+		$mol_view_tree2_to_locale *
+			input \view.tree
+			output \json
 		$mol_view_tree2_to_dts *
 			input \view.tree
 			output \text.tree

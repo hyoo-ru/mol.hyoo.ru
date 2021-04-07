@@ -7096,6 +7096,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_view_tree2_to_locale(this: $, tree2_module: $mol_tree2): $mol_view_tree2_locales;
+}
+
+declare namespace $ {
     function $mol_guard_defined<T>(value: T): value is NonNullable<T>;
 }
 
@@ -7268,6 +7272,10 @@ declare namespace $ {
                 output: string;
             };
             $mol_view_tree2_to_text: {
+                input: string;
+                output: string;
+            };
+            $mol_view_tree2_to_locale: {
                 input: string;
                 output: string;
             };
