@@ -26899,10 +26899,22 @@ var $;
                 '{;}': sequence('{', '; ', '}'),
                 '[,]': sequence('[', ', ', ']'),
                 '{,}': sequence('{', ', ', '}'),
-                ':': duplet('[', ']: '),
                 '()': sequence('(', '', ')'),
-                '[]': sequence('[', '', ']'),
                 '{}': sequence('{', '', '}'),
+                '[]': (input, belt) => {
+                    const first = input.kids[0];
+                    if (first.type)
+                        return sequence('[', '', ']')(input, belt);
+                    else
+                        return [input.data('.' + first.text())];
+                },
+                ':': (input, belt) => {
+                    const first = input.kids[0];
+                    if (first.type)
+                        return duplet('[', ']: ')(input, belt);
+                    else
+                        return duplet('', ': ')(input, belt);
+                },
                 'let': duplet('let ', ' = '),
                 'const': duplet('const ', ' = '),
                 'var': duplet('var ', ' = '),
@@ -34985,7 +34997,7 @@ var $;
 						:
 							bar
 							2
-				`), '{["foo"]: 1, [bar]: 2}\n');
+				`), '{"foo": 1, [bar]: 2}\n');
         },
         'regexp'() {
             $.$mol_assert_equal(convert(`
@@ -35016,19 +35028,19 @@ var $;
             $.$mol_assert_equal(convert(`
 					()
 						foo
-						[,] \\bar
-						[,] 1
-				`), '(foo["bar"][1])\n');
+						[] \\bar
+						[] 1
+				`), '(foo.bar[1])\n');
             $.$mol_assert_equal(convert(`
 					()
 						foo
-						[,] 1
+						[] 1
 						(,)
 				`), '(foo[1]())\n');
             $.$mol_assert_equal(convert(`
 					()
 						[,] 0
-						[,] 1
+						[] 1
 						(,)
 							2
 							3
