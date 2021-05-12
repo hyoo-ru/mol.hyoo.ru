@@ -12,12 +12,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var globalThis = globalThis || ( typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : this )
 var $ = ( typeof module === 'object' ) ? Object.setPrototypeOf( module['export'+'s'] , globalThis ) : globalThis
 $.$$ = $
-$.$mol = $  // deprecated
 
 ;
 
 var $node = $node || {}
-void function( module ) { var exports = module.exports = this; function require( id ) { return $node[ id.replace( /^.\// , "../mol/" ) ] }; 
+void function( module ) { var exports = module.exports = this; function require( id ) { return $node[ id.replace( /^.\// , "../" ) ] }; 
 ;
 "use strict";
 Error.stackTraceLimit = Infinity;
@@ -25,10 +24,10 @@ var $;
 (function ($) {
 })($ || ($ = {}));
 module.exports = $;
-//mol.js.map
+//mam.js.map
 ;
 
-$node[ "../mol/mol" ] = $node[ "../mol/mol.js" ] = module.exports }.call( {} , {} )
+$node[ "../mam" ] = $node[ "../mam.js" ] = module.exports }.call( {} , {} )
 ;
 "use strict";
 var $;
@@ -190,8 +189,8 @@ var $;
             return this.name;
         }
         destructor() { }
-        [Symbol.toPrimitive]() {
-            return this.toString();
+        [Symbol.toPrimitive](hint) {
+            return hint === 'number' ? this.valueOf() : this.toString();
         }
         toString() {
             return this[Symbol.toStringTag] || this.constructor.name + '()';
@@ -2133,7 +2132,7 @@ var $;
 var $;
 (function ($) {
     function $mol_dom_qname(name) {
-        return name.replace(/\W/, '').replace(/^(?=\d+)/, '_');
+        return name.replace(/\W/g, '').replace(/^(?=\d+)/, '_');
     }
     $.$mol_dom_qname = $mol_dom_qname;
 })($ || ($ = {}));
@@ -2492,6 +2491,7 @@ var $;
                     console.error(error);
                 }
             }
+            this.auto();
             return node;
         }
         dom_node_actual() {
@@ -2505,6 +2505,7 @@ var $;
             $.$mol_dom_render_fields(node, fields);
             return node;
         }
+        auto() { }
         render() {
             const node = this.dom_node_actual();
             const sub = this.sub_visible();
@@ -8081,6 +8082,16 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    let $mol_time_moment_weekdays;
+    (function ($mol_time_moment_weekdays) {
+        $mol_time_moment_weekdays[$mol_time_moment_weekdays["monday"] = 0] = "monday";
+        $mol_time_moment_weekdays[$mol_time_moment_weekdays["tuesday"] = 1] = "tuesday";
+        $mol_time_moment_weekdays[$mol_time_moment_weekdays["wednesday"] = 2] = "wednesday";
+        $mol_time_moment_weekdays[$mol_time_moment_weekdays["thursday"] = 3] = "thursday";
+        $mol_time_moment_weekdays[$mol_time_moment_weekdays["friday"] = 4] = "friday";
+        $mol_time_moment_weekdays[$mol_time_moment_weekdays["saturday"] = 5] = "saturday";
+        $mol_time_moment_weekdays[$mol_time_moment_weekdays["sunday"] = 6] = "sunday";
+    })($mol_time_moment_weekdays = $.$mol_time_moment_weekdays || ($.$mol_time_moment_weekdays = {}));
     function numb(str, max) {
         const numb = Number(str);
         if (numb < max)
@@ -8093,7 +8104,7 @@ var $;
             if (typeof config === 'number')
                 config = new Date(config);
             if (typeof config === 'string') {
-                const parsed = /^(?:(\d\d?\d?\d?)(?:-?(\d\d?)(?:-?(\d\d?))?)?)?(?:[T ](\d\d?)(?::?(\d\d?)(?::?(\d\d?(?:\.\d+)?))?)?(Z|[\+\-]\d\d?(?::?(?:\d\d?)?)?)?)?$/.exec(config);
+                const parsed = /^(?:(\d\d?\d?\d?)(?:-?(\d\d?)(?:-?(\d\d?))?)?)?(?:[T ](?:(\d\d?)(?::?(\d\d?)(?::?(\d\d?(?:\.\d+)?))?)?)?(Z|[\+\-]\d\d?(?::?(?:\d\d?)?)?)?)?$/.exec(config);
                 if (!parsed)
                     throw new Error(`Can not parse time moment (${config})`);
                 if (parsed[1])
@@ -8211,7 +8222,8 @@ var $;
         toOffset(config) {
             const duration = new $.$mol_time_duration(config);
             const offset = this.offset || new $mol_time_moment().offset;
-            const moment = this.shift(duration.summ(offset.mult(-1)));
+            let with_time = new $mol_time_moment('T00:00:00').merge(this);
+            const moment = with_time.shift(duration.summ(offset.mult(-1)));
             return moment.merge({ offset: duration });
         }
         valueOf() { return this.native.getTime(); }
@@ -8669,8 +8681,8 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    var $mol;
-    (function ($mol) {
+    var $$;
+    (function ($$) {
         class $mol_calendar extends $.$mol_calendar {
             month_moment() {
                 const moment = new $.$mol_time_moment(this.month_string() || undefined);
@@ -8789,8 +8801,8 @@ var $;
         __decorate([
             $.$mol_mem_key
         ], $mol_calendar.prototype, "day_selected", null);
-        $mol.$mol_calendar = $mol_calendar;
-    })($mol = $.$mol || ($.$mol = {}));
+        $$.$mol_calendar = $mol_calendar;
+    })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //calendar.view.js.map
 ;
@@ -18169,6 +18181,9 @@ var $;
 //array.js.map
 ;
 "use strict";
+//equals.js.map
+;
+"use strict";
 //merge.js.map
 ;
 "use strict";
@@ -20307,7 +20322,9 @@ var $;
 var $;
 (function ($) {
     class $mol_select extends $.$mol_pick {
-        dictionary() {
+        dictionary(val) {
+            if (val !== undefined)
+                return val;
             return {};
         }
         options() {
@@ -20422,6 +20439,9 @@ var $;
             return true;
         }
     }
+    __decorate([
+        $.$mol_mem
+    ], $mol_select.prototype, "dictionary", null);
     __decorate([
         $.$mol_mem
     ], $mol_select.prototype, "value", null);
@@ -23971,7 +23991,7 @@ var $;
                     switch (typeof (type)) {
                         case 'string':
                             for (var child of item.kids) {
-                                if (!type || (child.type == type)) {
+                                if (child.type == type) {
                                     next.push(child);
                                 }
                             }
@@ -24751,7 +24771,7 @@ var $;
                 while (str.length > pos && str[pos] != '\n') {
                     pos++;
                 }
-                let next = new $.$mol_tree2('', str.slice(data_start + 1, pos), [], span.span(row, data_start - line_start + 1, pos - data_start - 1));
+                let next = new $.$mol_tree2('', str.slice(data_start + 1, pos), [], span.span(row, data_start - line_start + 2, pos - data_start - 1));
                 const parent_kids = parent.kids;
                 parent_kids.push(next);
                 parent = next;
@@ -26830,6 +26850,68 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_tree2_xml_from_dom(dom) {
+        switch (dom.nodeType) {
+            case dom.DOCUMENT_NODE: {
+                let kids = [];
+                for (const kid of dom.childNodes) {
+                    kids.push($mol_tree2_xml_from_dom(kid));
+                }
+                return $.$mol_tree2.list(kids);
+            }
+            case dom.PROCESSING_INSTRUCTION_NODE: {
+                return $.$mol_tree2.struct('?', [
+                    $.$mol_tree2.struct(dom.nodeName, dom.nodeValue.split(' ').map(chunk => {
+                        const [, name, value] = /^(.*?)(?:="(.*?)")?$/.exec(chunk);
+                        const kids = value ? [$.$mol_tree2.data(value)] : [];
+                        return $.$mol_tree2.struct(name, kids);
+                    }))
+                ]);
+            }
+            case dom.DOCUMENT_TYPE_NODE: {
+                const dom2 = dom;
+                return $.$mol_tree2.struct('!', [
+                    $.$mol_tree2.struct('DOCTYPE', [
+                        $.$mol_tree2.struct(dom2.name)
+                    ])
+                ]);
+            }
+            case dom.ELEMENT_NODE: {
+                let kids = [];
+                for (const attr of dom.attributes) {
+                    kids.push($.$mol_tree2.struct('@', [
+                        $.$mol_tree2.struct(attr.nodeName, [
+                            $.$mol_tree2.data(attr.nodeValue)
+                        ])
+                    ]));
+                }
+                for (const kid of dom.childNodes) {
+                    const k = $mol_tree2_xml_from_dom(kid);
+                    if (k.type || k.value)
+                        kids.push(k);
+                }
+                return $.$mol_tree2.struct(dom.nodeName, kids);
+            }
+            case dom.COMMENT_NODE: {
+                return $.$mol_tree2.struct('--', [
+                    $.$mol_tree2.data(dom.nodeValue)
+                ]);
+            }
+            case dom.TEXT_NODE: {
+                if (!dom.nodeValue.trim())
+                    return $.$mol_tree2.list([]);
+                return $.$mol_tree2.data(dom.nodeValue.replace(/\s+/g, ' '));
+            }
+        }
+        return $.$mol_fail(new Error(`Unsupported node ${dom.nodeName}`));
+    }
+    $.$mol_tree2_xml_from_dom = $mol_tree2_xml_from_dom;
+})($ || ($ = {}));
+//dom.js.map
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_tree2_js_to_text(js) {
         function sequence(open, separator, close) {
             return (input, belt) => [
@@ -28012,6 +28094,9 @@ var $;
                     from: (input, b, c) => {
                         return arg.hack(Object.assign(Object.create(belt_inner), b), c);
                     },
+                    clone: (input, b, c) => [
+                        arg.clone(input.hack(b, c)),
+                    ],
                 })), Object.assign(Object.assign({}, context), { span: arg.span }));
             };
             return [];
@@ -28109,9 +28194,17 @@ var $;
                     input: "grammar.tree",
                     output: "grammar.tree"
                 },
+                "$mol_dom_parse": {
+                    input: "text",
+                    output: "dom"
+                },
                 "$mol_tree2_xml_to_text": {
                     input: "xml.tree",
                     output: "text.tree"
+                },
+                "$mol_tree2_xml_from_dom": {
+                    input: "dom",
+                    output: "xml.tree"
                 },
                 "$mol_tree2_js_to_text": {
                     input: "js.tree",
@@ -28447,6 +28540,17 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_dom_serialize(node) {
+        const serializer = new $.$mol_dom_context.XMLSerializer;
+        return serializer.serializeToString(node);
+    }
+    $.$mol_dom_serialize = $mol_dom_serialize;
+})($ || ($ = {}));
+//serialize.js.map
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_base64_encode(src) {
         throw new Error('Not implemented');
     }
@@ -28547,6 +28651,8 @@ var $;
                     return res;
                 if (Object(res) !== res)
                     return String(res);
+                if (res instanceof $.$mol_dom_context.Node)
+                    return $.$mol_dom_serialize(res);
                 if (!Reflect.getPrototypeOf(Reflect.getPrototypeOf(res)))
                     return JSON.stringify(res, null, '\t');
                 if (Array.isArray(res))
@@ -29477,10 +29583,6 @@ var $;
             uriSource() {
                 return 'https://api.github.com/search/issues?q=label:HabHub+is:open&sort=reactions';
             }
-            search(next) {
-                var _a;
-                return (_a = this.$.$mol_state_arg.value('search', next)) !== null && _a !== void 0 ? _a : '';
-            }
             gists() {
                 return $.$mol_github_search_issues.item(this.uriSource()).items();
             }
@@ -30186,6 +30288,11 @@ var $;
             ];
             return obj;
         }
+        Paginator() {
+            const obj = new this.$.$mol_paginator();
+            obj.value = (val) => this.slide(val);
+            return obj;
+        }
         open_listener_hint() {
             return this.$.$mol_locale.text('$hyoo_slides_open_listener_hint');
         }
@@ -30228,6 +30335,7 @@ var $;
             return [
                 this.Speech_toggle(),
                 this.Speech_text(),
+                this.Paginator(),
                 this.Open_listener(),
                 this.Lights(),
                 this.Close()
@@ -30522,6 +30630,9 @@ var $;
     __decorate([
         $.$mol_mem
     ], $hyoo_slides.prototype, "Speech_text", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_slides.prototype, "Paginator", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_slides.prototype, "Open_listener_icon", null);

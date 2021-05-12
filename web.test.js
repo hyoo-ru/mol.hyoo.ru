@@ -1950,21 +1950,21 @@ var $;
     });
     $_1.$mol_test({
         'args as dictionary'($) {
-            $.$mol_state_arg.href('#foo=bar/xxx');
+            $.$mol_state_arg.href('#!foo=bar/xxx');
             $_1.$mol_assert_like($.$mol_state_arg.dict(), { foo: 'bar', xxx: '' });
             $.$mol_state_arg.dict({ foo: null, yyy: '', lol: '123' });
-            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#yyy/lol=123');
+            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!yyy/lol=123');
         },
         'one value from args'($) {
-            $.$mol_state_arg.href('#foo=bar/xxx');
+            $.$mol_state_arg.href('#!foo=bar/xxx');
             $_1.$mol_assert_equal($.$mol_state_arg.value('foo'), 'bar');
             $_1.$mol_assert_equal($.$mol_state_arg.value('xxx'), '');
             $.$mol_state_arg.value('foo', 'lol');
-            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#foo=lol/xxx');
+            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo=lol/xxx');
             $.$mol_state_arg.value('foo', '');
-            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#foo/xxx');
+            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo/xxx');
             $.$mol_state_arg.value('foo', null);
-            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#xxx');
+            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!xxx');
         },
         'nested args'($) {
             const base = new $.$mol_state_arg('nested.');
@@ -1974,11 +1974,11 @@ var $;
                 }
             }
             Nested.value = (key, next) => base.value(key, next);
-            $.$mol_state_arg.href('#foo=bar/nested.xxx=123');
+            $.$mol_state_arg.href('#!foo=bar/nested.xxx=123');
             $_1.$mol_assert_equal(Nested.value('foo'), null);
             $_1.$mol_assert_equal(Nested.value('xxx'), '123');
             Nested.value('foo', 'lol');
-            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#foo=bar/nested.xxx=123/nested.foo=lol');
+            $_1.$mol_assert_equal($.$mol_state_arg.href().replace(/.*#/, '#'), '#!foo=bar/nested.xxx=123/nested.foo=lol');
         },
     });
 })($ || ($ = {}));
@@ -2402,12 +2402,15 @@ var $;
             $.$mol_assert_equal(new $.$mol_time_moment('2014-01').shift('PT-8760h').toString(), '2013-01');
         },
         'normalization'() {
-            $.$mol_assert_equal(new $.$mol_time_moment({ year: 2015, month: 6, day: 34 }).normal.toString(), '2015-08-03');
+            $.$mol_assert_equal(new $.$mol_time_moment({ year: 2015, month: 6, day: 34 }).normal.toString(), '2015-08-04');
         },
         'iso week day'() {
-            $.$mol_assert_equal(new $.$mol_time_moment('2017-09-18').weekday, 6);
-            $.$mol_assert_equal(new $.$mol_time_moment('2017-09-19').weekday, 0);
+            $.$mol_assert_equal(new $.$mol_time_moment('2017-09-17').weekday, $.$mol_time_moment_weekdays.sunday);
+            $.$mol_assert_equal(new $.$mol_time_moment('2017-09-18').weekday, $.$mol_time_moment_weekdays.monday);
         },
+        'change offset'() {
+            $.$mol_assert_equal(new $.$mol_time_moment('2021-04-10 +03:00').toOffset('Z').toString(), '2021-04-09T21:00:00+00:00');
+        }
     });
 })($ || ($ = {}));
 //moment.test.js.map
@@ -2682,7 +2685,7 @@ var $;
             var unit = new $.$mol_unit_money_usd(5);
             $.$mol_assert_equal(unit.valueOf(), 5);
             $.$mol_assert_equal(unit * 2, 10);
-            $.$mol_assert_equal(unit + '', '5');
+            $.$mol_assert_equal(unit + '', '$5');
             $.$mol_assert_equal(`${unit}`, '$5');
             $.$mol_assert_equal(unit.toString(), '$5');
             $.$mol_assert_equal(String(unit), '$5');
@@ -2891,6 +2894,9 @@ var $;
     });
 })($ || ($ = {}));
 //array.test.js.map
+;
+"use strict";
+//equals.test.js.map
 ;
 "use strict";
 //merge.test.js.map
@@ -4271,12 +4277,6 @@ var $;
     $.$mol_jsx_view = $mol_jsx_view;
 })($ || ($ = {}));
 //view.js.map
-;
-"use strict";
-//equals.test.js.map
-;
-"use strict";
-//equals.js.map
 ;
 "use strict";
 var $;

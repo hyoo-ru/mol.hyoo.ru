@@ -62,7 +62,7 @@ declare namespace $ {
         static [Symbol.toPrimitive](): any;
         static toString(): any;
         destructor(): void;
-        [Symbol.toPrimitive](): any;
+        [Symbol.toPrimitive](hint: string): any;
         toString(): any;
         toJSON(): any;
     }
@@ -621,6 +621,7 @@ declare namespace $ {
         dom_node(next?: Element): Element;
         dom_tree(next?: Element): Element;
         dom_node_actual(): Element;
+        auto(): void;
         render(): void;
         static view_classes(): (typeof $mol_view)[];
         view_names_owned(): string[];
@@ -1819,7 +1820,7 @@ declare namespace $.$$ {
         col_head_content(colId: string): readonly string[];
         rows(): readonly $mol_view[];
         cells(row_id: string[]): readonly $mol_view[];
-        col_type(col_id: string): "text" | "number" | "branch";
+        col_type(col_id: string): "number" | "text" | "branch";
         Cell(id: {
             row: string[];
             col: string;
@@ -2488,7 +2489,7 @@ declare namespace $.$$ {
         }): number;
         col_head_title(col: string): string;
         event_sort_toggle(col: string, next?: Event): void;
-        col_type(col: string): "text" | "number" | "branch";
+        col_type(col: string): "number" | "text" | "branch";
         cell_content_number(id: {
             row: string[];
             col: string;
@@ -2648,6 +2649,15 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    enum $mol_time_moment_weekdays {
+        monday = 0,
+        tuesday = 1,
+        wednesday = 2,
+        thursday = 3,
+        friday = 4,
+        saturday = 5,
+        sunday = 6
+    }
     type $mol_time_moment_config = number | Date | string | {
         year?: number;
         month?: number;
@@ -2775,7 +2785,7 @@ declare namespace $ {
 declare namespace $ {
 }
 
-declare namespace $.$mol {
+declare namespace $.$$ {
     class $mol_calendar extends $.$mol_calendar {
         month_moment(): $mol_time_moment;
         title(): string;
@@ -2804,7 +2814,7 @@ declare namespace $ {
         sub(): readonly any[];
         month(): string;
         holiday(day: any): boolean;
-        Calendar(): $mol_calendar;
+        Calendar(): $$.$mol_calendar;
     }
 }
 
@@ -2824,7 +2834,7 @@ declare namespace $ {
         sub(): readonly any[];
         month(): string;
         selected(day: any): boolean;
-        Calendar(): $mol_calendar;
+        Calendar(): $$.$mol_calendar;
     }
 }
 
@@ -2840,7 +2850,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         today(): $mol_time_moment;
-        Calendar(): $mol_calendar;
+        Calendar(): $$.$mol_calendar;
     }
 }
 
@@ -4966,9 +4976,16 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    type $mol_type_merge<Intersection> = Intersection extends (...a: any[]) => any ? Intersection : Intersection extends new (...a: any[]) => any ? Intersection : Intersection extends object ? {
+    type $mol_type_equals<A, B> = (<X>() => X extends A ? 1 : 2) extends (<X>() => X extends B ? 1 : 2) ? unknown : never;
+}
+
+declare namespace $ {
+    type $mol_type_merge<Intersection> = Intersection extends (...a: any[]) => any ? Intersection : Intersection extends new (...a: any[]) => any ? Intersection : Intersection extends object ? $mol_type_merge_object<Intersection> extends Intersection ? unknown extends $mol_type_equals<$mol_type_merge_object<Intersection>, Intersection> ? Intersection : {
         [Key in keyof Intersection]: $mol_type_merge<Intersection[Key]>;
-    } : Intersection;
+    } : Intersection : Intersection;
+    type $mol_type_merge_object<Intersection> = {
+        [Key in keyof Intersection]: Intersection[Key];
+    };
 }
 
 declare namespace $ {
@@ -4978,9 +4995,9 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_data_record<Sub extends Record<string, $mol_data_value<any>>>(sub: Sub): ((val: unknown) => Readonly<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends (...a: any[]) => any ? ((...a: any[]) => any) & Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends new (...a: any[]) => any ? (new (...a: any[]) => any) & Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends object ? { [Key in keyof (Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>)]: $mol_type_merge<(Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>)[Key]>; } : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>>) & {
+    function $mol_data_record<Sub extends Record<string, $mol_data_value<any>>>(sub: Sub): ((val: unknown) => Readonly<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends (...a: any[]) => any ? ((...a: any[]) => any) & Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends new (...a: any[]) => any ? (new (...a: any[]) => any) & Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends object ? $mol_type_merge_object<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>> extends Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> ? unknown extends $mol_type_equals<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> & $mol_type_merge_object<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>>, Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>> ? Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : { [Key in keyof (Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>)]: $mol_type_merge<(Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>)[Key]>; } : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>>) & {
         config: Sub;
-        Value: Readonly<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends (...a: any[]) => any ? ((...a: any[]) => any) & Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends new (...a: any[]) => any ? (new (...a: any[]) => any) & Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends object ? { [Key in keyof (Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>)]: $mol_type_merge<(Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>)[Key]>; } : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>>;
+        Value: Readonly<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends (...a: any[]) => any ? ((...a: any[]) => any) & Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends new (...a: any[]) => any ? (new (...a: any[]) => any) & Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> extends object ? $mol_type_merge_object<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>> extends Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> ? unknown extends $mol_type_equals<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> & $mol_type_merge_object<Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>>, Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>> ? Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : { [Key in keyof (Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>)]: $mol_type_merge<(Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>)[Key]>; } : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]> : Partial<{ [key in keyof Sub]: ReturnType<Sub[key]>; }> & Pick<{ [key in keyof Sub]: ReturnType<Sub[key]>; }, { [Field in keyof { [key in keyof Sub]: ReturnType<Sub[key]>; }]: undefined extends { [key in keyof Sub]: ReturnType<Sub[key]>; }[Field] ? never : Field; }[keyof Sub]>>;
     };
 }
 
@@ -5447,7 +5464,7 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_select extends $mol_pick {
-        dictionary(): {};
+        dictionary(val?: any): any;
         options(): readonly string[];
         value(val?: any): any;
         Option_row(id: any): $mol_button_minor;
@@ -6337,7 +6354,7 @@ declare namespace $ {
     function $mol_view_tree_prop_key(prop: $mol_tree): string;
     function $mol_view_tree_prop_next(prop: $mol_tree): string;
     function $mol_view_tree_prop_value(prop: $mol_tree): $mol_tree;
-    function $mol_view_tree_value_type(val: $mol_tree): "locale" | "bool" | "null" | "dict" | "string" | "get" | "bind" | "put" | "list" | "object" | "number";
+    function $mol_view_tree_value_type(val: $mol_tree): "number" | "locale" | "bool" | "null" | "dict" | "string" | "get" | "bind" | "put" | "list" | "object";
     function $mol_view_tree_compile(tree: $mol_tree): {
         script: string;
         locales: {
@@ -6355,7 +6372,7 @@ declare namespace $.$$ {
         title(): string;
         title_arg(): {};
         value(next?: $mol_tree): $mol_tree;
-        type(next?: string): "locale" | "bool" | "null" | "dict" | "string" | "get" | "bind" | "put" | "list" | "object" | "number" | null;
+        type(next?: string): "number" | "locale" | "bool" | "null" | "dict" | "string" | "get" | "bind" | "put" | "list" | "object" | null;
         expanded(next?: boolean): boolean;
         class(next?: string): string;
         bind(next?: string): string;
@@ -6626,7 +6643,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "bool" | "null" | "dict" | "string" | "get" | "bind" | "put" | "list" | "object" | "number";
+    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "number" | "locale" | "bool" | "null" | "dict" | "string" | "get" | "bind" | "put" | "list" | "object";
 }
 
 declare namespace $ {
@@ -6657,7 +6674,7 @@ declare namespace $.$$ {
         };
         prop(path: $mol_tree2_path, next?: $mol_tree2 | null): $mol_tree2 | null;
         prop_self(path: $mol_tree2_path): $mol_tree2 | null;
-        prop_type(path: $mol_tree2_path): "locale" | "bool" | "null" | "dict" | "string" | "get" | "bind" | "put" | "list" | "object" | "number" | null;
+        prop_type(path: $mol_tree2_path): "number" | "locale" | "bool" | "null" | "dict" | "string" | "get" | "bind" | "put" | "list" | "object" | null;
         prop_key(path: $mol_tree2_path, next?: string): string;
         prop_next(path: $mol_tree2_path, next?: string): string;
         prop_default(path: $mol_tree2_path, next?: $mol_tree2 | null): $mol_tree2 | null;
@@ -6992,6 +7009,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_tree2_xml_from_dom(dom: Node): $mol_tree2;
+}
+
+declare namespace $ {
     function $mol_tree2_js_to_text(this: $, js: $mol_tree2): $mol_tree2;
 }
 
@@ -7200,7 +7221,15 @@ declare namespace $ {
                 input: string;
                 output: string;
             };
+            $mol_dom_parse: {
+                input: string;
+                output: string;
+            };
             $mol_tree2_xml_to_text: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_xml_from_dom: {
                 input: string;
                 output: string;
             };
@@ -7326,6 +7355,10 @@ declare namespace $ {
         Result_text(): $$.$mol_text_code;
         Result(): $$.$mol_page;
     }
+}
+
+declare namespace $ {
+    function $mol_dom_serialize(node: Node): string;
 }
 
 declare namespace $ {
@@ -7688,7 +7721,6 @@ declare namespace $ {
 declare namespace $.$$ {
     class $hyoo_habhub extends $.$hyoo_habhub {
         uriSource(): string;
-        search(next?: string): string;
         gists(): $mol_github_issue[];
         gists_dict(): {
             [key: string]: $mol_github_issue;
@@ -7943,6 +7975,7 @@ declare namespace $ {
         Speech_toggle(): $mol_check_icon;
         speech_text(): string;
         Speech_text(): $mol_view;
+        Paginator(): $$.$mol_paginator;
         open_listener_hint(): string;
         Open_listener_icon(): $mol_icon_external;
         Open_listener(): $$.$mol_link;
@@ -8127,3 +8160,5 @@ declare namespace $ {
 declare namespace $ {
     function $mol_view_tree2_ts_method(this: $, owner_parts: $mol_view_tree2_prop, body: $mol_tree2, types?: boolean): $mol_tree2[];
 }
+
+export = $;
