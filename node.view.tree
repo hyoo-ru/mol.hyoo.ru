@@ -403,6 +403,8 @@ $mol_string $mol_view
 	enabled true
 	minimal_height 40
 	autocomplete false
+	auto /
+		<= selection_watcher null
 	field *
 		^
 		disabled <= disabled false
@@ -410,6 +412,8 @@ $mol_string $mol_view
 		placeholder <= hint \
 		spellcheck <= spellcheck false
 		autocomplete <= autocomplete_native \
+		selectionEnd <= selection_end?val 0
+		selectionStart <= selection_start?val 0
 	attr *
 		^
 		maxlength <= length_max Infinity
@@ -1731,6 +1735,7 @@ $mol_html_view $mol_list
 	Image!id $mol_image
 		uri <= image_uri!id \
 	Break!id $mol_paragraph
+		sub /
 	Text!id $mol_dimmer
 		needle <= highlight \
 		haystack <= text!id \

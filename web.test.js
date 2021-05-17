@@ -2295,11 +2295,21 @@ var $;
             $.$mol_assert_equal(regexp.exec('x5')[0], 'x');
         },
         'byte except'() {
-            const { byte_except, letter, tab } = $.$mol_regexp;
-            const name = byte_except(letter, tab);
+            const { char_except, letter, tab } = $.$mol_regexp;
+            const name = char_except(letter, tab);
             $.$mol_assert_equal(name.exec('a'), null);
             $.$mol_assert_equal(name.exec('\t'), null);
             $.$mol_assert_equal(name.exec('(')[0], '(');
+        },
+        'unicode only'() {
+            const { unicode_only } = $.$mol_regexp;
+            const name = $.$mol_regexp.from([
+                unicode_only('Script', 'Cyrillic'),
+                unicode_only('Hex_Digit'),
+            ]);
+            $.$mol_assert_equal(name.exec('FF'), null);
+            $.$mol_assert_equal(name.exec('ФG'), null);
+            $.$mol_assert_equal(name.exec('ФF')[0], 'ФF');
         },
     });
 })($ || ($ = {}));
@@ -3893,7 +3903,10 @@ var $;
             const code = $.$mol_tree2_from_string(`
 				custom xxx
 			`);
-            $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([0, 0x61, 0x73, 0x6d, 0x1, 0, 0, 0, 0, 0x4, 0x3, 0x78, 0x78, 0x78]));
+            $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([
+                0, 0x61, 0x73, 0x6d, 0x1, 0, 0, 0, 0,
+                0x4, 0x3, 0x78, 0x78, 0x78
+            ]));
         },
         'type section with value types'($) {
             const code = $.$mol_tree2_from_string(`
@@ -3903,7 +3916,10 @@ var $;
 					=> f32
 					<= f64
 			`);
-            $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([0, 0x61, 0x73, 0x6d, 0x01, 0, 0, 0, 0x01, 0x08, 0x01, 0x60, 0x03, 0x7f, 0x7e, 0x7d, 0x01, 0x7c]));
+            $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([
+                0, 0x61, 0x73, 0x6d, 0x01, 0, 0, 0,
+                0x01, 0x08, 0x01, 0x60, 0x03, 0x7f, 0x7e, 0x7d, 0x01, 0x7c
+            ]));
         },
         'import section'($) {
             const code = $.$mol_tree2_from_string(`
