@@ -4016,7 +4016,11 @@ var $;
 (function ($_1) {
     $_1.$mol_test({
         'test'($) {
-            const root = Object.assign(Object.assign({}, $_1.$mol_jack), { 'foo': input => [input.struct('FOO')], 'FOO': input => [input.struct('FAIL')] });
+            const root = {
+                ...$_1.$mol_jack,
+                'foo': input => [input.struct('FOO')],
+                'FOO': input => [input.struct('FAIL')],
+            };
             $_1.$mol_assert_like($.$mol_tree2_from_string(`
 					test
 						case foo
@@ -4124,7 +4128,15 @@ var $;
 							three
 					case tree THREE
 			`);
-            const res = tests.hack(Object.assign(Object.assign({}, $_1.$mol_jack.meta), { 'one': input => [input.struct('ONE')], 'two': input => [input.struct('TWO')], 'three': input => [input.struct('THREE')], 'ONE': input => [input.struct('XXX')], 'TWO': input => [input.struct('XXX')], 'THREE': input => [input.struct('XXX')] }));
+            const res = tests.hack({
+                ...$_1.$mol_jack.meta,
+                'one': input => [input.struct('ONE')],
+                'two': input => [input.struct('TWO')],
+                'three': input => [input.struct('THREE')],
+                'ONE': input => [input.struct('XXX')],
+                'TWO': input => [input.struct('XXX')],
+                'THREE': input => [input.struct('XXX')],
+            });
         },
     });
 })($ || ($ = {}));
