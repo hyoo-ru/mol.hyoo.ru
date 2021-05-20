@@ -7182,6 +7182,11 @@ var $;
         autocomplete() {
             return false;
         }
+        selection(val) {
+            if (val !== undefined)
+                return val;
+            return [];
+        }
         auto() {
             return [
                 this.selection_watcher()
@@ -7241,14 +7246,10 @@ var $;
         autocomplete_native() {
             return "";
         }
-        selection_end(val) {
-            if (val !== undefined)
-                return val;
+        selection_end() {
             return 0;
         }
-        selection_start(val) {
-            if (val !== undefined)
-                return val;
+        selection_start() {
             return 0;
         }
         length_max() {
@@ -7284,13 +7285,10 @@ var $;
     }
     __decorate([
         $.$mol_mem
+    ], $mol_string.prototype, "selection", null);
+    __decorate([
+        $.$mol_mem
     ], $mol_string.prototype, "value", null);
-    __decorate([
-        $.$mol_mem
-    ], $mol_string.prototype, "selection_end", null);
-    __decorate([
-        $.$mol_mem
-    ], $mol_string.prototype, "selection_start", null);
     __decorate([
         $.$mol_mem
     ], $mol_string.prototype, "type", null);
@@ -7340,8 +7338,16 @@ var $;
             }
             selection_change(event) {
                 const el = this.dom_node();
-                this.selection_start(el.selectionStart);
-                this.selection_end(el.selectionEnd);
+                this.selection([
+                    el.selectionStart,
+                    el.selectionEnd,
+                ]);
+            }
+            selection_start() {
+                return this.selection()[0];
+            }
+            selection_end() {
+                return this.selection()[1];
             }
         }
         __decorate([
@@ -17560,7 +17566,7 @@ var $;
         }
         String() {
             const obj = new this.$.$mol_string();
-            obj.type = () => "number";
+            obj.type = () => "tel";
             obj.value = (val) => this.value_string(val);
             obj.hint = () => this.hint();
             obj.enabled = () => this.string_enabled();
@@ -22378,6 +22384,11 @@ var $;
         length_max() {
             return Infinity;
         }
+        selection(val) {
+            if (val !== undefined)
+                return val;
+            return [];
+        }
         Edit() {
             const obj = new this.$.$mol_string();
             obj.dom_name = () => "textarea";
@@ -22385,6 +22396,7 @@ var $;
             obj.hint = () => this.hint();
             obj.enabled = () => this.enabled();
             obj.length_max = () => this.length_max();
+            obj.selection = (val) => this.selection(val);
             return obj;
         }
         row_numb(index) {
@@ -22411,6 +22423,9 @@ var $;
     __decorate([
         $.$mol_mem
     ], $mol_textarea.prototype, "value", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_textarea.prototype, "selection", null);
     __decorate([
         $.$mol_mem
     ], $mol_textarea.prototype, "Edit", null);
