@@ -4302,6 +4302,7 @@ var $;
             return $.$mol_fail(new Error('dom_tree() not implemented'));
         }
     }
+    Symbol.toStringTag;
     $.$mol_jsx_view = $mol_jsx_view;
 })($ || ($ = {}));
 //view.js.map

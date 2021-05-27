@@ -24140,6 +24140,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    var _a;
     class $mol_span extends $.$mol_object2 {
         constructor(uri, source, row, col, length) {
             super();
@@ -24148,7 +24149,7 @@ var $;
             this.row = row;
             this.col = col;
             this.length = length;
-            this[Symbol.toStringTag] = `${this.uri}#${this.row}:${this.col}/${this.length}`;
+            this[_a] = `${this.uri}#${this.row}:${this.col}/${this.length}`;
         }
         static begin(uri, source = '') {
             return new $mol_span(uri, source, 1, 1, 0);
@@ -24194,6 +24195,7 @@ var $;
             return this.span(this.row, this.col + begin, end - begin);
         }
     }
+    _a = Symbol.toStringTag;
     $mol_span.unknown = $mol_span.begin('unknown');
     $.$mol_span = $mol_span;
 })($ || ($ = {}));
@@ -36122,6 +36124,7 @@ var $;
             return $.$mol_fail(new Error('dom_tree() not implemented'));
         }
     }
+    Symbol.toStringTag;
     $.$mol_jsx_view = $mol_jsx_view;
 })($ || ($ = {}));
 //view.js.map
