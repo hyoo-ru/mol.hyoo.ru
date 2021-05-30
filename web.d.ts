@@ -4607,6 +4607,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    const $mol_wait_timeout: (timeout: number) => unknown;
+}
+
+declare namespace $ {
 }
 
 declare namespace $.$$ {
@@ -4614,6 +4618,7 @@ declare namespace $.$$ {
         dom_node: (next?: HTMLIFrameElement) => HTMLIFrameElement;
         window(): unknown;
         uri_resource(): any;
+        _uri_sync: $mol_fiber | undefined;
         uri_listener(): $mol_dom_listener;
         render(): void;
         allow(): string;
@@ -5428,10 +5433,6 @@ declare namespace $ {
         query(): any;
         Search(): $$.$mol_search;
     }
-}
-
-declare namespace $ {
-    const $mol_wait_timeout: (timeout: number) => unknown;
 }
 
 declare namespace $.$$ {
