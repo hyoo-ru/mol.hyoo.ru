@@ -7058,6 +7058,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_view_tree2_to_js(this: $, descr: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
     let $hyoo_marked_line_content: $mol_regexp<{}>;
     let $hyoo_marked_line: $mol_regexp<{
         readonly inline: string;
@@ -7222,6 +7226,10 @@ declare namespace $ {
                 output: string;
             };
             $mol_view_tree2_to_dts: {
+                input: string;
+                output: string;
+            };
+            $mol_view_tree2_to_js: {
                 input: string;
                 output: string;
             };
