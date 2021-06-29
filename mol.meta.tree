@@ -1,5 +1,3 @@
-pack studio git \https://github.com/hyoo-ru/studio.mol.hyoo.ru.git
-
 deploy \/mol/readme.md
 
 include \/mol/offline/install
