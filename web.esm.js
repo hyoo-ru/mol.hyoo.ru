@@ -6745,7 +6745,7 @@ var $;
         attach_new(val) {
             if (val !== undefined)
                 return val;
-            return "";
+            return null;
         }
         attach_title() {
             return "";
@@ -6814,7 +6814,7 @@ var $;
         file_new(val) {
             if (val !== undefined)
                 return val;
-            return "";
+            return null;
         }
         sub() {
             return [
@@ -7286,7 +7286,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/string/string.view.css", "[mol_string] {\n\tbox-sizing: border-box;\n\toutline-offset: 0;\n\tborder: none;\n\tborder-radius: var(--mol_gap_round);\n\twhite-space: nowrap;\n\toverflow: hidden;\n\tpadding: var(--mol_gap_text);\n\ttext-align: left;\n\tposition: relative;\n\tz-index: 0;\n\tfont: inherit;\n\tflex: 1 0 auto;\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n}\n\n[mol_string]:disabled {\n\tbackground-color: transparent;\n}\n\n[mol_string]:focus {\n\toutline: none;\n\tz-index: 1;\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_focus);\n}\n\n[mol_string]::-ms-clear {\n\tdisplay: none;\n}\n");
+    $.$mol_style_attach("mol/string/string.view.css", "[mol_string] {\n\tbox-sizing: border-box;\n\toutline-offset: 0;\n\tborder: none;\n\tborder-radius: var(--mol_gap_round);\n\twhite-space: nowrap;\n\toverflow: hidden;\n\tpadding: var(--mol_gap_text);\n\ttext-align: left;\n\tposition: relative;\n\tz-index: 0;\n\tfont: inherit;\n\tflex: 1 1 auto;\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n}\n\n[mol_string]:disabled {\n\tbackground-color: transparent;\n}\n\n[mol_string]:focus {\n\toutline: none;\n\tz-index: 1;\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_focus);\n}\n\n[mol_string]::-ms-clear {\n\tdisplay: none;\n}\n");
 })($ || ($ = {}));
 //string.view.css.js.map
 ;
@@ -7682,7 +7682,7 @@ var $;
     (function ($$) {
         class $mol_bench extends $.$mol_bench {
             col_sort(next) {
-                return $.$mol_state_arg.value(this.state_key('sort'), next);
+                return $.$mol_state_arg.value(this.state_key('sort'), next) ?? '';
             }
             row_ids() {
                 const result = this.result();
@@ -13638,12 +13638,12 @@ var $;
         current_x(val) {
             if (val !== undefined)
                 return val;
-            return "";
+            return null;
         }
         current_y(val) {
             if (val !== undefined)
                 return val;
-            return "";
+            return null;
         }
         event_up(event) {
             if (event !== undefined)
@@ -14767,6 +14767,7 @@ var $;
                 if (next === void 0)
                     return this.value() == key;
                 this.value(next ? key : null);
+                return next;
             }
         }
         __decorate([
@@ -16028,7 +16029,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/labeler/labeler.view.css", "[mol_labeler] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: stretch;\n\tcursor: inherit;\n}\n\n[mol_labeler_label] {\n\tcolor: var(--mol_theme_shade);\n}\n\n[mol_labeler_content] {\n\tdisplay: flex;\n}\n");
+    $.$mol_style_attach("mol/labeler/labeler.view.css", "[mol_labeler] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-items: stretch;\n\tcursor: inherit;\n}\n\n[mol_labeler_label] {\n\tcolor: var(--mol_theme_shade);\n\tpadding: 0 .75rem;\n}\n\n[mol_labeler_content] {\n\tdisplay: flex;\n}\n");
 })($ || ($ = {}));
 //labeler.view.css.js.map
 ;
@@ -21483,7 +21484,7 @@ var $;
         speak(val) {
             if (val !== undefined)
                 return val;
-            return false;
+            return null;
         }
         Speak() {
             const obj = new this.$.$mol_button_major();
@@ -21634,6 +21635,95 @@ var $;
     $.$mol_style_attach("mol/string/demo/demo.view.css", "[mol_string_demo]>* {\n\tmargin: .5rem\n}\n");
 })($ || ($ = {}));
 //demo.view.css.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_string_button extends $.$mol_string {
+        hint() {
+            return " ";
+        }
+    }
+    $.$mol_string_button = $mol_string_button;
+})($ || ($ = {}));
+//button.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_style_attach("mol/string/button/button.view.css", "[mol_string_button] {\n\tbackground: transparent;\n\tcolor: var(--mol_theme_control);\n\tbox-shadow: none;\n    min-width: 0;\n\ttext-overflow: ellipsis;\n}\n\n[mol_string_button]:placeholder-shown {\n\tbackground: var(--mol_theme_field);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n}\n\n[mol_string_button]:disabled {\n\tbackground: transparent;\n\tcolor: var(--mol_theme_text);\n}\n\n[mol_string_button]:focus {\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_focus);\n}\n");
+})($ || ($ = {}));
+//button.view.css.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_string_button_demo extends $.$mol_demo_small {
+        title() {
+            return this.$.$mol_locale.text('$mol_string_button_demo_title');
+        }
+        sub() {
+            return [
+                this.Simple(),
+                this.Hint(),
+                this.Filled(),
+                this.Disabled()
+            ];
+        }
+        name(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Simple() {
+            const obj = new this.$.$mol_string_button();
+            obj.value = (val) => this.name(val);
+            return obj;
+        }
+        Hint() {
+            const obj = new this.$.$mol_string_button();
+            obj.hint = () => "Batman";
+            obj.value = (val) => this.name(val);
+            return obj;
+        }
+        name2(val) {
+            if (val !== undefined)
+                return val;
+            return "Jocker";
+        }
+        Filled() {
+            const obj = new this.$.$mol_string_button();
+            obj.value = (val) => this.name2(val);
+            return obj;
+        }
+        Disabled() {
+            const obj = new this.$.$mol_string_button();
+            obj.disabled = () => true;
+            obj.value = (val) => this.name2(val);
+            return obj;
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $mol_string_button_demo.prototype, "name", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_string_button_demo.prototype, "Simple", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_string_button_demo.prototype, "Hint", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_string_button_demo.prototype, "name2", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_string_button_demo.prototype, "Filled", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_string_button_demo.prototype, "Disabled", null);
+    $.$mol_string_button_demo = $mol_string_button_demo;
+})($ || ($ = {}));
+//demo.view.tree.js.map
 ;
 "use strict";
 var $;
@@ -22706,241 +22796,127 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_tree_convert = Symbol('$mol_tree_convert');
-    class $mol_tree extends $.$mol_object2 {
-        constructor(config = {}) {
+    var _a;
+    class $mol_span extends $.$mol_object2 {
+        constructor(uri, source, row, col, length) {
             super();
-            this.type = config.type || '';
-            if (config.value !== undefined) {
-                var sub = $mol_tree.values(config.value);
-                if (config.type || sub.length > 1) {
-                    this.sub = [...sub, ...(config.sub || [])];
-                    this.data = config.data || '';
-                }
-                else {
-                    this.data = sub[0].data;
-                    this.sub = config.sub || [];
-                }
-            }
-            else {
-                this.data = config.data || '';
-                this.sub = config.sub || [];
-            }
-            this.baseUri = config.baseUri || '';
-            this.row = config.row || 0;
-            this.col = config.col || 0;
-            this.length = config.length || 0;
+            this.uri = uri;
+            this.source = source;
+            this.row = row;
+            this.col = col;
+            this.length = length;
+            this[_a] = `${this.uri}#${this.row}:${this.col}/${this.length}`;
         }
-        static values(str, baseUri) {
-            return str.split('\n').map((data, index) => new $mol_tree({
-                data: data,
-                baseUri: baseUri,
-                row: index + 1,
-                length: data.length,
-            }));
+        static begin(uri, source = '') {
+            return new $mol_span(uri, source, 1, 1, 0);
         }
-        clone(config = {}) {
-            return new $mol_tree({
-                type: ('type' in config) ? config.type : this.type,
-                data: ('data' in config) ? config.data : this.data,
-                sub: ('sub' in config) ? config.sub : this.sub,
-                baseUri: ('baseUri' in config) ? config.baseUri : this.baseUri,
-                row: ('row' in config) ? config.row : this.row,
-                col: ('col' in config) ? config.col : this.col,
-                length: ('length' in config) ? config.length : this.length,
-                value: config.value
-            });
+        static end(uri, source) {
+            return new $mol_span(uri, source, 1, source.length + 1, length);
         }
-        make(config) {
-            return new $mol_tree({
-                baseUri: this.baseUri,
-                row: this.row,
-                col: this.col,
-                length: this.length,
-                ...config,
-            });
+        static entire(uri, source) {
+            return new $mol_span(uri, source, 1, 1, source.length);
         }
-        make_data(value, sub) {
-            return this.make({ value, sub });
-        }
-        make_struct(type, sub) {
-            return this.make({ type, sub });
-        }
-        static fromString(str, baseUri) {
-            var root = new $mol_tree({ baseUri: baseUri });
-            var stack = [root];
-            var row = 0;
-            var prefix = str.replace(/^\n?(\t*)[\s\S]*/, '$1');
-            var lines = str.replace(new RegExp('^\\t{0,' + prefix.length + '}', 'mg'), '').split('\n');
-            lines.forEach(line => {
-                ++row;
-                var chunks = /^(\t*)((?:[^\n\t\\ ]+ *)*)(\\[^\n]*)?(.*?)(?:$|\n)/m.exec(line);
-                if (!chunks || chunks[4])
-                    return this.$.$mol_fail(new Error(`Syntax error at ${baseUri}:${row}\n${line}`));
-                var indent = chunks[1];
-                var path = chunks[2];
-                var data = chunks[3];
-                var deep = indent.length;
-                var types = path ? path.replace(/ $/, '').split(/ +/) : [];
-                if (stack.length <= deep)
-                    return this.$.$mol_fail(new Error(`Too many tabs at ${baseUri}:${row}\n${line}`));
-                stack.length = deep + 1;
-                var parent = stack[deep];
-                let col = deep;
-                types.forEach(type => {
-                    if (!type)
-                        return this.$.$mol_fail(new Error(`Unexpected space symbol ${baseUri}:${row}\n${line}`));
-                    var next = new $mol_tree({ type, baseUri, row, col, length: type.length });
-                    const parent_sub = parent.sub;
-                    parent_sub.push(next);
-                    parent = next;
-                    col += type.length + 1;
-                });
-                if (data) {
-                    var next = new $mol_tree({ data: data.substring(1), baseUri, row, col, length: data.length });
-                    const parent_sub = parent.sub;
-                    parent_sub.push(next);
-                    parent = next;
-                }
-                stack.push(parent);
-            });
-            return root;
-        }
-        static fromJSON(json, baseUri = '') {
-            switch (true) {
-                case typeof json === 'boolean':
-                case typeof json === 'number':
-                case json === null:
-                    return new $mol_tree({
-                        type: String(json),
-                        baseUri: baseUri
-                    });
-                case typeof json === 'string':
-                    return new $mol_tree({
-                        value: json,
-                        baseUri: baseUri
-                    });
-                case Array.isArray(json):
-                    return new $mol_tree({
-                        type: "/",
-                        sub: json.map(json => $mol_tree.fromJSON(json, baseUri))
-                    });
-                case json instanceof Date:
-                    return new $mol_tree({
-                        value: json.toISOString(),
-                        baseUri: baseUri
-                    });
-                default:
-                    if (typeof json[$.$mol_tree_convert] === 'function') {
-                        return json[$.$mol_tree_convert]();
-                    }
-                    if (typeof json.toJSON === 'function') {
-                        return $mol_tree.fromJSON(json.toJSON());
-                    }
-                    if (json instanceof Error) {
-                        const { name, message, stack } = json;
-                        json = { ...json, name, message, stack };
-                    }
-                    var sub = [];
-                    for (var key in json) {
-                        if (json[key] === undefined)
-                            continue;
-                        const subsub = $mol_tree.fromJSON(json[key], baseUri);
-                        if (/^[^\n\t\\ ]+$/.test(key)) {
-                            var child = new $mol_tree({
-                                type: key,
-                                baseUri: baseUri,
-                                sub: [subsub],
-                            });
-                        }
-                        else {
-                            var child = new $mol_tree({
-                                value: key,
-                                baseUri: baseUri,
-                                sub: [subsub],
-                            });
-                        }
-                        sub.push(child);
-                    }
-                    return new $mol_tree({
-                        type: "*",
-                        sub: sub,
-                        baseUri: baseUri
-                    });
-            }
-        }
-        get uri() {
-            return this.baseUri + '#' + this.row + ':' + this.col;
-        }
-        toString(prefix = '') {
-            var output = '';
-            if (this.type.length) {
-                if (!prefix.length) {
-                    prefix = "\t";
-                }
-                output += this.type;
-                if (this.sub.length == 1) {
-                    return output + ' ' + this.sub[0].toString(prefix);
-                }
-                output += "\n";
-            }
-            else if (this.data.length || prefix.length) {
-                output += "\\" + this.data + "\n";
-            }
-            for (var child of this.sub) {
-                output += prefix;
-                output += child.toString(prefix + "\t");
-            }
-            return output;
+        toString() {
+            return this[Symbol.toStringTag];
         }
         toJSON() {
-            if (!this.type)
-                return this.value;
-            if (this.type === 'true')
-                return true;
-            if (this.type === 'false')
-                return false;
-            if (this.type === 'null')
-                return null;
-            if (this.type === '*') {
-                var obj = {};
-                for (var child of this.sub) {
-                    if (child.type === '-')
-                        continue;
-                    var key = child.type || child.clone({ sub: child.sub.slice(0, child.sub.length - 1) }).value;
-                    var val = child.sub[child.sub.length - 1].toJSON();
-                    if (val !== undefined)
-                        obj[key] = val;
-                }
-                return obj;
-            }
-            if (this.type === '/') {
-                var res = [];
-                this.sub.forEach(child => {
-                    if (child.type === '-')
-                        return;
-                    var val = child.toJSON();
-                    if (val !== undefined)
-                        res.push(val);
-                });
-                return res;
-            }
-            if (this.type === 'time') {
-                return new Date(this.value);
-            }
-            const numb = Number(this.type);
-            if (!Number.isNaN(numb) || this.type === 'NaN')
-                return numb;
-            throw new Error(`Unknown type (${this.type}) at ${this.uri}`);
+            return {
+                uri: this.uri,
+                row: this.row,
+                col: this.col,
+                length: this.length
+            };
         }
-        get value() {
-            var values = [];
-            for (var child of this.sub) {
-                if (child.type)
-                    continue;
-                values.push(child.value);
+        error(message, Class = Error) {
+            return new Class(`${message}${this}`);
+        }
+        span(row, col, length) {
+            return new $mol_span(this.uri, this.source, row, col, length);
+        }
+        after(length = 0) {
+            return new $mol_span(this.uri, this.source, this.row, this.col + this.length, length);
+        }
+        slice(begin, end = -1) {
+            let len = this.length;
+            if (begin < 0)
+                begin += len;
+            if (end < 0)
+                end += len;
+            if (begin < 0 || begin > len)
+                this.$.$mol_fail(`Begin value '${begin}' out of range ${this}`);
+            if (end < 0 || end > len)
+                this.$.$mol_fail(`End value '${end}' out of range ${this}`);
+            if (end < begin)
+                this.$.$mol_fail(`End value '${end}' can't be less than begin value ${this}`);
+            return this.span(this.row, this.col + begin, end - begin);
+        }
+    }
+    _a = Symbol.toStringTag;
+    $mol_span.unknown = $mol_span.begin('unknown');
+    $.$mol_span = $mol_span;
+})($ || ($ = {}));
+//span.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_tree2 extends $.$mol_object2 {
+        constructor(type, value, kids, span) {
+            super();
+            this.type = type;
+            this.value = value;
+            this.kids = kids;
+            this.span = span;
+            this[Symbol.toStringTag] = type || '\\' + value;
+        }
+        static list(kids, span = $.$mol_span.unknown) {
+            return new $mol_tree2('', '', kids, span);
+        }
+        list(kids) {
+            return $mol_tree2.list(kids, this.span);
+        }
+        static data(value, kids = [], span = $.$mol_span.unknown) {
+            const chunks = value.split('\n');
+            if (chunks.length > 1) {
+                let kid_span = span.span(span.row, span.col, 0);
+                const data = chunks.map(chunk => {
+                    kid_span = kid_span.after(chunk.length);
+                    return new $mol_tree2('', chunk, [], kid_span);
+                });
+                kids = [...data, ...kids];
+                value = '';
             }
-            return this.data + values.join("\n");
+            return new $mol_tree2('', value, kids, span);
+        }
+        data(value, kids = []) {
+            return $mol_tree2.data(value, kids, this.span);
+        }
+        static struct(type, kids = [], span = $.$mol_span.unknown) {
+            if (/[ \n\t\\]/.test(type)) {
+                this.$.$mol_fail(span.error(`Wrong type ${JSON.stringify(type)}`));
+            }
+            return new $mol_tree2(type, '', kids, span);
+        }
+        struct(type, kids = []) {
+            return $mol_tree2.struct(type, kids, this.span);
+        }
+        clone(kids, span = this.span) {
+            return new $mol_tree2(this.type, this.value, kids, span);
+        }
+        text() {
+            var values = [];
+            for (var kid of this.kids) {
+                if (kid.type)
+                    continue;
+                values.push(kid.value);
+            }
+            return this.value + values.join('\n');
+        }
+        static fromString(str, uri = 'unknown') {
+            return this.$.$mol_tree2_from_string(str, uri);
+        }
+        toString() {
+            return this.$.$mol_tree2_to_string(this);
         }
         insert(value, ...path) {
             if (path.length === 0)
@@ -22948,86 +22924,101 @@ var $;
             const type = path[0];
             if (typeof type === 'string') {
                 let replaced = false;
-                const sub = this.sub.map((item, index) => {
+                const sub = this.kids.map((item, index) => {
                     if (item.type !== type)
                         return item;
                     replaced = true;
                     return item.insert(value, ...path.slice(1));
-                });
-                if (!replaced)
-                    sub.push(new $mol_tree({ type }).insert(value, ...path.slice(1)));
-                return this.clone({ sub });
+                }).filter(Boolean);
+                if (!replaced && value) {
+                    sub.push(this.struct(type, []).insert(value, ...path.slice(1)));
+                }
+                return this.clone(sub);
             }
             else if (typeof type === 'number') {
-                const sub = this.sub.slice();
-                sub[type] = (sub[type] || new $mol_tree).insert(value, ...path.slice(1));
-                return this.clone({ sub });
+                const sub = this.kids.slice();
+                sub[type] = (sub[type] || this.list([]))
+                    .insert(value, ...path.slice(1));
+                return this.clone(sub.filter(Boolean));
             }
             else {
-                return this.clone({ sub: ((this.sub.length === 0) ? [new $mol_tree()] : this.sub).map(item => item.insert(value, ...path.slice(1))) });
+                const kids = ((this.kids.length === 0) ? [this.list([])] : this.kids)
+                    .map(item => item.insert(value, ...path.slice(1)))
+                    .filter(Boolean);
+                return this.clone(kids);
             }
         }
         select(...path) {
-            var next = [this];
-            for (var type of path) {
+            let next = [this];
+            for (const type of path) {
                 if (!next.length)
                     break;
-                var prev = next;
+                const prev = next;
                 next = [];
                 for (var item of prev) {
                     switch (typeof (type)) {
                         case 'string':
-                            for (var child of item.sub) {
-                                if (!type || (child.type == type)) {
+                            for (var child of item.kids) {
+                                if (child.type == type) {
                                     next.push(child);
                                 }
                             }
                             break;
                         case 'number':
-                            if (type < item.sub.length)
-                                next.push(item.sub[type]);
+                            if (type < item.kids.length)
+                                next.push(item.kids[type]);
                             break;
-                        default: next.push(...item.sub);
+                        default: next.push(...item.kids);
                     }
                 }
             }
-            return new $mol_tree({ sub: next });
+            return this.list(next);
         }
         filter(path, value) {
-            var sub = this.sub.filter(function (item) {
+            const sub = this.kids.filter(item => {
                 var found = item.select(...path);
-                if (value == null) {
-                    return Boolean(found.sub.length);
+                if (value === undefined) {
+                    return Boolean(found.kids.length);
                 }
                 else {
-                    return found.sub.some(child => child.value == value);
+                    return found.kids.some(child => child.value == value);
                 }
             });
-            return new $mol_tree({ sub: sub });
+            return this.clone(sub);
         }
-        transform(visit, stack = []) {
-            const sub_stack = [this, ...stack];
-            return visit(sub_stack, () => this.sub.map(node => node.transform(visit, sub_stack)).filter(n => n));
-        }
-        hack(context) {
-            const sub = [].concat(...this.sub.map(child => {
-                const handle = context[child.type] || context[''];
-                if (!handle)
-                    $.$mol_fail(child.error('Handler not defined'));
-                return handle(child, context);
+        hack(belt, context = {}) {
+            return [].concat(...this.kids.map(child => {
+                let handle = belt[child.type] || belt[''];
+                if (!handle || handle === Object.prototype[child.type]) {
+                    handle = (input, belt, context) => [
+                        input.clone(input.hack(belt, context), context.span)
+                    ];
+                }
+                try {
+                    return handle(child, belt, context);
+                }
+                catch (error) {
+                    error.message += `\n${child.clone([])}${child.span}`;
+                    $.$mol_fail_hidden(error);
+                }
             }));
-            return this.clone({ sub });
         }
-        error(message) {
-            return new Error(`${message}:\n${this} ${this.baseUri}:${this.row}:${this.col}`);
+        error(message, Class = Error) {
+            return this.span.error(`${message}\n${this.clone([])}`, Class);
         }
     }
     __decorate([
-        $.$mol_deprecated('Use $mol_tree:hack')
-    ], $mol_tree.prototype, "transform", null);
-    $.$mol_tree = $mol_tree;
+        $.$mol_deprecated('Use $mol_tree2_from_string')
+    ], $mol_tree2, "fromString", null);
+    $.$mol_tree2 = $mol_tree2;
+    class $mol_tree2_empty extends $mol_tree2 {
+        constructor() {
+            super('', '', [], $.$mol_span.unknown);
+        }
+    }
+    $.$mol_tree2_empty = $mol_tree2_empty;
 })($ || ($ = {}));
-//tree.js.map
+//tree2.js.map
 ;
 "use strict";
 var $;
@@ -23364,13 +23355,13 @@ var $;
         prop(path, val) {
             if (val !== undefined)
                 return val;
-            const obj = new this.$.$mol_tree();
+            const obj = new this.$.$mol_tree2_empty();
             return obj;
         }
         props(name, val) {
             if (val !== undefined)
                 return val;
-            const obj = new this.$.$mol_tree();
+            const obj = new this.$.$mol_tree2_empty();
             return obj;
         }
         prop_value(id) {
@@ -23514,233 +23505,6 @@ var $;
     $.$mol_app_studio_field_title = $mol_app_studio_field_title;
 })($ || ($ = {}));
 //field.view.tree.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    var _a;
-    class $mol_span extends $.$mol_object2 {
-        constructor(uri, source, row, col, length) {
-            super();
-            this.uri = uri;
-            this.source = source;
-            this.row = row;
-            this.col = col;
-            this.length = length;
-            this[_a] = `${this.uri}#${this.row}:${this.col}/${this.length}`;
-        }
-        static begin(uri, source = '') {
-            return new $mol_span(uri, source, 1, 1, 0);
-        }
-        static end(uri, source) {
-            return new $mol_span(uri, source, 1, source.length + 1, length);
-        }
-        static entire(uri, source) {
-            return new $mol_span(uri, source, 1, 1, source.length);
-        }
-        toString() {
-            return this[Symbol.toStringTag];
-        }
-        toJSON() {
-            return {
-                uri: this.uri,
-                row: this.row,
-                col: this.col,
-                length: this.length
-            };
-        }
-        error(message, Class = Error) {
-            return new Class(`${message}${this}`);
-        }
-        span(row, col, length) {
-            return new $mol_span(this.uri, this.source, row, col, length);
-        }
-        after(length = 0) {
-            return new $mol_span(this.uri, this.source, this.row, this.col + this.length, length);
-        }
-        slice(begin, end = -1) {
-            let len = this.length;
-            if (begin < 0)
-                begin += len;
-            if (end < 0)
-                end += len;
-            if (begin < 0 || begin > len)
-                this.$.$mol_fail(`Begin value '${begin}' out of range ${this}`);
-            if (end < 0 || end > len)
-                this.$.$mol_fail(`End value '${end}' out of range ${this}`);
-            if (end < begin)
-                this.$.$mol_fail(`End value '${end}' can't be less than begin value ${this}`);
-            return this.span(this.row, this.col + begin, end - begin);
-        }
-    }
-    _a = Symbol.toStringTag;
-    $mol_span.unknown = $mol_span.begin('unknown');
-    $.$mol_span = $mol_span;
-})($ || ($ = {}));
-//span.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_tree2 extends $.$mol_object2 {
-        constructor(type, value, kids, span) {
-            super();
-            this.type = type;
-            this.value = value;
-            this.kids = kids;
-            this.span = span;
-            this[Symbol.toStringTag] = type || '\\' + value;
-        }
-        static list(kids, span = $.$mol_span.unknown) {
-            return new $mol_tree2('', '', kids, span);
-        }
-        list(kids) {
-            return $mol_tree2.list(kids, this.span);
-        }
-        static data(value, kids = [], span = $.$mol_span.unknown) {
-            const chunks = value.split('\n');
-            if (chunks.length > 1) {
-                let kid_span = span.span(span.row, span.col, 0);
-                const data = chunks.map(chunk => {
-                    kid_span = kid_span.after(chunk.length);
-                    return new $mol_tree2('', chunk, [], kid_span);
-                });
-                kids = [...data, ...kids];
-                value = '';
-            }
-            return new $mol_tree2('', value, kids, span);
-        }
-        data(value, kids = []) {
-            return $mol_tree2.data(value, kids, this.span);
-        }
-        static struct(type, kids = [], span = $.$mol_span.unknown) {
-            if (/[ \n\t\\]/.test(type)) {
-                this.$.$mol_fail(span.error(`Wrong type ${JSON.stringify(type)}`));
-            }
-            return new $mol_tree2(type, '', kids, span);
-        }
-        struct(type, kids = []) {
-            return $mol_tree2.struct(type, kids, this.span);
-        }
-        clone(kids, span = this.span) {
-            return new $mol_tree2(this.type, this.value, kids, span);
-        }
-        text() {
-            var values = [];
-            for (var kid of this.kids) {
-                if (kid.type)
-                    continue;
-                values.push(kid.value);
-            }
-            return this.value + values.join('\n');
-        }
-        static fromString(str, uri = 'unknown') {
-            return this.$.$mol_tree2_from_string(str, uri);
-        }
-        toString() {
-            return this.$.$mol_tree2_to_string(this);
-        }
-        insert(value, ...path) {
-            if (path.length === 0)
-                return value;
-            const type = path[0];
-            if (typeof type === 'string') {
-                let replaced = false;
-                const sub = this.kids.map((item, index) => {
-                    if (item.type !== type)
-                        return item;
-                    replaced = true;
-                    return item.insert(value, ...path.slice(1));
-                }).filter(Boolean);
-                if (!replaced && value) {
-                    sub.push(this.struct(type, []).insert(value, ...path.slice(1)));
-                }
-                return this.clone(sub);
-            }
-            else if (typeof type === 'number') {
-                const sub = this.kids.slice();
-                sub[type] = (sub[type] || this.list([]))
-                    .insert(value, ...path.slice(1));
-                return this.clone(sub.filter(Boolean));
-            }
-            else {
-                const kids = ((this.kids.length === 0) ? [this.list([])] : this.kids)
-                    .map(item => item.insert(value, ...path.slice(1)))
-                    .filter(Boolean);
-                return this.clone(kids);
-            }
-        }
-        select(...path) {
-            let next = [this];
-            for (const type of path) {
-                if (!next.length)
-                    break;
-                const prev = next;
-                next = [];
-                for (var item of prev) {
-                    switch (typeof (type)) {
-                        case 'string':
-                            for (var child of item.kids) {
-                                if (child.type == type) {
-                                    next.push(child);
-                                }
-                            }
-                            break;
-                        case 'number':
-                            if (type < item.kids.length)
-                                next.push(item.kids[type]);
-                            break;
-                        default: next.push(...item.kids);
-                    }
-                }
-            }
-            return this.list(next);
-        }
-        filter(path, value) {
-            const sub = this.kids.filter(item => {
-                var found = item.select(...path);
-                if (value === undefined) {
-                    return Boolean(found.kids.length);
-                }
-                else {
-                    return found.kids.some(child => child.value == value);
-                }
-            });
-            return this.clone(sub);
-        }
-        hack(belt, context = {}) {
-            return [].concat(...this.kids.map(child => {
-                let handle = belt[child.type] || belt[''];
-                if (!handle || handle === Object.prototype[child.type]) {
-                    handle = (input, belt, context) => [
-                        input.clone(input.hack(belt, context), context.span)
-                    ];
-                }
-                try {
-                    return handle(child, belt, context);
-                }
-                catch (error) {
-                    error.message += `\n${child.clone([])}${child.span}`;
-                    $.$mol_fail_hidden(error);
-                }
-            }));
-        }
-        error(message, Class = Error) {
-            return this.span.error(`${message}\n${this.clone([])}`, Class);
-        }
-    }
-    __decorate([
-        $.$mol_deprecated('Use $mol_tree2_from_string')
-    ], $mol_tree2, "fromString", null);
-    $.$mol_tree2 = $mol_tree2;
-    class $mol_tree2_empty extends $mol_tree2 {
-        constructor() {
-            super('', '', [], $.$mol_span.unknown);
-        }
-    }
-    $.$mol_tree2_empty = $mol_tree2_empty;
-})($ || ($ = {}));
-//tree2.js.map
 ;
 "use strict";
 var $;
@@ -23931,6 +23695,18 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_view_tree2_normalize(defs) {
+        return defs.clone($.$mol_view_tree2_classes(defs).kids.map(cl => cl.clone([
+            this.$mol_view_tree2_class_super(cl).clone(this.$mol_view_tree2_class_props(cl))
+        ])));
+    }
+    $.$mol_view_tree2_normalize = $mol_view_tree2_normalize;
+})($ || ($ = {}));
+//normalize.js.map
+;
+"use strict";
+var $;
+(function ($) {
     const err = $.$mol_view_tree2_error_str;
     function $mol_view_tree2_value_type(val) {
         switch (val.type) {
@@ -24064,7 +23840,7 @@ var $;
                 }
                 const val = this.value();
                 if (!val || val.type === '-')
-                    return null;
+                    return '';
                 return this.$.$mol_view_tree2_value_type(this.value());
             }
             expanded(next = ['bool', 'number', 'string', 'locale'].indexOf(this.type() || '') >= 0) {
@@ -24080,7 +23856,7 @@ var $;
                 return this.value(next && $.$mol_tree2.struct(String(next)) || undefined).type;
             }
             value_number(next) {
-                return this.value(next && $.$mol_tree2.struct(String(next)) || undefined).type;
+                return Number(this.value(next && $.$mol_tree2.struct(String(next)) || undefined).type);
             }
             value_string(next) {
                 let next2;
@@ -24136,25 +23912,27 @@ var $;
             }
             add_item(type) {
                 if (!type)
-                    return null;
+                    return '';
                 const items = this.value();
                 this.Prop([...this.path(), items.kids.length]).type(type);
-                return null;
+                return '';
             }
             over_options() {
                 return this.props(this.class()).kids.map(item => item.type);
             }
             add_over(name) {
                 if (!name)
-                    return;
+                    return '';
                 this.value(this.value().insert($.$mol_tree2.struct(name), name));
+                return '';
             }
             add_pair(event) {
                 if (!event)
-                    return;
+                    return '';
                 const name = this.add_pair_key();
                 this.add_pair_key('');
                 this.value(this.value().insert($.$mol_tree2.data(''), name, null));
+                return '';
             }
             event_prop_add(event) {
                 const name = this.Bind().filter_pattern();
@@ -24854,6 +24632,20 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    const { begin, end, latin_only: letter, optional, repeat_greedy } = $.$mol_regexp;
+    $.$mol_view_tree2_prop_signature = $.$mol_regexp.from([
+        begin,
+        { name: repeat_greedy(letter, 1) },
+        { key: optional(['!', repeat_greedy(letter, 0)]) },
+        { next: optional(['?', repeat_greedy(letter, 0)]) },
+        end,
+    ]);
+})($ || ($ = {}));
+//sigrature.js.map
+;
+"use strict";
+var $;
+(function ($) {
     $.$mol_style_attach("mol/app/studio/studio.view.css", "[mol_app_studio_preview_page] {\n\tflex: 1000 0 40rem; \n\tbackground: var(--mol_theme_field);\n}\n\n[mol_app_studio_editor_page] {\n\tflex: 0 0 30rem;\n}\n\n[mol_app_studio_source_page] {\n\tflex: 0 0 30rem;\n}\n\n[mol_app_studio_crumbs] {\n\tflex: 1000 1 auto;\n\tdisplay: flex;\n\tflex-wrap: wrap;\n}\n[mol_app_studio_crumbs] > * {\n\tmargin: 0;\n}\n\n[mol_app_studio_preview_page_head] {\n\tfilter: brightness(90%);\n}\n\n[mol_app_studio_preview_page_body] {\n\tdisplay: flex;\n\talign-items: stretch;\n}\n\n[mol_app_studio_selector] {\n\tpadding: .5rem;\n\tflex: 1 1 auto;\n\talign-items: flex-start;\n}\n\n[mol_app_studio_editor_page_head] {\n\tflex-wrap: nowrap;\n}\n\n/* [mol_app_studio_fields] {\n\tmin-height: 1.5rem;\n} */\n");
 })($ || ($ = {}));
 //studio.view.css.js.map
@@ -25100,6 +24892,7 @@ var $;
             }
             prop_add(name) {
                 this.prop([name], $.$mol_tree2.struct(name, [new $.$mol_tree2_empty]));
+                return '';
             }
             speech_enabled(next) {
                 return this.$.$mol_speech.hearing(next);
@@ -27413,19 +27206,11 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const { begin, end, latin_only: letter, optional, repeat_greedy } = $.$mol_regexp;
-    const prop_signature = $.$mol_regexp.from([
-        begin,
-        { name: repeat_greedy(letter, 1) },
-        { key: optional(['!', repeat_greedy(letter, 0)]) },
-        { next: optional(['?', repeat_greedy(letter, 0)]) },
-        end,
-    ]);
     function name_of(prop) {
-        return prop_signature.exec(prop.type).groups.name;
+        return [...prop.type.matchAll($.$mol_view_tree2_prop_signature)][0].groups.name;
     }
     function params_of(prop, ...val) {
-        const { key, next } = [...prop.type.matchAll(prop_signature)][0].groups;
+        const { key, next } = [...prop.type.matchAll($.$mol_view_tree2_prop_signature)][0].groups;
         return prop.struct('line', [
             prop.data('( '),
             ...key ? [
@@ -27455,7 +27240,7 @@ var $;
                 parent.data(parent.type),
                 klass.data(' {'),
             ]), ...props.map(prop => {
-                const { name, key, next } = prop_signature.exec(prop.type).groups;
+                const { name, key, next } = $.$mol_view_tree2_prop_signature.exec(prop.type).groups;
                 const bind_res = (bind) => [
                     bind.data('ReturnType< '),
                     klass.data(klass.type),
@@ -27585,19 +27370,11 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const { begin, end, latin_only: letter, optional, repeat_greedy } = $.$mol_regexp;
-    const prop_signature = $.$mol_regexp.from([
-        begin,
-        { name: repeat_greedy(letter, 1) },
-        { key: optional(['!', repeat_greedy(letter, 0)]) },
-        { next: optional(['?', repeat_greedy(letter, 0)]) },
-        end,
-    ]);
     function name_of(prop) {
-        return [...prop.type.matchAll(prop_signature)][0].groups.name;
+        return [...prop.type.matchAll($.$mol_view_tree2_prop_signature)][0].groups.name;
     }
     function params_of(prop) {
-        const { key, next } = [...prop.type.matchAll(prop_signature)][0].groups;
+        const { key, next } = [...prop.type.matchAll($.$mol_view_tree2_prop_signature)][0].groups;
         return prop.struct('(,)', [
             ...key ? [prop.struct(key.slice(1) || 'key')] : [],
             ...next ? [prop.struct(next.slice(1) || 'next')] : [],
@@ -27612,7 +27389,7 @@ var $;
             const addons = [];
             const members = [];
             for (const prop of props) {
-                const { name, key, next } = [...prop.type.matchAll(prop_signature)][0].groups;
+                const { name, key, next } = [...prop.type.matchAll($.$mol_view_tree2_prop_signature)][0].groups;
                 const bind_res = (bind) => {
                     const res = bind.kids[0];
                     return [
@@ -31591,6 +31368,7 @@ var $;
                     next,
                     next.data(' !== undefined ) return '),
                     next,
+                    next.data(' as never'),
                 ])
             ]));
         sub.push(body, name.data('}'));
