@@ -3021,6 +3021,113 @@ var $;
 ;
 "use strict";
 var $;
+(function ($) {
+    $.$mol_test({
+        'Makes reactive value by key'() {
+            class Fib extends $.$mol_object2 {
+                static get value() {
+                    return $.$mol_atom2_dict({
+                        get: (index, dict) => {
+                            if (index < 2)
+                                return 1;
+                            return dict[index - 1] + dict[index - 2];
+                        }
+                    });
+                }
+            }
+            __decorate([
+                $.$mol_atom2_field
+            ], Fib, "value", null);
+            $.$mol_assert_equal(Fib.value[10], 89);
+            Fib.value[1] = 2;
+            $.$mol_assert_equal(Fib.value[10], 144);
+        },
+        'Reactive keys list'() {
+            class Registry extends $.$mol_object2 {
+                static get value() {
+                    return $.$mol_atom2_dict({});
+                }
+                static get size() {
+                    return Object.keys(this.value).length;
+                }
+            }
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "value", null);
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "size", null);
+            $.$mol_assert_equal(Registry.size, 0);
+            Registry.value[1] = 2;
+            Registry.value[3] = 4;
+            $.$mol_assert_equal(Registry.size, 2);
+        },
+        'Can be iterated over keys'() {
+            class Registry extends $.$mol_object2 {
+                static get value() {
+                    return $.$mol_atom2_dict({});
+                }
+            }
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "value", null);
+            Registry.value[1] = 2;
+            Registry.value[3] = 4;
+            const keys = [];
+            for (let key in Registry.value)
+                keys.push(key);
+            $.$mol_assert_like(keys, ['1', '3']);
+        },
+        async 'Call back on abort'() {
+            const log = [];
+            class Registry extends $.$mol_object2 {
+                static get item() {
+                    return $.$mol_atom2_dict({
+                        get: key => key,
+                        abort: key => {
+                            log.push(key);
+                            return true;
+                        },
+                    });
+                }
+                static get result() { return this.condition ? this.item['foo'] : ''; }
+            }
+            Registry.condition = true;
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "item", null);
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "condition", void 0);
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "result", null);
+            $.$mol_assert_equal(Registry.result, 'foo');
+            Registry.condition = false;
+            $.$mol_assert_equal(Registry.result, '');
+            $.$mol_assert_like(log, []);
+            await $.$mol_fiber_warp();
+            $.$mol_assert_like(log, ['foo']);
+        },
+        'Value has js-path name'() {
+            class Registry extends $.$mol_object2 {
+                static get item() {
+                    return $.$mol_atom2_dict({
+                        get: (key) => new $.$mol_object2,
+                    });
+                }
+            }
+            __decorate([
+                $.$mol_atom2_field
+            ], Registry, "item", null);
+            $.$mol_assert_equal(`${Registry.item['foo']}`, 'Registry.item["foo"]');
+        },
+    });
+})($ || ($ = {}));
+//dict.test.js.map
+;
+"use strict";
+var $;
 (function ($_1) {
     $_1.$mol_test({
         'span for same uri'($) {
@@ -3220,113 +3327,6 @@ var $;
     })($$ = $_1.$$ || ($_1.$$ = {}));
 })($ || ($ = {}));
 //props.test.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_test({
-        'Makes reactive value by key'() {
-            class Fib extends $.$mol_object2 {
-                static get value() {
-                    return $.$mol_atom2_dict({
-                        get: (index, dict) => {
-                            if (index < 2)
-                                return 1;
-                            return dict[index - 1] + dict[index - 2];
-                        }
-                    });
-                }
-            }
-            __decorate([
-                $.$mol_atom2_field
-            ], Fib, "value", null);
-            $.$mol_assert_equal(Fib.value[10], 89);
-            Fib.value[1] = 2;
-            $.$mol_assert_equal(Fib.value[10], 144);
-        },
-        'Reactive keys list'() {
-            class Registry extends $.$mol_object2 {
-                static get value() {
-                    return $.$mol_atom2_dict({});
-                }
-                static get size() {
-                    return Object.keys(this.value).length;
-                }
-            }
-            __decorate([
-                $.$mol_atom2_field
-            ], Registry, "value", null);
-            __decorate([
-                $.$mol_atom2_field
-            ], Registry, "size", null);
-            $.$mol_assert_equal(Registry.size, 0);
-            Registry.value[1] = 2;
-            Registry.value[3] = 4;
-            $.$mol_assert_equal(Registry.size, 2);
-        },
-        'Can be iterated over keys'() {
-            class Registry extends $.$mol_object2 {
-                static get value() {
-                    return $.$mol_atom2_dict({});
-                }
-            }
-            __decorate([
-                $.$mol_atom2_field
-            ], Registry, "value", null);
-            Registry.value[1] = 2;
-            Registry.value[3] = 4;
-            const keys = [];
-            for (let key in Registry.value)
-                keys.push(key);
-            $.$mol_assert_like(keys, ['1', '3']);
-        },
-        async 'Call back on abort'() {
-            const log = [];
-            class Registry extends $.$mol_object2 {
-                static get item() {
-                    return $.$mol_atom2_dict({
-                        get: key => key,
-                        abort: key => {
-                            log.push(key);
-                            return true;
-                        },
-                    });
-                }
-                static get result() { return this.condition ? this.item['foo'] : ''; }
-            }
-            Registry.condition = true;
-            __decorate([
-                $.$mol_atom2_field
-            ], Registry, "item", null);
-            __decorate([
-                $.$mol_atom2_field
-            ], Registry, "condition", void 0);
-            __decorate([
-                $.$mol_atom2_field
-            ], Registry, "result", null);
-            $.$mol_assert_equal(Registry.result, 'foo');
-            Registry.condition = false;
-            $.$mol_assert_equal(Registry.result, '');
-            $.$mol_assert_like(log, []);
-            await $.$mol_fiber_warp();
-            $.$mol_assert_like(log, ['foo']);
-        },
-        'Value has js-path name'() {
-            class Registry extends $.$mol_object2 {
-                static get item() {
-                    return $.$mol_atom2_dict({
-                        get: (key) => new $.$mol_object2,
-                    });
-                }
-            }
-            __decorate([
-                $.$mol_atom2_field
-            ], Registry, "item", null);
-            $.$mol_assert_equal(`${Registry.item['foo']}`, 'Registry.item["foo"]');
-        },
-    });
-})($ || ($ = {}));
-//dict.test.js.map
 ;
 "use strict";
 var $;
