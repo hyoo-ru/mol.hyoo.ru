@@ -27602,7 +27602,7 @@ var $;
                 parent.data(parent.type),
                 klass.data(' {'),
             ]), ...props.map(prop => {
-                const { name, key, next } = $.$mol_view_tree2_prop_signature.exec(prop.type).groups;
+                const { name, key, next } = [...prop.type.matchAll($.$mol_view_tree2_prop_signature)][0].groups;
                 const bind_res = (bind) => [
                     bind.data('ReturnType< '),
                     klass.data(klass.type),
