@@ -5359,7 +5359,8 @@ var $;
                 return chunks;
             }
             strings() {
-                const regexp = $.$mol_regexp.from({ needle: this.needle() }, { ignoreCase: true });
+                const variants = { ...this.needle().split(/\s+/g).filter(Boolean) };
+                const regexp = $.$mol_regexp.from({ needle: variants }, { ignoreCase: true });
                 return this.haystack().split(regexp);
             }
             string(index) {
