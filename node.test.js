@@ -28418,6 +28418,14 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_data_mol_title'),
                     uri: "https://mol.hyoo.ru/"
                 },
+                search: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_search_title'),
+                    uri: "https://search.hyoo.ru/"
+                },
+                talks: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_talks_title'),
+                    uri: "https://talks.hyoo.ru/#!chat=RXV3H2EC"
+                },
                 scout: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_scout_title'),
                     uri: "https://scout.hyoo.ru/"

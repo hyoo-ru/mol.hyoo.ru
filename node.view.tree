@@ -3002,6 +3002,12 @@ $hyoo_apps $mol_book2
 		mol *
 			title @ \$mol UI Framework
 			uri \https://mol.hyoo.ru/
+		search *
+			title @ \Web Search
+			uri \https://search.hyoo.ru/
+		talks *
+			title @ \Messanger
+			uri \https://talks.hyoo.ru/#!chat=RXV3H2EC
 		scout *
 			title @ \Scout Games
 			uri \https://scout.hyoo.ru/
