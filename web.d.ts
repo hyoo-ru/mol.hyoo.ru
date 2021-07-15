@@ -3830,7 +3830,7 @@ declare namespace $ {
         suggests(): readonly string[];
         plugins(): readonly $mol_plugin[];
         showed(val?: any): boolean;
-        Anchor(): $$.$mol_string;
+        Anchor(): $mol_view;
         bubble_content(): readonly $mol_view_content[];
         Suggest(id: any): $mol_button_minor;
         clear(val?: any): any;
@@ -3843,6 +3843,9 @@ declare namespace $ {
         submit(event?: any): any;
         enabled(): boolean;
         Query(): $$.$mol_string;
+        Clear_icon(): $mol_icon_cross;
+        Clear(): $mol_button_minor;
+        anchor_content(): readonly any[];
         menu_items(): readonly $mol_view[];
         Menu(): $$.$mol_list;
         suggest_select(id: any, event?: any): any;
@@ -3857,6 +3860,7 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_search extends $.$mol_search {
+        anchor_content(): ($mol_button_minor | $mol_string)[];
         suggests_showed(next?: boolean): boolean;
         suggest_selected(next?: string): void;
         nav_components(): ($mol_button_minor | $mol_string)[];
@@ -5753,6 +5757,7 @@ declare namespace $ {
     class $mol_select_list extends $mol_view {
         value(val?: any): readonly string[];
         dictionary(): {};
+        minimal_height(): number;
         Badge(index: any): $mol_button_minor;
         Pick(): $$.$mol_select;
         badge_title(index: any): string;
@@ -5775,7 +5780,7 @@ declare namespace $.$$ {
     class $mol_select_list extends $.$mol_select_list {
         value(val?: string[]): readonly string[];
         pick(key: string): string;
-        options(): string[];
+        options(): readonly string[];
         options_pickable(): readonly string[];
         option_title(key: string): string;
         badge_title(index: number): string;
@@ -5930,23 +5935,6 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_string_button extends $mol_string {
-        hint(): string;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_string_button_demo extends $mol_demo_small {
-        title(): string;
-        sub(): readonly any[];
-        name(val?: any): string;
-        Simple(): $mol_string_button;
-        Hint(): $mol_string_button;
-        name2(val?: any): string;
-        Filled(): $mol_string_button;
-        Disabled(): $mol_string_button;
     }
 }
 
