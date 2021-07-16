@@ -20867,15 +20867,12 @@ var $;
         dictionary() {
             return {};
         }
-        minimal_height() {
-            return 40;
-        }
         Badge(index) {
             const obj = new this.$.$mol_button_minor();
             obj.title = () => this.badge_title(index);
             obj.click = (event) => this.remove(index, event);
             obj.hint = () => this.badge_hint();
-            obj.enabled = () => this.enabled();
+            obj.enabled = () => this.drop_enabled();
             return obj;
         }
         Pick() {
@@ -20883,6 +20880,7 @@ var $;
             obj.options = () => this.options_pickable();
             obj.value = (val) => this.pick(val);
             obj.option_label = (key) => this.option_title(key);
+            obj.trigger_enabled = () => this.pick_enabled();
             obj.hint = () => this.pick_hint();
             obj.Trigger_icon = () => this.Pick_icon();
             return obj;
@@ -20901,6 +20899,9 @@ var $;
         enabled() {
             return true;
         }
+        drop_enabled() {
+            return this.enabled();
+        }
         options() {
             return [];
         }
@@ -20914,6 +20915,9 @@ var $;
         }
         option_title(key) {
             return "";
+        }
+        pick_enabled() {
+            return this.enabled();
         }
         pick_hint() {
             return this.$.$mol_locale.text('$mol_select_list_pick_hint');
@@ -20976,6 +20980,8 @@ var $;
                     return '';
                 this.value([...this.value(), key]);
                 $.$mol_fiber_defer(() => {
+                    if (!this.pick_enabled())
+                        return;
                     this.Pick().Trigger().focused(true);
                     this.Pick().open();
                 });
@@ -20997,10 +21003,13 @@ var $;
             badge_title(index) {
                 return this.option_title(this.value()[index]);
             }
+            pick_enabled() {
+                return this.options_pickable().length > 0;
+            }
             sub() {
                 return [
                     ...this.value().map((_, index) => this.Badge(index)),
-                    ...this.options_pickable().length ? [this.Pick()] : [],
+                    this.Pick(),
                 ];
             }
             title() {
@@ -21020,6 +21029,9 @@ var $;
         __decorate([
             $.$mol_mem
         ], $mol_select_list.prototype, "options_pickable", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_select_list.prototype, "pick_enabled", null);
         __decorate([
             $.$mol_mem
         ], $mol_select_list.prototype, "sub", null);
@@ -28115,10 +28127,6 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_data_piterjs_title'),
                     uri: "https://piterjs.org/"
                 },
-                shelter: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_shelter_title'),
-                    uri: "https://shelter.hyoo.ru/#login=user"
-                },
                 fallacy: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_fallacy_title'),
                     uri: "https://fallacy.hyoo.ru/"
@@ -28190,6 +28198,10 @@ var $;
                 questions: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_questions_title'),
                     uri: "https://mol.js.org/app/questions/-/"
+                },
+                shelter: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_shelter_title'),
+                    uri: "https://shelter.hyoo.ru/#login=user"
                 },
                 toys: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_toys_title'),

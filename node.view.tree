@@ -2348,16 +2348,16 @@ $mol_select_demo_priority $mol_demo_small
 $mol_select_list $mol_view
 	value?val /string
 	dictionary *
-	minimal_height 40
 	Badge!index $mol_button_minor
 		title <= badge_title!index \badge
 		click?event <=> remove!index?event null
 		hint <= badge_hint @ \Drop
-		enabled <= enabled true
+		enabled <= drop_enabled <= enabled true
 	Pick $mol_select
 		options <= options_pickable <= options /string
 		value?val <=> pick?val \
 		option_label!key <= option_title!key \
+		trigger_enabled <= pick_enabled <= enabled true
 		hint <= pick_hint @ \Add..
 		Trigger_icon <= Pick_icon $mol_icon_plus
 
@@ -3007,9 +3007,6 @@ $hyoo_apps $mol_book2
 		piterjs *
 			title @ \PiterJS Meetups
 			uri \https://piterjs.org/
-		shelter *
-			title @ \Shelters ERP
-			uri \https://shelter.hyoo.ru/#login=user
 		fallacy *
 			title @ \Fallacies Collection
 			uri \https://fallacy.hyoo.ru/
@@ -3064,6 +3061,9 @@ $hyoo_apps $mol_book2
 		questions *
 			title @ \StackOverflow Client
 			uri \https://mol.js.org/app/questions/-/
+		shelter *
+			title @ \Shelters ERP
+			uri \https://shelter.hyoo.ru/#login=user
 		toys *
 			title @ \Online Toys Store
 			uri \https://toys.hyoo.ru/#size=M/popular
