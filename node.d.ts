@@ -2794,6 +2794,7 @@ declare namespace $ {
         expanded2(this: $mol_vector<$mol_vector_range<number>, Length>, point: readonly (readonly [number, number])[] & {
             length: Length;
         }): this;
+        center<Item extends $mol_vector<number, number>>(this: $mol_vector<Item, Length>): Item;
     }
     class $mol_vector_1d<Value> extends $mol_vector<Value, 1> {
         [0]: Value;
@@ -2820,6 +2821,7 @@ declare namespace $ {
         get max(): Value;
         get inversed(): $mol_vector_range<Value>;
         expanded0(value: Value): $mol_vector_range<Value>;
+        distance<Length extends number>(this: $mol_vector_range<$mol_vector<number, Length>>): number;
     }
     let $mol_vector_range_full: $mol_vector_range<number>;
     class $mol_vector_matrix<Width extends number, Height extends number> extends $mol_vector<readonly number[] & {
@@ -7433,12 +7435,6 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_icon_open_in_new extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
     class $hyoo_apps extends $mol_book2 {
         Placeholder(): any;
         plugins(): readonly any[];
@@ -7560,8 +7556,7 @@ declare namespace $ {
         app_title(id: any): string;
         app_arg(id: any): {};
         Menu_link_in(id: any): $$.$mol_link;
-        Menu_link_out_icon(id: any): $mol_icon_open_in_new;
-        Menu_link_out(id: any): $$.$mol_link;
+        Menu_link_out(id: any): $$.$mol_link_iconed;
         app_uri(id: any, val?: any): string;
     }
 }

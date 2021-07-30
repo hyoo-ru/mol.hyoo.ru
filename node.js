@@ -5979,7 +5979,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/link/iconed/iconed.view.css", "[mol_link_iconed] {\n\talign-items: center;\n\tcolor: var(--mol_theme_control);\n\tdisplay: inline;\n\tpadding: var(--mol_gap_text);\n}\n\n[mol_link_iconed_icon] {\n\tbox-shadow: none;\n\theight: 1em;\n\twidth: 1em;\n\tdisplay: inline-block;\n\tmargin: .25rem 0;\n\tvertical-align: middle;\n}\n\n[mol_theme=\"$mol_theme_dark\"] [mol_link_iconed_icon] {\n\tfilter: invert(1) hue-rotate(180deg);\n}\n");
+    $.$mol_style_attach("mol/link/iconed/iconed.view.css", "[mol_link_iconed] {\n\talign-items: center;\n\tcolor: var(--mol_theme_control);\n\tdisplay: inline;\n\tpadding: var(--mol_gap_text);\n}\n\n[mol_link_iconed_icon] {\n\tbox-shadow: none;\n\theight: 1em;\n\twidth: 1em;\n\tdisplay: inline-block;\n\tmargin: .125rem 0;\n\tvertical-align: text-bottom;\n}\n\n[mol_theme=\"$mol_theme_dark\"] [mol_link_iconed_icon] {\n\tfilter: invert(1) hue-rotate(180deg);\n}\n");
 })($ || ($ = {}));
 //iconed.view.css.js.map
 ;
@@ -9190,6 +9190,10 @@ var $;
                 return next;
             });
         }
+        center() {
+            const Result = this[0].constructor;
+            return new Result(...this[0].map((_, i) => this.reduce((sum, point) => sum + point[i], 0) / this.length));
+        }
     }
     $.$mol_vector = $mol_vector;
     class $mol_vector_1d extends $mol_vector {
@@ -9221,6 +9225,9 @@ var $;
             if (value < range.min)
                 range = new Range(value, range.max);
             return range;
+        }
+        distance() {
+            return this.min.reduce((sum, min, i) => sum + (min - this.max[i]) ** 2, 0) ** (1 / this[0].length);
         }
     }
     $.$mol_vector_range = $mol_vector_range;
@@ -10840,59 +10847,31 @@ var $;
                 const [shift_x, shift_y] = this.shift();
                 const [scale_x, scale_y] = this.scale();
                 const indexes = [];
-                let last = [Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY];
-                let first_x = null;
-                let first_y = null;
-                let last_x = null;
-                let last_y = null;
+                let last = new $.$mol_vector_2d(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
+                let last_zone = new $.$mol_vector_2d(0, 0);
                 const series_x = this.series_x();
                 const series_y = this.series_y();
+                const zone_of = (point) => new $.$mol_vector_2d(point.x < viewport_left ? -1
+                    : point.x > viewport_right ? 1
+                        : 0, point.y < viewport_bottom ? -1
+                    : point.y > viewport_top ? 1
+                        : 0);
                 for (let i = 0; i < series_x.length; i++) {
-                    const scaled = [
-                        Math.round(shift_x + series_x[i] * scale_x),
-                        Math.round(shift_y + series_y[i] * scale_y),
-                    ];
-                    if (Math.abs(scaled[0] - last[0]) < threshold
-                        && Math.abs(scaled[1] - last[1]) < threshold)
+                    const scaled = new $.$mol_vector_2d(Math.round(shift_x + series_x[i] * scale_x), Math.round(shift_y + series_y[i] * scale_y));
+                    if (Math.abs(scaled.x - last.x) < threshold
+                        && Math.abs(scaled.y - last.y) < threshold)
                         continue;
+                    const zone = zone_of(scaled);
                     last = scaled;
-                    if (scaled[0] < viewport_left) {
-                        first_x = i;
+                    if (zone.x !== 0 && zone.x === last_zone.x || zone.y !== 0 && zone.y === last_zone.y) {
                         continue;
                     }
-                    if (scaled[1] < viewport_bottom) {
-                        first_y = i;
-                        continue;
+                    if (last_zone.x !== 0 || last_zone.y !== 0) {
+                        indexes.push(i - 1);
                     }
-                    if (scaled[0] > viewport_right) {
-                        if (last_x === null)
-                            last_x = i;
-                        continue;
-                    }
-                    if (scaled[1] > viewport_top) {
-                        if (last_y === null)
-                            last_y = i;
-                        continue;
-                    }
-                    if (first_x !== null)
-                        indexes.push(first_x);
-                    if (first_y !== null)
-                        indexes.push(first_y);
+                    last_zone = zone;
                     indexes.push(i);
-                    if (last_x !== null)
-                        indexes.push(last_x);
-                    if (last_y !== null)
-                        indexes.push(last_y);
-                    first_x = first_y = last_x = last_y = null;
                 }
-                if (first_x !== null)
-                    indexes.push(first_x);
-                if (first_y !== null)
-                    indexes.push(first_y);
-                if (last_x !== null)
-                    indexes.push(last_x);
-                if (last_y !== null)
-                    indexes.push(last_y);
                 return indexes;
             }
             curve() {
@@ -28384,18 +28363,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_icon_open_in_new extends $.$mol_icon {
-        path() {
-            return "M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V12H19V19Z";
-        }
-    }
-    $.$mol_icon_open_in_new = $mol_icon_open_in_new;
-})($ || ($ = {}));
-//new.view.tree.js.map
-;
-"use strict";
-var $;
-(function ($) {
     class $hyoo_apps extends $.$mol_book2 {
         Placeholder() {
             return null;
@@ -28576,17 +28543,10 @@ var $;
             obj.arg = () => this.app_arg(id);
             return obj;
         }
-        Menu_link_out_icon(id) {
-            const obj = new this.$.$mol_icon_open_in_new();
-            return obj;
-        }
         Menu_link_out(id) {
-            const obj = new this.$.$mol_link();
+            const obj = new this.$.$mol_link_iconed();
             obj.uri = () => this.app_uri(id);
-            obj.target = () => "_blank";
-            obj.sub = () => [
-                this.Menu_link_out_icon(id)
-            ];
+            obj.title = () => "";
             return obj;
         }
         app_uri(id, val) {
@@ -28619,9 +28579,6 @@ var $;
     __decorate([
         $.$mol_mem_key
     ], $hyoo_apps.prototype, "Menu_link_in", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_apps.prototype, "Menu_link_out_icon", null);
     __decorate([
         $.$mol_mem_key
     ], $hyoo_apps.prototype, "Menu_link_out", null);
