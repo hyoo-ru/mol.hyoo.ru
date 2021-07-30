@@ -1,3 +1,4 @@
 deploy \/mol/readme.md
+deploy \/mol/mol_logo.svg
 
 include \/mol/offline/install
