@@ -64,7 +64,6 @@ declare namespace $ {
         [$mol_ambient_ref]: typeof $$;
         get $(): $;
         set $(next: $);
-        constructor(init?: (obj: any) => void);
         static create<Instance>(this: new (init?: (instance: any) => void) => Instance, init?: (instance: $mol_type_writable<Instance>) => void): Instance;
         static [Symbol.toPrimitive](): any;
         static toString(): any;
@@ -2786,7 +2785,7 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_vector<Value, Length extends number> extends Array<Value> {
-        length: Length;
+        get length(): Length;
         constructor(...values: Value[] & {
             length: Length;
         });
@@ -2825,8 +2824,8 @@ declare namespace $ {
     class $mol_vector_3d<Value> extends $mol_vector<Value, 3> {
     }
     class $mol_vector_range<Value> extends $mol_vector<Value, 2> {
-        [0]: Value;
-        [1]: Value;
+        get [0](): Value;
+        get [1](): Value;
         get min(): Value;
         get max(): Value;
         get inversed(): $mol_vector_range<Value>;
@@ -6362,12 +6361,11 @@ declare namespace $ {
         readonly col: number;
         readonly length: number;
         constructor(uri: string, source: string, row: number, col: number, length: number);
-        [Symbol.toStringTag]: string;
         static unknown: $mol_span;
         static begin(uri: string, source?: string): $mol_span;
         static end(uri: string, source: string): $mol_span;
         static entire(uri: string, source: string): $mol_span;
-        toString(): string;
+        toString(): any;
         toJSON(): {
             uri: string;
             row: number;
