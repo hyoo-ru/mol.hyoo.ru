@@ -2832,6 +2832,13 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_svg_title extends $mol_svg {
+        dom_name(): string;
+        sub(): readonly any[];
+    }
+}
+
+declare namespace $ {
     class $mol_plot_graph extends $mol_svg_group {
         series_x(): readonly number[];
         series_y(): readonly number[];
@@ -2853,6 +2860,7 @@ declare namespace $ {
         points(): readonly (readonly number[])[];
         front(): readonly $mol_svg[];
         back(): readonly $mol_svg[];
+        Hint(): $mol_svg_title;
         hue(): number;
         Sample(): any;
         type(): string;
@@ -2865,6 +2873,8 @@ declare namespace $ {
         dimensions_y(): $mol_vector_range<number>;
         gap_x(): $mol_vector_range<number>;
         gap_y(): $mol_vector_range<number>;
+        title(): string;
+        hint(): string;
     }
     class $mol_plot_graph_sample extends $mol_view {
         attr(): {
@@ -2915,39 +2925,6 @@ declare namespace $.$$ {
         graph_legends(): $mol_view[];
         graph_title(index: number): string;
         Graph_sample(index: number): any;
-    }
-}
-
-declare namespace $ {
-    class $mol_meter extends $mol_plugin {
-        zoom(): number;
-        width(val?: any): number;
-        height(val?: any): number;
-        left(val?: any): number;
-        right(val?: any): number;
-        bottom(val?: any): number;
-        top(val?: any): number;
-    }
-}
-
-declare namespace $.$$ {
-    class $mol_meter extends $.$mol_meter {
-        rect(): {
-            left: number;
-            top: number;
-            right: number;
-            bottom: number;
-            width: number;
-            height: number;
-            zoom: number;
-        };
-        top(): number;
-        bottom(): number;
-        left(): number;
-        right(): number;
-        width(): number;
-        height(): number;
-        zoom(): number;
     }
 }
 
@@ -3062,9 +3039,8 @@ declare namespace $ {
         graphs_sorted(): readonly $mol_svg[];
         graphs(): readonly $mol_plot_graph[];
         graphs_positioned(): readonly $mol_plot_graph[];
-        width(): number;
-        height(): number;
-        Meter(): $$.$mol_meter;
+        zoom(val?: any): number;
+        drawn(val?: any): $mol_vector_2d<readonly number[]>;
         Touch(): $$.$mol_touch;
         reset(event?: any): any;
     }
@@ -3111,6 +3087,7 @@ declare namespace $ {
         Legend(): $$.$mol_chart_legend;
         hue_base(): number;
         hue_shift(): number;
+        zoom(val?: any): number;
         graphs_colored(): readonly $mol_plot_graph[];
         Plot(): $$.$mol_plot_pane;
     }
@@ -3171,6 +3148,7 @@ declare namespace $.$$ {
 declare namespace $ {
     class $mol_plot_dot extends $mol_plot_graph {
         points_max(): number;
+        aspect(): number;
         style(): {
             "stroke-width": number;
             color: string;
@@ -5008,6 +4986,39 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_meter extends $mol_plugin {
+        zoom(): number;
+        width(val?: any): number;
+        height(val?: any): number;
+        left(val?: any): number;
+        right(val?: any): number;
+        bottom(val?: any): number;
+        top(val?: any): number;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_meter extends $.$mol_meter {
+        rect(): {
+            left: number;
+            top: number;
+            right: number;
+            bottom: number;
+            width: number;
+            height: number;
+            zoom: number;
+        };
+        top(): number;
+        bottom(): number;
+        left(): number;
+        right(): number;
+        width(): number;
+        height(): number;
+        zoom(): number;
+    }
+}
+
+declare namespace $ {
     class $mol_meter_demo extends $mol_demo_small {
         title(): string;
         plugins(): readonly any[];
@@ -5142,6 +5153,68 @@ declare namespace $.$$ {
         input_series(): number[];
         output_series(): number[];
         saturation_series(): number[];
+    }
+}
+
+declare namespace $ {
+    class $mol_plot_map_heat extends $mol_plot_group {
+        series_z(): readonly number[];
+        graphs(): readonly any[];
+        Level(z: any): $mol_plot_map_heat_level;
+        Sample(): $mol_plot_graph_sample;
+        level_graphs(): readonly any[];
+        level_hint(z: any): string;
+        level_points(z: any): readonly any[];
+        level_opacity(z: any): string;
+        level_diameter(): number;
+        level_aspect(): number;
+    }
+    class $mol_plot_map_heat_level extends $mol_plot_dot {
+        style(): {
+            opacity: string;
+            "stroke-width": number;
+            color: string;
+        };
+        opacity(): string;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $mol_plot_map_heat extends $.$mol_plot_map_heat {
+        levels(): number[];
+        level_graphs(): $mol_plot_map_heat_level[];
+        level_points(level: number): (readonly number[])[];
+        level_opacity(level: number): string;
+        level_diameter(): number;
+        level_aspect(): number;
+        level_hint(index: number): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_plot_map_heat_demo extends $mol_demo_large {
+        title(): string;
+        count_x(): number;
+        count_y(): number;
+        count_z(): number;
+        sub(): readonly any[];
+        terrain_x(): readonly number[];
+        terrain_y(): readonly number[];
+        terrain_z(): readonly number[];
+        Terrain(): $$.$mol_plot_map_heat;
+        zoom(val?: any): number;
+        Plot(): $$.$mol_plot_pane;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_plot_map_heat_demo extends $.$mol_plot_map_heat_demo {
+        terrain_x(): number[];
+        terrain_y(): number[];
+        terrain_z(): number[];
     }
 }
 
@@ -7762,7 +7835,6 @@ declare namespace $ {
         Close_app(): $$.$mol_link;
         pages(): readonly any[];
         Theme(): $$.$mol_theme_auto;
-        sources_uri(): string;
         Sources(): $mol_link_source;
         Lights(): $$.$mol_lights_toggle;
         tools_root(): readonly any[];
@@ -7783,6 +7855,7 @@ declare namespace $ {
         Icons_link(): $$.$mol_link;
         Close_app_icon(): $mol_icon_cross;
         description(): string;
+        sources_uri(): string;
         Description(): $$.$mol_text;
         Main(): $$.$mol_page;
         Components_app(): $$.$mol_app_demo;
