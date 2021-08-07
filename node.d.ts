@@ -2884,6 +2884,7 @@ declare namespace $ {
 declare namespace $.$$ {
     class $mol_plot_graph extends $.$mol_plot_graph {
         viewport(): $mol_vector_2d<$mol_vector_range<number>>;
+        indexes(): readonly number[];
         points(): readonly (readonly number[])[];
         series_x(): readonly number[];
         dimensions(): $mol_vector_2d<$mol_vector_range<number>>;
@@ -4463,7 +4464,6 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_frame extends $.$mol_frame {
-        dom_node: (next?: HTMLIFrameElement) => HTMLIFrameElement;
         window(): Window;
         uri_resource(): string;
         _uri_sync: $mol_fiber | undefined;
