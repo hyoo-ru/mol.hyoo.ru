@@ -1426,9 +1426,6 @@ declare namespace $ {
     }
 }
 
-declare namespace $ {
-}
-
 declare namespace $.$$ {
     class $mol_lights_toggle extends $.$mol_lights_toggle {
         lights(next?: boolean): boolean;
@@ -1473,49 +1470,6 @@ declare namespace $.$$ {
         sub_visible(): $mol_view[];
         minimal_height(): number;
         force_render(path: Set<$mol_view>): void;
-    }
-}
-
-declare namespace $ {
-    class $mol_float extends $mol_view {
-        style(): {
-            minHeight: string;
-        };
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_icon_chevron extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_check_expand extends $mol_check {
-        minimal_height(): number;
-        Icon(): $mol_icon_chevron;
-        level(): number;
-        style(): {
-            paddingLeft: string;
-        };
-        checked(val?: any): boolean;
-        enabled(): boolean;
-        level_style(): string;
-        expanded(val?: any): boolean;
-        expandable(): boolean;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $.$$ {
-    class $mol_check_expand extends $.$mol_check_expand {
-        level_style(): string;
-        expandable(): boolean;
     }
 }
 
@@ -1659,6 +1613,189 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    class $mol_text_code_token extends $mol_dimmer {
+        attr(): {
+            mol_text_code_token_type: string;
+        };
+        type(): string;
+    }
+    class $mol_text_code_token_link extends $mol_text_code_token {
+        dom_name(): string;
+        type(): string;
+        attr(): {
+            href: string;
+            target: string;
+            mol_text_code_token_type: string;
+        };
+        haystack(): string;
+    }
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $ {
+    class $mol_text_code_row extends $mol_paragraph {
+        text(): string;
+        minimal_height(): number;
+        numb_showed(): boolean;
+        Numb(): $mol_view;
+        Token(id: any): $mol_text_code_token;
+        Token_link(id: any): $mol_text_code_token_link;
+        numb(): number;
+        token_type(id: any): string;
+        token_text(id: any): string;
+        highlight(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_syntax2<Lexems extends {
+        [name: string]: RegExp;
+    }> {
+        lexems: Lexems;
+        constructor(lexems: Lexems);
+        rules: {
+            regExp: RegExp;
+            name: string;
+            size: number;
+        }[];
+        regexp: RegExp;
+        tokenize(text: string, handle: (name: string, found: string, chunks: string[], offset: number) => void): void;
+        parse(text: string, handlers: {
+            [key in keyof Lexems | '']: (found: string, chunks: string[], offset: number) => void;
+        }): void;
+    }
+}
+
+declare namespace $ {
+    var $mol_syntax2_md_flow: $mol_syntax2<{
+        quote: RegExp;
+        header: RegExp;
+        list: RegExp;
+        code: RegExp;
+        'code-indent': RegExp;
+        table: RegExp;
+        block: RegExp;
+    }>;
+    var $mol_syntax2_md_line: $mol_syntax2<{
+        strong: RegExp;
+        emphasis: RegExp;
+        code3: RegExp;
+        code: RegExp;
+        strike: RegExp;
+        'text-link': RegExp;
+        'image-link': RegExp;
+    }>;
+    const $mol_syntax2_md_code: $mol_syntax2<{
+        'code-docs': RegExp;
+        'code-comment-block': RegExp;
+        'code-link': RegExp;
+        'code-comment-inline': RegExp;
+        'code-string': RegExp;
+        'code-number': RegExp;
+        'code-call': RegExp;
+        'code-field': RegExp;
+        'code-keyword': RegExp;
+        'code-global': RegExp;
+        'code-decorator': RegExp;
+        'code-tag': RegExp;
+        'code-punctuation': RegExp;
+    }>;
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $.$$ {
+    class $mol_text_code_row extends $.$mol_text_code_row {
+        maximal_width(): number;
+        tokens(path: number[]): readonly {
+            name: string;
+            found: string;
+            chunks: string[];
+        }[];
+        sub(): $mol_view[];
+        row_content(path: number[]): $mol_text_code_token[];
+        Token(path: number[]): $mol_text_code_token;
+        token_type(path: number[]): string;
+        token_content(path: number[]): (string | $mol_text_code_token)[];
+        token_text(path: number[]): string;
+        view_find(check: (path: $mol_view, text?: string) => boolean, path?: $mol_view[]): Generator<$mol_view[]>;
+    }
+}
+
+declare namespace $ {
+    class $mol_text_code extends $mol_list {
+        attr(): {
+            mol_text_code_sidebar_showed: boolean;
+        };
+        text(): string;
+        text_lines(): readonly string[];
+        Row(id: any): $$.$mol_text_code_row;
+        sidebar_showed(): boolean;
+        row_numb(id: any): number;
+        row_text(id: any): string;
+        highlight(): string;
+    }
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $.$$ {
+    class $mol_text_code extends $.$mol_text_code {
+        text_lines(): readonly string[];
+        rows(): $mol_text_code_row[];
+        row_text(index: number): string;
+        row_numb(index: number): number;
+    }
+}
+
+declare namespace $ {
+    class $mol_float extends $mol_view {
+        style(): {
+            minHeight: string;
+        };
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_icon_chevron extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_check_expand extends $mol_check {
+        minimal_height(): number;
+        Icon(): $mol_icon_chevron;
+        level(): number;
+        style(): {
+            paddingLeft: string;
+        };
+        checked(val?: any): boolean;
+        enabled(): boolean;
+        level_style(): string;
+        expanded(val?: any): boolean;
+        expandable(): boolean;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $mol_check_expand extends $.$mol_check_expand {
+        level_style(): string;
+        expandable(): boolean;
+    }
+}
+
+declare namespace $ {
     class $mol_grid extends $mol_scroll {
         row_height(): number;
         row_ids(): readonly string[][];
@@ -1798,9 +1935,11 @@ declare namespace $ {
         Quote(id: any): $$.$mol_text;
         Row(id: any): $mol_text_row;
         Span(id: any): $mol_text_span;
+        String(id: any): $mol_text_string;
         Link(id: any): $mol_text_link;
         Image(id: any): $mol_text_image;
         Header(id: any): $mol_text_header;
+        Code(id: any): $$.$mol_text_code;
         Table(id: any): $$.$mol_grid;
         Table_row(id: any): $mol_grid_row;
         Table_cell(id: any): $mol_grid_cell;
@@ -1808,9 +1947,11 @@ declare namespace $ {
         quote_text(id: any): string;
         block_content(id: any): readonly any[];
         block_type(id: any): string;
+        highlight(): string;
         link_target(id: any): string;
         header_level(id: any): number;
         header_content(id: any): readonly any[];
+        code_text(id: any): string;
         table_head_cells(id: any): readonly any[];
         table_rows(id: any): readonly any[];
         table_cells(id: any): readonly any[];
@@ -1839,6 +1980,10 @@ declare namespace $ {
         sub(): readonly any[];
         type(val?: any): string;
         content(val?: any): readonly any[];
+    }
+    class $mol_text_string extends $mol_dimmer {
+        dom_name(): string;
+        haystack(val?: any): string;
     }
     class $mol_text_link extends $mol_link_iconed {
         attr(): {
@@ -1869,61 +2014,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_syntax2<Lexems extends {
-        [name: string]: RegExp;
-    }> {
-        lexems: Lexems;
-        constructor(lexems: Lexems);
-        rules: {
-            regExp: RegExp;
-            name: string;
-            size: number;
-        }[];
-        regexp: RegExp;
-        tokenize(text: string, handle: (name: string, found: string, chunks: string[], offset: number) => void): void;
-        parse(text: string, handlers: {
-            [key in keyof Lexems | '']: (found: string, chunks: string[], offset: number) => void;
-        }): void;
-    }
-}
-
-declare namespace $ {
-    var $mol_syntax2_md_flow: $mol_syntax2<{
-        quote: RegExp;
-        header: RegExp;
-        list: RegExp;
-        code: RegExp;
-        'code-indent': RegExp;
-        table: RegExp;
-        block: RegExp;
-    }>;
-    var $mol_syntax2_md_line: $mol_syntax2<{
-        strong: RegExp;
-        emphasis: RegExp;
-        code3: RegExp;
-        code: RegExp;
-        strike: RegExp;
-        'text-link': RegExp;
-        'image-link': RegExp;
-    }>;
-    const $mol_syntax2_md_code: $mol_syntax2<{
-        'code-docs': RegExp;
-        'code-comment-block': RegExp;
-        'code-link': RegExp;
-        'code-comment-inline': RegExp;
-        'code-string': RegExp;
-        'code-number': RegExp;
-        'code-call': RegExp;
-        'code-field': RegExp;
-        'code-keyword': RegExp;
-        'code-global': RegExp;
-        'code-decorator': RegExp;
-        'code-tag': RegExp;
-        'code-punctuation': RegExp;
-    }>;
-}
-
-declare namespace $ {
 }
 
 declare namespace $.$$ {
@@ -1933,9 +2023,10 @@ declare namespace $.$$ {
             found: string;
             chunks: string[];
         }[];
-        rows(): ($mol_grid | $mol_text | $mol_text_row | $mol_text_header)[];
+        rows(): ($mol_text_code | $mol_grid | $mol_text | $mol_text_row | $mol_text_header)[];
         header_level(index: number): number;
         header_content(index: number): $mol_view[];
+        code_text(index: number): string;
         quote_text(index: number): string;
         block_type(index: number): string;
         cell_contents(indexBlock: number): string[][];
@@ -6014,91 +6105,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_text_code_token extends $mol_dimmer {
-        attr(): {
-            mol_text_code_token_type: string;
-        };
-        type(): string;
-    }
-    class $mol_text_code_token_link extends $mol_text_code_token {
-        dom_name(): string;
-        type(): string;
-        attr(): {
-            href: string;
-            target: string;
-            mol_text_code_token_type: string;
-        };
-        haystack(): string;
-    }
-}
-
-declare namespace $.$$ {
-}
-
-declare namespace $ {
-    class $mol_text_code_row extends $mol_paragraph {
-        text(): string;
-        minimal_height(): number;
-        numb_showed(): boolean;
-        Numb(): $mol_view;
-        Token(id: any): $mol_text_code_token;
-        Token_link(id: any): $mol_text_code_token_link;
-        numb(): number;
-        token_type(id: any): string;
-        token_text(id: any): string;
-        highlight(): string;
-    }
-}
-
-declare namespace $.$$ {
-}
-
-declare namespace $.$$ {
-    class $mol_text_code_row extends $.$mol_text_code_row {
-        maximal_width(): number;
-        tokens(path: number[]): readonly {
-            name: string;
-            found: string;
-            chunks: string[];
-        }[];
-        sub(): $mol_view[];
-        row_content(path: number[]): $mol_text_code_token[];
-        Token(path: number[]): $mol_text_code_token;
-        token_type(path: number[]): string;
-        token_content(path: number[]): (string | $mol_text_code_token)[];
-        token_text(path: number[]): string;
-        view_find(check: (path: $mol_view, text?: string) => boolean, path?: $mol_view[]): Generator<$mol_view[]>;
-    }
-}
-
-declare namespace $ {
-    class $mol_text_code extends $mol_list {
-        attr(): {
-            mol_text_code_sidebar_showed: boolean;
-        };
-        text(): string;
-        text_lines(): readonly string[];
-        Row(id: any): $$.$mol_text_code_row;
-        sidebar_showed(): boolean;
-        row_numb(id: any): number;
-        row_text(id: any): string;
-        highlight(): string;
-    }
-}
-
-declare namespace $.$$ {
-}
-
-declare namespace $.$$ {
-    class $mol_text_code extends $.$mol_text_code {
-        text_lines(): readonly string[];
-        rows(): $mol_text_code_row[];
-        row_text(index: number): string;
-        row_numb(index: number): number;
-    }
-}
-
-declare namespace $ {
     class $mol_text_code_demo extends $mol_demo_large {
         title(): string;
         sub(): readonly any[];
@@ -7116,6 +7122,28 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    class $mol_search_jumper extends $mol_search {
+        Root(): $mol_view;
+        forward(event?: any): void;
+        backward(event?: any): void;
+        Index(): $$.$mol_paginator;
+        plugins(): readonly any[];
+        index(val?: any): number;
+        Backward(): $$.$mol_hotkey;
+        escape(val?: any): any;
+        Forward(): $$.$mol_hotkey;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_search_jumper extends $.$mol_search_jumper {
+        results(): $mol_view[][];
+        index(next?: number): number;
+        sub(): ($mol_button_minor | $mol_string | $mol_paginator)[];
+    }
+}
+
+declare namespace $ {
     class $mol_model<Raw extends Object> extends $mol_object {
         static item<Instance extends $mol_model<{}>>(this: {
             new (): Instance;
@@ -7237,7 +7265,6 @@ declare namespace $ {
             url: string;
         };
         comments: 2;
-        closed_at: string;
         author_association: string;
         body: string;
         closed_by: $mol_github_user_json;
@@ -7253,7 +7280,8 @@ declare namespace $ {
         closer(): $mol_github_user;
         assignees(): $mol_github_user[];
         labels(): $mol_github_label[];
-        moment_closed(): $mol_time_moment;
+        moment_created(): $mol_time_moment;
+        moment_updated(): $mol_time_moment;
         comments(): $mol_github_issue_comments;
     }
     class $mol_github_issue_comments extends $mol_model<$mol_github_comment_json[]> {
@@ -7419,10 +7447,13 @@ declare namespace $ {
         Lights(): $$.$mol_lights_toggle;
         tools_root(): readonly any[];
         search(val?: any): string;
-        Search(): $$.$mol_search;
+        Details_body(): $mol_view;
+        Search(): $$.$mol_search_jumper;
         menu_rows(): readonly any[];
         Menu(): $$.$mol_list;
         gist_current_title(): string;
+        gist_current_created(): string;
+        Created(): $$.$mol_paragraph;
         details_link(): string;
         Details_link(): $mol_link_source;
         close_arg(): {
@@ -7458,6 +7489,7 @@ declare namespace $.$$ {
         gist(id: number): $mol_github_issue;
         gist_current(): $mol_github_issue | null;
         details_link(): string;
+        Details_body(): $mol_scroll;
         author(): string | null;
         repo(): string | null;
         article(): string | null;
@@ -7473,6 +7505,7 @@ declare namespace $.$$ {
         gist_current_title(): string;
         gist_current_content(): string;
         gist_current_issue(): $mol_github_issue;
+        gist_current_created(): string;
         details_scroll_top(next?: number): number;
     }
 }
