@@ -1205,6 +1205,58 @@ $mol_chart_demo_forces $mol_demo_large
 						<= Forces_left
 						<= Forces_right
 
+$mol_icon_forum $mol_icon path \M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
+
+$mol_icon_forum_outline $mol_icon path \M15,4V11H5.17L4,12.17V4H15M16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12V3C17,2.45 16.55,2 16,2M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
+
+$mol_icon_open_in_new $mol_icon path \M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V12H19V19Z
+
+$mol_frame $mol_scroll
+	dom_name \iframe
+	attr *
+		src <= uri?val \
+		srcdoc <= html null
+		allow <= allow \
+	fullscreen true
+	accelerometer true
+	autoplay true
+	encription true
+	gyroscope true
+	pip true
+
+$mol_chat $mol_link
+	seed \
+	opened false
+	arg * mol_chat \
+	hint <= title
+	sub /
+		<= Icon $mol_icon_forum_outline
+	pages /
+		<= Page $mol_page
+			title <= title @ \Discussion
+			tools /
+				<= Esternal $mol_link
+					uri <= external \
+					sub /
+						<= External_icon $mol_icon_open_in_new
+				<= Close $mol_link
+					arg * mol_chat null
+					sub /
+						<= Close_icon $mol_icon_cross
+			Body <= Embed $mol_frame
+				uri <= embed \
+
+$mol_chat_demo $mol_demo_large
+	title @ \Feed of comments for this page
+	sub /
+		<= Row $mol_row
+			sub /
+				<= Chat $mol_chat
+					seed \mol_chat_demo
+					pages => chat_pages
+		<= Pages $mol_view
+			sub <= chat_pages
+
 $mol_check_box_demo $mol_demo_small
 	title @ \Checkboxes in various states
 	sub /
@@ -1736,19 +1788,6 @@ $mol_form_demo_bids $mol_demo_small
 					click?val <=> submit?val null
 					enabled <= submit_allowed true
 		<= Message $mol_view sub / <= message?val \
-
-$mol_frame $mol_view
-	dom_name \iframe
-	attr *
-		src <= uri?val \
-		srcdoc <= html null
-		allow <= allow \
-	fullscreen true
-	accelerometer true
-	autoplay true
-	encription true
-	gyroscope true
-	pip true
 
 $mol_frame_demo $mol_demo_large
 	title @ \Another page inside that
@@ -2686,16 +2725,14 @@ $mol_app_demo $mol_book2
 		option!id <= nav_option!id null
 		filter?val <=> filter_string?val \
 	Detail!id $mol_app_demo_detail
+		chat_seed <= chat_seed!id \
+		chat_pages => chat_pages!id
 		title <= detail_title
 		source_link <= source_link \
 		edit_uri <= edit_uri \
 		body /
 			<= Detail_list $mol_list
 				rows <= main_content /
-			- <= Chat $mol_chat
-				repository_name \nin-jin/mol_chat
-				title <= title
-				link <= chat_link \
 	Welcome $mol_scroll
 		sub /
 			<= Welcome_text $mol_text
@@ -2723,6 +2760,9 @@ $mol_app_demo_menu $mol_page
 		
 $mol_app_demo_detail $mol_page
 	tools /
+		<= Chat $mol_chat
+			pages => chat_pages
+			seed <= chat_seed \
 		<= Source_link $mol_link
 			uri <= source_link \
 			target \_blank
@@ -2944,34 +2984,6 @@ $mol_search_jumper $mol_search
 				enter?event <=> forward?event
 				escape?val <=> escape?val null
 
-$mol_chat $mol_list
-	rows /
-		<= Add_link $mol_link
-			uri <= add_uri \
-			title <= add_label @ \Add comment..
-		- <= Add_status $mol_status status <= adding?next null
-		- <= Add $mol_view
-			sub <= add_content /
-				<= Add_body $mol_textarea
-					hint <= add_hint @ \New message..
-					value?val <=> add_body?val \
-				<= Add_submit $mol_button_major
-					enabled <= add_submit_enabled false
-					title <= add_submit_label @ \Post
-					event_click?event <=> add?event null
-	Post!index $mol_message
-		name <= post_user_name!index \
-		moment <= post_updated!index $mol_time_moment
-		avatar_link <= post_user_link!index \
-		avatar <= post_user_ava!index \
-		text <= post_body!index \
-	repository $mol_github_repository
-	repository_name \
-	link \
-	seed \
-	teaser \
-	issue $mol_github_issue
-
 $hyoo_habhub $mol_book2
 	plugins /
 		<= Theme $mol_theme_auto
@@ -2997,6 +3009,9 @@ $hyoo_habhub $mol_book2
 		minimal_width 600
 		title <= gist_current_title \
 		tools /
+			<= Details_chat!id $mol_chat
+				seed <= chat_seed!id \
+				pages => chat_pages!id
 			<= Created $mol_paragraph
 				title <= gist_current_created \
 			<= Details_link $mol_link_source
@@ -3011,13 +3026,9 @@ $hyoo_habhub $mol_book2
 					<= Close_icon $mol_icon_cross
 		body_scroll_top?val <=> details_scroll_top?val 0
 		body /
-			<= Details_content $mol_list
-				rows /
-					<= Datails_text $mol_text
-						highlight <= search
-						text <= gist_current_content \
-					<= Details_chat $mol_chat
-						issue <= gist_current_issue $mol_github_issue
+			<= Datails_text $mol_text
+				highlight <= search
+				text <= gist_current_content \
 	Menu_row!id $mol_link
 		sub /
 			<= Menu_row_title!id $mol_dimmer

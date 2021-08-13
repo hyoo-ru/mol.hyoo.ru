@@ -3685,6 +3685,111 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    class $mol_icon_forum extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_forum_outline extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_open_in_new extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_frame extends $mol_scroll {
+        dom_name(): string;
+        attr(): {
+            src: string;
+            srcdoc: any;
+            allow: string;
+        };
+        fullscreen(): boolean;
+        accelerometer(): boolean;
+        autoplay(): boolean;
+        encription(): boolean;
+        gyroscope(): boolean;
+        pip(): boolean;
+        uri(val?: any): string;
+        html(): any;
+        allow(): string;
+    }
+}
+
+declare namespace $ {
+    const $mol_wait_timeout: (timeout: number) => unknown;
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $mol_frame extends $.$mol_frame {
+        window(): Window;
+        uri_resource(): string;
+        _uri_sync: $mol_fiber | undefined;
+        uri_listener(): $mol_dom_listener;
+        render(): void;
+        allow(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_chat extends $mol_link {
+        seed(): string;
+        opened(): boolean;
+        arg(): {
+            mol_chat: string;
+        };
+        hint(): string;
+        sub(): readonly any[];
+        pages(): readonly any[];
+        Icon(): $mol_icon_forum_outline;
+        title(): string;
+        external(): string;
+        External_icon(): $mol_icon_open_in_new;
+        Esternal(): $$.$mol_link;
+        Close_icon(): $mol_icon_cross;
+        Close(): $$.$mol_link;
+        embed(): string;
+        Embed(): $$.$mol_frame;
+        Page(): $$.$mol_page;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $mol_chat extends $.$mol_chat {
+        opened(): boolean;
+        pages(): $mol_page[];
+        external(): string;
+        embed(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_chat_demo extends $mol_demo_large {
+        title(): string;
+        sub(): readonly any[];
+        chat_pages(): $$.$mol_page[];
+        Chat(): $$.$mol_chat;
+        Row(): $mol_row;
+        Pages(): $mol_view;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
     class $mol_check_box_demo extends $mol_demo_small {
         title(): string;
         sub(): readonly any[];
@@ -4501,44 +4606,6 @@ declare namespace $.$$ {
         sex_bid(): string;
         submit(next?: Event): void;
         submit_allowed(): boolean;
-    }
-}
-
-declare namespace $ {
-    class $mol_frame extends $mol_view {
-        dom_name(): string;
-        attr(): {
-            src: string;
-            srcdoc: any;
-            allow: string;
-        };
-        fullscreen(): boolean;
-        accelerometer(): boolean;
-        autoplay(): boolean;
-        encription(): boolean;
-        gyroscope(): boolean;
-        pip(): boolean;
-        uri(val?: any): string;
-        html(): any;
-        allow(): string;
-    }
-}
-
-declare namespace $ {
-    const $mol_wait_timeout: (timeout: number) => unknown;
-}
-
-declare namespace $ {
-}
-
-declare namespace $.$$ {
-    class $mol_frame extends $.$mol_frame {
-        window(): Window;
-        uri_resource(): string;
-        _uri_sync: $mol_fiber | undefined;
-        uri_listener(): $mol_dom_listener;
-        render(): void;
-        allow(): string;
     }
 }
 
@@ -6303,6 +6370,7 @@ declare namespace $ {
         pages(): readonly any[];
         plugins(): readonly any[];
         Menu(): $mol_app_demo_menu;
+        chat_pages(id: any): $$.$mol_page[];
         Detail(id: any): $mol_app_demo_detail;
         Welcome(): $$.$mol_scroll;
         Detail_empty_message(): $$.$mol_status;
@@ -6312,6 +6380,7 @@ declare namespace $ {
         nav_hierarchy(): any;
         nav_option(id: any): any;
         filter_string(val?: any): string;
+        chat_seed(id: any): string;
         source_link(): string;
         edit_uri(): string;
         main_content(): readonly any[];
@@ -6337,6 +6406,9 @@ declare namespace $ {
     }
     class $mol_app_demo_detail extends $mol_page {
         tools(): readonly any[];
+        chat_seed(): string;
+        chat_pages(): $$.$mol_page[];
+        Chat(): $$.$mol_chat;
         source_link(): string;
         source_hint(): string;
         Source_icon(): $mol_icon_code_braces;
@@ -6412,6 +6484,7 @@ declare namespace $.$$ {
         names_demo(): string[];
         blocks(): $mol_view[];
         main_content(): $mol_view[] | $mol_status[];
+        chat_seed(id: string): string;
         logo_uri(): string;
         source_link(): string;
         chat_link(): string;
@@ -7158,6 +7231,49 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    class $hyoo_habhub extends $mol_book2 {
+        plugins(): readonly any[];
+        Menu_page(): $$.$mol_page;
+        Details(id: any): $$.$mol_page;
+        Menu_row(id: any): $$.$mol_link;
+        Theme(): $$.$mol_theme_auto;
+        menu_title(): string;
+        Add_icon(): $mol_icon_plus;
+        Add(): $$.$mol_link;
+        Source_link(): $mol_link_source;
+        Lights(): $$.$mol_lights_toggle;
+        tools_root(): readonly any[];
+        search(val?: any): string;
+        Details_body(): $mol_view;
+        Search(): $$.$mol_search_jumper;
+        menu_rows(): readonly any[];
+        Menu(): $$.$mol_list;
+        gist_current_title(): string;
+        chat_seed(id: any): string;
+        chat_pages(id: any): $$.$mol_page[];
+        Details_chat(id: any): $$.$mol_chat;
+        gist_current_created(): string;
+        Created(): $$.$mol_paragraph;
+        details_link(): string;
+        Details_link(): $mol_link_source;
+        close_arg(): {
+            author: any;
+            repo: any;
+            article: any;
+            gist: any;
+        };
+        Close_icon(): $mol_icon_cross;
+        Close(): $$.$mol_link;
+        details_scroll_top(val?: any): number;
+        gist_current_content(): string;
+        Datails_text(): $$.$mol_text;
+        gist_title(id: any): string;
+        Menu_row_title(id: any): $$.$mol_dimmer;
+        gist_arg(id: any): {};
+    }
+}
+
+declare namespace $ {
     class $mol_model<Raw extends Object> extends $mol_object {
         static item<Instance extends $mol_model<{}>>(this: {
             new (): Instance;
@@ -7308,113 +7424,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    interface $mol_github_repository_json extends $mol_github_entity_json {
-        name?: string;
-        full_name?: string;
-        owner?: $mol_github_user_json;
-        author_association?: string;
-        private?: false;
-        description?: string;
-        fork?: false;
-        forks_url?: string;
-        keys_url?: string;
-        collaborators_url?: string;
-        teams_url?: string;
-        hooks_url?: string;
-        issue_events_url?: string;
-        events_url?: string;
-        assignees_url?: string;
-        branches_url?: string;
-        tags_url?: string;
-        blobs_url?: string;
-        git_tags_url?: string;
-        git_refs_url?: string;
-        trees_url?: string;
-        statuses_url?: string;
-        languages_url?: string;
-        stargazers_url?: string;
-        contributors_url?: string;
-        subscribers_url?: string;
-        subscription_url?: string;
-        commits_url?: string;
-        git_commits_url?: string;
-        comments_url?: string;
-        issue_comment_url?: string;
-        contents_url?: string;
-        compare_url?: string;
-        merges_url?: string;
-        archive_url?: string;
-        downloads_url?: string;
-        issues_url?: string;
-        pulls_url?: string;
-        milestones_url?: string;
-        notifications_url?: string;
-        labels_url?: string;
-        releases_url?: string;
-        deployments_url?: string;
-        pushed_at?: string;
-        git_url?: string;
-        ssh_url?: string;
-        clone_url?: string;
-        svn_url?: string;
-        homepage?: string;
-        size?: number;
-        stargazers_count?: number;
-        watchers_count?: number;
-        language?: string;
-        has_issues?: boolean;
-        has_projects?: boolean;
-        has_downloads?: boolean;
-        has_wiki?: boolean;
-        has_pages?: boolean;
-        forks_count?: number;
-        mirror_url?: string;
-        archived?: boolean;
-        open_issues_count?: number;
-        watchers?: number;
-        default_branch?: string;
-        network_count?: number;
-        subscribers_count?: number;
-    }
-    class $mol_github_repository extends $mol_github_entity<$mol_github_repository_json> {
-        json_update(patch: Partial<$mol_github_repository_json>): $mol_github_repository_json;
-        owner(): $mol_github_user;
-        name(): string;
-        name_full(): string;
-        issues(): $mol_github_repository_issues;
-    }
-    class $mol_github_repository_issues extends $mol_model<$mol_github_issue_json[]> {
-        json_update(patch: $mol_github_issue_json[]): $mol_github_issue_json[];
-        items(next?: $mol_github_issue[], force?: $mol_mem_force): $mol_github_issue[];
-        add(config: {
-            title: string;
-            text?: string;
-        }, next?: $mol_github_issue, force?: $mol_mem_force): $mol_github_issue | undefined;
-    }
-}
-
-declare namespace $ {
-    class $mol_chat extends $mol_list {
-        rows(): readonly any[];
-        Post(index: any): $$.$mol_message;
-        repository(): $mol_github_repository;
-        repository_name(): string;
-        link(): string;
-        seed(): string;
-        teaser(): string;
-        issue(): $mol_github_issue;
-        add_uri(): string;
-        add_label(): string;
-        Add_link(): $$.$mol_link;
-        post_user_name(index: any): string;
-        post_updated(index: any): $mol_time_moment;
-        post_user_link(index: any): string;
-        post_user_ava(index: any): string;
-        post_body(index: any): string;
-    }
-}
-
-declare namespace $ {
     interface $mol_github_search_issues_json {
         incomplete_results: boolean;
         items: $mol_github_issue_json[];
@@ -7424,69 +7433,6 @@ declare namespace $ {
         json_update(patch: $mol_github_search_issues_json): $mol_github_search_issues_json;
         items(next?: $mol_github_issue[], force?: $mol_mem_force): $mol_github_issue[];
         resource_url(): string;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $.$$ {
-    class $mol_chat extends $.$mol_chat {
-        repository(): $mol_github_repository;
-        issue(next?: $mol_github_issue, force?: $mol_mem_force): $mol_github_issue;
-        add_uri(): string;
-        seed(): string;
-        teaser(): string;
-        posts_data(): $mol_github_comment[];
-        rows(): ($mol_link | $mol_message)[];
-        post_user_ava(index: number): string;
-        post_user_name(index: number): string;
-        post_user_link(index: number): string;
-        post_body(index: number): string;
-        post_updated(index: number): $mol_time_moment;
-    }
-}
-
-declare namespace $ {
-    class $hyoo_habhub extends $mol_book2 {
-        plugins(): readonly any[];
-        Menu_page(): $$.$mol_page;
-        Details(id: any): $$.$mol_page;
-        Menu_row(id: any): $$.$mol_link;
-        Theme(): $$.$mol_theme_auto;
-        menu_title(): string;
-        Add_icon(): $mol_icon_plus;
-        Add(): $$.$mol_link;
-        Source_link(): $mol_link_source;
-        Lights(): $$.$mol_lights_toggle;
-        tools_root(): readonly any[];
-        search(val?: any): string;
-        Details_body(): $mol_view;
-        Search(): $$.$mol_search_jumper;
-        menu_rows(): readonly any[];
-        Menu(): $$.$mol_list;
-        gist_current_title(): string;
-        gist_current_created(): string;
-        Created(): $$.$mol_paragraph;
-        details_link(): string;
-        Details_link(): $mol_link_source;
-        close_arg(): {
-            author: any;
-            repo: any;
-            article: any;
-            gist: any;
-        };
-        Close_icon(): $mol_icon_cross;
-        Close(): $$.$mol_link;
-        details_scroll_top(val?: any): number;
-        gist_current_content(): string;
-        Datails_text(): $$.$mol_text;
-        gist_current_issue(): $mol_github_issue;
-        Details_chat(): $$.$mol_chat;
-        Details_content(): $$.$mol_list;
-        gist_title(id: any): string;
-        Menu_row_title(id: any): $$.$mol_dimmer;
-        gist_arg(id: any): {};
     }
 }
 
@@ -7508,6 +7454,7 @@ declare namespace $.$$ {
         repo(): string | null;
         article(): string | null;
         pages(): $mol_page[];
+        chat_seed(issue: $mol_github_issue): string;
         menu_rows(): $mol_view[];
         gist_title(id: number): string;
         gist_arg(id: number): {
@@ -7937,6 +7884,92 @@ declare namespace $ {
 
 declare namespace $ {
     function $mol_view_tree2_ts_method(this: $, owner_parts: $mol_view_tree2_prop, body: $mol_tree2, types?: boolean): $mol_tree2[];
+}
+
+declare namespace $ {
+    interface $mol_github_repository_json extends $mol_github_entity_json {
+        name?: string;
+        full_name?: string;
+        owner?: $mol_github_user_json;
+        author_association?: string;
+        private?: false;
+        description?: string;
+        fork?: false;
+        forks_url?: string;
+        keys_url?: string;
+        collaborators_url?: string;
+        teams_url?: string;
+        hooks_url?: string;
+        issue_events_url?: string;
+        events_url?: string;
+        assignees_url?: string;
+        branches_url?: string;
+        tags_url?: string;
+        blobs_url?: string;
+        git_tags_url?: string;
+        git_refs_url?: string;
+        trees_url?: string;
+        statuses_url?: string;
+        languages_url?: string;
+        stargazers_url?: string;
+        contributors_url?: string;
+        subscribers_url?: string;
+        subscription_url?: string;
+        commits_url?: string;
+        git_commits_url?: string;
+        comments_url?: string;
+        issue_comment_url?: string;
+        contents_url?: string;
+        compare_url?: string;
+        merges_url?: string;
+        archive_url?: string;
+        downloads_url?: string;
+        issues_url?: string;
+        pulls_url?: string;
+        milestones_url?: string;
+        notifications_url?: string;
+        labels_url?: string;
+        releases_url?: string;
+        deployments_url?: string;
+        pushed_at?: string;
+        git_url?: string;
+        ssh_url?: string;
+        clone_url?: string;
+        svn_url?: string;
+        homepage?: string;
+        size?: number;
+        stargazers_count?: number;
+        watchers_count?: number;
+        language?: string;
+        has_issues?: boolean;
+        has_projects?: boolean;
+        has_downloads?: boolean;
+        has_wiki?: boolean;
+        has_pages?: boolean;
+        forks_count?: number;
+        mirror_url?: string;
+        archived?: boolean;
+        open_issues_count?: number;
+        watchers?: number;
+        default_branch?: string;
+        network_count?: number;
+        subscribers_count?: number;
+    }
+    class $mol_github_repository extends $mol_github_entity<$mol_github_repository_json> {
+        json_update(patch: Partial<$mol_github_repository_json>): $mol_github_repository_json;
+        owner(): $mol_github_user;
+        name(): string;
+        name_full(): string;
+        issues(): $mol_github_repository_issues;
+    }
+    class $mol_github_repository_issues extends $mol_model<$mol_github_issue_json[]> {
+        json_update(patch: $mol_github_issue_json[]): $mol_github_issue_json[];
+        items(next?: $mol_github_issue[], force?: $mol_mem_force): $mol_github_issue[];
+        add(config: {
+            title: string;
+            text?: string;
+        }, next?: $mol_github_issue, force?: $mol_mem_force): $mol_github_issue | undefined;
+    }
 }
 
 export = $;

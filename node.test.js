@@ -9648,7 +9648,7 @@ var $;
     $.$mol_vector_3d = $mol_vector_3d;
     class $mol_vector_range extends $mol_vector {
         get [0]() { return super[0]; }
-        get [1]() { return super[0]; }
+        get [1]() { return super[1]; }
         get min() { return this[0]; }
         get max() { return this[1]; }
         get inversed() {
@@ -13232,6 +13232,389 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //forces.view.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_forum extends $.$mol_icon {
+        path() {
+            return "M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z";
+        }
+    }
+    $.$mol_icon_forum = $mol_icon_forum;
+})($ || ($ = {}));
+//forum.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_forum_outline extends $.$mol_icon {
+        path() {
+            return "M15,4V11H5.17L4,12.17V4H15M16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12V3C17,2.45 16.55,2 16,2M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z";
+        }
+    }
+    $.$mol_icon_forum_outline = $mol_icon_forum_outline;
+})($ || ($ = {}));
+//outline.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_open_in_new extends $.$mol_icon {
+        path() {
+            return "M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V12H19V19Z";
+        }
+    }
+    $.$mol_icon_open_in_new = $mol_icon_open_in_new;
+})($ || ($ = {}));
+//new.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_frame extends $.$mol_scroll {
+        dom_name() {
+            return "iframe";
+        }
+        attr() {
+            return {
+                src: this.uri(),
+                srcdoc: this.html(),
+                allow: this.allow()
+            };
+        }
+        fullscreen() {
+            return true;
+        }
+        accelerometer() {
+            return true;
+        }
+        autoplay() {
+            return true;
+        }
+        encription() {
+            return true;
+        }
+        gyroscope() {
+            return true;
+        }
+        pip() {
+            return true;
+        }
+        uri(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        html() {
+            return null;
+        }
+        allow() {
+            return "";
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $mol_frame.prototype, "uri", null);
+    $.$mol_frame = $mol_frame;
+})($ || ($ = {}));
+//frame.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_wait_timeout = $.$mol_fiber_sync((timeout) => new Promise(done => new $.$mol_after_timeout(timeout, () => done(null))));
+})($ || ($ = {}));
+//timeout.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_style_define($.$mol_frame, {
+        border: {
+            style: 'none',
+        },
+        flex: 'auto',
+    });
+})($ || ($ = {}));
+//frame.view.css.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_frame extends $.$mol_frame {
+            window() {
+                const node = this.dom_node();
+                this.uri_resource();
+                return $.$mol_fiber_sync(() => new Promise((done, fail) => {
+                    new $.$mol_after_timeout(3_000, () => {
+                        try {
+                            if (node.contentWindow.location.href === 'about:blank') {
+                                done(node.contentWindow);
+                            }
+                        }
+                        catch { }
+                    });
+                    node.onload = () => {
+                        done(node.contentWindow);
+                    };
+                    node.onerror = (event) => {
+                        fail(typeof event === 'string' ? new Error(event) : event.error || event);
+                    };
+                }))();
+            }
+            uri_resource() {
+                return this.uri().replace(/#.*/, '');
+            }
+            _uri_sync;
+            uri_listener() {
+                const node = this.dom_node();
+                return new $.$mol_dom_listener($.$mol_dom_context, 'message', $.$mol_fiber_root((event) => {
+                    if (event.source !== node.contentWindow)
+                        return;
+                    if (!Array.isArray(event.data))
+                        return;
+                    if (event.data[0] !== 'hashchange')
+                        return;
+                    this._uri_sync?.destructor();
+                    this._uri_sync = $.$mol_fiber.current;
+                    $.$mol_wait_timeout(1000);
+                    this.uri(event.data[1]);
+                }));
+            }
+            render() {
+                const node = super.render();
+                this.uri_listener();
+                this.window();
+                return node;
+            }
+            allow() {
+                return [
+                    ...this.fullscreen() ? ['fullscreen'] : [],
+                    ...this.accelerometer() ? ['accelerometer'] : [],
+                    ...this.autoplay() ? ['autoplay'] : [],
+                    ...this.encription() ? ['encrypted-media'] : [],
+                    ...this.gyroscope() ? ['gyroscope'] : [],
+                    ...this.pip() ? ['picture-in-picture'] : [],
+                ].join(';');
+            }
+        }
+        __decorate([
+            $.$mol_mem
+        ], $mol_frame.prototype, "window", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_frame.prototype, "uri_resource", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_frame.prototype, "uri_listener", null);
+        $$.$mol_frame = $mol_frame;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//frame.view.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_chat extends $.$mol_link {
+        seed() {
+            return "";
+        }
+        opened() {
+            return false;
+        }
+        arg() {
+            return {
+                mol_chat: ""
+            };
+        }
+        hint() {
+            return this.title();
+        }
+        sub() {
+            return [
+                this.Icon()
+            ];
+        }
+        pages() {
+            return [
+                this.Page()
+            ];
+        }
+        Icon() {
+            const obj = new this.$.$mol_icon_forum_outline();
+            return obj;
+        }
+        title() {
+            return this.$.$mol_locale.text('$mol_chat_title');
+        }
+        external() {
+            return "";
+        }
+        External_icon() {
+            const obj = new this.$.$mol_icon_open_in_new();
+            return obj;
+        }
+        Esternal() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => this.external();
+            obj.sub = () => [
+                this.External_icon()
+            ];
+            return obj;
+        }
+        Close_icon() {
+            const obj = new this.$.$mol_icon_cross();
+            return obj;
+        }
+        Close() {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => ({
+                mol_chat: null
+            });
+            obj.sub = () => [
+                this.Close_icon()
+            ];
+            return obj;
+        }
+        embed() {
+            return "";
+        }
+        Embed() {
+            const obj = new this.$.$mol_frame();
+            obj.uri = () => this.embed();
+            return obj;
+        }
+        Page() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => this.title();
+            obj.tools = () => [
+                this.Esternal(),
+                this.Close()
+            ];
+            obj.Body = () => this.Embed();
+            return obj;
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat.prototype, "Icon", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat.prototype, "External_icon", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat.prototype, "Esternal", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat.prototype, "Close_icon", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat.prototype, "Close", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat.prototype, "Embed", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat.prototype, "Page", null);
+    $.$mol_chat = $mol_chat;
+})($ || ($ = {}));
+//chat.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_style_attach("mol/chat/chat.view.css", "[mol_chat_page] {\n\tflex: 1 0 40rem;\n}\n");
+})($ || ($ = {}));
+//chat.view.css.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_chat extends $.$mol_chat {
+            opened() {
+                return this.$.$mol_state_arg.value('mol_chat') !== null;
+            }
+            pages() {
+                return this.opened() ? [this.Page()] : [];
+            }
+            external() {
+                const seed = this.seed() ?? this.$.$mol_dom_context.location.host;
+                return `https://talks.hyoo.ru/#!chat=${encodeURIComponent(seed)}`;
+            }
+            embed() {
+                const lights = this.$.$mol_lights() ? 'on' : 'off';
+                return `${this.external()}/embed/mol_lights=${lights}`;
+            }
+        }
+        __decorate([
+            $.$mol_mem
+        ], $mol_chat.prototype, "external", null);
+        __decorate([
+            $.$mol_mem
+        ], $mol_chat.prototype, "embed", null);
+        $$.$mol_chat = $mol_chat;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//chat.view.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_chat_demo extends $.$mol_demo_large {
+        title() {
+            return this.$.$mol_locale.text('$mol_chat_demo_title');
+        }
+        sub() {
+            return [
+                this.Row(),
+                this.Pages()
+            ];
+        }
+        chat_pages() {
+            return this.Chat().pages();
+        }
+        Chat() {
+            const obj = new this.$.$mol_chat();
+            obj.seed = () => "mol_chat_demo";
+            return obj;
+        }
+        Row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Chat()
+            ];
+            return obj;
+        }
+        Pages() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.chat_pages();
+            return obj;
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat_demo.prototype, "Chat", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat_demo.prototype, "Row", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_chat_demo.prototype, "Pages", null);
+    $.$mol_chat_demo = $mol_chat_demo;
+})($ || ($ = {}));
+//demo.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_style_attach("mol/chat/demo/demo.view.css", "[mol_chat_demo_pages] {\n\tflex: 1 1 auto;\n}\n");
+})($ || ($ = {}));
+//demo.view.css.js.map
 ;
 "use strict";
 var $;
@@ -16901,152 +17284,6 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //bids.view.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_frame extends $.$mol_view {
-        dom_name() {
-            return "iframe";
-        }
-        attr() {
-            return {
-                src: this.uri(),
-                srcdoc: this.html(),
-                allow: this.allow()
-            };
-        }
-        fullscreen() {
-            return true;
-        }
-        accelerometer() {
-            return true;
-        }
-        autoplay() {
-            return true;
-        }
-        encription() {
-            return true;
-        }
-        gyroscope() {
-            return true;
-        }
-        pip() {
-            return true;
-        }
-        uri(val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        html() {
-            return null;
-        }
-        allow() {
-            return "";
-        }
-    }
-    __decorate([
-        $.$mol_mem
-    ], $mol_frame.prototype, "uri", null);
-    $.$mol_frame = $mol_frame;
-})($ || ($ = {}));
-//frame.view.tree.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_wait_timeout = $.$mol_fiber_sync((timeout) => new Promise(done => new $.$mol_after_timeout(timeout, () => done(null))));
-})($ || ($ = {}));
-//timeout.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_style_define($.$mol_frame, {
-        border: {
-            style: 'none',
-        },
-        flex: 'auto',
-    });
-})($ || ($ = {}));
-//frame.view.css.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_frame extends $.$mol_frame {
-            window() {
-                const node = this.dom_node();
-                this.uri_resource();
-                return $.$mol_fiber_sync(() => new Promise((done, fail) => {
-                    new $.$mol_after_timeout(3_000, () => {
-                        try {
-                            if (node.contentWindow.location.href === 'about:blank') {
-                                done(node.contentWindow);
-                            }
-                        }
-                        catch { }
-                    });
-                    node.onload = () => {
-                        done(node.contentWindow);
-                    };
-                    node.onerror = (event) => {
-                        fail(typeof event === 'string' ? new Error(event) : event.error || event);
-                    };
-                }))();
-            }
-            uri_resource() {
-                return this.uri().replace(/#.*/, '');
-            }
-            _uri_sync;
-            uri_listener() {
-                const node = this.dom_node();
-                return new $.$mol_dom_listener($.$mol_dom_context, 'message', $.$mol_fiber_root((event) => {
-                    if (event.source !== node.contentWindow)
-                        return;
-                    if (!Array.isArray(event.data))
-                        return;
-                    if (event.data[0] !== 'hashchange')
-                        return;
-                    this._uri_sync?.destructor();
-                    this._uri_sync = $.$mol_fiber.current;
-                    $.$mol_wait_timeout(1000);
-                    this.uri(event.data[1]);
-                }));
-            }
-            render() {
-                const node = super.render();
-                this.uri_listener();
-                this.window();
-                return node;
-            }
-            allow() {
-                return [
-                    ...this.fullscreen() ? ['fullscreen'] : [],
-                    ...this.accelerometer() ? ['accelerometer'] : [],
-                    ...this.autoplay() ? ['autoplay'] : [],
-                    ...this.encription() ? ['encrypted-media'] : [],
-                    ...this.gyroscope() ? ['gyroscope'] : [],
-                    ...this.pip() ? ['picture-in-picture'] : [],
-                ].join(';');
-            }
-        }
-        __decorate([
-            $.$mol_mem
-        ], $mol_frame.prototype, "window", null);
-        __decorate([
-            $.$mol_mem
-        ], $mol_frame.prototype, "uri_resource", null);
-        __decorate([
-            $.$mol_mem
-        ], $mol_frame.prototype, "uri_listener", null);
-        $$.$mol_frame = $mol_frame;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-//frame.view.js.map
 ;
 "use strict";
 var $;
@@ -23561,8 +23798,12 @@ var $;
             obj.filter = (val) => this.filter_string(val);
             return obj;
         }
+        chat_pages(id) {
+            return this.Detail(id).chat_pages();
+        }
         Detail(id) {
             const obj = new this.$.$mol_app_demo_detail();
+            obj.chat_seed = () => this.chat_seed(id);
             obj.title = () => this.detail_title();
             obj.source_link = () => this.source_link();
             obj.edit_uri = () => this.edit_uri();
@@ -23606,6 +23847,9 @@ var $;
         filter_string(val) {
             if (val !== undefined)
                 return val;
+            return "";
+        }
+        chat_seed(id) {
             return "";
         }
         source_link() {
@@ -23737,10 +23981,22 @@ var $;
     class $mol_app_demo_detail extends $.$mol_page {
         tools() {
             return [
+                this.Chat(),
                 this.Source_link(),
                 this.Edit(),
                 this.Close()
             ];
+        }
+        chat_seed() {
+            return "";
+        }
+        chat_pages() {
+            return this.Chat().pages();
+        }
+        Chat() {
+            const obj = new this.$.$mol_chat();
+            obj.seed = () => this.chat_seed();
+            return obj;
         }
         source_link() {
             return "";
@@ -23816,6 +24072,9 @@ var $;
             return obj;
         }
     }
+    __decorate([
+        $.$mol_mem
+    ], $mol_app_demo_detail.prototype, "Chat", null);
     __decorate([
         $.$mol_mem
     ], $mol_app_demo_detail.prototype, "Source_icon", null);
@@ -24160,8 +24419,10 @@ var $;
             blocks() {
                 let sub = [];
                 sub.push(this.Menu());
-                if (this.selected()) {
-                    sub.push(this.Detail(this.selected()));
+                const selected = this.selected();
+                if (selected) {
+                    sub.push(this.Detail(selected));
+                    sub.push(...this.chat_pages(selected));
                 }
                 return sub;
             }
@@ -24173,6 +24434,9 @@ var $;
                     default:
                         return this.names_demo().map(name => this.Widget()[name]);
                 }
+            }
+            chat_seed(id) {
+                return id;
             }
             logo_uri() {
                 return $.$mol_file.relative('/mol/logo/logo.svg').path();
@@ -27961,6 +28225,250 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $hyoo_habhub extends $.$mol_book2 {
+        plugins() {
+            return [
+                this.Theme()
+            ];
+        }
+        Menu_page() {
+            const obj = new this.$.$mol_page();
+            obj.minimal_width = () => 400;
+            obj.title = () => this.menu_title();
+            obj.tools = () => this.tools_root();
+            obj.body = () => [
+                this.Search(),
+                this.Menu()
+            ];
+            return obj;
+        }
+        Details(id) {
+            const obj = new this.$.$mol_page();
+            obj.minimal_width = () => 600;
+            obj.title = () => this.gist_current_title();
+            obj.tools = () => [
+                this.Details_chat(id),
+                this.Created(),
+                this.Details_link(),
+                this.Close()
+            ];
+            obj.body_scroll_top = (val) => this.details_scroll_top(val);
+            obj.body = () => [
+                this.Datails_text()
+            ];
+            return obj;
+        }
+        Menu_row(id) {
+            const obj = new this.$.$mol_link();
+            obj.sub = () => [
+                this.Menu_row_title(id)
+            ];
+            obj.arg = () => this.gist_arg(id);
+            return obj;
+        }
+        Theme() {
+            const obj = new this.$.$mol_theme_auto();
+            return obj;
+        }
+        menu_title() {
+            return this.$.$mol_locale.text('$hyoo_habhub_menu_title');
+        }
+        Add_icon() {
+            const obj = new this.$.$mol_icon_plus();
+            return obj;
+        }
+        Add() {
+            const obj = new this.$.$mol_link();
+            obj.hint = () => "Add article";
+            obj.uri = () => "https://github.com/nin-jin/habhub";
+            obj.sub = () => [
+                this.Add_icon()
+            ];
+            return obj;
+        }
+        Source_link() {
+            const obj = new this.$.$mol_link_source();
+            obj.uri = () => "https://github.com/hyoo-ru/habhub.hyoo.ru";
+            return obj;
+        }
+        Lights() {
+            const obj = new this.$.$mol_lights_toggle();
+            return obj;
+        }
+        tools_root() {
+            return [
+                this.Add(),
+                this.Source_link(),
+                this.Lights()
+            ];
+        }
+        search(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Details_body() {
+            const obj = new this.$.$mol_view();
+            return obj;
+        }
+        Search() {
+            const obj = new this.$.$mol_search_jumper();
+            obj.query = (val) => this.search(val);
+            obj.Root = () => this.Details_body();
+            return obj;
+        }
+        menu_rows() {
+            return [];
+        }
+        Menu() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.menu_rows();
+            return obj;
+        }
+        gist_current_title() {
+            return "";
+        }
+        chat_seed(id) {
+            return "";
+        }
+        chat_pages(id) {
+            return this.Details_chat(id).pages();
+        }
+        Details_chat(id) {
+            const obj = new this.$.$mol_chat();
+            obj.seed = () => this.chat_seed(id);
+            return obj;
+        }
+        gist_current_created() {
+            return "";
+        }
+        Created() {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => this.gist_current_created();
+            return obj;
+        }
+        details_link() {
+            return "";
+        }
+        Details_link() {
+            const obj = new this.$.$mol_link_source();
+            obj.uri = () => this.details_link();
+            return obj;
+        }
+        close_arg() {
+            return {
+                author: null,
+                repo: null,
+                article: null,
+                gist: null
+            };
+        }
+        Close_icon() {
+            const obj = new this.$.$mol_icon_cross();
+            return obj;
+        }
+        Close() {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => this.close_arg();
+            obj.sub = () => [
+                this.Close_icon()
+            ];
+            return obj;
+        }
+        details_scroll_top(val) {
+            if (val !== undefined)
+                return val;
+            return 0;
+        }
+        gist_current_content() {
+            return "";
+        }
+        Datails_text() {
+            const obj = new this.$.$mol_text();
+            obj.highlight = () => this.search();
+            obj.text = () => this.gist_current_content();
+            return obj;
+        }
+        gist_title(id) {
+            return "";
+        }
+        Menu_row_title(id) {
+            const obj = new this.$.$mol_dimmer();
+            obj.needle = () => this.search();
+            obj.haystack = () => this.gist_title(id);
+            return obj;
+        }
+        gist_arg(id) {
+            return {};
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Menu_page", null);
+    __decorate([
+        $.$mol_mem_key
+    ], $hyoo_habhub.prototype, "Details", null);
+    __decorate([
+        $.$mol_mem_key
+    ], $hyoo_habhub.prototype, "Menu_row", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Theme", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Add_icon", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Add", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Source_link", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Lights", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "search", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Details_body", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Search", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Menu", null);
+    __decorate([
+        $.$mol_mem_key
+    ], $hyoo_habhub.prototype, "Details_chat", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Created", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Details_link", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Close_icon", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Close", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "details_scroll_top", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_habhub.prototype, "Datails_text", null);
+    __decorate([
+        $.$mol_mem_key
+    ], $hyoo_habhub.prototype, "Menu_row_title", null);
+    $.$hyoo_habhub = $hyoo_habhub;
+})($ || ($ = {}));
+//habhub.view.tree.js.map
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_model extends $.$mol_object {
         static item(uri) {
             const instance = new this;
@@ -28341,166 +28849,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_github_repository extends $.$mol_github_entity {
-        json_update(patch) {
-            if (patch.owner)
-                $.$mol_github_user.item(patch.owner.url).json_update(patch.owner);
-            return super.json_update(patch);
-        }
-        owner() {
-            return $.$mol_github_user.item(this.json().owner.url);
-        }
-        name() {
-            return this.uri().match(/[^\/]+$/)[0];
-        }
-        name_full() {
-            return this.uri().match(/[^\/]+\/[^\/]+$/)[0];
-        }
-        issues() {
-            return $mol_github_repository_issues.item(`${this.uri()}/issues`);
-        }
-    }
-    __decorate([
-        $.$mol_mem
-    ], $mol_github_repository.prototype, "issues", null);
-    $.$mol_github_repository = $mol_github_repository;
-    class $mol_github_repository_issues extends $.$mol_model {
-        json_update(patch) {
-            if (patch) {
-                for (let issue of patch) {
-                    $.$mol_github_issue.item(issue.url).json_update(issue);
-                }
-            }
-            const cache = $.$mol_model.cache();
-            return cache[this.uri()] = patch;
-        }
-        items(next, force) {
-            return this.json(undefined, force).map(json => $.$mol_github_issue.item(json.url));
-        }
-        add(config, next, force) {
-            if (!config)
-                return;
-            try {
-                const json = $.$mol_fetch.json(this.uri() + '?', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `token ${$.$mol_github_auth.token(['public_repo'])}`,
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ title: config.title, body: config.text })
-                });
-                const comment = $.$mol_github_issue.item(json.url);
-                comment.json_update(json);
-                this.json(undefined, $.$mol_mem_force_cache);
-                return comment;
-            }
-            catch (error) {
-                if (error.message === 'Unauthorized') {
-                    $.$mol_github_auth.token_last(undefined, $.$mol_mem_force_update);
-                }
-                throw error;
-            }
-        }
-    }
-    __decorate([
-        $.$mol_mem
-    ], $mol_github_repository_issues.prototype, "items", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $mol_github_repository_issues.prototype, "add", null);
-    $.$mol_github_repository_issues = $mol_github_repository_issues;
-})($ || ($ = {}));
-//repository.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_chat extends $.$mol_list {
-        rows() {
-            return [
-                this.Add_link()
-            ];
-        }
-        Post(index) {
-            const obj = new this.$.$mol_message();
-            obj.name = () => this.post_user_name(index);
-            obj.moment = () => this.post_updated(index);
-            obj.avatar_link = () => this.post_user_link(index);
-            obj.avatar = () => this.post_user_ava(index);
-            obj.text = () => this.post_body(index);
-            return obj;
-        }
-        repository() {
-            const obj = new this.$.$mol_github_repository();
-            return obj;
-        }
-        repository_name() {
-            return "";
-        }
-        link() {
-            return "";
-        }
-        seed() {
-            return "";
-        }
-        teaser() {
-            return "";
-        }
-        issue() {
-            const obj = new this.$.$mol_github_issue();
-            return obj;
-        }
-        add_uri() {
-            return "";
-        }
-        add_label() {
-            return this.$.$mol_locale.text('$mol_chat_add_label');
-        }
-        Add_link() {
-            const obj = new this.$.$mol_link();
-            obj.uri = () => this.add_uri();
-            obj.title = () => this.add_label();
-            return obj;
-        }
-        post_user_name(index) {
-            return "";
-        }
-        post_updated(index) {
-            const obj = new this.$.$mol_time_moment();
-            return obj;
-        }
-        post_user_link(index) {
-            return "";
-        }
-        post_user_ava(index) {
-            return "";
-        }
-        post_body(index) {
-            return "";
-        }
-    }
-    __decorate([
-        $.$mol_mem_key
-    ], $mol_chat.prototype, "Post", null);
-    __decorate([
-        $.$mol_mem
-    ], $mol_chat.prototype, "repository", null);
-    __decorate([
-        $.$mol_mem
-    ], $mol_chat.prototype, "issue", null);
-    __decorate([
-        $.$mol_mem
-    ], $mol_chat.prototype, "Add_link", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $mol_chat.prototype, "post_updated", null);
-    $.$mol_chat = $mol_chat;
-})($ || ($ = {}));
-//chat.view.tree.js.map
-;
-"use strict";
-var $;
-(function ($) {
     class $mol_github_search_issues extends $.$mol_model {
         json_update(patch) {
             if (patch) {
@@ -28524,339 +28872,6 @@ var $;
     $.$mol_github_search_issues = $mol_github_search_issues;
 })($ || ($ = {}));
 //issues.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_style_attach("mol/chat/chat.view.css", "[mol_chat] {\n}\n\n[mol_chat_post] {\n\tmargin: var(--mol_gap_block);\n}\n\n[mol_chat_add_status] {\n\tmargin: var(--mol_gap_block);\n\tmax-width: 58rem;\n\tbox-sizing: border-box;\n}\n\n[mol_chat_add] {\n\tmargin: var(--mol_gap_block);\n\talign-items: flex-end;\n\tmax-width: 58rem;\n}\n\n[mol_chat_add_link] {\n\tmargin: var(--mol_gap_block);\n}\n");
-})($ || ($ = {}));
-//chat.view.css.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_chat extends $.$mol_chat {
-            repository() {
-                return $.$mol_github_repository.item(`https://api.github.com/repos/${this.repository_name()}`);
-            }
-            issue(next, force) {
-                const repo_name = this.repository().name_full();
-                const search_uri = `https://api.github.com/search/issues?q=repo:${repo_name} ${this.seed()} in:body type:issue`;
-                if (next)
-                    return next;
-                const issues = $.$mol_github_search_issues.item(search_uri).items(undefined, force);
-                return issues[0] || null;
-            }
-            add_uri() {
-                return this.issue().web_uri() + `#issue-comment-box`;
-            }
-            seed() {
-                return btoa(this.link());
-            }
-            teaser() {
-                return `[${this.seed()}](${this.link()})`;
-            }
-            posts_data() {
-                const issue = this.issue();
-                if (!issue)
-                    return [];
-                return issue.comments().items();
-            }
-            rows() {
-                return [
-                    ...this.posts_data().map((_, index) => this.Post(index)),
-                    this.Add_link(),
-                ];
-            }
-            post_user_ava(index) {
-                return this.posts_data()[index].user().avatar();
-            }
-            post_user_name(index) {
-                return this.posts_data()[index].user().name();
-            }
-            post_user_link(index) {
-                return this.posts_data()[index].user().link();
-            }
-            post_body(index) {
-                return this.posts_data()[index].text();
-            }
-            post_updated(index) {
-                return this.posts_data()[index].moment_updated();
-            }
-        }
-        __decorate([
-            $.$mol_mem
-        ], $mol_chat.prototype, "repository", null);
-        __decorate([
-            $.$mol_mem
-        ], $mol_chat.prototype, "issue", null);
-        __decorate([
-            $.$mol_mem
-        ], $mol_chat.prototype, "posts_data", null);
-        __decorate([
-            $.$mol_mem
-        ], $mol_chat.prototype, "rows", null);
-        $$.$mol_chat = $mol_chat;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-//chat.view.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_habhub extends $.$mol_book2 {
-        plugins() {
-            return [
-                this.Theme()
-            ];
-        }
-        Menu_page() {
-            const obj = new this.$.$mol_page();
-            obj.minimal_width = () => 400;
-            obj.title = () => this.menu_title();
-            obj.tools = () => this.tools_root();
-            obj.body = () => [
-                this.Search(),
-                this.Menu()
-            ];
-            return obj;
-        }
-        Details(id) {
-            const obj = new this.$.$mol_page();
-            obj.minimal_width = () => 600;
-            obj.title = () => this.gist_current_title();
-            obj.tools = () => [
-                this.Created(),
-                this.Details_link(),
-                this.Close()
-            ];
-            obj.body_scroll_top = (val) => this.details_scroll_top(val);
-            obj.body = () => [
-                this.Details_content()
-            ];
-            return obj;
-        }
-        Menu_row(id) {
-            const obj = new this.$.$mol_link();
-            obj.sub = () => [
-                this.Menu_row_title(id)
-            ];
-            obj.arg = () => this.gist_arg(id);
-            return obj;
-        }
-        Theme() {
-            const obj = new this.$.$mol_theme_auto();
-            return obj;
-        }
-        menu_title() {
-            return this.$.$mol_locale.text('$hyoo_habhub_menu_title');
-        }
-        Add_icon() {
-            const obj = new this.$.$mol_icon_plus();
-            return obj;
-        }
-        Add() {
-            const obj = new this.$.$mol_link();
-            obj.hint = () => "Add article";
-            obj.uri = () => "https://github.com/nin-jin/habhub";
-            obj.sub = () => [
-                this.Add_icon()
-            ];
-            return obj;
-        }
-        Source_link() {
-            const obj = new this.$.$mol_link_source();
-            obj.uri = () => "https://github.com/hyoo-ru/habhub.hyoo.ru";
-            return obj;
-        }
-        Lights() {
-            const obj = new this.$.$mol_lights_toggle();
-            return obj;
-        }
-        tools_root() {
-            return [
-                this.Add(),
-                this.Source_link(),
-                this.Lights()
-            ];
-        }
-        search(val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        Details_body() {
-            const obj = new this.$.$mol_view();
-            return obj;
-        }
-        Search() {
-            const obj = new this.$.$mol_search_jumper();
-            obj.query = (val) => this.search(val);
-            obj.Root = () => this.Details_body();
-            return obj;
-        }
-        menu_rows() {
-            return [];
-        }
-        Menu() {
-            const obj = new this.$.$mol_list();
-            obj.rows = () => this.menu_rows();
-            return obj;
-        }
-        gist_current_title() {
-            return "";
-        }
-        gist_current_created() {
-            return "";
-        }
-        Created() {
-            const obj = new this.$.$mol_paragraph();
-            obj.title = () => this.gist_current_created();
-            return obj;
-        }
-        details_link() {
-            return "";
-        }
-        Details_link() {
-            const obj = new this.$.$mol_link_source();
-            obj.uri = () => this.details_link();
-            return obj;
-        }
-        close_arg() {
-            return {
-                author: null,
-                repo: null,
-                article: null,
-                gist: null
-            };
-        }
-        Close_icon() {
-            const obj = new this.$.$mol_icon_cross();
-            return obj;
-        }
-        Close() {
-            const obj = new this.$.$mol_link();
-            obj.arg = () => this.close_arg();
-            obj.sub = () => [
-                this.Close_icon()
-            ];
-            return obj;
-        }
-        details_scroll_top(val) {
-            if (val !== undefined)
-                return val;
-            return 0;
-        }
-        gist_current_content() {
-            return "";
-        }
-        Datails_text() {
-            const obj = new this.$.$mol_text();
-            obj.highlight = () => this.search();
-            obj.text = () => this.gist_current_content();
-            return obj;
-        }
-        gist_current_issue() {
-            const obj = new this.$.$mol_github_issue();
-            return obj;
-        }
-        Details_chat() {
-            const obj = new this.$.$mol_chat();
-            obj.issue = () => this.gist_current_issue();
-            return obj;
-        }
-        Details_content() {
-            const obj = new this.$.$mol_list();
-            obj.rows = () => [
-                this.Datails_text(),
-                this.Details_chat()
-            ];
-            return obj;
-        }
-        gist_title(id) {
-            return "";
-        }
-        Menu_row_title(id) {
-            const obj = new this.$.$mol_dimmer();
-            obj.needle = () => this.search();
-            obj.haystack = () => this.gist_title(id);
-            return obj;
-        }
-        gist_arg(id) {
-            return {};
-        }
-    }
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Menu_page", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_habhub.prototype, "Details", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_habhub.prototype, "Menu_row", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Theme", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Add_icon", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Add", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Source_link", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Lights", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "search", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Details_body", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Search", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Menu", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Created", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Details_link", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Close_icon", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Close", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "details_scroll_top", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Datails_text", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "gist_current_issue", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Details_chat", null);
-    __decorate([
-        $.$mol_mem
-    ], $hyoo_habhub.prototype, "Details_content", null);
-    __decorate([
-        $.$mol_mem_key
-    ], $hyoo_habhub.prototype, "Menu_row_title", null);
-    $.$hyoo_habhub = $hyoo_habhub;
-})($ || ($ = {}));
-//habhub.view.tree.js.map
 ;
 "use strict";
 var $;
@@ -28916,10 +28931,17 @@ var $;
                 return $.$mol_state_arg.value('article');
             }
             pages() {
+                const gist = this.gist_current();
                 return [
                     this.Menu_page(),
-                    ...this.gist_current() ? [this.Details(this.gist_current())] : []
+                    ...gist ? [
+                        this.Details(gist),
+                        ...this.chat_pages(gist),
+                    ] : []
                 ];
+            }
+            chat_seed(issue) {
+                return issue.uri().replace(/.*\/repos\//, '');
             }
             menu_rows() {
                 return this.gists()
@@ -28961,6 +28983,9 @@ var $;
         __decorate([
             $.$mol_mem
         ], $hyoo_habhub.prototype, "details_link", null);
+        __decorate([
+            $.$mol_mem_key
+        ], $hyoo_habhub.prototype, "chat_seed", null);
         $$.$hyoo_habhub = $hyoo_habhub;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -30813,6 +30838,80 @@ var $;
     $.$mol_view_tree2_ts_method = $mol_view_tree2_ts_method;
 })($ || ($ = {}));
 //method.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_github_repository extends $.$mol_github_entity {
+        json_update(patch) {
+            if (patch.owner)
+                $.$mol_github_user.item(patch.owner.url).json_update(patch.owner);
+            return super.json_update(patch);
+        }
+        owner() {
+            return $.$mol_github_user.item(this.json().owner.url);
+        }
+        name() {
+            return this.uri().match(/[^\/]+$/)[0];
+        }
+        name_full() {
+            return this.uri().match(/[^\/]+\/[^\/]+$/)[0];
+        }
+        issues() {
+            return $mol_github_repository_issues.item(`${this.uri()}/issues`);
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $mol_github_repository.prototype, "issues", null);
+    $.$mol_github_repository = $mol_github_repository;
+    class $mol_github_repository_issues extends $.$mol_model {
+        json_update(patch) {
+            if (patch) {
+                for (let issue of patch) {
+                    $.$mol_github_issue.item(issue.url).json_update(issue);
+                }
+            }
+            const cache = $.$mol_model.cache();
+            return cache[this.uri()] = patch;
+        }
+        items(next, force) {
+            return this.json(undefined, force).map(json => $.$mol_github_issue.item(json.url));
+        }
+        add(config, next, force) {
+            if (!config)
+                return;
+            try {
+                const json = $.$mol_fetch.json(this.uri() + '?', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${$.$mol_github_auth.token(['public_repo'])}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ title: config.title, body: config.text })
+                });
+                const comment = $.$mol_github_issue.item(json.url);
+                comment.json_update(json);
+                this.json(undefined, $.$mol_mem_force_cache);
+                return comment;
+            }
+            catch (error) {
+                if (error.message === 'Unauthorized') {
+                    $.$mol_github_auth.token_last(undefined, $.$mol_mem_force_update);
+                }
+                throw error;
+            }
+        }
+    }
+    __decorate([
+        $.$mol_mem
+    ], $mol_github_repository_issues.prototype, "items", null);
+    __decorate([
+        $.$mol_mem_key
+    ], $mol_github_repository_issues.prototype, "add", null);
+    $.$mol_github_repository_issues = $mol_github_repository_issues;
+})($ || ($ = {}));
+//repository.js.map
 ;
 "use strict";
 var $;
