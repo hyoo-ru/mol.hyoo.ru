@@ -13361,7 +13361,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/chat/chat.view.css", "[mol_chat_page] {\n\tflex: 1 0 40rem;\n}\n");
+    $.$mol_style_attach("mol/chat/chat.view.css", "[mol_chat_page] {\n\tflex: 1 0 30rem;\n}\n");
 })($ || ($ = {}));
 //chat.view.css.js.map
 ;
@@ -13378,12 +13378,15 @@ var $;
                 return this.opened() ? [this.Page()] : [];
             }
             external() {
-                const seed = this.seed() ?? this.$.$mol_dom_context.location.host;
-                return `https://talks.hyoo.ru/#!chat=${encodeURIComponent(seed)}`;
+                const seed = this.seed();
+                const origin = new URL(this.$.$mol_state_arg.href()).origin;
+                return `https://talks.hyoo.ru/#!chat=${encodeURIComponent(origin + '/' + seed)}`;
             }
             embed() {
+                const seed = this.seed();
                 const lights = this.$.$mol_lights() ? 'on' : 'off';
-                return `${this.external()}/embed/mol_lights=${lights}`;
+                const embed = this.$.$mol_state_arg.href();
+                return `https://talks.hyoo.ru/#!chat=${encodeURIComponent(seed)}/embed=${encodeURIComponent(embed)}/mol_lights=${lights}`;
             }
         }
         __decorate([
