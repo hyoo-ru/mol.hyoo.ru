@@ -1796,7 +1796,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_grid extends $mol_scroll {
+    class $mol_grid extends $mol_view {
         row_height(): number;
         row_ids(): readonly string[][];
         row_id(index: any): any;
@@ -6379,7 +6379,7 @@ declare namespace $ {
     class $mol_app_demo_menu extends $mol_page {
         title(): string;
         tools(): readonly any[];
-        sub(): readonly any[];
+        Body(): $$.$mol_scroll;
         sources_uri(): string;
         Sources(): $mol_link_source;
         Lights(): $$.$mol_lights_toggle;
