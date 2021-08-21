@@ -5,7 +5,7 @@ $hyoo_mol $mol_book2
 	Menu $mol_page
 		tools <= tools_root /
 			<= Sources $mol_link_source
-				uri <= sources_uri \https://github.com/hyoo-ru/mam_mol/tree/master/
+				uri \https://github.com/hyoo-ru/mol.hyoo.ru
 			<= Lights $mol_lights_toggle
 		title <= menu_title @ \$mol framework
 		body /
@@ -45,7 +45,7 @@ $hyoo_mol $mol_book2
 			body /
 				<= Description $mol_text
 					text <= description \
-					uri_base <= sources_uri
+					uri_base <= sources_uri \https://github.com/hyoo-ru/mam_mol/tree/master/
 		<= Components_app $mol_app_demo
 		<= View_tree_app $hyoo_tree
 			Presets null
