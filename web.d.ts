@@ -1868,6 +1868,10 @@ declare namespace $.$$ {
             row: string[];
             col: string;
         }): any[];
+        cell_content_text(id: {
+            row: string[];
+            col: string;
+        }): any[];
         records(): any;
         record(id: string): any;
         record_ids(): string[];
@@ -6724,7 +6728,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "number" | "locale" | "string" | "object" | "bool" | "null" | "dict" | "get" | "bind" | "put" | "list";
+    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "number" | "locale" | "object" | "string" | "bool" | "null" | "dict" | "get" | "bind" | "put" | "list";
 }
 
 declare namespace $ {
