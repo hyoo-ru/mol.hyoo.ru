@@ -3655,21 +3655,25 @@ var $;
 var $;
 (function ($) {
     function parse(theme) {
-        if (theme === 'on')
+        if (theme === 'true')
             return true;
-        if (theme === 'off')
+        if (theme === 'false')
             return false;
         return null;
     }
     function $mol_lights(next) {
-        const base = null
-            ?? parse(this.$mol_state_arg.value('mol_lights'))
-            ?? this.$mol_media.match('(prefers-color-scheme: light)');
+        const arg = parse(this.$mol_state_arg.value('mol_lights'));
+        const base = this.$mol_media.match('(prefers-color-scheme: light)');
         if (next === undefined) {
-            return this.$mol_state_local.value('$mol_lights') ?? base;
+            return arg ?? this.$mol_state_local.value('$mol_lights') ?? base;
         }
         else {
-            this.$mol_state_local.value('$mol_lights', next === base ? null : next);
+            if (arg === null) {
+                this.$mol_state_local.value('$mol_lights', next === base ? null : next);
+            }
+            else {
+                this.$mol_state_arg.value('mol_lights', String(next));
+            }
             return next;
         }
     }
@@ -13557,7 +13561,7 @@ var $;
             }
             embed() {
                 const seed = this.seed();
-                const lights = this.$.$mol_lights() ? 'on' : 'off';
+                const lights = String(this.$.$mol_lights());
                 const embed = this.$.$mol_state_arg.href();
                 return `https://talks.hyoo.ru/#!chat=${encodeURIComponent(seed)}/embed=${encodeURIComponent(embed)}/mol_lights=${lights}`;
             }
@@ -29026,7 +29030,7 @@ var $;
         }
         App(id) {
             const obj = new this.$.$mol_frame();
-            obj.uri = (val) => this.app_uri(id, val);
+            obj.uri = (val) => this.app_uri_embed(id, val);
             return obj;
         }
         data() {
@@ -29045,7 +29049,11 @@ var $;
                 },
                 talks: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_talks_title'),
-                    uri: "https://talks.hyoo.ru/#!chat=RXV3H2EC"
+                    uri: "https://talks.hyoo.ru/#!roster/chat=RXV3H2EC"
+                },
+                draw: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_draw_title'),
+                    uri: "https://draw.hyoo.ru/"
                 },
                 scout: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_scout_title'),
@@ -29182,13 +29190,16 @@ var $;
             obj.arg = () => this.app_arg(id);
             return obj;
         }
+        app_uri_default(id) {
+            return "";
+        }
         Menu_link_out(id) {
             const obj = new this.$.$mol_link_iconed();
-            obj.uri = () => this.app_uri(id);
+            obj.uri = () => this.app_uri_default(id);
             obj.title = () => "";
             return obj;
         }
-        app_uri(id, val) {
+        app_uri_embed(id, val) {
             if (val !== undefined)
                 return val;
             return "";
@@ -29223,7 +29234,7 @@ var $;
     ], $hyoo_apps.prototype, "Menu_link_out", null);
     __decorate([
         $.$mol_mem_key
-    ], $hyoo_apps.prototype, "app_uri", null);
+    ], $hyoo_apps.prototype, "app_uri_embed", null);
     $.$hyoo_apps = $hyoo_apps;
 })($ || ($ = {}));
 //apps.view.tree.js.map
@@ -29257,13 +29268,17 @@ var $;
             app_title(app) {
                 return this.data()[app].title;
             }
-            app_uri(app, next) {
+            app_uri_default(app, next) {
+                return this.data()[app].uri;
+            }
+            app_uri_embed(app, next) {
+                const lights = this.$.$mol_lights();
                 if (this.app() === app) {
-                    return this.$.$mol_state_arg.value('uri', next) ?? this.data()[app].uri;
+                    const arg = this.$.$mol_state_arg.value('uri', next);
+                    if (arg)
+                        return arg.replace(/mol_lights=(true|false)/, `mol_lights=${lights}`);
                 }
-                else {
-                    return this.data()[app].uri;
-                }
+                return this.app_uri_default(app) + `#mol_lights=${lights}`;
             }
             app_arg(app) {
                 return { app, uri: null };
@@ -29274,7 +29289,7 @@ var $;
         ], $hyoo_apps.prototype, "menu_items", null);
         __decorate([
             $.$mol_mem_key
-        ], $hyoo_apps.prototype, "app_uri", null);
+        ], $hyoo_apps.prototype, "app_uri_embed", null);
         $$.$hyoo_apps = $hyoo_apps;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
