@@ -5538,7 +5538,7 @@ var $;
                         color: hsla(330, 70, 50, 1),
                     },
                     'code-global': {
-                        color: hsla(210, 80, 50, 1),
+                        color: hsla(30, 80, 50, 1),
                     },
                     'code-decorator': {
                         color: hsla(180, 40, 50, 1),
@@ -5556,7 +5556,7 @@ var $;
                         color: hsla(270, 60, 50, 1),
                     },
                     'code-link': {
-                        color: hsla(240, 60, 50, 1),
+                        color: hsla(210, 60, 50, 1),
                     },
                     'code-comment-inline': {
                         opacity: .5,
@@ -29446,6 +29446,7 @@ var $;
                 "https://nin-jin.github.io/slides/virt/": "Автоматическая виртуализация рендеринга произвольной вёрстки",
                 "https://nin-jin.github.io/slides/css-in-ts/": "Продвинутый CSS-in-TS",
                 "https://nin-jin.github.io/slides/testing/": "Фрактальное тестирование",
+                "https://nin-jin.github.io/slides/consensus/": "Консистентно о Консенсусе",
                 "https://nin-jin.github.io/slides/absurd/": "Проблема останова лжеца Гёделя и брадобрея Кантора"
             };
         }
@@ -29489,8 +29490,15 @@ var $;
         role() {
             return "";
         }
+        Source_link() {
+            const obj = new this.$.$mol_link_source();
+            obj.uri = () => "https://github.com/hyoo-ru/slides.hyoo.ru";
+            return obj;
+        }
         menu_tools() {
-            return [];
+            return [
+                this.Source_link()
+            ];
         }
         menu_items() {
             return [];
@@ -29885,6 +29893,9 @@ var $;
     __decorate([
         $.$mol_mem_key
     ], $hyoo_slides.prototype, "Page", null);
+    __decorate([
+        $.$mol_mem
+    ], $hyoo_slides.prototype, "Source_link", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_slides.prototype, "Menu_items", null);

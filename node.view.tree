@@ -3183,6 +3183,8 @@ $hyoo_slides $mol_view
 	Menu $mol_page
 		title \Slides
 		tools <= menu_tools /
+			<= Source_link $mol_link_source
+				uri \https://github.com/hyoo-ru/slides.hyoo.ru
 		body /
 			<= Menu_items $mol_list
 				rows <= menu_items /$mol_view
@@ -3198,6 +3200,7 @@ $hyoo_slides $mol_view
 		https://nin-jin.github.io/slides/virt/ \Автоматическая виртуализация рендеринга произвольной вёрстки
 		https://nin-jin.github.io/slides/css-in-ts/ \Продвинутый CSS-in-TS
 		https://nin-jin.github.io/slides/testing/ \Фрактальное тестирование
+		https://nin-jin.github.io/slides/consensus/ \Консистентно о Консенсусе
 		https://nin-jin.github.io/slides/absurd/ \Проблема останова лжеца Гёделя и брадобрея Кантора
 	Loader $mol_frame
 		uri <= uri_slides \

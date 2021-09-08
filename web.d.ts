@@ -7674,12 +7674,14 @@ declare namespace $ {
             "https://nin-jin.github.io/slides/virt/": string;
             "https://nin-jin.github.io/slides/css-in-ts/": string;
             "https://nin-jin.github.io/slides/testing/": string;
+            "https://nin-jin.github.io/slides/consensus/": string;
             "https://nin-jin.github.io/slides/absurd/": string;
         };
         Loader(): $$.$mol_frame;
         Page(index: any): $$.$hyoo_slides_page;
         plugins(): readonly any[];
         role(): string;
+        Source_link(): $mol_link_source;
         menu_tools(): readonly any[];
         menu_items(): readonly $mol_view[];
         Menu_items(): $$.$mol_list;
