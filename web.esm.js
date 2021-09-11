@@ -28772,6 +28772,10 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_data_shelter_title'),
                     uri: "https://shelter.hyoo.ru/#login=user"
                 },
+                mail: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_mail_title'),
+                    uri: "https://mail.hyoo.ru/#!folder=inbox/mail=qwe"
+                },
                 toys: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_toys_title'),
                     uri: "https://toys.hyoo.ru/#size=M/popular"

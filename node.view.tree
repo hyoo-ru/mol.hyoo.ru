@@ -3138,6 +3138,9 @@ $hyoo_apps $mol_book2
 		shelter *
 			title @ \Shelters ERP
 			uri \https://shelter.hyoo.ru/#login=user
+		mail *
+			title @ \Universal EMail client
+			uri \https://mail.hyoo.ru/#!folder=inbox/mail=qwe
 		toys *
 			title @ \Online Toys Store
 			uri \https://toys.hyoo.ru/#size=M/popular

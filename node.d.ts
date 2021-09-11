@@ -7590,6 +7590,10 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            mail: {
+                title: string;
+                uri: string;
+            };
             toys: {
                 title: string;
                 uri: string;
