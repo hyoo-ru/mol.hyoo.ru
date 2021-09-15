@@ -15391,6 +15391,7 @@ var $;
             obj.checked = (val) => this.option_checked(id, val);
             obj.label = () => this.option_label(id);
             obj.enabled = () => this.option_enabled(id);
+            obj.hint = () => this.option_hint(id);
             obj.minimal_height = () => 24;
             return obj;
         }
@@ -15426,6 +15427,9 @@ var $;
         }
         option_enabled(id) {
             return this.enabled();
+        }
+        option_hint(id) {
+            return "";
         }
         items() {
             return [];
@@ -26274,49 +26278,196 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    let $mol_wasm_section_types;
-    (function ($mol_wasm_section_types) {
-        $mol_wasm_section_types[$mol_wasm_section_types["custom"] = 0] = "custom";
-        $mol_wasm_section_types[$mol_wasm_section_types["type"] = 1] = "type";
-        $mol_wasm_section_types[$mol_wasm_section_types["import"] = 2] = "import";
-        $mol_wasm_section_types[$mol_wasm_section_types["function"] = 3] = "function";
-        $mol_wasm_section_types[$mol_wasm_section_types["table"] = 4] = "table";
-        $mol_wasm_section_types[$mol_wasm_section_types["memory"] = 5] = "memory";
-        $mol_wasm_section_types[$mol_wasm_section_types["global"] = 6] = "global";
-        $mol_wasm_section_types[$mol_wasm_section_types["export"] = 7] = "export";
-        $mol_wasm_section_types[$mol_wasm_section_types["start"] = 8] = "start";
-        $mol_wasm_section_types[$mol_wasm_section_types["element"] = 9] = "element";
-        $mol_wasm_section_types[$mol_wasm_section_types["code"] = 10] = "code";
-        $mol_wasm_section_types[$mol_wasm_section_types["data"] = 11] = "data";
-    })($mol_wasm_section_types = $.$mol_wasm_section_types || ($.$mol_wasm_section_types = {}));
+    let $mol_wasm_bin_section;
+    (function ($mol_wasm_bin_section) {
+        $mol_wasm_bin_section[$mol_wasm_bin_section["custom"] = 0] = "custom";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["type"] = 1] = "type";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["import"] = 2] = "import";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["func"] = 3] = "func";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["table"] = 4] = "table";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["memory"] = 5] = "memory";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["global"] = 6] = "global";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["export"] = 7] = "export";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["start"] = 8] = "start";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["element"] = 9] = "element";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["code"] = 10] = "code";
+        $mol_wasm_bin_section[$mol_wasm_bin_section["data"] = 11] = "data";
+    })($mol_wasm_bin_section = $.$mol_wasm_bin_section || ($.$mol_wasm_bin_section = {}));
+    let $mol_wasm_bin_external;
+    (function ($mol_wasm_bin_external) {
+        $mol_wasm_bin_external[$mol_wasm_bin_external["func"] = 0] = "func";
+        $mol_wasm_bin_external[$mol_wasm_bin_external["table"] = 1] = "table";
+        $mol_wasm_bin_external[$mol_wasm_bin_external["mem"] = 2] = "mem";
+        $mol_wasm_bin_external[$mol_wasm_bin_external["global"] = 3] = "global";
+    })($mol_wasm_bin_external = $.$mol_wasm_bin_external || ($.$mol_wasm_bin_external = {}));
+    let $mol_wasm_bin_valtype;
+    (function ($mol_wasm_bin_valtype) {
+        $mol_wasm_bin_valtype[$mol_wasm_bin_valtype["i32"] = 127] = "i32";
+        $mol_wasm_bin_valtype[$mol_wasm_bin_valtype["i64"] = 126] = "i64";
+        $mol_wasm_bin_valtype[$mol_wasm_bin_valtype["f32"] = 125] = "f32";
+        $mol_wasm_bin_valtype[$mol_wasm_bin_valtype["f64"] = 124] = "f64";
+    })($mol_wasm_bin_valtype = $.$mol_wasm_bin_valtype || ($.$mol_wasm_bin_valtype = {}));
+    let $mol_wasm_bin_instr;
+    (function ($mol_wasm_bin_instr) {
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["block"] = 2] = "block";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["loop"] = 3] = "loop";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["if"] = 4] = "if";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["else"] = 5] = "else";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["br"] = 12] = "br";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["br_if"] = 13] = "br_if";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["br_table"] = 14] = "br_table";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["call"] = 16] = "call";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["call_indirect"] = 17] = "call_indirect";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["ref.null"] = 208] = "ref.null";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["ref.is_null"] = 209] = "ref.is_null";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["ref.func"] = 210] = "ref.func";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["drop"] = 26] = "drop";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["select"] = 27] = "select";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["select2"] = 28] = "select2";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["memory.size"] = 63] = "memory.size";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["memory.grow"] = 64] = "memory.grow";
+        $mol_wasm_bin_instr[$mol_wasm_bin_instr["mem"] = 252] = "mem";
+    })($mol_wasm_bin_instr = $.$mol_wasm_bin_instr || ($.$mol_wasm_bin_instr = {}));
+    let $mol_wasm_bin_instr_nullary;
+    (function ($mol_wasm_bin_instr_nullary) {
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["unreachable"] = 0] = "unreachable";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["nop"] = 1] = "nop";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["end"] = 11] = "end";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["return"] = 15] = "return";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.eqz"] = 69] = "i32.eqz";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.eq"] = 70] = "i32.eq";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.ne"] = 71] = "i32.ne";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.lt_s"] = 72] = "i32.lt_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.lt_u"] = 73] = "i32.lt_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.gt_s"] = 74] = "i32.gt_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.gt_u"] = 75] = "i32.gt_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.le_s"] = 76] = "i32.le_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.le_u"] = 77] = "i32.le_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.ge_s"] = 78] = "i32.ge_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.ge_u"] = 79] = "i32.ge_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.eqz"] = 80] = "i64.eqz";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.eq"] = 81] = "i64.eq";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.ne"] = 82] = "i64.ne";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.lt_s"] = 83] = "i64.lt_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.lt_u"] = 84] = "i64.lt_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.gt_s"] = 85] = "i64.gt_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.gt_u"] = 86] = "i64.gt_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.le_s"] = 87] = "i64.le_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.le_u"] = 88] = "i64.le_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.ge_s"] = 89] = "i64.ge_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.ge_u"] = 90] = "i64.ge_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f32.eq"] = 91] = "f32.eq";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f32.ne"] = 92] = "f32.ne";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f32.lt"] = 93] = "f32.lt";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f32.gt"] = 94] = "f32.gt";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f32.le"] = 95] = "f32.le";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f32.ge"] = 96] = "f32.ge";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f64.eq"] = 97] = "f64.eq";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f64.ne"] = 98] = "f64.ne";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f64.lt"] = 99] = "f64.lt";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f64.gt"] = 100] = "f64.gt";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f64.le"] = 101] = "f64.le";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["f64.ge"] = 102] = "f64.ge";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.clz"] = 103] = "i32.clz";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.ctz"] = 104] = "i32.ctz";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.popcnt"] = 105] = "i32.popcnt";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.add"] = 106] = "i32.add";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.sub"] = 107] = "i32.sub";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.mul"] = 108] = "i32.mul";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.div_s"] = 109] = "i32.div_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.div_u"] = 110] = "i32.div_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.rem_s"] = 111] = "i32.rem_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.rem_u"] = 112] = "i32.rem_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.and"] = 113] = "i32.and";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.or"] = 114] = "i32.or";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.xor"] = 115] = "i32.xor";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.shl"] = 116] = "i32.shl";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.shr_s"] = 117] = "i32.shr_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.shr_u"] = 118] = "i32.shr_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.rotl"] = 119] = "i32.rotl";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i32.rotr"] = 120] = "i32.rotr";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.clz"] = 121] = "i64.clz";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.ctz"] = 122] = "i64.ctz";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.popcnt"] = 123] = "i64.popcnt";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.add"] = 124] = "i64.add";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.sub"] = 125] = "i64.sub";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.mul"] = 126] = "i64.mul";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.div_s"] = 127] = "i64.div_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.div_u"] = 128] = "i64.div_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.rem_s"] = 129] = "i64.rem_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.rem_u"] = 130] = "i64.rem_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.and"] = 131] = "i64.and";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.or"] = 132] = "i64.or";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.xor"] = 133] = "i64.xor";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.shl"] = 134] = "i64.shl";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.shr_s"] = 135] = "i64.shr_s";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.shr_u"] = 136] = "i64.shr_u";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.rotl"] = 137] = "i64.rotl";
+        $mol_wasm_bin_instr_nullary[$mol_wasm_bin_instr_nullary["i64.rotr"] = 138] = "i64.rotr";
+    })($mol_wasm_bin_instr_nullary = $.$mol_wasm_bin_instr_nullary || ($.$mol_wasm_bin_instr_nullary = {}));
+    let $mol_wasm_bin_instr_unary;
+    (function ($mol_wasm_bin_instr_unary) {
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["local.get"] = 32] = "local.get";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["local.set"] = 33] = "local.set";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["local.tee"] = 34] = "local.tee";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["global.get"] = 35] = "global.get";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["global.set"] = 36] = "global.set";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["table.get"] = 37] = "table.get";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["table.set"] = 38] = "table.set";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["i32.const"] = 65] = "i32.const";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["i64.const"] = 66] = "i64.const";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["f32.const"] = 67] = "f32.const";
+        $mol_wasm_bin_instr_unary[$mol_wasm_bin_instr_unary["f64.const"] = 68] = "f64.const";
+    })($mol_wasm_bin_instr_unary = $.$mol_wasm_bin_instr_unary || ($.$mol_wasm_bin_instr_unary = {}));
+    let $mol_wasm_bin_instr_binary;
+    (function ($mol_wasm_bin_instr_binary) {
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i32.load"] = 40] = "i32.load";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.load"] = 41] = "i64.load";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["f32.load"] = 42] = "f32.load";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["f64.load"] = 43] = "f64.load";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i32.load8_s"] = 44] = "i32.load8_s";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i32.load8_u"] = 45] = "i32.load8_u";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i32.load16_s"] = 46] = "i32.load16_s";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i32.load16_u"] = 47] = "i32.load16_u";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.load8_s"] = 48] = "i64.load8_s";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.load8_u"] = 49] = "i64.load8_u";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.load16_s"] = 50] = "i64.load16_s";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.load16_u"] = 51] = "i64.load16_u";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.load32_s"] = 52] = "i64.load32_s";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.load32_u"] = 53] = "i64.load32_u";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i32.store"] = 54] = "i32.store";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.store"] = 55] = "i64.store";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["f32.store"] = 56] = "f32.store";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["f64.store"] = 57] = "f64.store";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i32.store8"] = 58] = "i32.store8";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i32.store16"] = 59] = "i32.store16";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.store8"] = 60] = "i64.store8";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.store16"] = 61] = "i64.store16";
+        $mol_wasm_bin_instr_binary[$mol_wasm_bin_instr_binary["i64.store32"] = 62] = "i64.store32";
+    })($mol_wasm_bin_instr_binary = $.$mol_wasm_bin_instr_binary || ($.$mol_wasm_bin_instr_binary = {}));
+    let $mol_wasm_bin_instr_mem;
+    (function ($mol_wasm_bin_instr_mem) {
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["i32.trunc_sat_f32_s"] = 0] = "i32.trunc_sat_f32_s";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["i32.trunc_sat_f32_u"] = 1] = "i32.trunc_sat_f32_u";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["i32.trunc_sat_f64_s"] = 2] = "i32.trunc_sat_f64_s";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["i32.trunc_sat_f64_u"] = 3] = "i32.trunc_sat_f64_u";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["i64.trunc_sat_f32_s"] = 4] = "i64.trunc_sat_f32_s";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["i64.trunc_sat_f32_u"] = 5] = "i64.trunc_sat_f32_u";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["i64.trunc_sat_f64_s"] = 6] = "i64.trunc_sat_f64_s";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["i64.trunc_sat_f64_u"] = 7] = "i64.trunc_sat_f64_u";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["memory.init"] = 8] = "memory.init";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["data.drop"] = 9] = "data.drop";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["memory.copy"] = 10] = "memory.copy";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["memory.fill"] = 11] = "memory.fill";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["table.init"] = 12] = "table.init";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["elem.drop"] = 13] = "elem.drop";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["table.copy"] = 14] = "table.copy";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["table.grow"] = 15] = "table.grow";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["table.size"] = 16] = "table.size";
+        $mol_wasm_bin_instr_mem[$mol_wasm_bin_instr_mem["table.fill"] = 17] = "table.fill";
+    })($mol_wasm_bin_instr_mem = $.$mol_wasm_bin_instr_mem || ($.$mol_wasm_bin_instr_mem = {}));
 })($ || ($ = {}));
-//section.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    let $mol_wasm_value_types;
-    (function ($mol_wasm_value_types) {
-        $mol_wasm_value_types[$mol_wasm_value_types["i32"] = 127] = "i32";
-        $mol_wasm_value_types[$mol_wasm_value_types["i64"] = 126] = "i64";
-        $mol_wasm_value_types[$mol_wasm_value_types["f32"] = 125] = "f32";
-        $mol_wasm_value_types[$mol_wasm_value_types["f64"] = 124] = "f64";
-    })($mol_wasm_value_types = $.$mol_wasm_value_types || ($.$mol_wasm_value_types = {}));
-})($ || ($ = {}));
-//value.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    let $mol_wasm_import_types;
-    (function ($mol_wasm_import_types) {
-        $mol_wasm_import_types[$mol_wasm_import_types["func"] = 0] = "func";
-        $mol_wasm_import_types[$mol_wasm_import_types["table"] = 1] = "table";
-        $mol_wasm_import_types[$mol_wasm_import_types["mem"] = 2] = "mem";
-        $mol_wasm_import_types[$mol_wasm_import_types["global"] = 3] = "global";
-    })($mol_wasm_import_types = $.$mol_wasm_import_types || ($.$mol_wasm_import_types = {}));
-})($ || ($ = {}));
-//import.js.map
+//bin.js.map
 ;
 "use strict";
 var $;
@@ -26346,7 +26497,7 @@ var $;
                 const name = custom.kids[0];
                 const section = [];
                 section.push(...str(name.type, name.span));
-                body.push(...bytes([$.$mol_wasm_section_types.custom], custom.span));
+                body.push(...bytes([$.$mol_wasm_bin_section.custom], custom.span));
                 body.push(...dyn(section, custom.span));
             }
         }
@@ -26362,15 +26513,15 @@ var $;
                 const params = name.select('=>', null);
                 section.push(...array_prolog(params));
                 for (const param of params.kids) {
-                    section.push(...bytes([$.$mol_wasm_value_types[param.type]], param.span));
+                    section.push(...bytes([$.$mol_wasm_bin_valtype[param.type]], param.span));
                 }
                 const results = name.select('<=', null);
                 section.push(...array_prolog(results));
                 for (const result of results.kids) {
-                    section.push(...bytes([$.$mol_wasm_value_types[result.type]], result.span));
+                    section.push(...bytes([$.$mol_wasm_bin_valtype[result.type]], result.span));
                 }
             }
-            body.push(...bytes([$.$mol_wasm_section_types.type], prolog.span), ...dyn([
+            body.push(...bytes([$.$mol_wasm_bin_section.type], prolog.span), ...dyn([
                 ...array_prolog(types, prolog.span),
                 ...section,
             ], prolog.span));
@@ -26391,11 +26542,77 @@ var $;
                     const index = types_mapping.get(name.type);
                     if (index === undefined)
                         this.$mol_fail(name.error('Unknown type'));
-                    section.push(...bytes([$.$mol_wasm_import_types.func], kind.span), ...int(index, name.span));
+                    section.push(...bytes([$.$mol_wasm_bin_external.func], kind.span), ...int(index, name.span));
                 }
             }
-            body.push(...bytes([$.$mol_wasm_section_types.import], prolog.span), ...dyn([
+            body.push(...bytes([$.$mol_wasm_bin_section.import], prolog.span), ...dyn([
                 ...array_prolog(imports, prolog.span),
+                ...section,
+            ], prolog.span));
+        }
+        funcs: {
+            const funcs = code.select('func');
+            if (funcs.kids.length === 0)
+                break funcs;
+            const section = [];
+            for (const func of funcs.kids) {
+                const name = func.kids[0];
+                const index = types_mapping.get(name.type);
+                if (index === undefined)
+                    this.$mol_fail(name.error('Unknown type'));
+                section.push(...int(index, name.span));
+            }
+            body.push(...bytes([$.$mol_wasm_bin_section.func], prolog.span), ...dyn([
+                ...array_prolog(funcs, prolog.span),
+                ...section,
+            ], prolog.span));
+        }
+        exports: {
+            const exports = code.select('export');
+            if (exports.kids.length === 0)
+                break exports;
+            const section = [];
+            for (const export_ of exports.kids) {
+                const path = export_.kids[0];
+                const kind = path.kids[0];
+                section.push(...str(path.type, path.span));
+                if (kind.type === 'func') {
+                    const name = kind.kids[0];
+                    const index = types_mapping.get(name.type);
+                    if (index === undefined)
+                        this.$mol_fail(name.error('Unknown type'));
+                    section.push(...bytes([$.$mol_wasm_bin_external.func], kind.span), ...int(index, name.span));
+                }
+            }
+            body.push(...bytes([$.$mol_wasm_bin_section.export], prolog.span), ...dyn([
+                ...array_prolog(exports, prolog.span),
+                ...section,
+            ], prolog.span));
+        }
+        codes: {
+            const funcs = code.select('func');
+            if (funcs.kids.length === 0)
+                break codes;
+            const section = [];
+            for (const func of funcs.kids) {
+                const body = [];
+                body.push(...int(0, func.span));
+                for (const expr of func.kids[0].kids) {
+                    if (typeof $.$mol_wasm_bin_instr_unary[expr.type] === 'number') {
+                        body.push(...bytes([$.$mol_wasm_bin_instr_unary[expr.type]], expr.span), ...int(Number(expr.kids[0].type), expr.kids[0].span));
+                        continue;
+                    }
+                    if (typeof $.$mol_wasm_bin_instr_nullary[expr.type] === 'number') {
+                        body.push(...bytes([$.$mol_wasm_bin_instr_nullary[expr.type]], expr.span));
+                        continue;
+                    }
+                    $.$mol_fail(expr.error('Unknown wasm instruction'));
+                }
+                body.push(...bytes([$.$mol_wasm_bin_instr_nullary.end], func.span));
+                section.push(...dyn(body, func.span));
+            }
+            body.push(...bytes([$.$mol_wasm_bin_section.code], prolog.span), ...dyn([
+                ...array_prolog(funcs, prolog.span),
                 ...section,
             ], prolog.span));
         }
@@ -34129,14 +34346,67 @@ var $;
         },
         'import section'($) {
             const code = $.$mol_tree2_from_string(`
-				type xxx
-				import foo.bar func xxx
+				type nothing
+				import foo.bar func nothing
 			`);
             $_1.$mol_assert_like(new Uint8Array($_1.$mol_tree2_wasm_to_module(code).buffer), new Uint8Array([
                 0, 0x61, 0x73, 0x6d, 0x01, 0, 0, 0,
                 0x01, 0x04, 0x01, 0x60, 0, 0,
                 0x02, 0x0b, 0x01, 0x03, 0x66, 0x6f, 0x6f, 0x03, 0x62, 0x61, 0x72, 0, 0
             ]));
+        },
+        'export imported identity'($) {
+            const code = $.$mol_tree2_from_string(`
+				type identity
+					=> i32
+					<= i32
+				import foo.bar func identity
+				export xxx.yyy func identity
+			`);
+            const instance = $_1.$mol_tree2_wasm_to_module(code).instance({ foo: { bar: (a) => a } });
+            const identity = instance.get('xxx.yyy');
+            $_1.$mol_assert_like(identity(123), 123);
+        },
+        'export internal identity'($) {
+            const code = $.$mol_tree2_from_string(`
+				type identity
+					=> i32
+					<= i32
+				func identity local.get 0
+				export id func identity
+			`);
+            const instance = $_1.$mol_tree2_wasm_to_module(code).instance();
+            const identity = instance.get('id');
+            $_1.$mol_assert_like(identity(123), 123);
+        },
+        'export increase'($) {
+            const code = $.$mol_tree2_from_string(`
+				type inc32
+					=> i32
+					<= i32
+				func inc32
+					local.get 0
+					i32.const 1
+					i32.add
+				export increase func inc32
+			`);
+            const instance = $_1.$mol_tree2_wasm_to_module(code).instance();
+            const inc = instance.get('increase');
+            $_1.$mol_assert_like(inc(2), 3);
+        },
+        'export function that returns pair'($) {
+            const code = $.$mol_tree2_from_string(`
+				type pair
+					<= i32
+					<= i32
+				func pair
+					i32.const 1
+					i32.const 2
+				export pair func pair
+			`);
+            const instance = $_1.$mol_tree2_wasm_to_module(code).instance();
+            const pair = instance.get('pair');
+            $_1.$mol_assert_like(pair(), [1, 2]);
         },
     });
 })($ || ($ = {}));

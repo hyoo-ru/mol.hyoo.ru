@@ -4194,6 +4194,7 @@ declare namespace $ {
         option_label(id: any): readonly any[];
         enabled(): boolean;
         option_enabled(id: any): boolean;
+        option_hint(id: any): string;
         items(): readonly $mol_check[];
     }
 }
@@ -6840,11 +6841,11 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    enum $mol_wasm_section_types {
+    enum $mol_wasm_bin_section {
         custom = 0,
         type = 1,
         import = 2,
-        function = 3,
+        func = 3,
         table = 4,
         memory = 5,
         global = 6,
@@ -6854,23 +6855,171 @@ declare namespace $ {
         code = 10,
         data = 11
     }
-}
-
-declare namespace $ {
-    enum $mol_wasm_value_types {
+    enum $mol_wasm_bin_external {
+        func = 0,
+        table = 1,
+        mem = 2,
+        global = 3
+    }
+    enum $mol_wasm_bin_valtype {
         i32 = 127,
         i64 = 126,
         f32 = 125,
         f64 = 124
     }
-}
-
-declare namespace $ {
-    enum $mol_wasm_import_types {
-        func = 0,
-        table = 1,
-        mem = 2,
-        global = 3
+    enum $mol_wasm_bin_instr {
+        'block' = 2,
+        'loop' = 3,
+        'if' = 4,
+        'else' = 5,
+        'br' = 12,
+        'br_if' = 13,
+        'br_table' = 14,
+        'call' = 16,
+        'call_indirect' = 17,
+        'ref.null' = 208,
+        'ref.is_null' = 209,
+        'ref.func' = 210,
+        'drop' = 26,
+        'select' = 27,
+        'select2' = 28,
+        'memory.size' = 63,
+        'memory.grow' = 64,
+        mem = 252
+    }
+    enum $mol_wasm_bin_instr_nullary {
+        'unreachable' = 0,
+        'nop' = 1,
+        'end' = 11,
+        'return' = 15,
+        'i32.eqz' = 69,
+        'i32.eq' = 70,
+        'i32.ne' = 71,
+        'i32.lt_s' = 72,
+        'i32.lt_u' = 73,
+        'i32.gt_s' = 74,
+        'i32.gt_u' = 75,
+        'i32.le_s' = 76,
+        'i32.le_u' = 77,
+        'i32.ge_s' = 78,
+        'i32.ge_u' = 79,
+        'i64.eqz' = 80,
+        'i64.eq' = 81,
+        'i64.ne' = 82,
+        'i64.lt_s' = 83,
+        'i64.lt_u' = 84,
+        'i64.gt_s' = 85,
+        'i64.gt_u' = 86,
+        'i64.le_s' = 87,
+        'i64.le_u' = 88,
+        'i64.ge_s' = 89,
+        'i64.ge_u' = 90,
+        'f32.eq' = 91,
+        'f32.ne' = 92,
+        'f32.lt' = 93,
+        'f32.gt' = 94,
+        'f32.le' = 95,
+        'f32.ge' = 96,
+        'f64.eq' = 97,
+        'f64.ne' = 98,
+        'f64.lt' = 99,
+        'f64.gt' = 100,
+        'f64.le' = 101,
+        'f64.ge' = 102,
+        'i32.clz' = 103,
+        'i32.ctz' = 104,
+        'i32.popcnt' = 105,
+        'i32.add' = 106,
+        'i32.sub' = 107,
+        'i32.mul' = 108,
+        'i32.div_s' = 109,
+        'i32.div_u' = 110,
+        'i32.rem_s' = 111,
+        'i32.rem_u' = 112,
+        'i32.and' = 113,
+        'i32.or' = 114,
+        'i32.xor' = 115,
+        'i32.shl' = 116,
+        'i32.shr_s' = 117,
+        'i32.shr_u' = 118,
+        'i32.rotl' = 119,
+        'i32.rotr' = 120,
+        'i64.clz' = 121,
+        'i64.ctz' = 122,
+        'i64.popcnt' = 123,
+        'i64.add' = 124,
+        'i64.sub' = 125,
+        'i64.mul' = 126,
+        'i64.div_s' = 127,
+        'i64.div_u' = 128,
+        'i64.rem_s' = 129,
+        'i64.rem_u' = 130,
+        'i64.and' = 131,
+        'i64.or' = 132,
+        'i64.xor' = 133,
+        'i64.shl' = 134,
+        'i64.shr_s' = 135,
+        'i64.shr_u' = 136,
+        'i64.rotl' = 137,
+        'i64.rotr' = 138
+    }
+    enum $mol_wasm_bin_instr_unary {
+        'local.get' = 32,
+        'local.set' = 33,
+        'local.tee' = 34,
+        'global.get' = 35,
+        'global.set' = 36,
+        'table.get' = 37,
+        'table.set' = 38,
+        'i32.const' = 65,
+        'i64.const' = 66,
+        'f32.const' = 67,
+        'f64.const' = 68
+    }
+    enum $mol_wasm_bin_instr_binary {
+        'i32.load' = 40,
+        'i64.load' = 41,
+        'f32.load' = 42,
+        'f64.load' = 43,
+        'i32.load8_s' = 44,
+        'i32.load8_u' = 45,
+        'i32.load16_s' = 46,
+        'i32.load16_u' = 47,
+        'i64.load8_s' = 48,
+        'i64.load8_u' = 49,
+        'i64.load16_s' = 50,
+        'i64.load16_u' = 51,
+        'i64.load32_s' = 52,
+        'i64.load32_u' = 53,
+        'i32.store' = 54,
+        'i64.store' = 55,
+        'f32.store' = 56,
+        'f64.store' = 57,
+        'i32.store8' = 58,
+        'i32.store16' = 59,
+        'i64.store8' = 60,
+        'i64.store16' = 61,
+        'i64.store32' = 62
+    }
+    enum $mol_wasm_bin_instr_mem {
+        'i32.trunc_sat_f32_s' = 0,
+        'i32.trunc_sat_f32_u' = 1,
+        'i32.trunc_sat_f64_s' = 2,
+        'i32.trunc_sat_f64_u' = 3,
+        'i64.trunc_sat_f32_s' = 4,
+        'i64.trunc_sat_f32_u' = 5,
+        'i64.trunc_sat_f64_s' = 6,
+        'i64.trunc_sat_f64_u' = 7,
+        'memory.init' = 8,
+        'data.drop' = 9,
+        'memory.copy' = 10,
+        'memory.fill' = 11,
+        'table.init' = 12,
+        'elem.drop' = 13,
+        'table.copy' = 14,
+        'table.grow' = 15,
+        'table.size' = 16,
+        'table.fill' = 17
     }
 }
 
