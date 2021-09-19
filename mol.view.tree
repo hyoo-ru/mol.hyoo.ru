@@ -9,32 +9,33 @@ $hyoo_mol $mol_book2
 			<= Lights $mol_lights_toggle
 		title <= menu_title @ \$mol framework
 		body /
-			<= Main_link $mol_link
-				title <= main_title @ \Introduction
-				arg * section \main
-			<= Articles_link $mol_link
-				title <= articles_title @ \Articles
-				arg * section \articles
-			<= Slides_link $mol_link
-				title <= slides_title @ \Slides
-				arg * section \slides
-			<= Apps_link $mol_link
-				title <= apps_title @ \Applications
-				arg *
-					section \apps
-					app null
-			<= Components_link $mol_link
-				title <= components_title @ \Components
-				arg * section \components
-			<= View_tree_link $mol_link
-				title <= view_tree_title @ \View.Tree Sandbox
-				arg *
-					section \view.tree
-					pipeline null
-					source null
-			<= Icons_link $mol_link
-				title <= icons_title @ \Icons
-				arg * section \icons
+			<= Menu_links $mol_list rows /
+				<= Main_link $mol_link
+					title <= main_title @ \Introduction
+					arg * section \main
+				<= Articles_link $mol_link
+					title <= articles_title @ \Articles
+					arg * section \articles
+				<= Slides_link $mol_link
+					title <= slides_title @ \Slides
+					arg * section \slides
+				<= Apps_link $mol_link
+					title <= apps_title @ \Applications
+					arg *
+						section \apps
+						app null
+				<= Components_link $mol_link
+					title <= components_title @ \Components
+					arg * section \components
+				<= View_tree_link $mol_link
+					title <= view_tree_title @ \View.Tree Sandbox
+					arg *
+						section \view.tree
+						pipeline null
+						source null
+				<= Icons_link $mol_link
+					title <= icons_title @ \Icons
+					arg * section \icons
 	Close_app $mol_link
 		arg * section null
 		sub / <= Close_app_icon $mol_icon_cross
