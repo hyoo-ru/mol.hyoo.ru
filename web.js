@@ -4670,18 +4670,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_icon_cross extends $.$mol_icon {
-        path() {
-            return "M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z";
-        }
-    }
-    $.$mol_icon_cross = $mol_icon_cross;
-})($ || ($ = {}));
-//cross.view.tree.js.map
-;
-"use strict";
-var $;
-(function ($) {
     class $mol_list extends $.$mol_view {
         render_visible_only() {
             return true;
@@ -4890,6 +4878,18 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //list.view.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_cross extends $.$mol_icon {
+        path() {
+            return "M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z";
+        }
+    }
+    $.$mol_icon_cross = $mol_icon_cross;
+})($ || ($ = {}));
+//cross.view.tree.js.map
 ;
 "use strict";
 var $;
@@ -29918,13 +29918,7 @@ var $;
             obj.tools = () => this.tools_root();
             obj.title = () => this.menu_title();
             obj.body = () => [
-                this.Main_link(),
-                this.Articles_link(),
-                this.Slides_link(),
-                this.Apps_link(),
-                this.Components_link(),
-                this.View_tree_link(),
-                this.Icons_link()
+                this.Menu_links()
             ];
             return obj;
         }
@@ -30051,6 +30045,19 @@ var $;
             });
             return obj;
         }
+        Menu_links() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Main_link(),
+                this.Articles_link(),
+                this.Slides_link(),
+                this.Apps_link(),
+                this.Components_link(),
+                this.View_tree_link(),
+                this.Icons_link()
+            ];
+            return obj;
+        }
         Close_app_icon() {
             const obj = new this.$.$mol_icon_cross();
             return obj;
@@ -30165,6 +30172,9 @@ var $;
     ], $hyoo_mol.prototype, "Icons_link", null);
     __decorate([
         $.$mol_mem
+    ], $hyoo_mol.prototype, "Menu_links", null);
+    __decorate([
+        $.$mol_mem
     ], $hyoo_mol.prototype, "Close_app_icon", null);
     __decorate([
         $.$mol_mem
@@ -30197,7 +30207,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("hyoo/mol/mol.view.css", "[hyoo_mol_menu] {\n\tflex: 0 0 16rem;\n}\n\n[hyoo_mol_main] {\n\tflex: 0 0 60rem;\n}\n\n[hyoo_mol_menu_body] {\n\tdisplay: flex;\n\tflex-direction: column;\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_mol_slides_app] {\n\tflex: 1000 0 80rem;\n}\n\n[hyoo_mol_view_tree_app] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_mol_icons_app] {\n\tflex: 1000 0 40rem;\n}\n");
+    $.$mol_style_attach("hyoo/mol/mol.view.css", "[hyoo_mol_menu] {\n\tflex: 0 0 16rem;\n}\n\n[hyoo_mol_main] {\n\tflex: 0 0 60rem;\n}\n\n[hyoo_mol_slides_app] {\n\tflex: 1000 0 80rem;\n}\n\n[hyoo_mol_view_tree_app] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_mol_icons_app] {\n\tflex: 1000 0 40rem;\n}\n");
 })($ || ($ = {}));
 //mol.view.css.js.map
 ;

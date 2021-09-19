@@ -1417,12 +1417,6 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_icon_cross extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
     class $mol_list extends $mol_view {
         render_visible_only(): boolean;
         render_over(): number;
@@ -1454,6 +1448,12 @@ declare namespace $.$$ {
         sub_visible(): $mol_view[];
         minimal_height(): number;
         force_render(path: Set<$mol_view>): void;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_cross extends $mol_icon {
+        path(): string;
     }
 }
 
@@ -7964,6 +7964,7 @@ declare namespace $ {
         View_tree_link(): $$.$mol_link;
         icons_title(): string;
         Icons_link(): $$.$mol_link;
+        Menu_links(): $$.$mol_list;
         Close_app_icon(): $mol_icon_cross;
         description(): string;
         sources_uri(): string;
