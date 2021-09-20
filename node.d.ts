@@ -7763,6 +7763,7 @@ declare namespace $ {
         Link(): $$.$mol_link;
         progress(): number;
         Progress(): $$.$mol_portion;
+        Listener_head(): $mol_view;
         Listener(): $$.$mol_page;
     }
 }
