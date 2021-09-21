@@ -3779,7 +3779,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_chat_demo extends $mol_demo_small {
+    class $mol_chat_demo extends $mol_view {
         title(): string;
         sub(): readonly any[];
         chat_pages(): $$.$mol_page[];
@@ -3853,9 +3853,9 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_check_group_demo extends $mol_view {
+    class $mol_check_group_demo extends $mol_list {
         title(): string;
-        sub(): readonly any[];
+        rows(): readonly any[];
         All(): $$.$mol_check_group;
         strength_title(): string;
         strength(val?: any): boolean;
@@ -3892,9 +3892,9 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_check_icon_demo extends $mol_view {
+    class $mol_check_icon_demo extends $mol_list {
         title(): string;
-        sub(): readonly any[];
+        rows(): readonly any[];
         Base_icon(): $mol_icon_microphone;
         base_checked(val?: any): boolean;
         Base(): $mol_check_icon;
@@ -4230,7 +4230,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_deck_demo extends $mol_demo_small {
+    class $mol_deck_demo extends $mol_view {
         title(): string;
         sub(): readonly any[];
         greet_message(): string;
@@ -4244,16 +4244,19 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_dimmer_demo extends $mol_row {
+    class $mol_dimmer_demo extends $mol_list {
         title(): string;
-        sub(): readonly any[];
-        one(): $$.$mol_dimmer;
-        two(): $$.$mol_dimmer;
-        three(): $$.$mol_dimmer;
-        four(): $$.$mol_dimmer;
-        five(): $$.$mol_dimmer;
-        six(): $$.$mol_dimmer;
+        rows(): readonly any[];
+        One(): $$.$mol_dimmer;
+        Two(): $$.$mol_dimmer;
+        Three(): $$.$mol_dimmer;
+        Four(): $$.$mol_dimmer;
+        Five(): $$.$mol_dimmer;
+        Six(): $$.$mol_dimmer;
     }
+}
+
+declare namespace $ {
 }
 
 declare namespace $ {
@@ -4458,7 +4461,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_expander_demo extends $mol_demo_large {
+    class $mol_expander_demo extends $mol_view {
         title(): string;
         sub(): readonly any[];
         Content(): $mol_filler;
@@ -5103,47 +5106,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_message extends $mol_view {
-        moment(): $mol_time_moment;
-        sub(): readonly any[];
-        avatar_link(): string;
-        avatar(): string;
-        Avatar(): $mol_image;
-        name(): string;
-        Name(): $mol_view;
-        Author(): $$.$mol_link;
-        moment_string(): string;
-        Moment(): $mol_view;
-        Info(): $mol_row;
-        text(): string;
-        Text(): $$.$mol_text;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $.$$ {
-    class $mol_message extends $.$mol_message {
-        moment_string(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_message_demo extends $mol_demo_small {
-        title(): string;
-        sub(): readonly any[];
-        created(): $mol_time_moment;
-        Message_short(): $$.$mol_message;
-        Message_long(): $$.$mol_message;
-    }
-}
-
-declare namespace $ {
-    class $mol_nav_demo extends $mol_demo_small {
+    class $mol_nav_demo extends $mol_list {
         title(): string;
         plugins(): readonly any[];
-        sub(): readonly any[];
+        rows(): readonly any[];
         Nav(): $$.$mol_nav;
         Hint(): $$.$mol_card;
         tab_current(val?: any): string;
@@ -5262,7 +5228,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_paginator_demo extends $mol_demo_small {
+    class $mol_paginator_demo extends $mol_view {
         title(): string;
         sub(): readonly any[];
         page(val?: any): number;
@@ -5409,7 +5375,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_pop_over_demo extends $mol_demo_small {
+    class $mol_pop_over_demo extends $mol_view {
         title(): string;
         sub(): readonly any[];
         file_title(): string;
@@ -5608,7 +5574,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_select_demo_colors extends $mol_demo_small {
+    class $mol_select_demo_colors extends $mol_view {
         title(): string;
         sub(): readonly any[];
         color(val?: any): string;
@@ -5943,7 +5909,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_select_demo_month extends $mol_demo_small {
+    class $mol_select_demo_month extends $mol_view {
         title(): string;
         sub(): readonly any[];
         month(val?: any): string;
@@ -5966,7 +5932,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_select_demo_priority extends $mol_demo_small {
+    class $mol_select_demo_priority extends $mol_view {
         title(): string;
         sub(): readonly any[];
         priority(val?: any): string;
