@@ -6,6 +6,10 @@
 	flex: 0 0 60rem;
 }
 
+[hyoo_mol_description] {
+	padding: var(--mol_gap_block);
+}
+
 [hyoo_mol_slides] {
 	flex: 1000 0 80rem;
 }
