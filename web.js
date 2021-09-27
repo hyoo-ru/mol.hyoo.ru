@@ -30499,7 +30499,7 @@ var $;
         }
         Articles() {
             const obj = new this.$.$hyoo_habhub();
-            obj.menu_title = () => this.$.$mol_locale.text('$hyoo_mol_Articles_menu_title');
+            obj.title = () => this.$.$mol_locale.text('$hyoo_mol_Articles_title');
             obj.tools_root = () => [
                 this.Spread_close()
             ];

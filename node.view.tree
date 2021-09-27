@@ -3398,7 +3398,7 @@ $hyoo_mol $mol_book2_catalog
 					text <= description \
 					uri_base <= sources_uri \https://github.com/hyoo-ru/mam_mol/tree/master/
 		articles <= Articles $hyoo_habhub
-			menu_title @ \Articles
+			title @ \Articles
 			tools_root / <= Spread_close
 		slides <= Slides $hyoo_slides
 			title @ \Slides
