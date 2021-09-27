@@ -1,56 +1,35 @@
-$hyoo_mol $mol_book2
+$hyoo_mol $mol_book2_catalog
 	plugins /
 		<= Theme $mol_theme_auto
 	Placeholder null
-	Menu $mol_page
-		tools <= tools_root /
-			<= Sources $mol_link_source
-				uri \https://github.com/hyoo-ru/mol.hyoo.ru
-			<= Lights $mol_lights_toggle
-		title <= menu_title @ \$mol framework
-		body /
-			<= Menu_links $mol_list rows /
-				<= Main_link $mol_link
-					title <= main_title @ \Introduction
-					arg * section \main
-				<= Articles_link $mol_link
-					title <= articles_title @ \Articles
-					arg * section \articles
-				<= Slides_link $mol_link
-					title <= slides_title @ \Slides
-					arg * section \slides
-				<= Apps_link $mol_link
-					title <= apps_title @ \Applications
-					arg *
-						section \apps
-						app null
-				<= Components_link $mol_link
-					title <= components_title @ \Components
-					arg * section \components
-				<= View_tree_link $mol_link
-					title <= view_tree_title @ \View.Tree Sandbox
-					arg *
-						section \view.tree
-						pipeline null
-						source null
-				<= Icons_link $mol_link
-					title <= icons_title @ \Icons
-					arg * section \icons
-	Close_app $mol_link
-		arg * section null
-		sub / <= Close_app_icon $mol_icon_cross
-	pages /
-		<= Main $mol_page
-			title <= main_title
-			tools / <= Close_app
+	menu_title @ \$mol framework
+	menu_tools <= tools_root /
+		<= Sources $mol_link_source
+			uri \https://github.com/hyoo-ru/mol.hyoo.ru
+		<= Lights $mol_lights_toggle
+	param \section
+	spreads *
+		main <= Main $mol_page
+			title @ \Introduction
+			tools / <= Spread_close
 			body /
 				<= Description $mol_text
 					text <= description \
 					uri_base <= sources_uri \https://github.com/hyoo-ru/mam_mol/tree/master/
-		<= Components_app $mol_app_demo
-		<= View_tree_app $hyoo_tree
+		articles <= Articles $hyoo_habhub
+			menu_title @ \Articles
+			tools_root / <= Spread_close
+		slides <= Slides $hyoo_slides
+			title @ \Slides
+			menu_tools / <= Spread_close
+		apps <= Apps $hyoo_apps
+			title @ \Applications
+		components <= Components $mol_app_demo
+			title @ \Components
+		view.tree <= View_tree $hyoo_tree
+			title @ \View.Tree Sandbox
 			Presets null
-			source_tools / <= Close_app
+			source_tools / <= Spread_close
 			pipeline_default <= tree_pipeline /
 				\$mol_tree2_from_string
 				\$mol_view_tree2_to_text
@@ -65,11 +44,6 @@ $hyoo_mol $mol_book2
 				\			value?val <=> info_value?val NaN
 				\			kids <= info_kids /$mol_view_content
 				\
-		<= Articles_app $hyoo_habhub
-			menu_title <= articles_title
-			tools_root / <= Close_app
-		<= Apps_app $hyoo_apps
-		<= Icons_app $mol_frame
+		icons <= Icons $mol_frame
+			title @ \Icons
 			uri \https://nin-jin.github.io/mol_icon/
-		<= Slides_app $hyoo_slides
-			menu_tools / <= Close_app

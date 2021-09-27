@@ -6,14 +6,14 @@
 	flex: 0 0 60rem;
 }
 
-[hyoo_mol_slides_app] {
+[hyoo_mol_slides] {
 	flex: 1000 0 80rem;
 }
 
-[hyoo_mol_view_tree_app] {
+[hyoo_mol_view_tree] {
 	flex: 1000 0 60rem;
 }
 
-[hyoo_mol_icons_app] {
+[hyoo_mol_icons] {
 	flex: 1000 0 40rem;
 }
