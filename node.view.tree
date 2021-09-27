@@ -15,23 +15,6 @@ $mol_book2 $mol_scroll
 	minimal_width 0
 	Placeholder $mol_view
 
-$mol_page $mol_view
-	sub /
-		<= Head $mol_view
-			minimal_height 64
-			sub <= head /
-				<= Title $mol_view
-					dom_name \h1
-					sub /
-						<= title
-				<= Tools $mol_view
-					sub <= tools /$mol_view_content
-		<= Body $mol_scroll
-			scroll_top?val <=> body_scroll_top?val 0
-			sub <= body /$mol_view_content
-		<= Foot $mol_view
-			sub <= foot /$mol_view
-
 $mol_link $mol_view
 	dom_name \a
 	attr *
@@ -48,8 +31,33 @@ $mol_link $mol_view
 		^
 		click?event <=> click?event <=> event_click?event null
 
-$mol_theme_auto $mol_plugin
-	attr * mol_theme <= theme \
+$mol_list $mol_view
+	render_visible_only true
+	render_over 0
+	sub <= rows /$mol_view
+	Empty $mol_view
+	Gap_before $mol_view style * paddingTop <= gap_before 0
+	Gap_after $mol_view style * paddingTop <= gap_after 0
+	view_window /
+		0
+		0
+
+$mol_page $mol_view
+	sub /
+		<= Head $mol_view
+			minimal_height 64
+			sub <= head /
+				<= Title $mol_view
+					dom_name \h1
+					sub /
+						<= title
+				<= Tools $mol_view
+					sub <= tools /$mol_view_content
+		<= Body $mol_scroll
+			scroll_top?val <=> body_scroll_top?val 0
+			sub <= body /$mol_view_content
+		<= Foot $mol_view
+			sub <= foot /$mol_view
 
 $mol_svg $mol_view
 	dom_name \svg
@@ -78,6 +86,31 @@ $mol_icon $mol_svg_root
 	sub /
 		<= Path $mol_svg_path
 			geometry <= path \
+
+$mol_icon_cross $mol_icon path \M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z
+
+$mol_book2_catalog $mol_book2
+	param \
+	spreads *
+	Spread $mol_view
+	pages /
+		<= Menu $mol_page
+			title <= menu_title \
+			tools <= menu_tools /
+			body /
+				<= Links $mol_list
+					rows <= links /
+	Link!id $mol_link
+		arg <= arg!id *
+		sub /
+			<= spread_title!id \
+	Spread_close $mol_link
+		arg <= spread_close_arg *
+		sub /
+			<= Spread_close_icon $mol_icon_cross
+
+$mol_theme_auto $mol_plugin
+	attr * mol_theme <= theme \
 
 $mol_icon_github_circle $mol_icon path \M12,2C6.48,2 2,6.48 2,12C2,16.42 4.87,20.17 8.84,21.5C9.34,21.58 9.5,21.27 9.5,21C9.5,20.77 9.5,20.14 9.5,19.31C6.73,19.91 6.14,17.97 6.14,17.97C5.68,16.81 5.03,16.5 5.03,16.5C4.12,15.88 5.1,15.9 5.1,15.9C6.1,15.97 6.63,16.93 6.63,16.93C7.5,18.45 8.97,18 9.54,17.76C9.63,17.11 9.89,16.67 10.17,16.42C7.95,16.17 5.62,15.31 5.62,11.5C5.62,10.39 6,9.5 6.65,8.79C6.55,8.54 6.2,7.5 6.75,6.15C6.75,6.15 7.59,5.88 9.5,7.17C10.29,6.95 11.15,6.84 12,6.84C12.85,6.84 13.71,6.95 14.5,7.17C16.41,5.88 17.25,6.15 17.25,6.15C17.8,7.5 17.45,8.54 17.35,8.79C18,9.5 18.38,10.39 18.38,11.5C18.38,15.32 16.04,16.16 13.81,16.41C14.17,16.72 14.5,17.33 14.5,18.26C14.5,19.6 14.5,20.68 14.5,21C14.5,21.27 14.66,21.59 15.17,21.5C19.14,20.16 22,16.42 22,12C22,6.48 17.52,2 12,2Z
 
@@ -140,19 +173,6 @@ $mol_lights_toggle $mol_check_icon
 	Icon <= Lights_icon $mol_icon_brightness_6
 	hint @ \Toggle lights
 	checked?val <=> lights?val false
-
-$mol_list $mol_view
-	render_visible_only true
-	render_over 0
-	sub <= rows /$mol_view
-	Empty $mol_view
-	Gap_before $mol_view style * paddingTop <= gap_before 0
-	Gap_after $mol_view style * paddingTop <= gap_after 0
-	view_window /
-		0
-		0
-
-$mol_icon_cross $mol_icon path \M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z
 
 $mol_paragraph $mol_view
 	line_height 24
@@ -367,6 +387,622 @@ $mol_text_image $mol_view
 	sub /
 		<= title?val \
 
+$mol_icon_plus $mol_icon path \M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z
+
+$mol_pop $mol_view
+	event * keydown?event <=> keydown?event null
+	showed?val false
+	align_vert \
+	align_hor \
+	sub /
+		<= Anchor null
+	sub_visible /
+		<= Anchor
+		<= Bubble $mol_pop_bubble
+			align <= align \bottom_center
+			content <= bubble_content /$mol_view_content
+			height_max <= height_max 9999
+
+$mol_pop_bubble $mol_scroll
+	sub <= content /$mol_view_content
+	style *
+		^
+		maxHeight <= height_max 9999
+	attr *
+		^
+		mol_pop_align <= align \
+		tabindex 0
+
+$mol_hotkey $mol_plugin
+	event *
+		^
+		keydown?event <=> keydown?event null
+	key *
+	mod_ctrl false
+	mod_alt false
+	mod_shift false
+
+$mol_nav $mol_plugin
+	cycle?val false
+	-
+	mod_ctrl false
+	mod_shift false
+	mod_alt false
+	-
+	keys_x?val /
+	keys_y?val /
+	-
+	current_x?val null
+	current_y?val null
+	-
+	event_up?event null
+	event_down?event null
+	event_left?event null
+	event_right?event null
+	event *
+		^
+		keydown?event <=> event_key?event null
+
+$mol_string $mol_view
+	dom_name \input
+	enabled true
+	minimal_height 40
+	autocomplete false
+	selection?val /number
+	auto /
+		<= selection_watcher null
+	field *
+		^
+		disabled <= disabled false
+		value <= value_changed?val <=> value?val \
+		placeholder <= hint \ 
+		spellcheck <= spellcheck false
+		autocomplete <= autocomplete_native \
+		selectionEnd <= selection_end 0
+		selectionStart <= selection_start 0
+	attr *
+		^
+		maxlength <= length_max Infinity
+		type <= type?val \text
+	event *
+		^
+		input?event <=> event_change?event null
+		keydown?event <=> event_key_press?event null
+	plugins /
+		<= Submit $mol_hotkey
+			key * enter?event <=> submit?event null
+
+$mol_search $mol_pop
+	query?val \
+	suggests /string
+	plugins /$mol_plugin
+		^
+		<= Hotkey $mol_hotkey
+			key * escape?val <=> clear?val null
+		<= Nav $mol_nav
+			keys_y <= nav_components /$mol_view
+			current_y?component <=> nav_focused?component null
+	showed?val <=> suggests_showed?val false
+	align_hor \right
+	Anchor $mol_view
+		sub <= anchor_content /
+			<= Query $mol_string
+				value?val <=> query?val \
+				hint <= hint @ \Search...
+				submit?event <=> submit?event null
+				enabled <= enabled true
+			<= Clear $mol_button_minor
+				hint @ \Clear
+				click?event <=> clear?event null
+				sub /
+					<= Clear_icon $mol_icon_cross
+	bubble_content /$mol_view_content
+		<= Menu $mol_list
+			rows <= menu_items /$mol_view
+	Suggest!id $mol_button_minor
+		click?event <=> suggest_select!id?event null
+		sub <= suggest_content!id /$mol_view_content
+			<= Suggest_label!id $mol_dimmer
+				haystack <= suggest_label!id \
+				needle <= query?val \
+
+$mol_icon_chevron_left $mol_icon path \M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z
+
+$mol_icon_chevron_right $mol_icon path \M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z
+
+$mol_paginator $mol_view
+	sub /
+		<= Backward $mol_button_minor
+			hint <= backward_hint @ \Назад
+			click?event <=> backward?event null
+			sub / <= Backward_icon $mol_icon_chevron_left
+		<= Value $mol_view sub / <= value?val 0
+		<= Forward $mol_button_minor
+			hint <= forward_hint @ \Вперёд
+			click?event <=> forward?event null
+			sub / <= Forward_icon $mol_icon_chevron_right
+
+$mol_search_jumper $mol_search
+	Root $mol_view
+	Index $mol_paginator
+		value?val <=> index?val 0
+		forward?event => forward?event
+		backward?event => backward?event
+	plugins /
+		^
+		<= Backward $mol_hotkey
+			mod_shift true
+			key * enter?event <=> backward?event
+		<= Forward $mol_hotkey
+			key *
+				enter?event <=> forward?event
+				escape?val <=> escape?val null
+
+$mol_icon_forum $mol_icon path \M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
+
+$mol_icon_forum_outline $mol_icon path \M15,4V11H5.17L4,12.17V4H15M16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12V3C17,2.45 16.55,2 16,2M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
+
+$mol_icon_open_in_new $mol_icon path \M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V12H19V19Z
+
+$mol_frame $mol_scroll
+	dom_name \iframe
+	attr *
+		src <= uri?val \
+		srcdoc <= html null
+		allow <= allow \
+	fullscreen true
+	accelerometer true
+	autoplay true
+	encription true
+	gyroscope true
+	pip true
+
+$mol_chat $mol_link
+	seed \
+	opened false
+	arg * mol_chat \
+	hint <= title
+	sub /
+		<= Icon $mol_icon_forum_outline
+	pages /
+		<= Page $mol_page
+			title <= title @ \Discussion
+			tools /
+				<= Esternal $mol_link
+					uri <= external \
+					sub /
+						<= External_icon $mol_icon_open_in_new
+				<= Close $mol_link
+					arg * mol_chat null
+					sub /
+						<= Close_icon $mol_icon_cross
+			Body <= Embed $mol_frame
+				uri <= embed \
+
+$hyoo_habhub $mol_book2
+	plugins /
+		<= Theme $mol_theme_auto
+	Menu_page $mol_page
+		minimal_width 400
+		title <= menu_title @ \HabHub
+		tools <= tools_root /
+			<= Add $mol_link
+				hint \Add article
+				uri \https://github.com/nin-jin/habhub
+				sub /
+					<= Add_icon $mol_icon_plus
+			<= Source_link $mol_link_source
+				uri \https://github.com/hyoo-ru/habhub.hyoo.ru
+			<= Lights $mol_lights_toggle
+		body /
+			<= Search $mol_search_jumper
+				query?val <=> search?val \
+				Root <= Details_body $mol_view
+			<= Menu $mol_list
+				rows <= menu_rows /
+	Details!id $mol_page
+		minimal_width 600
+		title <= gist_current_title \
+		tools /
+			<= Details_chat!id $mol_chat
+				seed <= chat_seed!id \
+				pages => chat_pages!id
+			<= Created $mol_paragraph
+				title <= gist_current_created \
+			<= Details_link $mol_link_source
+				uri <= details_link \
+			<= Close $mol_link
+				arg <= close_arg *
+					author null
+					repo null
+					article null
+					gist null
+				sub /
+					<= Close_icon $mol_icon_cross
+		body_scroll_top?val <=> details_scroll_top?val 0
+		body /
+			<= Datails_text $mol_text
+				highlight <= search
+				text <= gist_current_content \
+	Menu_row!id $mol_link
+		sub /
+			<= Menu_row_title!id $mol_dimmer
+				needle <= search
+				haystack <= gist_title!id \
+		arg <= gist_arg!id *
+
+$mol_portion_indicator $mol_view
+	style *
+		^
+		width <= width_style \0
+
+$mol_portion $mol_view
+	portion 0
+	sub /
+		<= indicator $mol_portion_indicator
+			width_style <= indicator_width_style \0
+
+$hyoo_slides_page $mol_book2
+	role \
+	contents?val \
+	slide?val 0
+	Placeholder null
+	pages /
+		<= Speaker $mol_page
+			minimal_width 300
+			head <= speaker_tools /
+			body /
+				<= Speaker_content $mol_text
+					uri_base <= uri_base \
+					tokens <= speaker_content /
+		<= Listener $mol_page
+			tools <= tools /
+			minimal_width <= listener_width 600
+			title <= title
+			Head => Listener_head
+			sub /
+				<= Listener_head
+				<= Listener_content $mol_text
+					uri_base <= uri_base \
+					tokens <= listener_content /
+				<= Link $mol_link
+					uri <= uri_page \
+					sub / <= uri_page \
+					minimal_height 24
+				<= Progress $mol_portion
+					portion <= progress 0
+
+$mol_icon_microphone $mol_icon path \M12,2C13.66,2 15,3.34 15,5V11C15,12.66 13.66,14 12,14C10.34,14 9,12.66 9,11V5C9,3.34 10.34,2 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7C7,13.76 9.24,16 12,16C14.76,16 17,13.76 17,11H19Z
+
+$mol_icon_external $mol_icon path \M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z
+
+$mol_touch $mol_plugin
+	start_zoom?val 0
+	start_distance?val 0
+	zoom?val 1
+	action_type?val \
+	action_point?val $mol_vector_2d /
+		NaN
+		NaN
+	-
+	start_pan?val /
+		0
+		0
+	pan?val $mol_vector_2d /
+		0
+		0
+	pointer_center $mol_vector_2d /
+		NaN
+		NaN
+	-
+	start_pos?val null
+	swipe_precision 16
+	-
+	swipe_right?val null
+	swipe_bottom?val null
+	swipe_left?val null
+	swipe_top?val null
+	-
+	swipe_from_right?val null
+	swipe_from_bottom?val null
+	swipe_from_left?val null
+	swipe_from_top?val null
+	-
+	swipe_to_right?val null
+	swipe_to_bottom?val null
+	swipe_to_left?val null
+	swipe_to_top?val null
+	-
+	draw?event null
+	-
+	style *
+		^
+		touch-action \none
+		overscroll-behavior \none
+	-
+	event *
+		^
+		pointerdown?event <=> event_start?event null
+		pointermove?event <=> event_move?event null
+		pointerup?event <=> event_end?event null
+		pointerleave?event <=> event_end?event null
+		wheel?event <=> event_wheel?event null
+		contextmenu?event <=> event_menu?event null
+
+$hyoo_slides $mol_view
+	attr *
+		^
+		hyoo_slides_role <= role \
+	style *
+		^
+		touch-action \none
+	contents?val \
+	Menu $mol_page
+		title \Slides
+		tools <= menu_tools /
+			<= Source_link $mol_link_source
+				uri \https://github.com/hyoo-ru/slides.hyoo.ru
+		body /
+			<= Menu_items $mol_list
+				rows <= menu_items /$mol_view
+	Menu_item!id $mol_link
+		title <= menu_item_title!id \
+		arg * slides <= menu_item_uri!id \
+	menu_options *
+		https://nin-jin.github.io/slides/slides/ \Презентация приложения для проведения презентаций
+		https://nin-jin.github.io/slides/orp/ \Объектное Реактивное Программирование
+		https://nin-jin.github.io/slides/tree/ \Tree - единый AST чтобы править всеми
+		https://nin-jin.github.io/slides/sourcemap/ \Что не так с сорсмапами и как с ними не связываться?
+		https://nin-jin.github.io/slides/virt/ \Автоматическая виртуализация рендеринга произвольной вёрстки
+		https://nin-jin.github.io/slides/css-in-ts/ \Продвинутый CSS-in-TS
+		https://nin-jin.github.io/slides/mol/ \$mol - лучшее средство от геморроя
+		https://nin-jin.github.io/slides/fibers/ \Квантовая механика вычисления на JS
+		https://nin-jin.github.io/slides/testing/ \Фрактальное тестирование
+		https://nin-jin.github.io/slides/consensus/ \Консистентно о Консенсусе
+		https://nin-jin.github.io/slides/absurd/ \Проблема останова лжеца Гёделя и брадобрея Кантора
+	Loader $mol_frame
+		uri <= uri_slides \
+	Page!index $hyoo_slides_page
+		tools <= tools /
+		title <= page_title!index \
+		slide?val <=> page_slide!index?val 0
+		uri_base <= uri_base \
+		role <= role \
+		listener_content <= listener_content!index /
+		speaker_content <= speaker_content!index /
+		progress <= progress!index 0
+		speaker_tools <= speaker_tools /
+			<= Speech_toggle $mol_check_icon
+				Icon <= Speech_toggle_icon $mol_icon_microphone
+				checked?val <=> speech_enabled?val false
+				hint <= speech_toggle_hint @ \Speech contol
+			<= Speech_text $mol_view sub / <= speech_text \
+			<= Paginator $mol_paginator value?val <=> slide?val
+			<= Open_listener $mol_link
+				target \_blank
+				hint <= open_listener_hint @ \Open slides window
+				arg *
+					role \listener
+					slide null
+				sub /
+					<= Open_listener_icon $mol_icon_external
+			<= Lights $mol_lights_toggle
+			<= Close $mol_link
+				arg *
+					slides null
+				sub /
+					<= Close_icon $mol_icon_cross
+	plugins /
+		<= Theme $mol_theme_auto
+		<= Nav $mol_nav
+			keys_y <= slide_keys /
+			keys_x <= slide_keys /
+			current_y?val <=> slide?val 0
+			current_x?val <=> slide?val 0
+		<= Touch $mol_touch
+			swipe_to_left?event <=> event_next?event null
+			swipe_to_right?event <=> event_prev?event null
+		<= Speech_next $mol_speech
+			event_catch?val <=> event_next?val null
+			patterns <= speech_next /
+				\next
+				\forward
+				\дальше
+				\далее
+				\даша
+				\дарья
+				\дай
+				\доля
+				\удали
+				\впер[её]д
+				\период
+				\перевод
+				\следующий слайд
+		<= Speech_next_auto $mol_speech
+			event_catch?val <=> event_next?val null
+			suffix \
+			patterns <= speech_next_auto /
+		<= Speech_slide $mol_speech
+			event_catch?val <=> event_slide?val null
+			patterns <= speech_slide /
+				\number (\d+)
+				\(\d+) slide
+				\номер (\d+)
+				\(\d+) слайд
+		<= Speech_prev $mol_speech
+			event_catch?val <=> event_prev?val null
+			patterns <= speech_prev /
+				\back
+				\назад
+				\назар
+				\надо
+				\предыдущий слайд
+		<= Speech_start $mol_speech
+			event_catch?val <=> event_start?val null
+			patterns <= speech_start /
+				\to beginning
+				\first slide
+				\начало
+				\начала
+				\первый слайд
+				\первый слой
+		<= Speech_end $mol_speech
+			event_catch?val <=> event_end?val null
+			patterns <= speech_end /
+				\to ending
+				\last slide
+				\конец
+				\последний слайд
+		<= Speech_about $mol_speech
+			event_catch?val <=> event_about?val null
+			patterns <= speech_about /
+				\about( \S+?)+
+				\search( \S+?)+
+				\про( \S+?)+
+				\найти( \S+?)+
+				\найди( \S+?)+
+		<= Speech_repeat $mol_speech
+			event_catch?val <=> event_repeat?val null
+			patterns <= speech_repeat /
+				\repeat
+				\повтори
+				\повторите
+		<= Speech_on $mol_speech
+			event_catch?val <=> event_speech_on?val null
+			patterns <= speech_on /
+				\continue
+				\продолжай
+		<= Speech_off $mol_speech
+			event_catch?val <=> event_speech_off?val null
+			patterns <= speech_off /
+				\shut up
+				\hush
+				\замолчи
+				\помолчи
+		<= Lights_toggle $mol_speech
+			event_catch?val <=> event_lights_toggle?val null
+			patterns <= lights_toggle /
+				\lights off
+				\lights on
+				\toggle lights
+				\свет
+				\след
+				\цвет
+		<= Sing $mol_speech
+			event_catch?val <=> event_sing?val null
+			patterns <= sing /
+				\sing( \S+?)*
+				\спой( \S+?)*
+
+$hyoo_apps $mol_book2
+	Placeholder null
+	plugins /
+		<= Theme $mol_theme_auto
+	pages /
+		<= Menu $mol_page
+			title @ \HyOO Apps
+			tools /
+				<= Source $mol_link_source uri \https://github.com/hyoo-ru/apps.hyoo.ru
+				<= Lights $mol_lights_toggle
+			body /
+				<= Menu_items $mol_list
+					rows <= menu_items /$mol_view
+	Menu_item!id $mol_view
+		sub /
+			<= Menu_link_in!id $mol_link
+				title <= app_title!id \
+				arg <= app_arg!id *
+			<= Menu_link_out!id $mol_link_iconed
+				uri <= app_uri_default!id \
+				title \
+	App!id $mol_frame
+		uri?val <=> app_uri_embed!id?val \
+	data *
+		offer *
+			title @ \HyOO Business Offer
+			uri \https://offer.hyoo.ru/
+		mol *
+			title @ \$mol UI Framework
+			uri \https://mol.hyoo.ru/
+		search *
+			title @ \Web Search
+			uri \https://search.hyoo.ru/
+		talks *
+			title @ \Messanger
+			uri \https://talks.hyoo.ru/#!roster/chat=RXV3H2EC
+		draw *
+			title @ \Draw Tool
+			uri \https://draw.hyoo.ru/
+		scout *
+			title @ \Scout Games
+			uri \https://scout.hyoo.ru/
+		piterjs *
+			title @ \PiterJS Meetups
+			uri \https://piterjs.org/
+		fallacy *
+			title @ \Fallacies Collection
+			uri \https://fallacy.hyoo.ru/
+		calc *
+			title @ \Spreadsheet
+			uri \https://calc.hyoo.ru/#title=a*x**2%20%2B%20b*x%20%2B%20c%20%3D%200/A1=a/B2=6/A2=3/B1=b/C1=c/E1=D/E2=%3D%20B2**2%20-%204*A2*C2/G1=x1/G2=%3D%20%28%20-B2%20%2B%20sqrt%28E2%29%20%29%20%2F%202%20%2F%20A2/H1=x2/H2=%3D%20%28%20-B2%20-%20sqrt%28E2%29%20%29%20%2F%202%20%2F%20A2/C2=0
+		notes *
+			title @ \Private Notes
+			uri \https://notes.hyoo.ru/#
+		invest *
+			title @ \Private Investments
+			uri \https://invest.hyoo.ru/
+		life *
+			title @ \Life game
+			uri \https://life.hyoo.ru/
+		habhub *
+			title @ \Articles Reader
+			uri \https://habhub.hyoo.ru/
+		slides *
+			title @ \Slideshow
+			uri \https://slides.hyoo.ru/
+		iq *
+			title @ \IQ Tester
+			uri \https://iq.hyoo.ru/
+		rdf *
+			title @ \RDF Browser
+			uri \http://rdf.hyoo.ru/
+		lamps *
+			title @ \Lamps Database
+			uri \https://lamps.hyoo.ru/
+		bench *
+			title @ \Online Benchmark
+			uri \https://bench.hyoo.ru/#bench=https%3A%2F%2Fhyoo-ru.github.io%2Ftodomvc%2Fbenchmark%2F/sort=fill
+		request *
+			title @ \HTTP Debug Tool
+			uri \https://http.hyoo.ru/#uri=https%3A%2F%2Fapi.github.com%2Frepos%2Fhyoo-ru%2Fmam_mol
+		jsperf *
+			title @ \JS Performance Tool
+			uri \https://perf.js.hyoo.ru/#sources=%5B%22window.location.href%3B%22%2C%22document.location.href%3B%22%5D/prefix/postfix/optimized=true
+		issues *
+			title @ \GitHub Projects Comparison
+			uri \https://compare.github.hyoo.ru/#projects=hyoo-ru%2Fmam_mol%2Cfacebook%2Freact%2Cvuejs%2Fvue
+		tree *
+			title @ \Tree Sandbox
+			uri \https://tree.hyoo.ru/
+		icons *
+			title @ \Icons Gallery
+			uri \https://nin-jin.github.io/mol_icon/
+		todomvc *
+			title @ \ToDoMVC
+			uri \https://todomvc.hyoo.ru/
+		questions *
+			title @ \StackOverflow Client
+			uri \https://mol.js.org/app/questions/-/
+		shelter *
+			title @ \Shelters ERP
+			uri \https://shelter.hyoo.ru/#login=user
+		mail *
+			title @ \Universal EMail client
+			uri \https://mail.hyoo.ru/#!folder=inbox/mail=qwe
+		toys *
+			title @ \Online Toys Store
+			uri \https://toys.hyoo.ru/#size=M/popular
+
 $mol_card $mol_list
 	attr *
 		^
@@ -442,44 +1078,6 @@ $mol_attach_demo $mol_demo_small
 
 $mol_bar $mol_view
 
-$mol_hotkey $mol_plugin
-	event *
-		^
-		keydown?event <=> keydown?event null
-	key *
-	mod_ctrl false
-	mod_alt false
-	mod_shift false
-
-$mol_string $mol_view
-	dom_name \input
-	enabled true
-	minimal_height 40
-	autocomplete false
-	selection?val /number
-	auto /
-		<= selection_watcher null
-	field *
-		^
-		disabled <= disabled false
-		value <= value_changed?val <=> value?val \
-		placeholder <= hint \ 
-		spellcheck <= spellcheck false
-		autocomplete <= autocomplete_native \
-		selectionEnd <= selection_end 0
-		selectionStart <= selection_start 0
-	attr *
-		^
-		maxlength <= length_max Infinity
-		type <= type?val \text
-	event *
-		^
-		input?event <=> event_change?event null
-		keydown?event <=> event_key_press?event null
-	plugins /
-		<= Submit $mol_hotkey
-			key * enter?event <=> submit?event null
-
 $mol_icon_tick $mol_icon path \M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z
 
 $mol_check_box $mol_check
@@ -509,17 +1107,6 @@ $mol_bar_demo $mol_demo_small
 $mol_icon_sort $mol_icon path \M10,13V11H18V13H10M10,19V17H14V19H10M10,7V5H22V7H10M6,17H8.5L5,20.5L1.5,17H4V7H1.5L5,3.5L8.5,7H6V17Z
 
 $mol_icon_sort_asc $mol_icon path \M10,11V13H18V11H10M10,5V7H14V5H10M10,17V19H22V17H10M6,7H8.5L5,3.5L1.5,7H4V20H6V7Z
-
-$mol_portion_indicator $mol_view
-	style *
-		^
-		width <= width_style \0
-
-$mol_portion $mol_view
-	portion 0
-	sub /
-		<= indicator $mol_portion_indicator
-			width_style <= indicator_width_style \0
 
 $mol_bench $mol_grid
 	records <= result *
@@ -565,6 +1152,26 @@ $mol_book2_demo $mol_demo_large
 				sub / \ Second
 			<= Third $mol_view
 				sub / \ Third
+
+$mol_book2_catalog_demo $mol_demo_large
+	title \Catalog of pages
+	sub /
+		<= Calatog $mol_book2_catalog
+			param \mol_book2_catalog_demo
+			menu_title \Sections
+			spreads *
+				articles <= Articles $mol_page
+					title \Articles
+					body /
+						\Articles content
+				images <= Images $mol_page
+					title \Images
+					body /
+						\Images content
+				maps <= Maps $mol_page
+					title \Maps
+					body /
+						\Maps content
 
 $mol_button_major $mol_button_typed
 	attr *
@@ -767,59 +1374,6 @@ $mol_chart_legend $mol_scroll
 			<= Graph_title!id $mol_view
 				sub /
 					<= graph_title!id \
-
-$mol_touch $mol_plugin
-	start_zoom?val 0
-	start_distance?val 0
-	zoom?val 1
-	action_type?val \
-	action_point?val $mol_vector_2d /
-		NaN
-		NaN
-	-
-	start_pan?val /
-		0
-		0
-	pan?val $mol_vector_2d /
-		0
-		0
-	pointer_center $mol_vector_2d /
-		NaN
-		NaN
-	-
-	start_pos?val null
-	swipe_precision 16
-	-
-	swipe_right?val null
-	swipe_bottom?val null
-	swipe_left?val null
-	swipe_top?val null
-	-
-	swipe_from_right?val null
-	swipe_from_bottom?val null
-	swipe_from_left?val null
-	swipe_from_top?val null
-	-
-	swipe_to_right?val null
-	swipe_to_bottom?val null
-	swipe_to_left?val null
-	swipe_to_top?val null
-	-
-	draw?event null
-	-
-	style *
-		^
-		touch-action \none
-		overscroll-behavior \none
-	-
-	event *
-		^
-		pointerdown?event <=> event_start?event null
-		pointermove?event <=> event_move?event null
-		pointerup?event <=> event_end?event null
-		pointerleave?event <=> event_end?event null
-		wheel?event <=> event_wheel?event null
-		contextmenu?event <=> event_menu?event null
 
 $mol_plot_pane $mol_svg_root
 	aspect \none
@@ -1203,47 +1757,6 @@ $mol_chart_demo_forces $mol_demo_large
 						<= Forces_left
 						<= Forces_right
 
-$mol_icon_forum $mol_icon path \M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
-
-$mol_icon_forum_outline $mol_icon path \M15,4V11H5.17L4,12.17V4H15M16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12V3C17,2.45 16.55,2 16,2M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
-
-$mol_icon_open_in_new $mol_icon path \M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V12H19V19Z
-
-$mol_frame $mol_scroll
-	dom_name \iframe
-	attr *
-		src <= uri?val \
-		srcdoc <= html null
-		allow <= allow \
-	fullscreen true
-	accelerometer true
-	autoplay true
-	encription true
-	gyroscope true
-	pip true
-
-$mol_chat $mol_link
-	seed \
-	opened false
-	arg * mol_chat \
-	hint <= title
-	sub /
-		<= Icon $mol_icon_forum_outline
-	pages /
-		<= Page $mol_page
-			title <= title @ \Discussion
-			tools /
-				<= Esternal $mol_link
-					uri <= external \
-					sub /
-						<= External_icon $mol_icon_open_in_new
-				<= Close $mol_link
-					arg * mol_chat null
-					sub /
-						<= Close_icon $mol_icon_cross
-			Body <= Embed $mol_frame
-				uri <= embed \
-
 $mol_chat_demo $mol_view
 	title @ \Feed of comments for this page
 	sub /
@@ -1344,8 +1857,6 @@ $mol_check_group_demo $mol_list
 				title <= luck_title \Luck
 				checked?val <=> luck?val true
 
-$mol_icon_microphone $mol_icon path \M12,2C13.66,2 15,3.34 15,5V11C15,12.66 13.66,14 12,14C10.34,14 9,12.66 9,11V5C9,3.34 10.34,2 12,2M19,11C19,14.53 16.39,17.44 13,17.93V21H11V17.93C7.61,17.44 5,14.53 5,11H7C7,13.76 9.24,16 12,16C14.76,16 17,13.76 17,11H19Z
-
 $mol_check_icon_demo $mol_list
 	title @ \Iconic checkboxes in various states
 	rows /
@@ -1361,85 +1872,6 @@ $mol_check_icon_demo $mol_list
 			Icon <= Disabled_icon $mol_icon_microphone
 			checked true
 			enabled false
-
-$mol_pop $mol_view
-	event * keydown?event <=> keydown?event null
-	showed?val false
-	align_vert \
-	align_hor \
-	sub /
-		<= Anchor null
-	sub_visible /
-		<= Anchor
-		<= Bubble $mol_pop_bubble
-			align <= align \bottom_center
-			content <= bubble_content /$mol_view_content
-			height_max <= height_max 9999
-
-$mol_pop_bubble $mol_scroll
-	sub <= content /$mol_view_content
-	style *
-		^
-		maxHeight <= height_max 9999
-	attr *
-		^
-		mol_pop_align <= align \
-		tabindex 0
-
-$mol_nav $mol_plugin
-	cycle?val false
-	-
-	mod_ctrl false
-	mod_shift false
-	mod_alt false
-	-
-	keys_x?val /
-	keys_y?val /
-	-
-	current_x?val null
-	current_y?val null
-	-
-	event_up?event null
-	event_down?event null
-	event_left?event null
-	event_right?event null
-	event *
-		^
-		keydown?event <=> event_key?event null
-
-$mol_search $mol_pop
-	query?val \
-	suggests /string
-	plugins /$mol_plugin
-		^
-		<= Hotkey $mol_hotkey
-			key * escape?val <=> clear?val null
-		<= Nav $mol_nav
-			keys_y <= nav_components /$mol_view
-			current_y?component <=> nav_focused?component null
-	showed?val <=> suggests_showed?val false
-	align_hor \right
-	Anchor $mol_view
-		sub <= anchor_content /
-			<= Query $mol_string
-				value?val <=> query?val \
-				hint <= hint @ \Search...
-				submit?event <=> submit?event null
-				enabled <= enabled true
-			<= Clear $mol_button_minor
-				hint @ \Clear
-				click?event <=> clear?event null
-				sub /
-					<= Clear_icon $mol_icon_cross
-	bubble_content /$mol_view_content
-		<= Menu $mol_list
-			rows <= menu_items /$mol_view
-	Suggest!id $mol_button_minor
-		click?event <=> suggest_select!id?event null
-		sub <= suggest_content!id /$mol_view_content
-			<= Suggest_label!id $mol_dimmer
-				haystack <= suggest_label!id \
-				needle <= query?val \
 
 $mol_code $mol_view
 	sub /
@@ -1483,10 +1915,6 @@ $mol_pick $mol_pop
 		hint <= hint \
 
 $mol_icon_calendar $mol_icon path \M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3H18V1M17,12H12V17H17V12Z
-
-$mol_icon_chevron_left $mol_icon path \M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z
-
-$mol_icon_chevron_right $mol_icon path \M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z
 
 $mol_date $mol_pick
 	Icon $mol_icon_calendar
@@ -2048,8 +2476,6 @@ $mol_nav_demo $mol_list
 
 $mol_icon_minus $mol_icon path \M19,13H5V11H19V13Z
 
-$mol_icon_plus $mol_icon path \M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z
-
 $mol_number $mol_view
 	precision_view <= precision 1
 	precision_change <= precision 1
@@ -2115,18 +2541,6 @@ $mol_page_demo $mol_demo_large
 					sub /
 						<= Button_foot $mol_button_minor
 							title \Footer Button
-
-$mol_paginator $mol_view
-	sub /
-		<= Backward $mol_button_minor
-			hint <= backward_hint @ \Назад
-			click?event <=> backward?event null
-			sub / <= Backward_icon $mol_icon_chevron_left
-		<= Value $mol_view sub / <= value?val 0
-		<= Forward $mol_button_minor
-			hint <= forward_hint @ \Вперёд
-			click?event <=> forward?event null
-			sub / <= Forward_icon $mol_icon_chevron_right
 
 $mol_paginator_demo $mol_view
 	title @ \Page switcher
@@ -2965,433 +3379,38 @@ $hyoo_tree $mol_book2
 					render_visible_only false
 					text <= result_text null
 
-$mol_search_jumper $mol_search
-	Root $mol_view
-	Index $mol_paginator
-		value?val <=> index?val 0
-		forward?event => forward?event
-		backward?event => backward?event
-	plugins /
-		^
-		<= Backward $mol_hotkey
-			mod_shift true
-			key * enter?event <=> backward?event
-		<= Forward $mol_hotkey
-			key *
-				enter?event <=> forward?event
-				escape?val <=> escape?val null
-
-$hyoo_habhub $mol_book2
-	plugins /
-		<= Theme $mol_theme_auto
-	Menu_page $mol_page
-		minimal_width 400
-		title <= menu_title @ \HabHub
-		tools <= tools_root /
-			<= Add $mol_link
-				hint \Add article
-				uri \https://github.com/nin-jin/habhub
-				sub /
-					<= Add_icon $mol_icon_plus
-			<= Source_link $mol_link_source
-				uri \https://github.com/hyoo-ru/habhub.hyoo.ru
-			<= Lights $mol_lights_toggle
-		body /
-			<= Search $mol_search_jumper
-				query?val <=> search?val \
-				Root <= Details_body $mol_view
-			<= Menu $mol_list
-				rows <= menu_rows /
-	Details!id $mol_page
-		minimal_width 600
-		title <= gist_current_title \
-		tools /
-			<= Details_chat!id $mol_chat
-				seed <= chat_seed!id \
-				pages => chat_pages!id
-			<= Created $mol_paragraph
-				title <= gist_current_created \
-			<= Details_link $mol_link_source
-				uri <= details_link \
-			<= Close $mol_link
-				arg <= close_arg *
-					author null
-					repo null
-					article null
-					gist null
-				sub /
-					<= Close_icon $mol_icon_cross
-		body_scroll_top?val <=> details_scroll_top?val 0
-		body /
-			<= Datails_text $mol_text
-				highlight <= search
-				text <= gist_current_content \
-	Menu_row!id $mol_link
-		sub /
-			<= Menu_row_title!id $mol_dimmer
-				needle <= search
-				haystack <= gist_title!id \
-		arg <= gist_arg!id *
-
-$hyoo_apps $mol_book2
-	Placeholder null
-	plugins /
-		<= Theme $mol_theme_auto
-	pages /
-		<= Menu $mol_page
-			title @ \HyOO Apps
-			tools /
-				<= Source $mol_link_source uri \https://github.com/hyoo-ru/apps.hyoo.ru
-				<= Lights $mol_lights_toggle
-			body /
-				<= Menu_items $mol_list
-					rows <= menu_items /$mol_view
-	Menu_item!id $mol_view
-		sub /
-			<= Menu_link_in!id $mol_link
-				title <= app_title!id \
-				arg <= app_arg!id *
-			<= Menu_link_out!id $mol_link_iconed
-				uri <= app_uri_default!id \
-				title \
-	App!id $mol_frame
-		uri?val <=> app_uri_embed!id?val \
-	data *
-		offer *
-			title @ \HyOO Business Offer
-			uri \https://offer.hyoo.ru/
-		mol *
-			title @ \$mol UI Framework
-			uri \https://mol.hyoo.ru/
-		search *
-			title @ \Web Search
-			uri \https://search.hyoo.ru/
-		talks *
-			title @ \Messanger
-			uri \https://talks.hyoo.ru/#!roster/chat=RXV3H2EC
-		draw *
-			title @ \Draw Tool
-			uri \https://draw.hyoo.ru/
-		scout *
-			title @ \Scout Games
-			uri \https://scout.hyoo.ru/
-		piterjs *
-			title @ \PiterJS Meetups
-			uri \https://piterjs.org/
-		fallacy *
-			title @ \Fallacies Collection
-			uri \https://fallacy.hyoo.ru/
-		calc *
-			title @ \Spreadsheet
-			uri \https://calc.hyoo.ru/#title=a*x**2%20%2B%20b*x%20%2B%20c%20%3D%200/A1=a/B2=6/A2=3/B1=b/C1=c/E1=D/E2=%3D%20B2**2%20-%204*A2*C2/G1=x1/G2=%3D%20%28%20-B2%20%2B%20sqrt%28E2%29%20%29%20%2F%202%20%2F%20A2/H1=x2/H2=%3D%20%28%20-B2%20-%20sqrt%28E2%29%20%29%20%2F%202%20%2F%20A2/C2=0
-		notes *
-			title @ \Private Notes
-			uri \https://notes.hyoo.ru/#
-		invest *
-			title @ \Private Investments
-			uri \https://invest.hyoo.ru/
-		life *
-			title @ \Life game
-			uri \https://life.hyoo.ru/
-		habhub *
-			title @ \Articles Reader
-			uri \https://habhub.hyoo.ru/
-		slides *
-			title @ \Slideshow
-			uri \https://slides.hyoo.ru/
-		iq *
-			title @ \IQ Tester
-			uri \https://iq.hyoo.ru/
-		rdf *
-			title @ \RDF Browser
-			uri \http://rdf.hyoo.ru/
-		lamps *
-			title @ \Lamps Database
-			uri \https://lamps.hyoo.ru/
-		bench *
-			title @ \Online Benchmark
-			uri \https://bench.hyoo.ru/#bench=https%3A%2F%2Fhyoo-ru.github.io%2Ftodomvc%2Fbenchmark%2F/sort=fill
-		request *
-			title @ \HTTP Debug Tool
-			uri \https://http.hyoo.ru/#uri=https%3A%2F%2Fapi.github.com%2Frepos%2Fhyoo-ru%2Fmam_mol
-		jsperf *
-			title @ \JS Performance Tool
-			uri \https://perf.js.hyoo.ru/#sources=%5B%22window.location.href%3B%22%2C%22document.location.href%3B%22%5D/prefix/postfix/optimized=true
-		issues *
-			title @ \GitHub Projects Comparison
-			uri \https://compare.github.hyoo.ru/#projects=hyoo-ru%2Fmam_mol%2Cfacebook%2Freact%2Cvuejs%2Fvue
-		tree *
-			title @ \Tree Sandbox
-			uri \https://tree.hyoo.ru/
-		icons *
-			title @ \Icons Gallery
-			uri \https://nin-jin.github.io/mol_icon/
-		todomvc *
-			title @ \ToDoMVC
-			uri \https://todomvc.hyoo.ru/
-		questions *
-			title @ \StackOverflow Client
-			uri \https://mol.js.org/app/questions/-/
-		shelter *
-			title @ \Shelters ERP
-			uri \https://shelter.hyoo.ru/#login=user
-		mail *
-			title @ \Universal EMail client
-			uri \https://mail.hyoo.ru/#!folder=inbox/mail=qwe
-		toys *
-			title @ \Online Toys Store
-			uri \https://toys.hyoo.ru/#size=M/popular
-
-$hyoo_slides_page $mol_book2
-	role \
-	contents?val \
-	slide?val 0
-	Placeholder null
-	pages /
-		<= Speaker $mol_page
-			minimal_width 300
-			head <= speaker_tools /
-			body /
-				<= Speaker_content $mol_text
-					uri_base <= uri_base \
-					tokens <= speaker_content /
-		<= Listener $mol_page
-			tools <= tools /
-			minimal_width <= listener_width 600
-			title <= title
-			Head => Listener_head
-			sub /
-				<= Listener_head
-				<= Listener_content $mol_text
-					uri_base <= uri_base \
-					tokens <= listener_content /
-				<= Link $mol_link
-					uri <= uri_page \
-					sub / <= uri_page \
-					minimal_height 24
-				<= Progress $mol_portion
-					portion <= progress 0
-
-$mol_icon_external $mol_icon path \M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z
-
-$hyoo_slides $mol_view
-	attr *
-		^
-		hyoo_slides_role <= role \
-	style *
-		^
-		touch-action \none
-	contents?val \
-	Menu $mol_page
-		title \Slides
-		tools <= menu_tools /
-			<= Source_link $mol_link_source
-				uri \https://github.com/hyoo-ru/slides.hyoo.ru
-		body /
-			<= Menu_items $mol_list
-				rows <= menu_items /$mol_view
-	Menu_item!id $mol_link
-		title <= menu_item_title!id \
-		arg * slides <= menu_item_uri!id \
-	menu_options *
-		https://nin-jin.github.io/slides/slides/ \Презентация приложения для проведения презентаций
-		https://nin-jin.github.io/slides/orp/ \Объектное Реактивное Программирование
-		https://nin-jin.github.io/slides/tree/ \Tree - единый AST чтобы править всеми
-		https://nin-jin.github.io/slides/sourcemap/ \Что не так с сорсмапами и как с ними не связываться?
-		https://nin-jin.github.io/slides/virt/ \Автоматическая виртуализация рендеринга произвольной вёрстки
-		https://nin-jin.github.io/slides/css-in-ts/ \Продвинутый CSS-in-TS
-		https://nin-jin.github.io/slides/mol/ \$mol - лучшее средство от геморроя
-		https://nin-jin.github.io/slides/fibers/ \Квантовая механика вычисления на JS
-		https://nin-jin.github.io/slides/testing/ \Фрактальное тестирование
-		https://nin-jin.github.io/slides/consensus/ \Консистентно о Консенсусе
-		https://nin-jin.github.io/slides/absurd/ \Проблема останова лжеца Гёделя и брадобрея Кантора
-	Loader $mol_frame
-		uri <= uri_slides \
-	Page!index $hyoo_slides_page
-		tools <= tools /
-		title <= page_title!index \
-		slide?val <=> page_slide!index?val 0
-		uri_base <= uri_base \
-		role <= role \
-		listener_content <= listener_content!index /
-		speaker_content <= speaker_content!index /
-		progress <= progress!index 0
-		speaker_tools <= speaker_tools /
-			<= Speech_toggle $mol_check_icon
-				Icon <= Speech_toggle_icon $mol_icon_microphone
-				checked?val <=> speech_enabled?val false
-				hint <= speech_toggle_hint @ \Speech contol
-			<= Speech_text $mol_view sub / <= speech_text \
-			<= Paginator $mol_paginator value?val <=> slide?val
-			<= Open_listener $mol_link
-				target \_blank
-				hint <= open_listener_hint @ \Open slides window
-				arg *
-					role \listener
-					slide null
-				sub /
-					<= Open_listener_icon $mol_icon_external
-			<= Lights $mol_lights_toggle
-			<= Close $mol_link
-				arg *
-					slides null
-				sub /
-					<= Close_icon $mol_icon_cross
-	plugins /
-		<= Theme $mol_theme_auto
-		<= Nav $mol_nav
-			keys_y <= slide_keys /
-			keys_x <= slide_keys /
-			current_y?val <=> slide?val 0
-			current_x?val <=> slide?val 0
-		<= Touch $mol_touch
-			swipe_to_left?event <=> event_next?event null
-			swipe_to_right?event <=> event_prev?event null
-		<= Speech_next $mol_speech
-			event_catch?val <=> event_next?val null
-			patterns <= speech_next /
-				\next
-				\forward
-				\дальше
-				\далее
-				\даша
-				\дарья
-				\дай
-				\доля
-				\удали
-				\впер[её]д
-				\период
-				\перевод
-				\следующий слайд
-		<= Speech_next_auto $mol_speech
-			event_catch?val <=> event_next?val null
-			suffix \
-			patterns <= speech_next_auto /
-		<= Speech_slide $mol_speech
-			event_catch?val <=> event_slide?val null
-			patterns <= speech_slide /
-				\number (\d+)
-				\(\d+) slide
-				\номер (\d+)
-				\(\d+) слайд
-		<= Speech_prev $mol_speech
-			event_catch?val <=> event_prev?val null
-			patterns <= speech_prev /
-				\back
-				\назад
-				\назар
-				\надо
-				\предыдущий слайд
-		<= Speech_start $mol_speech
-			event_catch?val <=> event_start?val null
-			patterns <= speech_start /
-				\to beginning
-				\first slide
-				\начало
-				\начала
-				\первый слайд
-				\первый слой
-		<= Speech_end $mol_speech
-			event_catch?val <=> event_end?val null
-			patterns <= speech_end /
-				\to ending
-				\last slide
-				\конец
-				\последний слайд
-		<= Speech_about $mol_speech
-			event_catch?val <=> event_about?val null
-			patterns <= speech_about /
-				\about( \S+?)+
-				\search( \S+?)+
-				\про( \S+?)+
-				\найти( \S+?)+
-				\найди( \S+?)+
-		<= Speech_repeat $mol_speech
-			event_catch?val <=> event_repeat?val null
-			patterns <= speech_repeat /
-				\repeat
-				\повтори
-				\повторите
-		<= Speech_on $mol_speech
-			event_catch?val <=> event_speech_on?val null
-			patterns <= speech_on /
-				\continue
-				\продолжай
-		<= Speech_off $mol_speech
-			event_catch?val <=> event_speech_off?val null
-			patterns <= speech_off /
-				\shut up
-				\hush
-				\замолчи
-				\помолчи
-		<= Lights_toggle $mol_speech
-			event_catch?val <=> event_lights_toggle?val null
-			patterns <= lights_toggle /
-				\lights off
-				\lights on
-				\toggle lights
-				\свет
-				\след
-				\цвет
-		<= Sing $mol_speech
-			event_catch?val <=> event_sing?val null
-			patterns <= sing /
-				\sing( \S+?)*
-				\спой( \S+?)*
-
-$hyoo_mol $mol_book2
+$hyoo_mol $mol_book2_catalog
 	plugins /
 		<= Theme $mol_theme_auto
 	Placeholder null
-	Menu $mol_page
-		tools <= tools_root /
-			<= Sources $mol_link_source
-				uri \https://github.com/hyoo-ru/mol.hyoo.ru
-			<= Lights $mol_lights_toggle
-		title <= menu_title @ \$mol framework
-		body /
-			<= Menu_links $mol_list rows /
-				<= Main_link $mol_link
-					title <= main_title @ \Introduction
-					arg * section \main
-				<= Articles_link $mol_link
-					title <= articles_title @ \Articles
-					arg * section \articles
-				<= Slides_link $mol_link
-					title <= slides_title @ \Slides
-					arg * section \slides
-				<= Apps_link $mol_link
-					title <= apps_title @ \Applications
-					arg *
-						section \apps
-						app null
-				<= Components_link $mol_link
-					title <= components_title @ \Components
-					arg * section \components
-				<= View_tree_link $mol_link
-					title <= view_tree_title @ \View.Tree Sandbox
-					arg *
-						section \view.tree
-						pipeline null
-						source null
-				<= Icons_link $mol_link
-					title <= icons_title @ \Icons
-					arg * section \icons
-	Close_app $mol_link
-		arg * section null
-		sub / <= Close_app_icon $mol_icon_cross
-	pages /
-		<= Main $mol_page
-			title <= main_title
-			tools / <= Close_app
+	menu_title @ \$mol framework
+	menu_tools <= tools_root /
+		<= Sources $mol_link_source
+			uri \https://github.com/hyoo-ru/mol.hyoo.ru
+		<= Lights $mol_lights_toggle
+	param \section
+	spreads *
+		main <= Main $mol_page
+			title @ \Introduction
+			tools / <= Spread_close
 			body /
 				<= Description $mol_text
 					text <= description \
 					uri_base <= sources_uri \https://github.com/hyoo-ru/mam_mol/tree/master/
-		<= Components_app $mol_app_demo
-		<= View_tree_app $hyoo_tree
+		articles <= Articles $hyoo_habhub
+			menu_title @ \Articles
+			tools_root / <= Spread_close
+		slides <= Slides $hyoo_slides
+			title @ \Slides
+			menu_tools / <= Spread_close
+		apps <= Apps $hyoo_apps
+			title @ \Applications
+		components <= Components $mol_app_demo
+			title @ \Components
+		view.tree <= View_tree $hyoo_tree
+			title @ \View.Tree Sandbox
 			Presets null
-			source_tools / <= Close_app
+			source_tools / <= Spread_close
 			pipeline_default <= tree_pipeline /
 				\$mol_tree2_from_string
 				\$mol_view_tree2_to_text
@@ -3406,11 +3425,6 @@ $hyoo_mol $mol_book2
 				\			value?val <=> info_value?val NaN
 				\			kids <= info_kids /$mol_view_content
 				\
-		<= Articles_app $hyoo_habhub
-			menu_title <= articles_title
-			tools_root / <= Close_app
-		<= Apps_app $hyoo_apps
-		<= Icons_app $mol_frame
+		icons <= Icons $mol_frame
+			title @ \Icons
 			uri \https://nin-jin.github.io/mol_icon/
-		<= Slides_app $hyoo_slides
-			menu_tools / <= Close_app
