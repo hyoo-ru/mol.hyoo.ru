@@ -30591,7 +30591,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("hyoo/mol/mol.view.css", "[hyoo_mol_menu] {\n\tflex: 0 0 16rem;\n}\n\n[hyoo_mol_main] {\n\tflex: 0 0 60rem;\n}\n\n[hyoo_mol_slides] {\n\tflex: 1000 0 80rem;\n}\n\n[hyoo_mol_view_tree] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_mol_icons] {\n\tflex: 1000 0 40rem;\n}\n");
+    $.$mol_style_attach("hyoo/mol/mol.view.css", "[hyoo_mol_menu] {\n\tflex: 0 0 16rem;\n}\n\n[hyoo_mol_main] {\n\tflex: 0 0 60rem;\n}\n\n[hyoo_mol_description] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_mol_slides] {\n\tflex: 1000 0 80rem;\n}\n\n[hyoo_mol_view_tree] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_mol_icons] {\n\tflex: 1000 0 40rem;\n}\n");
 })($ || ($ = {}));
 //mol.view.css.js.map
 ;
