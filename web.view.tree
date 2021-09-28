@@ -583,7 +583,6 @@ $hyoo_habhub $mol_book2
 	plugins /
 		<= Theme $mol_theme_auto
 	Menu_page $mol_page
-		minimal_width 400
 		title <= menu_title @ \HabHub
 		tools <= tools_root /
 			<= Add $mol_link
@@ -601,7 +600,6 @@ $hyoo_habhub $mol_book2
 			<= Menu $mol_list
 				rows <= menu_rows /
 	Details!id $mol_page
-		minimal_width 600
 		title <= gist_current_title \
 		tools /
 			<= Details_chat!id $mol_chat

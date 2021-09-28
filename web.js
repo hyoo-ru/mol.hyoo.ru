@@ -8540,7 +8540,6 @@ var $;
         }
         Menu_page() {
             const obj = new this.$.$mol_page();
-            obj.minimal_width = () => 400;
             obj.title = () => this.menu_title();
             obj.tools = () => this.tools_root();
             obj.body = () => [
@@ -8551,7 +8550,6 @@ var $;
         }
         Details(id) {
             const obj = new this.$.$mol_page();
-            obj.minimal_width = () => 600;
             obj.title = () => this.gist_current_title();
             obj.tools = () => [
                 this.Details_chat(id),
