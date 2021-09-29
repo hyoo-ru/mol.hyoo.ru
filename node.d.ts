@@ -5597,6 +5597,12 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_icon_download extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
     class $mol_link_demo extends $mol_list {
         title(): string;
         rows(): readonly any[];
@@ -5610,6 +5616,16 @@ declare namespace $ {
         Blue(): $$.$mol_link;
         external_hint(): string;
         External(): $$.$mol_link;
+        object_uri(): string;
+        Download_icon(): $mol_icon_download;
+        download_label(): string;
+        Download(): $$.$mol_link;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_link_demo extends $.$mol_link_demo {
+        object_uri(): string;
     }
 }
 
