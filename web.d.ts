@@ -4086,6 +4086,7 @@ declare namespace $.$$ {
 declare namespace $ {
     class $mol_chart_legend extends $mol_scroll {
         graphs(): readonly $mol_plot_graph[];
+        graphs_front(): readonly $mol_plot_graph[];
         sub(): readonly $mol_view[];
         Graph_legend(id: any): $mol_view;
         graph_legends(): readonly $mol_view[];
@@ -4101,8 +4102,8 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_chart_legend extends $.$mol_chart_legend {
-        graphs_front(): $.$mol_plot_graph[];
-        graph_legends(): $mol_view[];
+        graphs_front(): readonly $mol_plot_graph[];
+        graph_legends(): readonly $mol_view[];
         graph_title(index: number): string;
         Graph_sample(index: number): any;
     }
