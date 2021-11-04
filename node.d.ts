@@ -2041,6 +2041,7 @@ declare namespace $ {
         type(val?: any): string;
         link(val?: any): string;
         title(val?: any): string;
+        Image(): $mol_image;
     }
 }
 
@@ -3209,6 +3210,7 @@ declare namespace $ {
         Menu_item(id: any): $$.$mol_link;
         menu_options(): {
             "https://nin-jin.github.io/slides/slides/": string;
+            "https://nin-jin.github.io/slides/reactivity/": string;
             "https://nin-jin.github.io/slides/orp/": string;
             "https://nin-jin.github.io/slides/tree/": string;
             "https://nin-jin.github.io/slides/sourcemap/": string;
