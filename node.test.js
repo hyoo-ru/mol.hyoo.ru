@@ -24706,6 +24706,7 @@ var $;
         }
         Pick() {
             const obj = new this.$.$mol_select();
+            obj.align_hor = () => this.align_hor();
             obj.options = () => this.options_pickable();
             obj.value = (val) => this.pick(val);
             obj.option_label = (key) => this.option_title(key);
@@ -24730,6 +24731,9 @@ var $;
         }
         drop_enabled() {
             return this.enabled();
+        }
+        align_hor() {
+            return "right";
         }
         options() {
             return [];
@@ -24837,8 +24841,10 @@ var $;
             }
             sub() {
                 return [
-                    ...this.value().map((_, index) => this.Badge(index)),
                     this.Pick(),
+                    ...this.value()
+                        .map((_, index) => this.Badge(index))
+                        .reverse(),
                 ];
             }
             title() {
