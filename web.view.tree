@@ -903,7 +903,7 @@ $hyoo_apps $mol_book2
 		<= Theme $mol_theme_auto
 	pages /
 		<= Menu $mol_page
-			title @ \HyOO Apps
+			title @ \$hyoo apps
 			tools /
 				<= Source $mol_link_source uri \https://github.com/hyoo-ru/apps.hyoo.ru
 				<= Lights $mol_lights_toggle
@@ -922,7 +922,7 @@ $hyoo_apps $mol_book2
 		uri?val <=> app_uri_embed!id?val \
 	data *
 		offer *
-			title @ \HyOO Business Offer
+			title @ \$hyoo Business Offer
 			uri \https://offer.hyoo.ru/
 		mol *
 			title @ \$mol UI Framework
