@@ -31935,7 +31935,7 @@ var $;
                 articles: this.Articles(),
                 slides: this.Slides(),
                 apps: this.Apps(),
-                components: this.Components(),
+                demos: this.Demos(),
                 "view.tree": this.View_tree(),
                 icons: this.Icons()
             };
@@ -32003,9 +32003,9 @@ var $;
             obj.title = () => this.$.$mol_locale.text('$hyoo_mol_Apps_title');
             return obj;
         }
-        Components() {
+        Demos() {
             const obj = new this.$.$mol_app_demo();
-            obj.title = () => this.$.$mol_locale.text('$hyoo_mol_Components_title');
+            obj.title = () => this.$.$mol_locale.text('$hyoo_mol_Demos_title');
             return obj;
         }
         tree_pipeline() {
@@ -32062,7 +32062,7 @@ var $;
     ], $hyoo_mol.prototype, "Apps", null);
     __decorate([
         $.$mol_mem
-    ], $hyoo_mol.prototype, "Components", null);
+    ], $hyoo_mol.prototype, "Demos", null);
     __decorate([
         $.$mol_mem
     ], $hyoo_mol.prototype, "View_tree", null);

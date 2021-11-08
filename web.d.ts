@@ -8258,7 +8258,7 @@ declare namespace $ {
             articles: $$.$hyoo_habhub;
             slides: $$.$hyoo_slides;
             apps: $$.$hyoo_apps;
-            components: $$.$mol_app_demo;
+            demos: $$.$mol_app_demo;
             "view.tree": $$.$hyoo_tree;
             icons: $$.$mol_frame;
         };
@@ -8273,7 +8273,7 @@ declare namespace $ {
         Articles(): $$.$hyoo_habhub;
         Slides(): $$.$hyoo_slides;
         Apps(): $$.$hyoo_apps;
-        Components(): $$.$mol_app_demo;
+        Demos(): $$.$mol_app_demo;
         tree_pipeline(): readonly any[];
         tree_source(): string;
         View_tree(): $$.$hyoo_tree;
