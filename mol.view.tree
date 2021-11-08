@@ -24,8 +24,8 @@ $hyoo_mol $mol_book2_catalog
 			menu_tools / <= Spread_close
 		apps <= Apps $hyoo_apps
 			title @ \Applications
-		components <= Components $mol_app_demo
-			title @ \Components
+		demos <= Demos $mol_app_demo
+			title @ \Examples
 		view.tree <= View_tree $hyoo_tree
 			title @ \View.Tree Sandbox
 			Presets null
