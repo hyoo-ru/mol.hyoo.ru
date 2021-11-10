@@ -3381,6 +3381,10 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            meme: {
+                title: string;
+                uri: string;
+            };
             calc: {
                 title: string;
                 uri: string;
