@@ -3622,13 +3622,13 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_demo extends $mol_view {
+    class $mol_example extends $mol_view {
         tags(): readonly string[];
     }
 }
 
 declare namespace $ {
-    class $mol_demo_small extends $mol_demo {
+    class $mol_example_small extends $mol_example {
     }
 }
 
@@ -3636,7 +3636,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_attach_demo extends $mol_demo_small {
+    class $mol_attach_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -3672,7 +3672,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_bar_demo extends $mol_demo_small {
+    class $mol_bar_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -3763,7 +3763,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_bench_demo extends $mol_demo_small {
+    class $mol_bench_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -3793,7 +3793,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_demo_large extends $mol_demo {
+    class $mol_example_large extends $mol_example {
     }
 }
 
@@ -3801,7 +3801,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_book2_demo extends $mol_demo_large {
+    class $mol_book2_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -3816,7 +3816,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_book2_catalog_demo extends $mol_demo_large {
+    class $mol_book2_catalog_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -3843,7 +3843,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_button_demo extends $mol_demo_small {
+    class $mol_button_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -3883,7 +3883,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_button_share_demo extends $mol_demo {
+    class $mol_button_share_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -3992,7 +3992,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_calendar_demo_holiday extends $mol_demo_small {
+    class $mol_calendar_demo_holiday extends $mol_example_small {
         title(): string;
         holidays(): readonly any[];
         sub(): readonly any[];
@@ -4010,7 +4010,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_calendar_demo_selection extends $mol_demo_small {
+    class $mol_calendar_demo_selection extends $mol_example_small {
         title(): string;
         interval_config(): {
             start: string;
@@ -4032,7 +4032,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_calendar_demo_simple extends $mol_demo_small {
+    class $mol_calendar_demo_simple extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -4048,7 +4048,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_card_demo extends $mol_demo_small {
+    class $mol_card_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -4637,7 +4637,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_chart_demo_simple extends $mol_demo_large {
+    class $mol_chart_demo_simple extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -4677,7 +4677,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_chart_demo_styles extends $mol_demo_large {
+    class $mol_chart_demo_styles extends $mol_example_large {
         title(): string;
         samples_count(): number;
         sub(): readonly any[];
@@ -4731,7 +4731,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_chart_demo_forces extends $mol_demo_large {
+    class $mol_chart_demo_forces extends $mol_example_large {
         title(): string;
         samples_count(): number;
         points_max(): number;
@@ -4767,7 +4767,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_chat_demo extends $mol_demo {
+    class $mol_chat_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -4780,7 +4780,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_check_box_demo extends $mol_demo {
+    class $mol_check_box_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -4800,7 +4800,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_check_expand_demo extends $mol_demo {
+    class $mol_check_expand_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -4846,7 +4846,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_check_group_demo extends $mol_demo {
+    class $mol_check_group_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -4881,7 +4881,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_check_icon_demo extends $mol_demo {
+    class $mol_check_icon_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -4922,7 +4922,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_code_demo extends $mol_demo_small {
+    class $mol_code_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5010,7 +5010,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_date_demo extends $mol_demo {
+    class $mol_date_demo extends $mol_example {
         sub(): readonly any[];
         tags(): readonly any[];
         date(val?: any): $mol_time_moment;
@@ -5082,7 +5082,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_deck_demo extends $mol_demo {
+    class $mol_deck_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5097,7 +5097,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_dimmer_demo extends $mol_demo {
+    class $mol_dimmer_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5221,7 +5221,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_drag_demo extends $mol_demo_large {
+    class $mol_drag_demo extends $mol_example_large {
         task_count(): number;
         sub(): readonly any[];
         Task_row(task: any): $$.$mol_drag;
@@ -5303,7 +5303,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_expander_demo extends $mol_demo {
+    class $mol_expander_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5321,7 +5321,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_float_demo extends $mol_demo_large {
+    class $mol_float_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5389,7 +5389,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_form_demo_bids extends $mol_demo {
+    class $mol_form_demo_bids extends $mol_example {
         title(): string;
         message_required(): string;
         message_no_spaces(): string;
@@ -5470,7 +5470,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_frame_demo extends $mol_demo_large {
+    class $mol_frame_demo extends $mol_example_large {
         sub(): readonly any[];
         tags(): readonly any[];
         Frame(): $$.$mol_frame;
@@ -5499,7 +5499,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_gallery_demo extends $mol_demo {
+    class $mol_gallery_demo extends $mol_example {
         title(): string;
         count(): number;
         sub(): readonly any[];
@@ -5617,7 +5617,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_html_view_demo extends $mol_demo_large {
+    class $mol_html_view_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5641,7 +5641,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_infinite_demo extends $mol_demo {
+    class $mol_infinite_demo extends $mol_example {
         title(): string;
         chunk_size(): number;
         sub(): readonly any[];
@@ -5660,7 +5660,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_labeler_demo extends $mol_demo_small {
+    class $mol_labeler_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5678,7 +5678,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_link_demo extends $mol_demo {
+    class $mol_link_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5707,7 +5707,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_link_iconed_demo extends $mol_demo {
+    class $mol_link_iconed_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5722,7 +5722,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_list_demo_table extends $mol_demo {
+    class $mol_list_demo_table extends $mol_example {
         title(): string;
         count(): number;
         sub(): readonly any[];
@@ -5762,7 +5762,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_list_demo_tree extends $mol_demo {
+    class $mol_list_demo_tree extends $mol_example {
         title(): string;
         sub(): readonly any[];
         Row(id: any): $$.$mol_expander;
@@ -5944,7 +5944,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_map_yandex_demo extends $mol_demo_large {
+    class $mol_map_yandex_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -5957,7 +5957,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_nav_demo extends $mol_demo {
+    class $mol_nav_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6017,7 +6017,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_number_demo extends $mol_demo_small {
+    class $mol_number_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6037,7 +6037,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_page_demo extends $mol_demo_large {
+    class $mol_page_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6050,7 +6050,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_paginator_demo extends $mol_demo {
+    class $mol_paginator_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6060,7 +6060,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_plot_demo extends $mol_demo_large {
+    class $mol_plot_demo extends $mol_example_large {
         title(): string;
         count(val?: any): number;
         sub(): readonly any[];
@@ -6134,7 +6134,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_plot_map_heat_demo extends $mol_demo_large {
+    class $mol_plot_map_heat_demo extends $mol_example_large {
         title(): string;
         count_x(): number;
         count_y(): number;
@@ -6159,7 +6159,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_pop_demo extends $mol_demo_small {
+    class $mol_pop_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6201,7 +6201,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_pop_over_demo extends $mol_demo {
+    class $mol_pop_over_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6229,7 +6229,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_portion_demo extends $mol_demo_small {
+    class $mol_portion_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6243,7 +6243,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_row_demo_form extends $mol_demo {
+    class $mol_row_demo_form extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6267,7 +6267,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_row_demo_products extends $mol_demo {
+    class $mol_row_demo_products extends $mol_example {
         title(): string;
         count(): number;
         Product(id: any): $$.$mol_card;
@@ -6290,7 +6290,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_scroll_demo extends $mol_demo_large {
+    class $mol_scroll_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6310,7 +6310,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_search_demo extends $mol_demo_small {
+    class $mol_search_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6339,7 +6339,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_section_demo extends $mol_demo {
+    class $mol_section_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6403,7 +6403,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_select_demo_colors extends $mol_demo {
+    class $mol_select_demo_colors extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6739,7 +6739,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_select_demo_month extends $mol_demo {
+    class $mol_select_demo_month extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6763,7 +6763,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_select_demo_priority extends $mol_demo {
+    class $mol_select_demo_priority extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6813,7 +6813,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_select_list_demo extends $mol_demo {
+    class $mol_select_list_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6847,7 +6847,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_speck_demo extends $mol_demo_small {
+    class $mol_speck_demo extends $mol_example_small {
         sub(): readonly any[];
         tags(): readonly any[];
         Link_speck(): $mol_speck;
@@ -6868,7 +6868,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_speech_demo extends $mol_demo_small {
+    class $mol_speech_demo extends $mol_example_small {
         sub(): readonly any[];
         tags(): readonly any[];
         Toggle_icon(): $mol_icon_microphone;
@@ -6890,7 +6890,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_string_demo extends $mol_demo_small {
+    class $mol_string_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6912,7 +6912,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_switch_demo extends $mol_demo {
+    class $mol_switch_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6927,7 +6927,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_text_code_demo extends $mol_demo {
+    class $mol_text_code_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6943,7 +6943,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_text_demo extends $mol_demo {
+    class $mol_text_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -6992,7 +6992,7 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_textarea_demo extends $mol_demo {
+    class $mol_textarea_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -7054,7 +7054,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_toolbar_demo extends $mol_demo_small {
+    class $mol_toolbar_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -7173,7 +7173,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_video_player_demo extends $mol_demo_large {
+    class $mol_video_player_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
@@ -7384,10 +7384,10 @@ declare namespace $.$$ {
         selected(): string;
         readme_page(): boolean;
         selected_class_name(): string;
-        Widget(): Record<string, $mol_demo>;
+        Widget(): Record<string, $mol_example>;
         names_demo(): string[];
         blocks(): $mol_view[];
-        Demo(): $mol_demo;
+        Demo(): $mol_example;
         chat_seed(id: string): string;
         logo_uri(): string;
         source_link(): string;

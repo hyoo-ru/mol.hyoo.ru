@@ -1063,12 +1063,12 @@ $mol_attach_add_input $mol_view
 		^
 		change?val <=> event_picked?val null
 
-$mol_demo $mol_view
+$mol_example $mol_view
 	tags /string
 
-$mol_demo_small $mol_demo
+$mol_example_small $mol_example
 
-$mol_attach_demo $mol_demo_small
+$mol_attach_demo $mol_example_small
 	title @ \Attach files an show them
 	sub /
 		<= Filled $mol_attach
@@ -1095,7 +1095,7 @@ $mol_icon_tick $mol_icon path \M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z
 $mol_check_box $mol_check
 	Icon $mol_icon_tick
 
-$mol_bar_demo $mol_demo_small
+$mol_bar_demo $mol_example_small
 	title @ \Group of controls as one control
 	sub /
 		<= Two $mol_bar
@@ -1152,7 +1152,7 @@ $mol_bench_head $mol_float
 		^
 		title <= hint @ \Click to sort by this column
 
-$mol_bench_demo $mol_demo_small
+$mol_bench_demo $mol_example_small
 	title @ \Benchmarking results visualization
 	sub /
 		<= View $mol_bench
@@ -1165,9 +1165,9 @@ $mol_bench_demo $mol_demo_small
 		\benchmark
 		\perfomance
 
-$mol_demo_large $mol_demo
+$mol_example_large $mol_example
 
-$mol_book2_demo $mol_demo_large
+$mol_book2_demo $mol_example_large
 	title @ \Adaprive layout for various sizes of screen
 	sub /
 		<= View $mol_book2 pages /
@@ -1186,7 +1186,7 @@ $mol_book2_demo $mol_demo_large
 		\multipage
 
 
-$mol_book2_catalog_demo $mol_demo_large
+$mol_book2_catalog_demo $mol_example_large
 	title \Catalog of pages
 	sub /
 		<= Calatog $mol_book2_catalog
@@ -1220,7 +1220,7 @@ $mol_button_major $mol_button_typed
 		^
 		mol_theme \$mol_theme_accent
 
-$mol_button_demo $mol_demo_small
+$mol_button_demo $mol_example_small
 	title @ \All types of buttons in every states
 	sub /
 		<= Major_enabled $mol_button_major
@@ -1249,7 +1249,7 @@ $mol_button_share $mol_button_minor
 	sub /
 		<= Icon $mol_icon_share_variant
 
-$mol_button_share_demo $mol_demo
+$mol_button_share_demo $mol_example
 	title @ \Share button
 	sub /
 		<= Share_self $mol_button_share
@@ -1304,7 +1304,7 @@ $mol_calendar_day $mol_view
 		mol_calendar_selected <= selected false
 		mol_theme <= theme \
 
-$mol_calendar_demo_holiday $mol_demo_small
+$mol_calendar_demo_holiday $mol_example_small
 	title @ \Days of month 2018-01 with custom holidays
 	holidays /
 		\2018-01-01
@@ -1329,7 +1329,7 @@ $mol_calendar_demo_holiday $mol_demo_small
 		\calendar
 		\date
 
-$mol_calendar_demo_selection $mol_demo_small
+$mol_calendar_demo_selection $mol_example_small
 	title @ \Days of month 2018-01 with custom selection
 	interval_config *
 		start \2018-01-10
@@ -1343,7 +1343,7 @@ $mol_calendar_demo_selection $mol_demo_small
 		\date
 		\period
 
-$mol_calendar_demo_simple $mol_demo_small
+$mol_calendar_demo_simple $mol_example_small
 	title @ \Days of curret month
 	sub /
 		<= Calendar $mol_calendar
@@ -1352,7 +1352,7 @@ $mol_calendar_demo_simple $mol_demo_small
 		\calendar
 		\date
 
-$mol_card_demo $mol_demo_small
+$mol_card_demo $mol_example_small
 	title @ \Cards with optional status
 	sub /
 		<= Simple $mol_card
@@ -1727,7 +1727,7 @@ $mol_plot_mark_cross $mol_plot_graph
 			pos_y <= title_y_pos_y \0
 			text <= title_y \
 
-$mol_chart_demo_simple $mol_demo_large
+$mol_chart_demo_simple $mol_example_large
 	title @ \Simple chart with hadcoded series
 	sub /
 		<= Chart $mol_chart
@@ -1772,7 +1772,7 @@ $mol_chart_demo_simple $mol_demo_large
 $mol_plot_fill $mol_plot_line
 	threshold 4
 
-$mol_chart_demo_styles $mol_demo_large
+$mol_chart_demo_styles $mol_example_large
 	title @ \Chart with various styles of graphs.
 	samples_count 15
 	sub /
@@ -1824,7 +1824,7 @@ $mol_chart_demo_styles $mol_demo_large
 		\visualization
 		\dashboard
 
-$mol_chart_demo_forces $mol_demo_large
+$mol_chart_demo_forces $mol_example_large
 	title @ \Fake wheel forces
 	samples_count 10000
 	points_max 1000
@@ -1856,7 +1856,7 @@ $mol_chart_demo_forces $mol_demo_large
 		\visualization
 		\dashboard
 
-$mol_chat_demo $mol_demo
+$mol_chat_demo $mol_example
 	title @ \Feed of comments for this page
 	sub /
 		<= Chat $mol_chat
@@ -1868,7 +1868,7 @@ $mol_chat_demo $mol_demo
 		\chat
 		\communication
 
-$mol_check_box_demo $mol_demo
+$mol_check_box_demo $mol_example
 	title @ \Checkboxes in various states
 	sub /
 		<= Demo_items $mol_list rows /
@@ -1897,7 +1897,7 @@ $mol_check_box_demo $mol_demo
 	tags /
 		\checkbox
 
-$mol_check_expand_demo $mol_demo
+$mol_check_expand_demo $mol_example
 	title @ \Checkbox-expand in various states
 	sub /
 		<= Demo_items $mol_list rows /
@@ -1931,7 +1931,7 @@ $mol_icon_check $mol_icon path \M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.5
 
 $mol_icon_check_all $mol_icon path \M0.41,13.41L6,19L7.41,17.58L1.83,12M22.24,5.58L11.66,16.17L7.5,12L6.07,13.41L11.66,19L23.66,7M18,7L16.59,5.58L10.24,11.93L11.66,13.34L18,7Z
 
-$mol_check_group_demo $mol_demo
+$mol_check_group_demo $mol_example
 	title @ \Group of checkboxes
 	sub /
 		<= Demo_items $mol_list
@@ -1975,7 +1975,7 @@ $mol_check_group_demo $mol_demo
 		\multi
 		\group
 
-$mol_check_icon_demo $mol_demo
+$mol_check_icon_demo $mol_example
 	title @ \Iconic checkboxes in various states
 	sub /
 		<= Demo_items $mol_list
@@ -2008,7 +2008,7 @@ $mol_code $mol_view
 			sub /
 				<= scan_label @ \Scan
 
-$mol_code_demo $mol_demo_small
+$mol_code_demo $mol_example_small
 	title @ \Barcode scanner with various formats support
 	sub /
 		<= Qr $mol_code
@@ -2086,7 +2086,7 @@ $mol_date_calendar $mol_calendar
 			event_click?event <=> day_click!day?event null
 			minimal_height 24
 
-$mol_date_demo $mol_demo
+$mol_date_demo $mol_example
 	sub /
 		<= Date $mol_date
 			value_moment?val <=> date?val $mol_time_moment
@@ -2119,7 +2119,7 @@ $mol_deck $mol_list
 			options <= switch_options *
 		<= Content $mol_view
 
-$mol_deck_demo $mol_demo
+$mol_deck_demo $mol_example
 	title @ \Simple deck with tabbar
 	sub /
 		<= Deck $mol_deck items /
@@ -2139,7 +2139,7 @@ $mol_deck_demo $mol_demo
 		\tabs
 		\container
 
-$mol_dimmer_demo $mol_demo
+$mol_dimmer_demo $mol_example
 	title @ \Text with highlighted found substring
 	sub /
 		<= Demo_items $mol_list rows /
@@ -2200,7 +2200,7 @@ $mol_icon_trash_can $mol_icon path \M9,3V4H4V6H5V19C5,20.1 5.9,21 7,21H17C18.1,2
 
 $mol_icon_trash_can_outline $mol_icon path \M9,3V4H4V6H5V19C5,20.1 5.9,21 7,21H17C18.1,21 19,20.1 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z
 
-$mol_drag_demo $mol_demo_large
+$mol_drag_demo $mol_example_large
 	task_count 100
 	sub /
 		<= List_drop $mol_drop
@@ -2261,7 +2261,7 @@ $mol_filler $mol_view
 		\Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper. Aenean commodo ultrices imperdiet. Vestibulum ut justo vel sapien venenatis tincidunt. Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. Aliquam ut massa in turpis dapibus convallis. Praesent elit lacus, vestibulum at malesuada et, ornare et est. Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. Mauris ut placerat justo. Mauris in ultricies enim. Quisque nec est eleifend nulla ultrices egestas quis ut quam. Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. Cras quis ligula sem, vel elementum mi. Phasellus non ullamcorper urna.
 		\Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In euismod ultrices facilisis. Vestibulum porta sapien adipiscing augue congue id pretium lectus molestie. Proin quis dictum nisl. Morbi id quam sapien, sed vestibulum sem. Duis elementum rutrum mauris sed convallis. Proin vestibulum magna mi. Aenean tristique hendrerit magna, ac facilisis nulla hendrerit ut. Sed non tortor sodales quam auctor elementum. Donec hendrerit nunc eget elit pharetra pulvinar. Suspendisse id tempus tortor. Aenean luctus, elit commodo laoreet commodo, justo nisi consequat massa, sed vulputate quam urna quis eros. Donec vel.
 
-$mol_expander_demo $mol_demo
+$mol_expander_demo $mol_example
 	title @ \Simple spoiler
 	sub /
 		<= Expander $mol_expander
@@ -2276,7 +2276,7 @@ $mol_expander_demo $mol_demo
 
 $mol_row $mol_view
 
-$mol_float_demo $mol_demo_large
+$mol_float_demo $mol_example_large
 	title @ \Floating header example
 	sub /
 		<= Scroll $mol_scroll
@@ -2327,7 +2327,7 @@ $mol_form $mol_view
 		<= Bar_buttons $mol_row
 			sub <= buttons /$mol_view
 
-$mol_form_demo_bids $mol_demo
+$mol_form_demo_bids $mol_example
 	title @ \Sign Up form demo
 	message_required @ \Required
 	message_no_spaces @ \No spaces!
@@ -2398,7 +2398,7 @@ $mol_form_demo_bids $mol_demo
 		\validation
 		\field
 
-$mol_frame_demo $mol_demo_large
+$mol_frame_demo $mol_example_large
 	sub /
 		<= Frame $mol_frame
 			title @ \Another page inside that
@@ -2415,7 +2415,7 @@ $mol_gallery $mol_view
 			flexGrow <= side_size!id \1
 		items <= side_items!id /$mol_view
 
-$mol_gallery_demo $mol_demo
+$mol_gallery_demo $mol_example
 	title @ \Gallery of cards
 	count 101
 	sub /
@@ -2476,7 +2476,7 @@ $mol_html_view_heading $mol_paragraph
 		^
 		mol_html_view_heading <= level 1
 
-$mol_html_view_demo $mol_demo_large
+$mol_html_view_demo $mol_example_large
 	title @ \View raw HTML
 	sub /
 		<= Scroll $mol_scroll sub /
@@ -2521,7 +2521,7 @@ $mol_infinite $mol_list
 	after!id /
 	Row!id $mol_view
 
-$mol_infinite_demo $mol_demo
+$mol_infinite_demo $mol_example
 	title @ \Infinite list demo
 	chunk_size 20
 	sub /
@@ -2535,7 +2535,7 @@ $mol_infinite_demo $mol_demo
 		\virtual
 		\container
 
-$mol_labeler_demo $mol_demo_small
+$mol_labeler_demo $mol_example_small
 	title @ \Labeled content of some types
 	sub /
 		<= Provider $mol_labeler
@@ -2555,7 +2555,7 @@ $mol_labeler_demo $mol_demo_small
 
 $mol_icon_download $mol_icon path \M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z
 
-$mol_link_demo $mol_demo
+$mol_link_demo $mol_example
 	title @ \Some hyperlinks
 	sub /
 		<= Demo_items $mol_list
@@ -2595,7 +2595,7 @@ $mol_link_demo $mol_demo
 		\router
 		\url
 
-$mol_link_iconed_demo $mol_demo
+$mol_link_iconed_demo $mol_example
 	title @ \Link with icon
 	sub /
 		<= Demo_items $mol_list
@@ -2613,7 +2613,7 @@ $mol_link_iconed_demo $mol_demo
 		\url
 
 
-$mol_list_demo_table $mol_demo
+$mol_list_demo_table $mol_example
 	title @ \Large list of rows with dynamic content
 	count 1000
 	sub /
@@ -2648,7 +2648,7 @@ $mol_list_demo_table $mol_demo
 		\table
 		\scroll
 
-$mol_list_demo_tree $mol_demo
+$mol_list_demo_tree $mol_example
 	title @ \Large list of rows with dynamic content
 	sub /
 		<= Content $mol_list
@@ -2691,7 +2691,7 @@ $mol_map_yandex $mol_view
 		0
 	objects /$mol_map_yandex_mark
 
-$mol_map_yandex_demo $mol_demo_large
+$mol_map_yandex_demo $mol_example_large
 	title @ \Simple Yandex Maps wrapper
 	sub /
 		<= Map $mol_map_yandex
@@ -2704,7 +2704,7 @@ $mol_map_yandex_demo $mol_demo_large
 		\map
 
 
-$mol_nav_demo $mol_demo
+$mol_nav_demo $mol_example
 	title @ \Number input control with various configuration
 	sub /
 		<= Demo_items $mol_list
@@ -2758,7 +2758,7 @@ $mol_number $mol_view
 			enabled <= inc_enabled <= enabled true
 			sub / <= inc_icon $mol_icon_plus
 
-$mol_number_demo $mol_demo_small
+$mol_number_demo $mol_example_small
 	title @ \Number input control with various configuration
 	sub /
 		<= zero $mol_number
@@ -2793,7 +2793,7 @@ $mol_number_demo $mol_demo_small
 		\number
 		\field
 
-$mol_page_demo $mol_demo_large
+$mol_page_demo $mol_example_large
 	title @ \Page with header, body and footer
 	sub /
 		<= Page $mol_page
@@ -2817,7 +2817,7 @@ $mol_page_demo $mol_demo_large
 		\footer
 		\toolbar
 
-$mol_paginator_demo $mol_demo
+$mol_paginator_demo $mol_example
 	title @ \Page switcher
 	sub /
 		<= Pages $mol_paginator
@@ -2826,7 +2826,7 @@ $mol_paginator_demo $mol_demo
 		\paginator
 		\navigation
 
-$mol_plot_demo $mol_demo_large
+$mol_plot_demo $mol_example_large
 	title @ \Dynamic lightweight graphs
 	count?val 20
 	sub /
@@ -2873,7 +2873,7 @@ $mol_plot_map_heat_level $mol_plot_dot
 		^
 		opacity <= opacity \1
 
-$mol_plot_map_heat_demo $mol_demo_large
+$mol_plot_map_heat_demo $mol_example_large
 	title @ \Dynamic Heat Map Graphs
 	count_x 20
 	count_y 200
@@ -2894,7 +2894,7 @@ $mol_plot_map_heat_demo $mol_demo_large
 		\graph
 		\dashboard
 
-$mol_pop_demo $mol_demo_small
+$mol_pop_demo $mol_example_small
 	title @ \Pop up block with various alignment
 	sub /
 		<= Pop $mol_pop
@@ -2923,7 +2923,7 @@ $mol_pop_over $mol_pop
 		mouseenter?event <=> event_show?event null
 		mouseleave?event <=> event_hide?event null
 
-$mol_pop_over_demo $mol_demo
+$mol_pop_over_demo $mol_example
 	title @ \Menu that opens on mouse over
 	sub /
 		<= Menu $mol_row
@@ -2958,7 +2958,7 @@ $mol_pop_over_demo $mol_demo
 		\menu
 		\hover
 
-$mol_portion_demo $mol_demo_small
+$mol_portion_demo $mol_example_small
 	title @ \Progress bar in various states
 	sub /
 		<= Empty $mol_portion
@@ -2971,7 +2971,7 @@ $mol_portion_demo $mol_demo_small
 		\dashboard
 		\progress
 
-$mol_row_demo_form $mol_demo
+$mol_row_demo_form $mol_example
 	title @ \Some controls in one row with equal paddings and wrapping support
 	sub /
 		<= Row $mol_row
@@ -3004,7 +3004,7 @@ $mol_row_demo_form $mol_demo
 		\identation
 		\space
 
-$mol_row_demo_products $mol_demo
+$mol_row_demo_products $mol_example
 	title @ \Product catalog
 	count 100
 	Product!id $mol_card
@@ -3021,7 +3021,7 @@ $mol_row_demo_products $mol_demo
 		\scroll
 
 
-$mol_scroll_demo $mol_demo_large
+$mol_scroll_demo $mol_example_large
 	title @ \Simple scroll pane
 	sub /
 		<= Scroll $mol_scroll
@@ -3044,7 +3044,7 @@ $mol_scroll_demo $mol_demo_large
 		\container
 
 
-$mol_search_demo $mol_demo_small
+$mol_search_demo $mol_example_small
 	title @ \Search field with suggest 
 	sub /
 		<= Search $mol_search
@@ -3063,7 +3063,7 @@ $mol_section $mol_list rows /
 			<= title
 	<= Content null
 
-$mol_section_demo $mol_demo
+$mol_section_demo $mol_example
 	title @ \Section with header
 	sub /
 		<= Section $mol_section
@@ -3108,7 +3108,7 @@ $mol_select $mol_pick
 		enabled <= enabled true
 	Trigger_icon $mol_icon_dots_vertical
 
-$mol_select_demo_colors $mol_demo
+$mol_select_demo_colors $mol_example
 	title @ \Color picker with filter and custom rows
 	sub /
 		<= Color $mol_select
@@ -3137,7 +3137,7 @@ $mol_select_colors_color_preview $mol_view
 		^
 		background <= color \
 
-$mol_select_demo_month $mol_demo
+$mol_select_demo_month $mol_example
 	title @ \Month picker with filter
 	sub /
 		<= Month $mol_select
@@ -3159,7 +3159,7 @@ $mol_select_demo_month $mol_demo
 	tags /
 		\select
 
-$mol_select_demo_priority $mol_demo
+$mol_select_demo_priority $mol_example
 	title @ \Priority picker
 	sub /
 		<= Priority $mol_select
@@ -3191,7 +3191,7 @@ $mol_select_list $mol_view
 		hint <= pick_hint @ \Add..
 		Trigger_icon <= Pick_icon $mol_icon_plus
 
-$mol_select_list_demo $mol_demo
+$mol_select_list_demo $mol_example
 	title @ \Friends picker
 	sub /
 		<= Demo_items $mol_list
@@ -3220,7 +3220,7 @@ $mol_icon_settings $mol_icon path \M12,15.5C10.07,15.5 8.5,13.93 8.5,12C8.5,10.0
 
 $mol_icon_menu $mol_icon path \M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z
 
-$mol_speck_demo $mol_demo_small
+$mol_speck_demo $mol_example_small
 	sub /
 		<= Link $mol_link
 			sub /
@@ -3250,7 +3250,7 @@ $mol_speck_demo $mol_demo_small
 		\highlight
 
 
-$mol_speech_demo $mol_demo_small
+$mol_speech_demo $mol_example_small
 	sub /
 		<= Toggle $mol_check_icon
 			Icon <= Toggle_icon $mol_icon_microphone
@@ -3271,7 +3271,7 @@ $mol_speech_demo $mol_demo_small
 		\dictation
 		
 
-$mol_string_demo $mol_demo_small
+$mol_string_demo $mol_example_small
 	title @ \String input field in various states
 	sub /
 		<= Simple $mol_string
@@ -3292,7 +3292,7 @@ $mol_string_demo $mol_demo_small
 
 $mol_string_button $mol_string
 
-$mol_switch_demo $mol_demo
+$mol_switch_demo $mol_example
 	title @ \Color switchers in various state
 	sub /
 		<= Demo_items $mol_list
@@ -3314,7 +3314,7 @@ $mol_switch_demo $mol_demo
 		\switch
 		\option
 
-$mol_text_code_demo $mol_demo
+$mol_text_code_demo $mol_example
 	title @ \Markdow visualization example
 	sub /
 		<= Text $mol_text_code text <= source \
@@ -3323,7 +3323,7 @@ $mol_text_code_demo $mol_demo
 		\code
 		\syntax highlighting
 
-$mol_text_demo $mol_demo
+$mol_text_demo $mol_example
 	title @ \Markdown visualization example
 	sub /
 		<= Text $mol_text text \
@@ -3391,7 +3391,7 @@ $mol_textarea $mol_view
 			sidebar_showed <= sidebar_showed
 			highlight <= highlight \
 
-$mol_textarea_demo $mol_demo
+$mol_textarea_demo $mol_example
 	title @ \Text input field in various states
 	sub /
 		<= Demo_items $mol_list
@@ -3430,7 +3430,7 @@ $mol_icon_content_paste $mol_icon path \M19,20H5V4H7V7H17V4H19M12,2C12.55,2 13,2
 
 $mol_icon_delete $mol_icon path \M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19C6,20.1 6.9,21 8,21H16C17.1,21 18,20.1 18,19V7H6V19Z
 
-$mol_toolbar_demo $mol_demo_small
+$mol_toolbar_demo $mol_example_small
 	title @ \Foldable toolbar demo
 	sub /
 		<= Toolbar $mol_toolbar
@@ -3497,7 +3497,7 @@ $mol_button_open_native $mol_view
 
 $mol_icon_play $mol_icon path \M8,5.14V19.14L19,12.14L8,5.14Z
 
-$mol_video_player_demo $mol_demo_large
+$mol_video_player_demo $mol_example_large
 	title \Reactive video player
 	sub /
 		<= Controls $mol_row sub /
@@ -3565,8 +3565,8 @@ $mol_app_demo $mol_book2
 	plugins /
 		<= Theme $mol_theme_auto
 	demo_block_list /
-		\$mol_demo_small
-		\$mol_demo_large
+		\$mol_example_small
+		\$mol_example_large
 	Menu $mol_app_demo_menu
 		names <= names_demo_filtered /string
 		filter_suggests <= filter_suggests /string
