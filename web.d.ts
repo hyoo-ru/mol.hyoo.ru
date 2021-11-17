@@ -629,6 +629,7 @@ declare namespace $ {
     interface Overrides {
         alignContent?: 'baseline' | 'start' | 'end' | 'flex-start' | 'flex-end' | 'center' | 'normal' | 'space-between' | 'space-around' | 'space-evenly' | 'stretch' | readonly ['first' | 'last', 'baseline'] | readonly ['safe' | 'unsafe', 'start' | 'end' | 'flex-start' | 'flex-end'] | Common;
         justifyContent?: 'start' | 'end' | 'flex-start' | 'flex-end' | 'left' | 'right' | 'space-between' | 'space-around' | 'space-evenly' | 'normal' | 'stretch' | 'center' | Common;
+        gap?: Length;
         background?: 'none' | {
             color?: Color | Common;
             image?: readonly (readonly [$mol_style_func<'url'>])[] | 'none' | Common;
@@ -750,6 +751,7 @@ declare namespace $ {
         readonly block: $mol_style_func<"var", "--mol_gap_block">;
         readonly text: $mol_style_func<"var", "--mol_gap_text">;
         readonly round: $mol_style_func<"var", "--mol_gap_round">;
+        readonly space: $mol_style_func<"var", "--mol_gap_space">;
     };
 }
 
@@ -3829,6 +3831,24 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_icon_cursor_default extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_cursor_default_click extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_cursor_default_click_outline extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
     class $mol_button_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
@@ -3839,6 +3859,8 @@ declare namespace $ {
         minor_label(): string;
         Minor_enabled(): $mol_button_minor;
         Minor_disabled(): $mol_button_minor;
+        Minor_icon(): $mol_icon_cursor_default_click_outline;
+        Minor_icon_enabled(): $mol_button_minor;
     }
 }
 
@@ -5708,6 +5730,44 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_link_lazy extends $mol_link {
+        uri(val?: any): string;
+        uri_generated(): string;
+        current(): boolean;
+        event(): {
+            mousedown: (event?: any) => any;
+            click: (event?: any) => any;
+        };
+        generate(event?: any): any;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_link_lazy extends $.$mol_link_lazy {
+        generate(event?: Event): void;
+    }
+}
+
+declare namespace $ {
+    class $mol_link_lazy_demo extends $mol_example_small {
+        title(): string;
+        sub(): readonly any[];
+        tags(): readonly any[];
+        uri_generated(): string;
+        download_file(): string;
+        Download_icon(): $mol_icon_download;
+        download_label(): string;
+        Download(): $$.$mol_link_lazy;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_link_lazy_demo extends $.$mol_link_lazy_demo {
+        uri_generated(): string;
+    }
+}
+
+declare namespace $ {
     class $mol_list_demo_table extends $mol_example {
         title(): string;
         count(): number;
@@ -6145,17 +6205,52 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_pop_demo extends $mol_example_small {
+    class $mol_icon_anchor extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_pop_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
-        show_text(): string;
-        Show(): $mol_button_minor;
-        showed(): boolean;
+        show_title(): string;
+        pop_showed_check_hint(): string;
+        pop_showed(val?: any): boolean;
+        Show_check(): $mol_check_box;
+        Showed(): $mol_labeler;
+        align_title(): string;
+        pop_align(val?: any): string;
+        aligins(): {
+            left_top: string;
+            left_center: string;
+            left_bottom: string;
+            right_top: string;
+            right_center: string;
+            right_bottom: string;
+            center: string;
+            top_left: string;
+            top_center: string;
+            top_right: string;
+            bottom_left: string;
+            bottom_center: string;
+            bottom_right: string;
+        };
+        Align_select(): $$.$mol_switch;
+        Align(): $mol_labeler;
+        Manage(): $mol_row;
+        anchor_button_icon(): $mol_icon_anchor;
+        anchor_button_title(): string;
+        Pop_anchor(): $mol_button_major;
         bubble_hint(): string;
         Content(): $mol_row;
         Pop(): $$.$mol_pop;
+        Pop_area(): $mol_view;
     }
+}
+
+declare namespace $.$$ {
 }
 
 declare namespace $ {
@@ -6226,6 +6321,122 @@ declare namespace $ {
         third(): number;
         Full(): $$.$mol_portion;
     }
+}
+
+declare namespace $ {
+    class $mol_icon_help extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_help_circle extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_help_circle_outline extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_dots_vertical extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_content_copy extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_cloud extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_cloud_download extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_cloud_download_outline extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_pick_demo extends $mol_example_small {
+        title(): string;
+        confirmation_popup_content(): {
+            delete: $$.$mol_list;
+        };
+        showed_confirmation(): any;
+        sub(): readonly any[];
+        Options_content(): $$.$mol_list;
+        Delete_confirm_content(): $$.$mol_list;
+        tags(): readonly any[];
+        Demo_caption(): $mol_view;
+        pick_trigger(): string;
+        pick_content(): string;
+        Simple_pop(): $mol_pick;
+        info_trigger(): $mol_icon_help_circle_outline;
+        info_content_text(): string;
+        info_content(): $$.$mol_text;
+        Info_pop(): $mol_pick;
+        options_trigger(): $mol_icon_dots_vertical;
+        options_trigger_content(): readonly any[];
+        options_bubble_content(): readonly any[];
+        Options_pop(): $mol_pick;
+        menu_item_copy_click(val?: any): any;
+        menu_item_copy_icon(): $mol_icon_content_copy;
+        menu_item_copy_label(): string;
+        Menu_item_copy(): $mol_button_minor;
+        menu_item_download_hint(): string;
+        menu_item_download_uri(): string;
+        menu_item_download_icon(): $mol_icon_cloud_download_outline;
+        menu_item_download_label(): string;
+        Menu_item_download(): $$.$mol_link_lazy;
+        menu_item_delete_click(val?: any): any;
+        menu_item_delete_icon(): $mol_icon_trash_can_outline;
+        menu_item_delete_label(): string;
+        Menu_item_delete(): $mol_button_minor;
+        delete_message(): string;
+        Delete_message_text(): $mol_view;
+        Delete_message(): $mol_row;
+        delete_confirm_title(): string;
+        delete_confirm_click(val?: any): any;
+        Delete_confirm(): $mol_button_major;
+        delete_cancel_title(): string;
+        delete_cancel_click(val?: any): any;
+        Delete_cancel(): $mol_button_minor;
+        Delete_buttons(): $mol_row;
+    }
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $.$$ {
+    type Confirmations = keyof ReturnType<typeof $.$mol_pick_demo.prototype.confirmation_popup_content>;
+    export class $mol_pick_demo extends $.$mol_pick_demo {
+        menu_item_download_uri(): string;
+        hide_options_menu(): void;
+        show_confirmation(confirmation: Confirmations): void;
+        showed_confirmation(next?: Confirmations | null): "delete" | null;
+        options_bubble_content(): readonly any[];
+        menu_item_copy_click(event?: MouseEvent): void;
+        menu_item_delete_click(event?: MouseEvent): void;
+        delete_confirm_click(event?: MouseEvent): void;
+        delete_cancel_click(event?: MouseEvent): void;
+    }
+    export {};
 }
 
 declare namespace $ {
@@ -6331,12 +6542,6 @@ declare namespace $ {
         tags(): readonly any[];
         Section_content(): $mol_filler;
         Section(): $mol_section;
-    }
-}
-
-declare namespace $ {
-    class $mol_icon_dots_vertical extends $mol_icon {
-        path(): string;
     }
 }
 
@@ -7016,12 +7221,6 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_icon_content_copy extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
     class $mol_icon_content_cut extends $mol_icon {
         path(): string;
     }
@@ -7312,13 +7511,16 @@ declare namespace $ {
         title(): string;
         tools(): readonly any[];
         body(): readonly any[];
+        Readme(): $$.$mol_text;
+        Not_found(): $mol_view;
         Close_icon(): $mol_icon_cross;
         close_arg(): {
             readme: any;
         };
         Close(): $$.$mol_link;
+        readme_content(): any;
         readme(): string;
-        Readme(): $$.$mol_text;
+        Not_found_caption(): string;
     }
 }
 
@@ -7394,9 +7596,14 @@ declare namespace $.$$ {
         };
         option_title(id: string): string;
     }
+    class $mol_app_demo_readme_not_found_error extends Error {
+        module: readonly string[];
+        constructor(module: readonly string[]);
+    }
     class $mol_app_demo_readme extends $.$mol_app_demo_readme {
         link(module: readonly string[]): string;
         readme(): string;
+        readme_content(): $mol_view;
     }
 }
 
