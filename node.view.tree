@@ -4014,13 +4014,13 @@ $hyoo_mol $mol_book2_catalog
 		<= Lights $mol_lights_toggle
 	param \section
 	spreads *
-		main <= Main $mol_page
-			title @ \Introduction
-			tools / <= Spread_close
-			body /
-				<= Description $mol_text
-					text <= description \
-					uri_base <= sources_uri \https://github.com/hyoo-ru/mam_mol/tree/master/
+		\
+			<= Main $mol_page
+				title @ \Introduction
+				body /
+					<= Description $mol_text
+						text <= description \
+						uri_base <= sources_uri \https://github.com/hyoo-ru/mam_mol/tree/master/
 		articles <= Articles $hyoo_habhub
 			title @ \Articles
 			tools_root / <= Spread_close

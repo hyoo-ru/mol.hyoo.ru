@@ -4059,7 +4059,7 @@ var $;
             pages() {
                 return [
                     this.Menu(),
-                    ...this.spread() ? [this.Spread()] : [],
+                    ...this.spread() != null ? [this.Spread()] : [],
                 ];
             }
             links() {
@@ -4072,7 +4072,7 @@ var $;
                 return this.$.$mol_state_arg.value(this.param()) ?? '';
             }
             arg(spread) {
-                return { [this.param()]: spread };
+                return { [this.param()]: spread || null };
             }
             spread_close_arg() {
                 return { [this.param()]: null };
@@ -32799,7 +32799,7 @@ var $;
         }
         spreads() {
             return {
-                main: this.Main(),
+                "": this.Main(),
                 articles: this.Articles(),
                 slides: this.Slides(),
                 apps: this.Apps(),
@@ -32842,9 +32842,6 @@ var $;
         Main() {
             const obj = new this.$.$mol_page();
             obj.title = () => this.$.$mol_locale.text('$hyoo_mol_Main_title');
-            obj.tools = () => [
-                this.Spread_close()
-            ];
             obj.body = () => [
                 this.Description()
             ];

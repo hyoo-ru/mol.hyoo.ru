@@ -1096,7 +1096,7 @@ declare namespace $.$$ {
         Spread(): any;
         spread(): string;
         arg(spread: string): {
-            [x: string]: string;
+            [x: string]: string | null;
         };
         spread_close_arg(): {
             [x: string]: null;
@@ -3610,7 +3610,7 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_attach extends $.$mol_attach {
-        attach_new(next?: File): void;
+        attach_new(next: File): void;
         content(): ($mol_view | $mol_attach_add)[];
     }
     class $mol_attach_item extends $.$mol_attach_item {
@@ -8221,7 +8221,7 @@ declare namespace $ {
         readonly deletion: string;
         readonly link: string;
         readonly uri: string;
-        readonly content: string;
+        content: string;
         readonly marker: string;
     }>;
 }
@@ -8481,7 +8481,7 @@ declare namespace $ {
         menu_tools(): readonly any[];
         param(): string;
         spreads(): {
-            main: $$.$mol_page;
+            "": $$.$mol_page;
             articles: $$.$hyoo_habhub;
             slides: $$.$hyoo_slides;
             apps: $$.$hyoo_apps;
