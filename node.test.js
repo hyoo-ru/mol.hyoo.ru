@@ -15053,12 +15053,6 @@ var $;
                 this.Touch()
             ];
         }
-        event() {
-            return {
-                ...super.event(),
-                dblclick: (event) => this.reset(event)
-            };
-        }
         gap_x() {
             const obj = new this.$.$mol_vector_range(this.gap_left(), this.gap_right());
             return obj;
@@ -15136,11 +15130,6 @@ var $;
             obj.pan = (val) => this.shift(val);
             obj.draw = (event) => this.draw(event);
             return obj;
-        }
-        reset(event) {
-            if (event !== undefined)
-                return event;
-            return null;
         }
     }
     __decorate([
@@ -15227,9 +15216,6 @@ var $;
     __decorate([
         $.$mol_mem
     ], $mol_plot_pane.prototype, "Touch", null);
-    __decorate([
-        $.$mol_mem
-    ], $mol_plot_pane.prototype, "reset", null);
     $.$mol_plot_pane = $mol_plot_pane;
 })($ || ($ = {}));
 //pane.view.tree.js.map
