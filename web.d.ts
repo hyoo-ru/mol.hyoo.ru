@@ -8235,7 +8235,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_compare_deep<Value>(a: Value, b: Value): boolean;
+    function $mol_compare_deep<Value>(left: Value, right: Value): boolean;
 }
 
 declare namespace $ {
