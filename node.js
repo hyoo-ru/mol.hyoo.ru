@@ -12323,6 +12323,10 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_data_search_title'),
                     uri: "https://search.hyoo.ru/"
                 },
+                map: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_map_title'),
+                    uri: "https://map.hyoo.ru/"
+                },
                 talks: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_talks_title'),
                     uri: "https://talks.hyoo.ru/#!roster/chat=RXV3H2EC"

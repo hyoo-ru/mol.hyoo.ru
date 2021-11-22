@@ -3365,6 +3365,10 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            map: {
+                title: string;
+                uri: string;
+            };
             talks: {
                 title: string;
                 uri: string;
