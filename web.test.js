@@ -268,11 +268,7 @@ var $;
             $.$mol_assert_ok($.$mol_compare_deep(1, 1));
             $.$mol_assert_ok($.$mol_compare_deep(Number.NaN, Number.NaN));
             $.$mol_assert_not($.$mol_compare_deep(1, 2));
-        },
-        'Number'() {
-            $.$mol_assert_ok($.$mol_compare_deep(Object(1), Object(1)));
-            $.$mol_assert_ok($.$mol_compare_deep(Object(Number.NaN), Object(Number.NaN)));
-            $.$mol_assert_not($.$mol_compare_deep(Object(1), Object(2)));
+            $.$mol_assert_not($.$mol_compare_deep(Object(1), Object(1)));
         },
         'POJO'() {
             $.$mol_assert_ok($.$mol_compare_deep({}, {}));
@@ -288,14 +284,12 @@ var $;
             $.$mol_assert_not($.$mol_compare_deep([1, 2], [1, 3]));
             $.$mol_assert_not($.$mol_compare_deep([1, 2,], [1, 3, undefined]));
         },
-        'different classes with same values'() {
-            class Obj {
-                foo = 1;
+        'Non POJO are different'() {
+            class Thing extends Object {
             }
-            const a = new Obj;
-            const b = new class extends Obj {
-            };
-            $.$mol_assert_not($.$mol_compare_deep(a, b));
+            $.$mol_assert_not($.$mol_compare_deep(new Thing, new Thing));
+            $.$mol_assert_not($.$mol_compare_deep(() => 1, () => 1));
+            $.$mol_assert_not($.$mol_compare_deep(new RangeError('Test error'), new RangeError('Test error')));
         },
         'same POJOs with cyclic reference'() {
             const a = { foo: {} };
@@ -303,41 +297,6 @@ var $;
             const b = { foo: {} };
             b['self'] = b;
             $.$mol_assert_ok($.$mol_compare_deep(a, b));
-        },
-        'empty Element'() {
-            $.$mol_assert_ok($.$mol_compare_deep($.$mol_jsx("div", null), $.$mol_jsx("div", null)));
-            $.$mol_assert_not($.$mol_compare_deep($.$mol_jsx("div", null), $.$mol_jsx("span", null)));
-        },
-        'Element with attributes'() {
-            $.$mol_assert_ok($.$mol_compare_deep($.$mol_jsx("div", { dir: "rtl" }), $.$mol_jsx("div", { dir: "rtl" })));
-            $.$mol_assert_not($.$mol_compare_deep($.$mol_jsx("div", { dir: "rtl" }), $.$mol_jsx("div", null)));
-            $.$mol_assert_not($.$mol_compare_deep($.$mol_jsx("div", { dir: "rtl" }), $.$mol_jsx("div", { dir: "ltr" })));
-        },
-        'Element with styles'() {
-            $.$mol_assert_ok($.$mol_compare_deep($.$mol_jsx("div", { style: { color: 'red' } }), $.$mol_jsx("div", { style: { color: 'red' } })));
-            $.$mol_assert_not($.$mol_compare_deep($.$mol_jsx("div", { style: { color: 'red' } }), $.$mol_jsx("div", { style: {} })));
-            $.$mol_assert_not($.$mol_compare_deep($.$mol_jsx("div", { style: { color: 'red' } }), $.$mol_jsx("div", { style: { color: 'blue' } })));
-        },
-        'Element with content'() {
-            $.$mol_assert_ok($.$mol_compare_deep($.$mol_jsx("div", null,
-                "foo",
-                $.$mol_jsx("br", null)), $.$mol_jsx("div", null,
-                "foo",
-                $.$mol_jsx("br", null))));
-            $.$mol_assert_not($.$mol_compare_deep($.$mol_jsx("div", null,
-                "foo",
-                $.$mol_jsx("br", null)), $.$mol_jsx("div", null,
-                "bar",
-                $.$mol_jsx("br", null))));
-            $.$mol_assert_not($.$mol_compare_deep($.$mol_jsx("div", null,
-                "foo",
-                $.$mol_jsx("br", null)), $.$mol_jsx("div", null,
-                "foo",
-                $.$mol_jsx("hr", null))));
-        },
-        'Element with handlers'() {
-            $.$mol_assert_ok($.$mol_compare_deep($.$mol_jsx("div", { onclick: () => 1 }), $.$mol_jsx("div", { onclick: () => 1 })));
-            $.$mol_assert_not($.$mol_compare_deep($.$mol_jsx("div", { onclick: () => 1 }), $.$mol_jsx("div", { onclick: () => 2 })));
         },
         'Date'() {
             $.$mol_assert_ok($.$mol_compare_deep(new Date(12345), new Date(12345)));
@@ -2449,7 +2408,8 @@ var $;
                 }
             }
             const boxify = $.$mol_data_pipe((input) => input.toString(), Box);
-            $.$mol_assert_like(boxify(5), new Box('5'));
+            $.$mol_assert_ok(boxify(5) instanceof Box);
+            $.$mol_assert_like(boxify(5).value, '5');
         },
     });
 })($ || ($ = {}));
