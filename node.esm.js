@@ -10737,7 +10737,17 @@ var $;
                 return val;
             return null;
         }
+        draw_start(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
         draw(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        draw_end(event) {
             if (event !== undefined)
                 return event;
             return null;
@@ -10755,7 +10765,7 @@ var $;
                 pointerdown: (event) => this.event_start(event),
                 pointermove: (event) => this.event_move(event),
                 pointerup: (event) => this.event_end(event),
-                pointerleave: (event) => this.event_end(event),
+                pointerleave: (event) => this.event_leave(event),
                 wheel: (event) => this.event_wheel(event)
             };
         }
@@ -10770,6 +10780,11 @@ var $;
             return null;
         }
         event_end(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        event_leave(event) {
             if (event !== undefined)
                 return event;
             return null;
@@ -10845,7 +10860,13 @@ var $;
     ], $mol_touch.prototype, "swipe_to_top", null);
     __decorate([
         $.$mol_mem
+    ], $mol_touch.prototype, "draw_start", null);
+    __decorate([
+        $.$mol_mem
     ], $mol_touch.prototype, "draw", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_touch.prototype, "draw_end", null);
     __decorate([
         $.$mol_mem
     ], $mol_touch.prototype, "event_start", null);
@@ -10855,6 +10876,9 @@ var $;
     __decorate([
         $.$mol_mem
     ], $mol_touch.prototype, "event_end", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_touch.prototype, "event_leave", null);
     __decorate([
         $.$mol_mem
     ], $mol_touch.prototype, "event_wheel", null);
@@ -10901,10 +10925,14 @@ var $;
             event_eat(event) {
                 if (event instanceof PointerEvent) {
                     const events = this.pointer_events().filter(e => e.pointerId !== event.pointerId);
-                    if (event.type !== 'pointerleave')
+                    if (event.type !== 'pointerup' && event.type !== 'pointerleave')
                         events.push(event);
                     this.pointer_events(events);
-                    if (this.allow_zoom() && events.filter(e => e.pointerType === 'touch').length === 2) {
+                    const touch_count = events.filter(e => e.pointerType === 'touch').length;
+                    if (this.allow_zoom() && touch_count === 2) {
+                        return this.action_type('zoom');
+                    }
+                    if (this.action_type() === 'zoom' && touch_count === 1) {
                         return this.action_type('zoom');
                     }
                     let button;
@@ -10937,10 +10965,12 @@ var $;
                 const action_type = this.event_eat(event);
                 if (!action_type)
                     return;
-                if (action_type === 'draw')
-                    return;
                 const coords = this.pointer_coords();
                 this.start_pos(coords.center());
+                if (action_type === 'draw') {
+                    this.draw_start(event);
+                    return;
+                }
                 this.start_distance(coords.distance());
                 this.start_zoom(this.zoom());
             }
@@ -10952,14 +10982,17 @@ var $;
                     return;
                 const start_pan = this.start_pan();
                 const action_type = this.event_eat(event);
+                const start_pos = this.start_pos();
                 let pos = this.pointer_center();
                 if (!action_type)
                     return;
                 if (action_type === 'draw') {
-                    this.draw(event);
+                    const distance = new $.$mol_vector(start_pos, pos).distance();
+                    if (distance >= 4) {
+                        this.draw(event);
+                    }
                     return;
                 }
-                const start_pos = this.start_pos();
                 if (!start_pos)
                     return;
                 if (action_type === 'pan') {
@@ -11008,12 +11041,15 @@ var $;
                 }
             }
             event_end(event) {
+                const action = this.action_type();
+                if (action === 'draw') {
+                    this.draw_end(event);
+                }
+                this.event_leave(event);
+            }
+            event_leave(event) {
                 this.event_eat(event);
                 this.dom_node().releasePointerCapture(event.pointerId);
-                if (!this.start_pos()) {
-                    this.draw(event);
-                    return;
-                }
                 this.start_pos(null);
             }
             swipe_left(event) {
@@ -15170,7 +15206,17 @@ var $;
         allow_zoom() {
             return true;
         }
+        draw_start(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
         draw(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        draw_end(event) {
             if (event !== undefined)
                 return event;
             return null;
@@ -15191,7 +15237,9 @@ var $;
             obj.allow_draw = () => this.allow_draw();
             obj.allow_pan = () => this.allow_pan();
             obj.allow_zoom = () => this.allow_zoom();
+            obj.draw_start = (event) => this.draw_start(event);
             obj.draw = (event) => this.draw(event);
+            obj.draw_end = (event) => this.draw_end(event);
             return obj;
         }
     }
@@ -15275,7 +15323,13 @@ var $;
     ], $mol_plot_pane.prototype, "zoom", null);
     __decorate([
         $.$mol_mem
+    ], $mol_plot_pane.prototype, "draw_start", null);
+    __decorate([
+        $.$mol_mem
     ], $mol_plot_pane.prototype, "draw", null);
+    __decorate([
+        $.$mol_mem
+    ], $mol_plot_pane.prototype, "draw_end", null);
     __decorate([
         $.$mol_mem
     ], $mol_plot_pane.prototype, "Touch", null);
