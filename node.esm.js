@@ -14222,11 +14222,13 @@ var $;
         }
         Share_page() {
             const obj = new this.$.$mol_button_share();
+            obj.title = () => this.title();
             obj.hint = () => "Share this page with screenshot";
             return obj;
         }
         Share_screenshot() {
             const obj = new this.$.$mol_button_share();
+            obj.title = () => "Component screensht";
             obj.hint = () => "Share screenshot of component";
             obj.uri = () => null;
             obj.capture = () => this.Share_hyoo();
@@ -14234,6 +14236,7 @@ var $;
         }
         Share_hyoo() {
             const obj = new this.$.$mol_button_share();
+            obj.title = () => "$hyoo";
             obj.hint = () => "Share hyoo.ru";
             obj.uri = () => "https://hyoo.ru";
             obj.capture = () => null;
