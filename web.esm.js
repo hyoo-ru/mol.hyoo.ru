@@ -32,9 +32,22 @@ $node[ "../mam" ] = $node[ "../mam.js" ] = module.exports }.call( {} , {} )
 "use strict";
 var $;
 (function ($) {
+})($ || ($ = {}));
+//context.js.map
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_dom_context = self;
+})($ || ($ = {}));
+//context.web.js.map
+;
+"use strict";
+var $;
+(function ($) {
     $.$mol_report_bugsnag = '';
     globalThis.onerror = function (msg, url, line, col, err) {
-        const el = document.activeElement;
+        const doc = $.$mol_dom_context.document;
         const report = {
             apiKey: $.$mol_report_bugsnag,
             payloadVersion: 5,
@@ -49,10 +62,10 @@ var $;
                         userAgent: navigator.userAgent,
                         time: new Date().toISOString(),
                     },
-                    context: el && el.id,
+                    context: doc?.activeElement?.id,
                     exceptions: [{
-                            message: err && err.message || err || msg,
-                            errorClass: err && err.constructor.name,
+                            message: err?.message || err || msg,
+                            errorClass: err?.constructor.name,
                             stacktrace: [{
                                     columnNumber: col,
                                     file: url,
@@ -64,8 +77,8 @@ var $;
                         stack: err && err.stack,
                     },
                     request: {
-                        url: document.location.href,
-                        referer: document.referrer,
+                        url: doc?.location.href,
+                        referer: doc?.referrer,
                     },
                 }],
         };
@@ -344,19 +357,6 @@ var $;
     $.$mol_after_tick = $mol_after_tick;
 })($ || ($ = {}));
 //tick.js.map
-;
-"use strict";
-var $;
-(function ($) {
-})($ || ($ = {}));
-//context.js.map
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_dom_context = self;
-})($ || ($ = {}));
-//context.web.js.map
 ;
 "use strict";
 var $;
