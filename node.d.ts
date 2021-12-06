@@ -8315,6 +8315,7 @@ declare namespace $ {
     function $mol_assert_equal<Value>(...args: [Value, Value, ...Value[]]): void;
     function $mol_assert_unique(...args: [any, any, ...any[]]): void;
     function $mol_assert_like<Value>(head: Value, ...tail: Value[]): undefined;
+    function $mol_assert_dom(left: Element, right: Element): void;
 }
 
 declare namespace $ {
