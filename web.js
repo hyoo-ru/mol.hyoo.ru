@@ -641,10 +641,16 @@ var $;
         static get promise() {
             if (this._promise)
                 return this._promise;
-            return this._promise = new Promise(done => requestAnimationFrame(() => {
-                this._promise = null;
-                done();
-            }));
+            return this._promise = new Promise(done => {
+                requestAnimationFrame(() => {
+                    this._promise = null;
+                    done();
+                });
+                setTimeout(() => {
+                    this._promise = null;
+                    done();
+                }, 100);
+            });
         }
         cancelled = false;
         promise;
@@ -19388,8 +19394,8 @@ var $;
     var $$;
     (function ($$) {
         class $mol_ghost extends $.$mol_ghost {
-            dom_node() {
-                const node = this.Sub().dom_node();
+            dom_node(next) {
+                const node = this.Sub().dom_node(next);
                 $.$mol_dom_render_attributes(node, this.attr_static());
                 $.$mol_dom_render_events(node, this.event());
                 return node;
@@ -19409,6 +19415,7 @@ var $;
                 const Sub = this.Sub();
                 const node = Sub.dom_tree();
                 this.dom_node_actual();
+                this.auto();
                 return node;
             }
             title() {
@@ -27592,7 +27599,9 @@ var $;
         attr() {
             return {
                 src: this.uri(),
-                controls: this.controls()
+                controls: this.controls(),
+                autoplay: this.autoplay(),
+                poster: this.poster()
             };
         }
         event() {
@@ -27600,6 +27609,7 @@ var $;
                 volumechange: (event) => this.revolume(event),
                 timeupdate: (event) => this.retime(event),
                 durationchange: (event) => this.redurate(event),
+                playing: (event) => this.play_started(event),
                 play: (event) => this.play(event),
                 pause: (event) => this.pause(event)
             };
@@ -27609,6 +27619,12 @@ var $;
         }
         controls() {
             return true;
+        }
+        autoplay() {
+            return true;
+        }
+        poster() {
+            return "";
         }
         revolume(event) {
             if (event !== undefined)
@@ -27621,6 +27637,11 @@ var $;
             return null;
         }
         redurate(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        play_started(event) {
             if (event !== undefined)
                 return event;
             return null;
@@ -27656,6 +27677,9 @@ var $;
     ], $mol_video_player.prototype, "redurate", null);
     __decorate([
         $.$mol_mem
+    ], $mol_video_player.prototype, "play_started", null);
+    __decorate([
+        $.$mol_mem
     ], $mol_video_player.prototype, "play", null);
     __decorate([
         $.$mol_mem
@@ -27667,7 +27691,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_style_attach("mol/video/player/player.view.css", "[mol_video_player] {\n\tflex: 1 1 auto;\n}\n");
+    $.$mol_style_attach("mol/video/player/player.view.css", "[mol_video_player] {\n\tflex: 1 1 auto;\n\tobject-fit: cover;\n}\n");
 })($ || ($ = {}));
 //player.view.css.js.map
 ;
@@ -27855,7 +27879,10 @@ var $;
                 return super.dom_node();
             }
             picked() {
-                this.files(this.dom_node().files);
+                const files = this.dom_node().files;
+                if (!files || !files.length)
+                    return;
+                this.files([...files]);
             }
         }
         $$.$mol_button_open_native = $mol_button_open_native;
