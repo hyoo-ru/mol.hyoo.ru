@@ -3409,6 +3409,10 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            play: {
+                title: string;
+                uri: string;
+            };
             invest: {
                 title: string;
                 uri: string;

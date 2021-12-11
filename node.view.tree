@@ -961,6 +961,9 @@ $hyoo_apps $mol_book2
 		notes *
 			title @ \Private Notes
 			uri \https://notes.hyoo.ru/#
+		play *
+			title @ \Media Player
+			uri \https://play.hyoo.ru/
 		invest *
 			title @ \Private Investments
 			uri \https://invest.hyoo.ru/
