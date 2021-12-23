@@ -12491,10 +12491,6 @@ var $;
         }
         data() {
             return {
-                offer: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_offer_title'),
-                    uri: "https://offer.hyoo.ru/"
-                },
                 mol: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_mol_title'),
                     uri: "https://mol.hyoo.ru/"
@@ -12533,7 +12529,7 @@ var $;
                 },
                 calc: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_calc_title'),
-                    uri: "https://calc.hyoo.ru/#title=a*x**2%20%2B%20b*x%20%2B%20c%20%3D%200/A1=a/B2=6/A2=3/B1=b/C1=c/E1=D/E2=%3D%20B2**2%20-%204*A2*C2/G1=x1/G2=%3D%20%28%20-B2%20%2B%20sqrt%28E2%29%20%29%20%2F%202%20%2F%20A2/H1=x2/H2=%3D%20%28%20-B2%20-%20sqrt%28E2%29%20%29%20%2F%202%20%2F%20A2/C2=0"
+                    uri: "https://calc.hyoo.ru/#!title=a*x**2%20%2B%20b*x%20%2B%20c%20%3D%200/A1=x%20%3D%20%5B%0A%09%28%20-_.b%20%2B%20sqrt%28_.D%29%20%29%20%2F%202%20%2F%20_.a%2C%0A%09%28%20-_.b%20-%20sqrt%28_.D%29%20%29%20%2F%202%20%2F%20_.a%2C%0A%5D/A2=D%20%3D%20_.b**2%20-%204*_.a*_.c/C1=a%20%3D%203/C2=b%20%3D%206/C3=c%20%3D%20-9"
                 },
                 notes: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_notes_title'),
