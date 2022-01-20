@@ -12206,16 +12206,19 @@ var $;
             contents() {
                 if (!this.uri_slides())
                     return '';
+                return $mol_wire_sync(this).call('content');
+            }
+            call(...message) {
                 const remote = this.Loader().window();
-                return $mol_fiber_sync(() => new Promise(done => {
-                    remote.postMessage(['content'], '*');
+                return new Promise(done => {
+                    remote.postMessage(message, '*');
                     $mol_dom_context.onmessage = (event) => {
                         if (event.data[0] !== 'done')
                             return;
                         $mol_dom_context.onmessage = null;
                         done(event.data[1]);
                     };
-                }))();
+                });
             }
             content_pages() {
                 return this.contents().split(/^(?=#)/mg);
