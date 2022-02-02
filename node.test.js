@@ -28516,6 +28516,7 @@ var $;
             const obj = new this.$.$mol_app_demo_menu();
             obj.names = () => this.names_demo_filtered();
             obj.filter_suggests = () => this.filter_suggests();
+            obj.tools = () => this.tools();
             return obj;
         }
         chat_pages(id) {
@@ -28568,6 +28569,24 @@ var $;
         }
         filter_suggests() {
             return [];
+        }
+        sources_uri() {
+            return "https://github.com/hyoo-ru/mam_mol/";
+        }
+        Sources() {
+            const obj = new this.$.$mol_link_source();
+            obj.uri = () => this.sources_uri();
+            return obj;
+        }
+        Lights() {
+            const obj = new this.$.$mol_lights_toggle();
+            return obj;
+        }
+        tools() {
+            return [
+                this.Sources(),
+                this.Lights()
+            ];
         }
         chat_seed(id) {
             return "";
@@ -28629,6 +28648,12 @@ var $;
     ], $mol_app_demo.prototype, "Theme", null);
     __decorate([
         $mol_mem
+    ], $mol_app_demo.prototype, "Sources", null);
+    __decorate([
+        $mol_mem
+    ], $mol_app_demo.prototype, "Lights", null);
+    __decorate([
+        $mol_mem
     ], $mol_app_demo.prototype, "Demo", null);
     __decorate([
         $mol_mem
@@ -28644,12 +28669,6 @@ var $;
         title() {
             return this.$.$mol_locale.text('$mol_app_demo_menu_title');
         }
-        tools() {
-            return [
-                this.Sources(),
-                this.Lights()
-            ];
-        }
         Body() {
             const obj = new this.$.$mol_scroll();
             obj.sub = () => [
@@ -28663,18 +28682,6 @@ var $;
             obj.sub = () => [
                 this.Option_title(id)
             ];
-            return obj;
-        }
-        sources_uri() {
-            return "https://github.com/hyoo-ru/mam_mol/tree/master/";
-        }
-        Sources() {
-            const obj = new this.$.$mol_link_source();
-            obj.uri = () => this.sources_uri();
-            return obj;
-        }
-        Lights() {
-            const obj = new this.$.$mol_lights_toggle();
             return obj;
         }
         filter(val) {
@@ -28723,12 +28730,6 @@ var $;
     __decorate([
         $mol_mem_key
     ], $mol_app_demo_menu.prototype, "Option", null);
-    __decorate([
-        $mol_mem
-    ], $mol_app_demo_menu.prototype, "Sources", null);
-    __decorate([
-        $mol_mem
-    ], $mol_app_demo_menu.prototype, "Lights", null);
     __decorate([
         $mol_mem
     ], $mol_app_demo_menu.prototype, "filter", null);
