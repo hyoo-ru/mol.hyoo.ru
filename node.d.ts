@@ -3596,6 +3596,7 @@ declare namespace $ {
         Theme(): $$.$mol_theme_auto;
         Source(): $mol_link_source;
         Lights(): $$.$mol_lights_toggle;
+        tools(): readonly any[];
         menu_items(): readonly $mol_view[];
         Menu_items(): $$.$mol_list;
         Menu(): $$.$mol_page;

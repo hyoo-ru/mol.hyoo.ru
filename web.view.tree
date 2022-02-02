@@ -923,8 +923,8 @@ $hyoo_apps $mol_book2
 		<= Theme $mol_theme_auto
 	pages /
 		<= Menu $mol_page
-			title @ \$hyoo apps
-			tools /
+			title @ \$mol apps
+			tools <= tools /
 				<= Source $mol_link_source uri \https://github.com/hyoo-ru/apps.hyoo.ru
 				<= Lights $mol_lights_toggle
 			body /
@@ -4080,8 +4080,10 @@ $hyoo_mol $mol_book2_catalog
 			menu_tools / <= Spread_close
 		apps <= Apps $hyoo_apps
 			title @ \Applications
+			tools / <= Spread_close
 		demos <= Demos $mol_app_demo
 			title @ \Examples
+			tools / <= Spread_close
 		view.tree <= View_tree $hyoo_tree
 			title @ \View.Tree Sandbox
 			Presets null
