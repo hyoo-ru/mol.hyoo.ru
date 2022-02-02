@@ -33082,7 +33082,7 @@ var $;
         }
         Sources() {
             const obj = new this.$.$mol_link_source();
-            obj.uri = () => "https://github.com/hyoo-ru/mol.hyoo.ru";
+            obj.uri = () => "https://github.com/hyoo-ru/mam_mol";
             return obj;
         }
         Lights() {
