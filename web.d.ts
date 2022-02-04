@@ -535,7 +535,7 @@ declare namespace $ {
         dom_node(next?: Element): Element;
         dom_tree(next?: Element): Element;
         dom_node_actual(): Element;
-        auto(): void;
+        auto(): any;
         render(): void;
         static view_classes(): (typeof $mol_view)[];
         view_names_owned(): string[];
@@ -737,7 +737,6 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_scroll extends $mol_view {
-        scroll_pos(): readonly any[];
         scroll_top(val?: any): number;
         scroll_left(val?: any): number;
         field(): {
@@ -748,20 +747,6 @@ declare namespace $ {
         };
         tabindex(): number;
         event_scroll(event?: any): any;
-    }
-}
-
-declare namespace $ {
-    class $mol_state_session<Value> extends $mol_object {
-        static 'native()': Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
-        static native(): Storage | {
-            getItem(key: string): any;
-            setItem(key: string, value: string): void;
-            removeItem(key: string): void;
-        };
-        static value<Value>(key: string, next?: Value): Value;
-        prefix(): string;
-        value(key: string, next?: Value): Value;
     }
 }
 
@@ -793,9 +778,8 @@ declare namespace $.$$ {
 
 declare namespace $.$$ {
     class $mol_scroll extends $.$mol_scroll {
-        scroll_pos(next?: readonly number[]): readonly number[];
-        scroll_top(next?: number): number;
-        scroll_left(next?: number): number;
+        scroll_top(next?: number, cache?: 'cache'): number;
+        scroll_left(next?: number, cache?: 'cache'): number;
         event_scroll(next?: Event): void;
         minimal_height(): number;
         minimal_width(): number;
@@ -945,8 +929,8 @@ declare namespace $ {
         Tools(): $mol_view;
         head(): readonly any[];
         Head(): $mol_view;
-        body_scroll_top(val?: any): number;
         body(): readonly $mol_view_content[];
+        body_scroll_top(val?: any): number;
         Body(): $$.$mol_scroll;
         foot(): readonly $mol_view[];
         Foot(): $mol_view;
@@ -954,12 +938,6 @@ declare namespace $ {
 }
 
 declare namespace $.$$ {
-}
-
-declare namespace $.$$ {
-    class $mol_page extends $.$mol_page {
-        body_scroll_top(next?: number): number;
-    }
 }
 
 declare namespace $ {
@@ -1053,7 +1031,7 @@ declare namespace $ {
         menu_tools(): readonly any[];
         links(): readonly any[];
         Links(): $$.$mol_list;
-        Menu(): $$.$mol_page;
+        Menu(): $mol_page;
         arg(id: any): {};
         spread_title(id: any): string;
         spread_close_arg(): {};
@@ -1888,6 +1866,20 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_state_session<Value> extends $mol_object {
+        static 'native()': Pick<Storage, 'getItem' | 'setItem' | 'removeItem'>;
+        static native(): Storage | {
+            getItem(key: string): any;
+            setItem(key: string, value: string): void;
+            removeItem(key: string): void;
+        };
+        static value<Value>(key: string, next?: Value): Value;
+        prefix(): string;
+        value(key: string, next?: Value): Value;
+    }
+}
+
+declare namespace $ {
 }
 
 declare namespace $.$$ {
@@ -2547,7 +2539,7 @@ declare namespace $.$$ {
         uri_resource(): string;
         uri_listener(): $mol_dom_listener;
         uri_change(event?: MessageEvent<[string, string]>): void;
-        auto(): void;
+        auto(): (Window | $mol_dom_listener)[];
     }
 }
 
@@ -2602,7 +2594,7 @@ declare namespace $ {
         Close(): $$.$mol_link;
         embed(): string;
         Embed(): $$.$mol_frame;
-        Page(): $$.$mol_page;
+        Page(): $mol_page;
     }
 }
 
@@ -2621,8 +2613,8 @@ declare namespace $.$$ {
 declare namespace $ {
     class $hyoo_habhub extends $mol_book2 {
         plugins(): readonly any[];
-        Menu_page(): $$.$mol_page;
-        Details(id: any): $$.$mol_page;
+        Menu_page(): $mol_page;
+        Details(id: any): $mol_page;
         Menu_row(id: any): $$.$mol_link;
         Theme(): $$.$mol_theme_auto;
         menu_title(): string;
@@ -2638,7 +2630,7 @@ declare namespace $ {
         Menu(): $$.$mol_list;
         gist_current_title(): string;
         chat_seed(id: any): string;
-        chat_pages(id: any): $$.$mol_page[];
+        chat_pages(id: any): $mol_page[];
         Details_chat(id: any): $$.$mol_chat;
         gist_current_created(): string;
         Created(): $$.$mol_paragraph;
@@ -3031,7 +3023,7 @@ declare namespace $ {
         uri_base(): string;
         speaker_content(): readonly any[];
         Speaker_content(): $$.$mol_text;
-        Speaker(): $$.$mol_page;
+        Speaker(): $mol_page;
         tools(): readonly any[];
         listener_width(): number;
         listener_content(): readonly any[];
@@ -3041,7 +3033,7 @@ declare namespace $ {
         progress(): number;
         Progress(): $$.$mol_portion;
         Listener_head(): $mol_view;
-        Listener(): $$.$mol_page;
+        Listener(): $mol_page;
     }
 }
 
@@ -3259,7 +3251,7 @@ declare namespace $ {
             "touch-action": string;
         };
         contents(val?: any): string;
-        Menu(): $$.$mol_page;
+        Menu(): $mol_page;
         Menu_item(id: any): $$.$mol_link;
         menu_options(): {
             "https://nin-jin.github.io/slides/slides/": string;
@@ -3542,7 +3534,7 @@ declare namespace $ {
         tools(): readonly any[];
         menu_items(): readonly $mol_view[];
         Menu_items(): $$.$mol_list;
-        Menu(): $$.$mol_page;
+        Menu(): $mol_page;
         app_title(id: any): string;
         app_arg(id: any): {};
         Menu_link_in(id: any): $$.$mol_link;
@@ -3877,9 +3869,9 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
-        Articles(): $$.$mol_page;
-        Images(): $$.$mol_page;
-        Maps(): $$.$mol_page;
+        Articles(): $mol_page;
+        Images(): $mol_page;
+        Maps(): $mol_page;
         Calatog(): $$.$mol_book2_catalog;
     }
 }
@@ -4907,7 +4899,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
-        chat_pages(): $$.$mol_page[];
+        chat_pages(): $mol_page[];
         Chat(): $$.$mol_chat;
     }
 }
@@ -6257,7 +6249,7 @@ declare namespace $ {
         Text(): $mol_filler;
         Button_foot(): $mol_button_minor;
         Foot_content(): $mol_row;
-        Page(): $$.$mol_page;
+        Page(): $mol_page;
     }
 }
 
@@ -7622,7 +7614,7 @@ declare namespace $ {
         plugins(): readonly any[];
         demo_block_list(): readonly any[];
         Menu(): $$.$mol_app_demo_menu;
-        chat_pages(id: any): $$.$mol_page[];
+        chat_pages(id: any): $mol_page[];
         Detail(id: any): $mol_app_demo_detail;
         Readme_page(): $$.$mol_app_demo_readme;
         Welcome(): $$.$mol_scroll;
@@ -7671,7 +7663,7 @@ declare namespace $ {
         readme_icon(): $mol_icon_information_outline;
         Readme(): $$.$mol_link;
         chat_seed(): string;
-        chat_pages(): $$.$mol_page[];
+        chat_pages(): $mol_page[];
         Chat(): $$.$mol_chat;
         source_link(): string;
         source_hint(): string;
@@ -8589,20 +8581,20 @@ declare namespace $ {
         Grammar(): $$.$mol_link;
         Span(): $$.$mol_link;
         Presets_list(): $$.$mol_list;
-        Presets(): $$.$mol_page;
+        Presets(): $mol_page;
         source_tools(): readonly $mol_view_content[];
         source_default(): string;
         source(val?: any): string;
         source_hint(): string;
         Source_text(): $$.$mol_textarea;
-        Source(): $$.$mol_page;
+        Source(): $mol_page;
         transform_options(): readonly string[];
         add_hint(): string;
         result_title(): string;
         Pipeline(): $$.$mol_select_list;
         result_text(): any;
         Result_text(): $$.$mol_text_code;
-        Result(): $$.$mol_page;
+        Result(): $mol_page;
     }
 }
 
@@ -8638,7 +8630,7 @@ declare namespace $ {
         menu_tools(): readonly any[];
         param(): string;
         spreads(): {
-            "": $$.$mol_page;
+            "": $mol_page;
             articles: $$.$hyoo_habhub;
             slides: $$.$hyoo_slides;
             apps: $$.$hyoo_apps;
@@ -8653,7 +8645,7 @@ declare namespace $ {
         description(): string;
         sources_uri(): string;
         Description(): $$.$mol_text;
-        Main(): $$.$mol_page;
+        Main(): $mol_page;
         Articles(): $$.$hyoo_habhub;
         Slides(): $$.$hyoo_slides;
         Apps(): $$.$hyoo_apps;
