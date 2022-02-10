@@ -418,6 +418,15 @@ var $;
 "use strict";
 var $;
 (function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_after_timeout = $mol_after_mock_timeout;
+    });
+})($ || ($ = {}));
+//mol/after/timeout/timeout.test.ts
+;
+"use strict";
+var $;
+(function ($_1) {
     $mol_test({
         async 'Latest Calls Wins on Concurrency'($) {
             class NameLogger extends $mol_object2 {
@@ -1841,15 +1850,6 @@ var $;
 ;
 "use strict";
 var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_after_timeout = $mol_after_mock_timeout;
-    });
-})($ || ($ = {}));
-//mol/after/timeout/timeout.test.ts
-;
-"use strict";
-var $;
 (function ($) {
     $mol_test_mocks.push(context => {
         class $mol_state_local_mock extends $mol_state_local {
@@ -2522,6 +2522,81 @@ var $;
 ;
 "use strict";
 var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_log3_come = () => { };
+        $.$mol_log3_done = () => { };
+        $.$mol_log3_fail = () => { };
+        $.$mol_log3_warn = () => { };
+        $.$mol_log3_rise = () => { };
+        $.$mol_log3_area = () => () => { };
+    });
+})($ || ($ = {}));
+//mol/log3/log3.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_wire_log extends $mol_object2 {
+        static watch(task) {
+            return task;
+        }
+        static track(fiber) {
+            const prev = $mol_wire_probe(() => this.track(fiber));
+            let next;
+            try {
+                next = fiber.sync();
+            }
+            finally {
+                for (const pub of fiber.pub_list) {
+                    if (pub instanceof $mol_wire_fiber) {
+                        this.track(pub);
+                    }
+                }
+            }
+            if (prev !== undefined && !$mol_compare_deep(prev, next)) {
+                this.$.$mol_log3_rise({
+                    message: 'Changed',
+                    place: fiber,
+                });
+            }
+            return next;
+        }
+        static active() {
+            try {
+                this.watch()?.();
+            }
+            finally {
+                for (const pub of $mol_wire_auto.pub_list) {
+                    if (pub instanceof $mol_wire_fiber) {
+                        this.track(pub);
+                    }
+                }
+            }
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_wire_log, "watch", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_wire_log, "track", null);
+    __decorate([
+        $mol_mem
+    ], $mol_wire_log, "active", null);
+    $.$mol_wire_log = $mol_wire_log;
+})($ || ($ = {}));
+//mol/wire/log/log.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_wire_log.active();
+})($ || ($ = {}));
+//mol/wire/wire.test.ts
+;
+"use strict";
+var $;
 (function ($) {
     $mol_test({
         'lazy calls'() {
@@ -2719,20 +2794,6 @@ var $;
     });
 })($ || ($ = {}));
 //mol/unit/unit.test.ts
-;
-"use strict";
-var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_log3_come = () => { };
-        $.$mol_log3_done = () => { };
-        $.$mol_log3_fail = () => { };
-        $.$mol_log3_warn = () => { };
-        $.$mol_log3_rise = () => { };
-        $.$mol_log3_area = () => () => { };
-    });
-})($ || ($ = {}));
-//mol/log3/log3.test.ts
 ;
 "use strict";
 //mol/type/param/param.test.ts
