@@ -1029,6 +1029,9 @@ $hyoo_apps $mol_book2
 		mail *
 			title @ \Universal EMail client
 			uri \https://mail.hyoo.ru/#!folder=inbox/mail=qwe
+		gazporn *
+			title @ \CEO Dashboard
+			uri \https://nin-jin.github.io/chart/
 		toys *
 			title @ \Online Toys Store
 			uri \https://toys.hyoo.ru/#size=M/popular

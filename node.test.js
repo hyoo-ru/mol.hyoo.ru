@@ -12555,6 +12555,10 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_data_mail_title'),
                     uri: "https://mail.hyoo.ru/#!folder=inbox/mail=qwe"
                 },
+                gazporn: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_gazporn_title'),
+                    uri: "https://nin-jin.github.io/chart/"
+                },
                 toys: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_toys_title'),
                     uri: "https://toys.hyoo.ru/#size=M/popular"
