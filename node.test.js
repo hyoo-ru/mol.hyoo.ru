@@ -27618,7 +27618,6 @@ var $;
                 wrap: 'wrap',
                 direction: 'row-reverse',
             },
-            justifyContent: 'flex-end',
             display: 'flex',
             position: 'relative',
             overflow: 'hidden',
@@ -27638,6 +27637,7 @@ var $;
             },
             Bar: {
                 display: 'flex',
+                justifyContent: 'flex-end',
                 flex: {
                     grow: 1,
                     wrap: 'wrap',
