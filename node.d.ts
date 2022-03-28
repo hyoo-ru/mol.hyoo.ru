@@ -23,20 +23,24 @@ interface $node {
 declare var $node: $node;
 
 declare namespace $ {
-}
-
-declare namespace $ {
-    let $mol_report_bugsnag: string;
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    function $mol_offline(uri?: string): void;
-}
-
-declare namespace $ {
+    type $mol_log3_event<Fields> = {
+        [key in string]: unknown;
+    } & {
+        time?: string;
+        place: unknown;
+        message: string;
+    } & Fields;
+    type $mol_log3_logger<Fields, Res = void> = (this: $, event: $mol_log3_event<Fields>) => Res;
+    let $mol_log3_come: $mol_log3_logger<{}>;
+    let $mol_log3_done: $mol_log3_logger<{}>;
+    let $mol_log3_fail: $mol_log3_logger<{}>;
+    let $mol_log3_warn: $mol_log3_logger<{
+        hint: string;
+    }>;
+    let $mol_log3_rise: $mol_log3_logger<{}>;
+    let $mol_log3_area: $mol_log3_logger<{}, () => void>;
+    function $mol_log3_area_lazy(this: $, event: $mol_log3_event<{}>): () => void;
+    let $mol_log3_stack: (() => void)[];
 }
 
 declare namespace $ {
@@ -90,6 +94,78 @@ declare namespace $ {
         toString(): any;
         toJSON(): any;
     }
+}
+
+declare namespace $ {
+    function $mol_deprecated(message: string): <Method extends (this: Host, ...args: readonly any[]) => any, Host extends { [key in Field]: Method; }, Field extends keyof Host>(host: Host, field: Field, descr: TypedPropertyDescriptor<Method>) => void;
+}
+
+declare namespace $ {
+    const $mol_tree_convert: unique symbol;
+    type $mol_tree_path = Array<string | number | null>;
+    type $mol_tree_hack = (input: $mol_tree, context: $mol_tree_context) => readonly $mol_tree[];
+    type $mol_tree_context = Record<string, $mol_tree_hack>;
+    type $mol_tree_library = Record<string, $mol_tree_context>;
+    class $mol_tree extends $mol_object2 {
+        readonly type: string;
+        readonly data: string;
+        readonly sub: readonly $mol_tree[];
+        readonly baseUri: string;
+        readonly row: number;
+        readonly col: number;
+        readonly length: number;
+        constructor(config?: Partial<$mol_tree>);
+        static values(str: string, baseUri?: string): $mol_tree[];
+        clone(config?: Partial<$mol_tree>): $mol_tree;
+        make(config: Partial<$mol_tree>): $mol_tree;
+        make_data(value: string, sub?: readonly $mol_tree[]): $mol_tree;
+        make_struct(type: string, sub?: readonly $mol_tree[]): $mol_tree;
+        static fromString(str: string, baseUri?: string): $mol_tree;
+        static fromJSON(json: any, baseUri?: string): $mol_tree;
+        get uri(): string;
+        toString(prefix?: string): string;
+        toJSON(): any;
+        get value(): string;
+        insert(value: $mol_tree, ...path: $mol_tree_path): $mol_tree;
+        select(...path: $mol_tree_path): $mol_tree;
+        filter(path: string[], value?: string): $mol_tree;
+        transform(visit: (stack: $mol_tree[], sub: () => $mol_tree[]) => $mol_tree | null, stack?: $mol_tree[]): $mol_tree | null;
+        hack(context: $mol_tree_context): $mol_tree;
+        error(message: string): Error;
+    }
+}
+
+declare namespace $ {
+    function $mol_log3_node_make(level: keyof Console, output: 'stdout' | 'stderr', type: string, color: keyof typeof $node.colorette): (this: $, event: $mol_log3_event<{}>) => () => void;
+}
+
+declare namespace $ {
+    function $mol_env(): Record<string, string | undefined>;
+}
+
+declare namespace $ {
+}
+
+/// <reference types="node" />
+declare namespace $ {
+    function $mol_exec(this: $, dir: string, command: string, ...args: string[]): import("child_process").SpawnSyncReturns<Buffer>;
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    let $mol_report_bugsnag: string;
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    function $mol_offline(uri?: string): void;
+}
+
+declare namespace $ {
 }
 
 declare namespace $ {
@@ -722,6 +798,19 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_plugin extends $mol_view {
+        dom_node(next?: Element): Element;
+        attr_static(): {
+            [key: string]: string | number | boolean;
+        };
+        event(): {
+            [key: string]: (event: Event) => void;
+        };
+        render(): void;
+    }
+}
+
+declare namespace $ {
     function $mol_style_define<Component extends $mol_view, Config extends $mol_style_guard<Component, Config>>(Component: new () => Component, config: Config): HTMLStyleElement | null;
 }
 
@@ -1110,70 +1199,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    type $mol_log3_event<Fields> = {
-        [key in string]: unknown;
-    } & {
-        time?: string;
-        place: unknown;
-        message: string;
-    } & Fields;
-    type $mol_log3_logger<Fields, Res = void> = (this: $, event: $mol_log3_event<Fields>) => Res;
-    let $mol_log3_come: $mol_log3_logger<{}>;
-    let $mol_log3_done: $mol_log3_logger<{}>;
-    let $mol_log3_fail: $mol_log3_logger<{}>;
-    let $mol_log3_warn: $mol_log3_logger<{
-        hint: string;
-    }>;
-    let $mol_log3_rise: $mol_log3_logger<{}>;
-    let $mol_log3_area: $mol_log3_logger<{}, () => void>;
-    function $mol_log3_area_lazy(this: $, event: $mol_log3_event<{}>): () => void;
-    let $mol_log3_stack: (() => void)[];
-}
-
-declare namespace $ {
-    function $mol_deprecated(message: string): <Method extends (this: Host, ...args: readonly any[]) => any, Host extends { [key in Field]: Method; }, Field extends keyof Host>(host: Host, field: Field, descr: TypedPropertyDescriptor<Method>) => void;
-}
-
-declare namespace $ {
-    const $mol_tree_convert: unique symbol;
-    type $mol_tree_path = Array<string | number | null>;
-    type $mol_tree_hack = (input: $mol_tree, context: $mol_tree_context) => readonly $mol_tree[];
-    type $mol_tree_context = Record<string, $mol_tree_hack>;
-    type $mol_tree_library = Record<string, $mol_tree_context>;
-    class $mol_tree extends $mol_object2 {
-        readonly type: string;
-        readonly data: string;
-        readonly sub: readonly $mol_tree[];
-        readonly baseUri: string;
-        readonly row: number;
-        readonly col: number;
-        readonly length: number;
-        constructor(config?: Partial<$mol_tree>);
-        static values(str: string, baseUri?: string): $mol_tree[];
-        clone(config?: Partial<$mol_tree>): $mol_tree;
-        make(config: Partial<$mol_tree>): $mol_tree;
-        make_data(value: string, sub?: readonly $mol_tree[]): $mol_tree;
-        make_struct(type: string, sub?: readonly $mol_tree[]): $mol_tree;
-        static fromString(str: string, baseUri?: string): $mol_tree;
-        static fromJSON(json: any, baseUri?: string): $mol_tree;
-        get uri(): string;
-        toString(prefix?: string): string;
-        toJSON(): any;
-        get value(): string;
-        insert(value: $mol_tree, ...path: $mol_tree_path): $mol_tree;
-        select(...path: $mol_tree_path): $mol_tree;
-        filter(path: string[], value?: string): $mol_tree;
-        transform(visit: (stack: $mol_tree[], sub: () => $mol_tree[]) => $mol_tree | null, stack?: $mol_tree[]): $mol_tree | null;
-        hack(context: $mol_tree_context): $mol_tree;
-        error(message: string): Error;
-    }
-}
-
-declare namespace $ {
-    function $mol_log3_node_make(level: keyof Console, output: 'stdout' | 'stderr', type: string, color: keyof typeof $node.colorette): (this: $, event: $mol_log3_event<{}>) => () => void;
-}
-
-declare namespace $ {
     class $mol_file_node extends $mol_file {
         static absolute(path: string): $mol_file_node;
         static relative(path: string): $mol_file_node;
@@ -1201,19 +1226,6 @@ declare namespace $ {
         static texts(lang: string, next?: $mol_locale_dict): $mol_locale_dict;
         static text(key: string): string;
         static warn(key: string): null;
-    }
-}
-
-declare namespace $ {
-    class $mol_plugin extends $mol_view {
-        dom_node(next?: Element): Element;
-        attr_static(): {
-            [key: string]: string | number | boolean;
-        };
-        event(): {
-            [key: string]: (event: Event) => void;
-        };
-        render(): void;
     }
 }
 
@@ -2989,6 +3001,92 @@ declare namespace $ {
         add(config: {
             text: string;
         }, next?: $mol_github_comment, force?: $mol_mem_force): $mol_github_comment | undefined;
+    }
+}
+
+declare namespace $ {
+    interface $mol_github_repository_json extends $mol_github_entity_json {
+        name?: string;
+        full_name?: string;
+        owner?: $mol_github_user_json;
+        author_association?: string;
+        private?: false;
+        description?: string;
+        fork?: false;
+        forks_url?: string;
+        keys_url?: string;
+        collaborators_url?: string;
+        teams_url?: string;
+        hooks_url?: string;
+        issue_events_url?: string;
+        events_url?: string;
+        assignees_url?: string;
+        branches_url?: string;
+        tags_url?: string;
+        blobs_url?: string;
+        git_tags_url?: string;
+        git_refs_url?: string;
+        trees_url?: string;
+        statuses_url?: string;
+        languages_url?: string;
+        stargazers_url?: string;
+        contributors_url?: string;
+        subscribers_url?: string;
+        subscription_url?: string;
+        commits_url?: string;
+        git_commits_url?: string;
+        comments_url?: string;
+        issue_comment_url?: string;
+        contents_url?: string;
+        compare_url?: string;
+        merges_url?: string;
+        archive_url?: string;
+        downloads_url?: string;
+        issues_url?: string;
+        pulls_url?: string;
+        milestones_url?: string;
+        notifications_url?: string;
+        labels_url?: string;
+        releases_url?: string;
+        deployments_url?: string;
+        pushed_at?: string;
+        git_url?: string;
+        ssh_url?: string;
+        clone_url?: string;
+        svn_url?: string;
+        homepage?: string;
+        size?: number;
+        stargazers_count?: number;
+        watchers_count?: number;
+        language?: string;
+        has_issues?: boolean;
+        has_projects?: boolean;
+        has_downloads?: boolean;
+        has_wiki?: boolean;
+        has_pages?: boolean;
+        forks_count?: number;
+        mirror_url?: string;
+        archived?: boolean;
+        open_issues_count?: number;
+        watchers?: number;
+        default_branch?: string;
+        network_count?: number;
+        subscribers_count?: number;
+    }
+    class $mol_github_repository extends $mol_github_entity<$mol_github_repository_json> {
+        json_update(patch: Partial<$mol_github_repository_json>): $mol_github_repository_json;
+        owner(): $mol_github_user;
+        name(): string;
+        name_full(): string;
+        issues(): $mol_github_repository_issues;
+    }
+    class $mol_github_repository_issues extends $mol_model<$mol_github_issue_json[]> {
+        json_update(patch: $mol_github_issue_json[]): $mol_github_issue_json[];
+        items(next?: $mol_github_issue[], force?: $mol_mem_force): $mol_github_issue[];
+        add(config: {
+            title: string;
+            text?: string;
+        }, next?: $mol_github_issue, force?: $mol_mem_force): $mol_github_issue | undefined;
     }
 }
 
@@ -7879,6 +7977,23 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_error_syntax extends SyntaxError {
+        reason: string;
+        line: string;
+        span: $mol_span;
+        constructor(reason: string, line: string, span: $mol_span);
+    }
+}
+
+declare namespace $ {
+    function $mol_tree2_from_string(this: $, str: string, uri?: string): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_tree2_to_string(this: $, tree: $mol_tree2): string;
+}
+
+declare namespace $ {
     type $mol_tree2_path = Array<string | number | null>;
     type $mol_tree2_hack<Context> = (input: $mol_tree2, belt: $mol_tree2_belt<Context>, context: Context) => readonly $mol_tree2[];
     type $mol_tree2_belt<Context> = Record<string, $mol_tree2_hack<Context>>;
@@ -7910,19 +8025,6 @@ declare namespace $ {
     class $mol_tree2_empty extends $mol_tree2 {
         constructor();
     }
-}
-
-declare namespace $ {
-    class $mol_error_syntax extends SyntaxError {
-        reason: string;
-        line: string;
-        span: $mol_span;
-        constructor(reason: string, line: string, span: $mol_span);
-    }
-}
-
-declare namespace $ {
-    function $mol_tree2_from_string(this: $, str: string, uri?: string): $mol_tree2;
 }
 
 declare namespace $ {
@@ -7994,14 +8096,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_class_super(this: $, klass: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_view_tree2_class_props(this: $, klass: $mol_tree2): $mol_tree2[];
-}
-
-declare namespace $ {
     function $mol_view_tree2_prop_split(this: $, src: $mol_tree2): {
         src: $mol_tree2;
         name: $mol_tree2;
@@ -8027,6 +8121,14 @@ declare namespace $ {
         readonly key: string;
         readonly next: string;
     }>;
+}
+
+declare namespace $ {
+    function $mol_view_tree2_class_super(this: $, klass: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_view_tree2_class_props(this: $, klass: $mol_tree2): $mol_tree2[];
 }
 
 declare namespace $ {
@@ -8156,11 +8258,23 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_to_text(this: $, tree2_module: $mol_tree2): $mol_tree2;
+    function $mol_view_tree2_ts_array_body(this: $, operator: $mol_tree2, parent_context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop): $mol_tree2;
 }
 
 declare namespace $ {
-    function $mol_tree2_to_string(this: $, tree: $mol_tree2): string;
+    function $mol_view_tree2_ts_array(this: $, operator: $mol_tree2, context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop | undefined): $mol_tree2[];
+}
+
+declare namespace $ {
+    function $mol_view_tree2_ts_method_body(this: $, having_parts: $mol_view_tree2_prop, parent_context: $mol_view_tree2_context): undefined;
+}
+
+declare namespace $ {
+    function $mol_view_tree2_ts_method(this: $, owner_parts: $mol_view_tree2_prop, body: $mol_tree2, types?: boolean): $mol_tree2[];
+}
+
+declare namespace $ {
+    function $mol_view_tree2_to_text(this: $, tree2_module: $mol_tree2): $mol_tree2;
 }
 
 declare namespace $ {
@@ -8735,120 +8849,6 @@ declare namespace $.$$ {
     class $hyoo_mol extends $.$hyoo_mol {
         description(): string;
     }
-}
-
-declare namespace $ {
-    function $mol_env(): Record<string, string | undefined>;
-}
-
-declare namespace $ {
-}
-
-/// <reference types="node" />
-declare namespace $ {
-    function $mol_exec(this: $, dir: string, command: string, ...args: string[]): import("child_process").SpawnSyncReturns<Buffer>;
-}
-
-declare namespace $ {
-    interface $mol_github_repository_json extends $mol_github_entity_json {
-        name?: string;
-        full_name?: string;
-        owner?: $mol_github_user_json;
-        author_association?: string;
-        private?: false;
-        description?: string;
-        fork?: false;
-        forks_url?: string;
-        keys_url?: string;
-        collaborators_url?: string;
-        teams_url?: string;
-        hooks_url?: string;
-        issue_events_url?: string;
-        events_url?: string;
-        assignees_url?: string;
-        branches_url?: string;
-        tags_url?: string;
-        blobs_url?: string;
-        git_tags_url?: string;
-        git_refs_url?: string;
-        trees_url?: string;
-        statuses_url?: string;
-        languages_url?: string;
-        stargazers_url?: string;
-        contributors_url?: string;
-        subscribers_url?: string;
-        subscription_url?: string;
-        commits_url?: string;
-        git_commits_url?: string;
-        comments_url?: string;
-        issue_comment_url?: string;
-        contents_url?: string;
-        compare_url?: string;
-        merges_url?: string;
-        archive_url?: string;
-        downloads_url?: string;
-        issues_url?: string;
-        pulls_url?: string;
-        milestones_url?: string;
-        notifications_url?: string;
-        labels_url?: string;
-        releases_url?: string;
-        deployments_url?: string;
-        pushed_at?: string;
-        git_url?: string;
-        ssh_url?: string;
-        clone_url?: string;
-        svn_url?: string;
-        homepage?: string;
-        size?: number;
-        stargazers_count?: number;
-        watchers_count?: number;
-        language?: string;
-        has_issues?: boolean;
-        has_projects?: boolean;
-        has_downloads?: boolean;
-        has_wiki?: boolean;
-        has_pages?: boolean;
-        forks_count?: number;
-        mirror_url?: string;
-        archived?: boolean;
-        open_issues_count?: number;
-        watchers?: number;
-        default_branch?: string;
-        network_count?: number;
-        subscribers_count?: number;
-    }
-    class $mol_github_repository extends $mol_github_entity<$mol_github_repository_json> {
-        json_update(patch: Partial<$mol_github_repository_json>): $mol_github_repository_json;
-        owner(): $mol_github_user;
-        name(): string;
-        name_full(): string;
-        issues(): $mol_github_repository_issues;
-    }
-    class $mol_github_repository_issues extends $mol_model<$mol_github_issue_json[]> {
-        json_update(patch: $mol_github_issue_json[]): $mol_github_issue_json[];
-        items(next?: $mol_github_issue[], force?: $mol_mem_force): $mol_github_issue[];
-        add(config: {
-            title: string;
-            text?: string;
-        }, next?: $mol_github_issue, force?: $mol_mem_force): $mol_github_issue | undefined;
-    }
-}
-
-declare namespace $ {
-    function $mol_view_tree2_ts_array_body(this: $, operator: $mol_tree2, parent_context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_view_tree2_ts_array(this: $, operator: $mol_tree2, context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop | undefined): $mol_tree2[];
-}
-
-declare namespace $ {
-    function $mol_view_tree2_ts_method_body(this: $, having_parts: $mol_view_tree2_prop, parent_context: $mol_view_tree2_context): undefined;
-}
-
-declare namespace $ {
-    function $mol_view_tree2_ts_method(this: $, owner_parts: $mol_view_tree2_prop, body: $mol_tree2, types?: boolean): $mol_tree2[];
 }
 
 export = $;

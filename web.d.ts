@@ -727,6 +727,19 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_plugin extends $mol_view {
+        dom_node(next?: Element): Element;
+        attr_static(): {
+            [key: string]: string | number | boolean;
+        };
+        event(): {
+            [key: string]: (event: Event) => void;
+        };
+        render(): void;
+    }
+}
+
+declare namespace $ {
     function $mol_style_define<Component extends $mol_view, Config extends $mol_style_guard<Component, Config>>(Component: new () => Component, config: Config): HTMLStyleElement | null;
 }
 
@@ -1201,19 +1214,6 @@ declare namespace $ {
         static texts(lang: string, next?: $mol_locale_dict): $mol_locale_dict;
         static text(key: string): string;
         static warn(key: string): null;
-    }
-}
-
-declare namespace $ {
-    class $mol_plugin extends $mol_view {
-        dom_node(next?: Element): Element;
-        attr_static(): {
-            [key: string]: string | number | boolean;
-        };
-        event(): {
-            [key: string]: (event: Event) => void;
-        };
-        render(): void;
     }
 }
 
@@ -2944,6 +2944,92 @@ declare namespace $ {
         add(config: {
             text: string;
         }, next?: $mol_github_comment, force?: $mol_mem_force): $mol_github_comment | undefined;
+    }
+}
+
+declare namespace $ {
+    interface $mol_github_repository_json extends $mol_github_entity_json {
+        name?: string;
+        full_name?: string;
+        owner?: $mol_github_user_json;
+        author_association?: string;
+        private?: false;
+        description?: string;
+        fork?: false;
+        forks_url?: string;
+        keys_url?: string;
+        collaborators_url?: string;
+        teams_url?: string;
+        hooks_url?: string;
+        issue_events_url?: string;
+        events_url?: string;
+        assignees_url?: string;
+        branches_url?: string;
+        tags_url?: string;
+        blobs_url?: string;
+        git_tags_url?: string;
+        git_refs_url?: string;
+        trees_url?: string;
+        statuses_url?: string;
+        languages_url?: string;
+        stargazers_url?: string;
+        contributors_url?: string;
+        subscribers_url?: string;
+        subscription_url?: string;
+        commits_url?: string;
+        git_commits_url?: string;
+        comments_url?: string;
+        issue_comment_url?: string;
+        contents_url?: string;
+        compare_url?: string;
+        merges_url?: string;
+        archive_url?: string;
+        downloads_url?: string;
+        issues_url?: string;
+        pulls_url?: string;
+        milestones_url?: string;
+        notifications_url?: string;
+        labels_url?: string;
+        releases_url?: string;
+        deployments_url?: string;
+        pushed_at?: string;
+        git_url?: string;
+        ssh_url?: string;
+        clone_url?: string;
+        svn_url?: string;
+        homepage?: string;
+        size?: number;
+        stargazers_count?: number;
+        watchers_count?: number;
+        language?: string;
+        has_issues?: boolean;
+        has_projects?: boolean;
+        has_downloads?: boolean;
+        has_wiki?: boolean;
+        has_pages?: boolean;
+        forks_count?: number;
+        mirror_url?: string;
+        archived?: boolean;
+        open_issues_count?: number;
+        watchers?: number;
+        default_branch?: string;
+        network_count?: number;
+        subscribers_count?: number;
+    }
+    class $mol_github_repository extends $mol_github_entity<$mol_github_repository_json> {
+        json_update(patch: Partial<$mol_github_repository_json>): $mol_github_repository_json;
+        owner(): $mol_github_user;
+        name(): string;
+        name_full(): string;
+        issues(): $mol_github_repository_issues;
+    }
+    class $mol_github_repository_issues extends $mol_model<$mol_github_issue_json[]> {
+        json_update(patch: $mol_github_issue_json[]): $mol_github_issue_json[];
+        items(next?: $mol_github_issue[], force?: $mol_mem_force): $mol_github_issue[];
+        add(config: {
+            title: string;
+            text?: string;
+        }, next?: $mol_github_issue, force?: $mol_mem_force): $mol_github_issue | undefined;
     }
 }
 
@@ -7859,7 +7945,24 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_error_syntax extends SyntaxError {
+        reason: string;
+        line: string;
+        span: $mol_span;
+        constructor(reason: string, line: string, span: $mol_span);
+    }
+}
+
+declare namespace $ {
+    function $mol_tree2_from_string(this: $, str: string, uri?: string): $mol_tree2;
+}
+
+declare namespace $ {
     function $mol_deprecated(message: string): <Method extends (this: Host, ...args: readonly any[]) => any, Host extends { [key in Field]: Method; }, Field extends keyof Host>(host: Host, field: Field, descr: TypedPropertyDescriptor<Method>) => void;
+}
+
+declare namespace $ {
+    function $mol_tree2_to_string(this: $, tree: $mol_tree2): string;
 }
 
 declare namespace $ {
@@ -7894,19 +7997,6 @@ declare namespace $ {
     class $mol_tree2_empty extends $mol_tree2 {
         constructor();
     }
-}
-
-declare namespace $ {
-    class $mol_error_syntax extends SyntaxError {
-        reason: string;
-        line: string;
-        span: $mol_span;
-        constructor(reason: string, line: string, span: $mol_span);
-    }
-}
-
-declare namespace $ {
-    function $mol_tree2_from_string(this: $, str: string, uri?: string): $mol_tree2;
 }
 
 declare namespace $ {
@@ -7978,14 +8068,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_class_super(this: $, klass: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_view_tree2_class_props(this: $, klass: $mol_tree2): $mol_tree2[];
-}
-
-declare namespace $ {
     function $mol_view_tree2_prop_split(this: $, src: $mol_tree2): {
         src: $mol_tree2;
         name: $mol_tree2;
@@ -8011,6 +8093,14 @@ declare namespace $ {
         readonly key: string;
         readonly next: string;
     }>;
+}
+
+declare namespace $ {
+    function $mol_view_tree2_class_super(this: $, klass: $mol_tree2): $mol_tree2;
+}
+
+declare namespace $ {
+    function $mol_view_tree2_class_props(this: $, klass: $mol_tree2): $mol_tree2[];
 }
 
 declare namespace $ {
@@ -8140,11 +8230,23 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_to_text(this: $, tree2_module: $mol_tree2): $mol_tree2;
+    function $mol_view_tree2_ts_array_body(this: $, operator: $mol_tree2, parent_context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop): $mol_tree2;
 }
 
 declare namespace $ {
-    function $mol_tree2_to_string(this: $, tree: $mol_tree2): string;
+    function $mol_view_tree2_ts_array(this: $, operator: $mol_tree2, context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop | undefined): $mol_tree2[];
+}
+
+declare namespace $ {
+    function $mol_view_tree2_ts_method_body(this: $, having_parts: $mol_view_tree2_prop, parent_context: $mol_view_tree2_context): undefined;
+}
+
+declare namespace $ {
+    function $mol_view_tree2_ts_method(this: $, owner_parts: $mol_view_tree2_prop, body: $mol_tree2, types?: boolean): $mol_tree2[];
+}
+
+declare namespace $ {
+    function $mol_view_tree2_to_text(this: $, tree2_module: $mol_tree2): $mol_tree2;
 }
 
 declare namespace $ {
@@ -8719,108 +8821,6 @@ declare namespace $.$$ {
     class $hyoo_mol extends $.$hyoo_mol {
         description(): string;
     }
-}
-
-declare namespace $ {
-    interface $mol_github_repository_json extends $mol_github_entity_json {
-        name?: string;
-        full_name?: string;
-        owner?: $mol_github_user_json;
-        author_association?: string;
-        private?: false;
-        description?: string;
-        fork?: false;
-        forks_url?: string;
-        keys_url?: string;
-        collaborators_url?: string;
-        teams_url?: string;
-        hooks_url?: string;
-        issue_events_url?: string;
-        events_url?: string;
-        assignees_url?: string;
-        branches_url?: string;
-        tags_url?: string;
-        blobs_url?: string;
-        git_tags_url?: string;
-        git_refs_url?: string;
-        trees_url?: string;
-        statuses_url?: string;
-        languages_url?: string;
-        stargazers_url?: string;
-        contributors_url?: string;
-        subscribers_url?: string;
-        subscription_url?: string;
-        commits_url?: string;
-        git_commits_url?: string;
-        comments_url?: string;
-        issue_comment_url?: string;
-        contents_url?: string;
-        compare_url?: string;
-        merges_url?: string;
-        archive_url?: string;
-        downloads_url?: string;
-        issues_url?: string;
-        pulls_url?: string;
-        milestones_url?: string;
-        notifications_url?: string;
-        labels_url?: string;
-        releases_url?: string;
-        deployments_url?: string;
-        pushed_at?: string;
-        git_url?: string;
-        ssh_url?: string;
-        clone_url?: string;
-        svn_url?: string;
-        homepage?: string;
-        size?: number;
-        stargazers_count?: number;
-        watchers_count?: number;
-        language?: string;
-        has_issues?: boolean;
-        has_projects?: boolean;
-        has_downloads?: boolean;
-        has_wiki?: boolean;
-        has_pages?: boolean;
-        forks_count?: number;
-        mirror_url?: string;
-        archived?: boolean;
-        open_issues_count?: number;
-        watchers?: number;
-        default_branch?: string;
-        network_count?: number;
-        subscribers_count?: number;
-    }
-    class $mol_github_repository extends $mol_github_entity<$mol_github_repository_json> {
-        json_update(patch: Partial<$mol_github_repository_json>): $mol_github_repository_json;
-        owner(): $mol_github_user;
-        name(): string;
-        name_full(): string;
-        issues(): $mol_github_repository_issues;
-    }
-    class $mol_github_repository_issues extends $mol_model<$mol_github_issue_json[]> {
-        json_update(patch: $mol_github_issue_json[]): $mol_github_issue_json[];
-        items(next?: $mol_github_issue[], force?: $mol_mem_force): $mol_github_issue[];
-        add(config: {
-            title: string;
-            text?: string;
-        }, next?: $mol_github_issue, force?: $mol_mem_force): $mol_github_issue | undefined;
-    }
-}
-
-declare namespace $ {
-    function $mol_view_tree2_ts_array_body(this: $, operator: $mol_tree2, parent_context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_view_tree2_ts_array(this: $, operator: $mol_tree2, context: $mol_view_tree2_context, super_method?: $mol_view_tree2_prop | undefined): $mol_tree2[];
-}
-
-declare namespace $ {
-    function $mol_view_tree2_ts_method_body(this: $, having_parts: $mol_view_tree2_prop, parent_context: $mol_view_tree2_context): undefined;
-}
-
-declare namespace $ {
-    function $mol_view_tree2_ts_method(this: $, owner_parts: $mol_view_tree2_prop, body: $mol_tree2, types?: boolean): $mol_tree2[];
 }
 
 export = $;
