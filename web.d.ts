@@ -5922,7 +5922,6 @@ declare namespace $ {
 declare namespace $.$$ {
     class $mol_infinite_demo extends $.$mol_infinite_demo {
         after(anchor_id?: number): number[];
-        item_title(id: number): string;
     }
 }
 
