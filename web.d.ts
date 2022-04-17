@@ -2117,15 +2117,11 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_pop extends $mol_view {
-        event(): {
-            keydown: (event?: any) => any;
-        };
         showed(val?: any): boolean;
         align_vert(): string;
         align_hor(): string;
         sub(): readonly any[];
         sub_visible(): readonly any[];
-        keydown(event?: any): any;
         Anchor(): any;
         align(): string;
         bubble_content(): readonly $mol_view_content[];
@@ -2158,7 +2154,6 @@ declare namespace $.$$ {
         align(): string;
         align_vert(): "suspense" | "top" | "bottom";
         align_hor(): "suspense" | "left" | "right";
-        keydown(event: KeyboardEvent): void;
     }
 }
 
@@ -5185,7 +5180,11 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_pick extends $mol_pop {
+        event(): {
+            keydown: (event?: any) => any;
+        };
         Anchor(): $$.$mol_check;
+        keydown(event?: any): any;
         trigger_enabled(): boolean;
         trigger_content(): readonly $mol_view_content[];
         hint(): string;
@@ -5194,6 +5193,12 @@ declare namespace $ {
 }
 
 declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $mol_pick extends $.$mol_pick {
+        keydown(event: KeyboardEvent): void;
+    }
 }
 
 declare namespace $ {
@@ -6933,7 +6938,6 @@ declare namespace $ {
         event(): {
             mouseenter: (event?: any) => any;
             mouseleave: (event?: any) => any;
-            keydown: (event?: any) => any;
         };
         hovered(val?: any): boolean;
         event_show(event?: any): any;
@@ -7050,15 +7054,15 @@ declare namespace $ {
         Demo_caption(): $mol_view;
         pick_trigger(): string;
         pick_content(): string;
-        Simple_pop(): $mol_pick;
+        Simple_pop(): $$.$mol_pick;
         info_trigger(): $mol_icon_help_circle_outline;
         info_content_text(): string;
         info_content(): $$.$mol_text;
-        Info_pop(): $mol_pick;
+        Info_pop(): $$.$mol_pick;
         options_trigger(): $mol_icon_dots_vertical;
         options_trigger_content(): readonly any[];
         options_bubble_content(): readonly any[];
-        Options_pop(): $mol_pick;
+        Options_pop(): $$.$mol_pick;
         menu_item_copy_click(val?: any): any;
         menu_item_copy_icon(): $mol_icon_content_copy;
         menu_item_copy_label(): string;

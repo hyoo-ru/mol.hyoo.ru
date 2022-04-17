@@ -397,7 +397,6 @@ $mol_text_image $mol_view
 $mol_icon_plus $mol_icon path \M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z
 
 $mol_pop $mol_view
-	event * keydown?event <=> keydown?event null
 	showed?val false
 	align_vert \
 	align_hor \
@@ -2098,6 +2097,9 @@ $mol_code_demo $mol_example_small
 		\cordova
 
 $mol_pick $mol_pop
+	event *
+		^
+		keydown?event <=> keydown?event null
 	Anchor <= Trigger $mol_check
 		minimal_width 40
 		minimal_height 40
