@@ -4025,14 +4025,19 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
-        major_label(): string;
+        fail(event?: any): any;
         Major_enabled(): $mol_button_major;
         Major_disabled(): $mol_button_major;
-        minor_label(): string;
         Minor_enabled(): $mol_button_minor;
         Minor_disabled(): $mol_button_minor;
         Minor_icon(): $mol_icon_cursor_default_click_outline;
         Minor_icon_enabled(): $mol_button_minor;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_button_demo extends $.$mol_button_demo {
+        fail(): void;
     }
 }
 

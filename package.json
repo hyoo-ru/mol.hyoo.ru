@@ -376,6 +376,7 @@
     "$mol_icon_cursor_default_click_-view.tree_click.view.tree.ts",
     "$mol_icon_cursor_default_click_outline_-view.tree_outline.view.tree.ts",
     "$mol_button_demo_-view.tree_demo.view.tree.ts",
+    "$mol_button_demo_demo.view.tree",
     "$mol_button_share_demo",
     "$mol_button_share",
     "$mol_icon_share_variant",

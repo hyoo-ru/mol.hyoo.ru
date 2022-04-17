@@ -13616,31 +13616,32 @@ var $;
                 "button"
             ];
         }
-        major_label() {
-            return this.$.$mol_locale.text('$mol_button_demo_major_label');
+        fail(event) {
+            if (event !== undefined)
+                return event;
+            return null;
         }
         Major_enabled() {
             const obj = new this.$.$mol_button_major();
-            obj.title = () => this.major_label();
+            obj.title = () => this.$.$mol_locale.text('$mol_button_demo_Major_enabled_title');
+            obj.click = (event) => this.fail(event);
             return obj;
         }
         Major_disabled() {
             const obj = new this.$.$mol_button_major();
-            obj.title = () => this.major_label();
+            obj.title = () => this.$.$mol_locale.text('$mol_button_demo_Major_disabled_title');
             obj.enabled = () => false;
             return obj;
         }
-        minor_label() {
-            return this.$.$mol_locale.text('$mol_button_demo_minor_label');
-        }
         Minor_enabled() {
             const obj = new this.$.$mol_button_minor();
-            obj.title = () => this.minor_label();
+            obj.title = () => this.$.$mol_locale.text('$mol_button_demo_Minor_enabled_title');
+            obj.click = (event) => this.fail(event);
             return obj;
         }
         Minor_disabled() {
             const obj = new this.$.$mol_button_minor();
-            obj.title = () => this.minor_label();
+            obj.title = () => this.$.$mol_locale.text('$mol_button_demo_Minor_disabled_title');
             obj.enabled = () => false;
             return obj;
         }
@@ -13650,13 +13651,17 @@ var $;
         }
         Minor_icon_enabled() {
             const obj = new this.$.$mol_button_minor();
+            obj.click = (event) => this.fail(event);
             obj.sub = () => [
                 this.Minor_icon(),
-                this.minor_label()
+                "Minor with Icon"
             ];
             return obj;
         }
     }
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "fail", null);
     __decorate([
         $mol_mem
     ], $mol_button_demo.prototype, "Major_enabled", null);
@@ -13678,6 +13683,22 @@ var $;
     $.$mol_button_demo = $mol_button_demo;
 })($ || ($ = {}));
 //mol/button/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_button_demo extends $.$mol_button_demo {
+            fail() {
+                this.$.$mol_wait_timeout(1000);
+                throw new Error('Demonstration Error');
+            }
+        }
+        $$.$mol_button_demo = $mol_button_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/button/demo/demo.view.ts
 ;
 "use strict";
 var $;
