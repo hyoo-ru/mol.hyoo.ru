@@ -1318,7 +1318,7 @@ declare namespace $ {
         disabled(): boolean;
         tab_index(): number;
         hint(): string;
-        hint_or_error(): string;
+        error(): string;
     }
 }
 
@@ -1438,7 +1438,6 @@ declare namespace $.$$ {
         event_key_press(event: KeyboardEvent): void;
         tab_index(): number;
         error(): string;
-        hint_or_error(): string;
         sub_visible(): ($mol_view_content | $mol_speck)[];
     }
 }
@@ -4084,6 +4083,8 @@ declare namespace $ {
         Minor_disabled(): $mol_button_minor;
         Minor_icon(): $mol_icon_cursor_default_click_outline;
         Minor_icon_enabled(): $mol_button_minor;
+        Iconed_icon(): $mol_icon_cursor_default_click_outline;
+        Iconed_enabled(): $mol_button_minor;
     }
 }
 
