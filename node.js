@@ -10182,6 +10182,12 @@ var $;
         author() {
             return $mol_github_user.item(this.json().user.url);
         }
+        owner() {
+            const url = this.json().repository_url
+                .replace(/\/[^\/]+$/, '')
+                .replace(/\/repos\//, '/users/');
+            return $mol_github_user.item(url);
+        }
         number() {
             return this.json().number;
         }
@@ -10424,29 +10430,29 @@ var $;
                 const uri = this.$.$mol_state_arg.value('gist');
                 if (uri)
                     return this.gists_dict()[uri] ?? null;
-                if (!this.author())
+                if (!this.owner())
                     return null;
                 if (!this.repo())
                     return null;
                 if (!this.article())
                     return null;
-                return this.gists_dict()[`https://api.github.com/repos/${this.author()}/${this.repo()}/issues/${this.article()}`] ?? null;
+                return this.gists_dict()[`https://api.github.com/repos/${this.owner()}/${this.repo()}/issues/${this.article()}`] ?? null;
             }
             details_link() {
-                return `https://github.com/${this.author()}/${this.repo()}/issues/${this.article()}`;
+                return `https://github.com/${this.owner()}/${this.repo()}/issues/${this.article()}`;
             }
             Details_body() {
                 const gist = this.gist_current();
                 return gist ? this.Details(gist).Body() : null;
             }
-            author() {
-                return $mol_state_arg.value('author');
+            owner() {
+                return this.$.$mol_state_arg.value('author');
             }
             repo() {
-                return $mol_state_arg.value('repo');
+                return this.$.$mol_state_arg.value('repo');
             }
             article() {
-                return $mol_state_arg.value('article');
+                return this.$.$mol_state_arg.value('article');
             }
             pages() {
                 const gist = this.gist_current();
@@ -10472,7 +10478,7 @@ var $;
             gist_arg(id) {
                 const gist = this.gist(id);
                 return {
-                    author: gist.author().name(),
+                    author: gist.owner().name(),
                     repo: gist.repository().name(),
                     article: String(gist.number()),
                     gist: null,
@@ -10497,13 +10503,37 @@ var $;
         }
         __decorate([
             $mol_mem
+        ], $hyoo_habhub.prototype, "gists_dict", null);
+        __decorate([
+            $mol_mem
         ], $hyoo_habhub.prototype, "gist_current", null);
         __decorate([
             $mol_mem
         ], $hyoo_habhub.prototype, "details_link", null);
         __decorate([
+            $mol_mem
+        ], $hyoo_habhub.prototype, "Details_body", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_habhub.prototype, "pages", null);
+        __decorate([
             $mol_mem_key
         ], $hyoo_habhub.prototype, "chat_seed", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_habhub.prototype, "menu_rows", null);
+        __decorate([
+            $mol_mem_key
+        ], $hyoo_habhub.prototype, "gist_title", null);
+        __decorate([
+            $mol_mem_key
+        ], $hyoo_habhub.prototype, "gist_arg", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_habhub.prototype, "gist_current_created", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_habhub.prototype, "details_scroll_top", null);
         $$.$hyoo_habhub = $hyoo_habhub;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));

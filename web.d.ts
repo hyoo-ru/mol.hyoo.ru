@@ -2932,6 +2932,7 @@ declare namespace $ {
         repository(): $mol_github_repository;
         web_uri(): string;
         author(): $mol_github_user;
+        owner(): $mol_github_user;
         number(): number;
         title(): string;
         text(): string;
@@ -3068,7 +3069,7 @@ declare namespace $.$$ {
         gist_current(): $mol_github_issue | null;
         details_link(): string;
         Details_body(): $mol_scroll;
-        author(): string | null;
+        owner(): string | null;
         repo(): string | null;
         article(): string | null;
         pages(): $mol_page[];
