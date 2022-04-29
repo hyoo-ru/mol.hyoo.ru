@@ -466,6 +466,7 @@
     "$mol_view_tree2_value",
     "$hyoo_tree",
     "$mol_tree2_from_json",
+    "$mol_tree2_to_json",
     "$mol_tree2_grammar_check",
     "$mol_tree2_grammar",
     "$mol_tree2_xml_to_text",

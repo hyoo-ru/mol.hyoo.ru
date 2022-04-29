@@ -4004,8 +4004,11 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        Articles_content(): $mol_row;
         Articles(): $mol_page;
+        Images_content(): $mol_row;
         Images(): $mol_page;
+        Maps_content(): $mol_row;
         Maps(): $mol_page;
         Calatog(): $$.$mol_book2_catalog;
     }
@@ -6055,12 +6058,11 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_html_view_demo extends $mol_example_large {
+    class $mol_html_view_demo extends $mol_example {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
         Html(): $$.$mol_html_view;
-        Scroll(): $$.$mol_scroll;
     }
 }
 
@@ -8286,6 +8288,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_tree2_to_json(this: $, tree: $mol_tree2): unknown;
+}
+
+declare namespace $ {
     function $mol_tree2_grammar_check(grammar: $mol_tree2): $mol_tree2;
 }
 
@@ -8640,6 +8646,10 @@ declare namespace $ {
                 output: string;
             };
             $mol_tree2_from_json: {
+                input: string;
+                output: string;
+            };
+            $mol_tree2_to_json: {
                 input: string;
                 output: string;
             };
