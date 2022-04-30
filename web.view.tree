@@ -642,6 +642,7 @@ $hyoo_habhub $mol_book2
 				highlight <= search
 				text <= gist_current_content \
 	Menu_row!id $mol_link
+		minimal_height 40
 		sub /
 			<= Menu_row_title!id $mol_dimmer
 				needle <= search

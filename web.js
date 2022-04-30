@@ -8644,6 +8644,7 @@ var $;
         }
         Menu_row(id) {
             const obj = new this.$.$mol_link();
+            obj.minimal_height = () => 40;
             obj.sub = () => [
                 this.Menu_row_title(id)
             ];
@@ -9633,12 +9634,15 @@ var $;
 (function ($) {
     class $mol_github_user extends $mol_github_entity {
         name() {
-            return this.json().login;
+            return this.uri().replace(/.*\//, '');
         }
         avatar() {
             return this.json().avatar_url;
         }
     }
+    __decorate([
+        $mol_mem
+    ], $mol_github_user.prototype, "name", null);
     $.$mol_github_user = $mol_github_user;
 })($ || ($ = {}));
 //mol/github/user/user.ts
@@ -10000,9 +10004,14 @@ var $;
                 return issue.uri().replace(/.*\/repos\//, '');
             }
             menu_rows() {
-                return this.gists()
-                    .filter($mol_match_text(this.search(), gist => [gist.title(), gist.text()]))
-                    .map((gist, index) => this.Menu_row(gist.uri()));
+                try {
+                    return this.gists()
+                        .filter($mol_match_text(this.search(), gist => [gist.title(), gist.text()]))
+                        .map(gist => this.Menu_row(gist.uri()));
+                }
+                catch (error) {
+                    return Array.from({ length: 20 }, (_, i) => this.Menu_row(i));
+                }
             }
             gist_title(id) {
                 return this.gist(id).title();
