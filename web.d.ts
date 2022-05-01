@@ -3593,6 +3593,10 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            jseval: {
+                title: string;
+                uri: string;
+            };
             jsperf: {
                 title: string;
                 uri: string;

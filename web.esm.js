@@ -12274,6 +12274,10 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_data_request_title'),
                     uri: "https://http.hyoo.ru/#uri=https%3A%2F%2Fapi.github.com%2Frepos%2Fhyoo-ru%2Fmam_mol"
                 },
+                jseval: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_jseval_title'),
+                    uri: "https://eval.js.hyoo.ru/#!code=%24mol_import.script%28%0A%09'https%3A%2F%2Funpkg.com%2Fmol_time_all'%0A%29%0A%0Aconst%20interval%20%3D%20new%20%24mol_time_interval%28%20'%2FP1M'%20%29%0A%0Aconsole.log%28%20'start'%2C%20interval.start.toString%28%20'YYYY-MM-DD'%20%29%20%29%0Aconsole.log%28%20'dur'%2C%20interval.duration.count%28%20'P1D'%20%29%20%29%0Aconsole.log%28%20'end'%2C%20interval.end.toString%28%20'YYYY-MM-DD'%20%29%20%29%0A%0Ainterval/run=true"
+                },
                 jsperf: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_jsperf_title'),
                     uri: "https://perf.js.hyoo.ru/#sources=%5B%22window.location.href%3B%22%2C%22document.location.href%3B%22%5D/prefix/postfix/optimized=true"
