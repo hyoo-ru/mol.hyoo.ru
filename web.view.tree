@@ -1039,6 +1039,116 @@ $hyoo_apps $mol_book2
 			title @ \Online Toys Store
 			uri \https://toys.hyoo.ru/#size=M/popular
 
+$mol_example $mol_view
+	tags /string
+
+$mol_example_large $mol_example
+
+$mol_button_major $mol_button_typed
+	attr *
+		^
+		mol_theme \$mol_theme_accent
+
+$mol_textarea $mol_view
+	attr *
+		^
+		mol_textarea_clickable <= clickable?val false
+		mol_textarea_sidebar_showed <= sidebar_showed false
+	event *
+		keydown?event <=> press?event null
+		pointermove?event <=> hover?event null
+	sub /
+		<= Edit $mol_textarea_edit
+			value?val <=> value?val \
+			hint <= hint \ 
+			enabled <= enabled true
+			length_max <= length_max Infinity
+			selection?val <=> selection?val /number
+		<= View $mol_text_code
+			text <= value
+			render_visible_only false
+			row_numb!index <= row_numb!index 0
+			sidebar_showed <= sidebar_showed
+			highlight <= highlight \
+
+$mol_textarea_edit $mol_string
+	dom_name \textarea
+	field *
+		^
+		scrollTop 0
+
+$mol_section $mol_list rows /
+	<= Head $mol_view
+		sub <= head /
+			<= title
+	<= Content $mol_list
+		rows <= content /
+
+$hyoo_crowd_app $mol_book2
+	Placeholder null
+	plugins /
+		<= Theme $mol_theme_auto
+	pages /
+		<= Left $hyoo_crowd_app_peer
+			title \CROWD Text Demo
+			hint \Text of Alice
+			sync <= sync
+			tools /
+				<= Sync $mol_button_major
+					title \Sync
+					enabled <= sync_enabled false
+					click?event <=> sync?event null
+		<= Right $hyoo_crowd_app_peer
+			title \
+			hint \Text of Bob
+			sync <= sync
+			tools /
+				<= Lights $mol_lights_toggle
+				<= Source $mol_link_source
+					uri \https://github.com/hyoo-ru/crowd.hyoo.ru/
+
+$hyoo_crowd_app_peer $mol_page
+	store $hyoo_crowd_doc
+	sync 0
+	body /
+		<= Text $mol_textarea
+			hint <= hint \
+			value?val <=> text?val \
+			sidebar_showed true
+		<= Stats $mol_text
+			text <= stats \
+				\# Stats
+				\
+				\Peer: **{peer}**
+				\Changes: **{changes}**
+				\
+				\| | Alive | Dead | Total
+				\|--|--|--
+				\| Tokens | **{tokens:alive}** | **{tokens:dead}** | **{tokens:total}**
+				\
+				\| | Now | Sync
+				\|--|--|--
+				\| Time | **{stamp:now}** | **{stamp:sync}**
+				\
+				\| | Text | State | Delta
+				\|--|--|--|--
+				\| JSON Size | **{size:text}** | **{size:state}** | **{size:delta}**
+				\| Bin Size | **{size:text:bin}** | **{size:state:bin}** | **{size:delta:bin}**
+				\
+		<= Delta_section $mol_section
+			title \Delta
+			content / <= Delta $mol_grid
+				records <= delta_view *
+
+$hyoo_crowd_text_demo $mol_example_large
+	title \CROWD Text Merge
+	sub /
+		<= Sandbox $hyoo_crowd_app
+	tags /
+		\CROWD
+		\text
+		\merge
+
 $mol_icon_upload $mol_icon path \M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z
 
 $mol_button_open $mol_button_minor
@@ -1075,9 +1185,6 @@ $mol_attach $mol_view
 			<= Image!id $mol_image
 				title \
 				uri <= item_uri!id \
-
-$mol_example $mol_view
-	tags /string
 
 $mol_example_small $mol_example
 
@@ -1171,8 +1278,6 @@ $mol_bench_demo $mol_example_small
 		\benchmark
 		\perfomance
 
-$mol_example_large $mol_example
-
 $mol_book2_demo $mol_example_large
 	title \Adaprive layout for various sizes of screen
 	sub /
@@ -1223,11 +1328,6 @@ $mol_book2_catalog_demo $mol_example_large
 		\navigation
 		\transition
 		\multipage
-
-$mol_button_major $mol_button_typed
-	attr *
-		^
-		mol_theme \$mol_theme_accent
 
 $mol_icon_cursor_default $mol_icon path \M13.64,21.97C13.14,22.21 12.54,22 12.31,21.5L10.13,16.76L7.62,18.78C7.45,18.92 7.24,19 7,19C6.45,19 6,18.55 6,18V3C6,2.45 6.45,2 7,2C7.24,2 7.47,2.09 7.64,2.23L7.65,2.22L19.14,11.86C19.57,12.22 19.62,12.85 19.27,13.27C19.12,13.45 18.91,13.57 18.7,13.61L15.54,14.23L17.74,18.96C18,19.46 17.76,20.05 17.26,20.28L13.64,21.97Z
 
@@ -3377,13 +3477,6 @@ $mol_search_demo $mol_example_small
 		\fulltext
 		\filter
 
-$mol_section $mol_list rows /
-	<= Head $mol_view
-		sub <= head /
-			<= title
-	<= Content $mol_list
-		rows <= content /
-
 $mol_section_demo $mol_example_small
 	title \Section with header
 	sub /
@@ -3661,34 +3754,6 @@ $mol_text_demo $mol_example_small
 	tags /
 		\text
 		\markdown
-
-$mol_textarea $mol_view
-	attr *
-		^
-		mol_textarea_clickable <= clickable?val false
-		mol_textarea_sidebar_showed <= sidebar_showed false
-	event *
-		keydown?event <=> press?event null
-		pointermove?event <=> hover?event null
-	sub /
-		<= Edit $mol_textarea_edit
-			value?val <=> value?val \
-			hint <= hint \ 
-			enabled <= enabled true
-			length_max <= length_max Infinity
-			selection?val <=> selection?val /number
-		<= View $mol_text_code
-			text <= value
-			render_visible_only false
-			row_numb!index <= row_numb!index 0
-			sidebar_showed <= sidebar_showed
-			highlight <= highlight \
-
-$mol_textarea_edit $mol_string
-	dom_name \textarea
-	field *
-		^
-		scrollTop 0
 
 $mol_textarea_demo $mol_example_small
 	title \Text input field in various states

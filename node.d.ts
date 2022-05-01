@@ -3726,6 +3726,354 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    type $mol_type_partial_deep<Val> = {
+        [field in keyof Val]?: $mol_type_partial_deep<Val[field]>;
+    };
+}
+
+declare namespace $ {
+    let $mol_jsx_prefix: string;
+    let $mol_jsx_booked: Set<string> | null;
+    let $mol_jsx_document: $mol_jsx.JSX.ElementClass['ownerDocument'];
+    const $mol_jsx_frag = "";
+    function $mol_jsx<Props extends $mol_jsx.JSX.IntrinsicAttributes, Children extends Array<Node | string>>(Elem: string | ((props: Props, ...children: Children) => Element), props: Props, ...childNodes: Children): Element | DocumentFragment;
+    namespace $mol_jsx.JSX {
+        interface Element extends HTMLElement {
+            class?: string;
+        }
+        interface ElementClass {
+            attributes: {};
+            ownerDocument: Pick<Document, 'getElementById' | 'createElementNS' | 'createDocumentFragment'>;
+            childNodes: Array<Node | string>;
+            valueOf(): Element;
+        }
+        type OrString<Dict> = {
+            [key in keyof Dict]: Dict[key] | string;
+        };
+        type IntrinsicElements = {
+            [key in keyof ElementTagNameMap]?: $.$mol_type_partial_deep<OrString<Element & IntrinsicAttributes & ElementTagNameMap[key]>>;
+        };
+        interface IntrinsicAttributes {
+            id?: string;
+            xmlns?: string;
+        }
+        interface ElementAttributesProperty {
+            attributes: {};
+        }
+        interface ElementChildrenAttribute {
+        }
+    }
+}
+
+declare namespace $ {
+    type $hyoo_crowd_chunk = {
+        readonly head: number;
+        readonly self: number;
+        readonly prev: number;
+        readonly next: number;
+        readonly peer: number;
+        readonly time: number;
+        readonly data: unknown;
+    };
+    function $hyoo_crowd_chunk_pack(this: $, raw: $hyoo_crowd_chunk): Uint8Array;
+    function $hyoo_crowd_chunk_unpack(this: $, pack: Uint8Array): $hyoo_crowd_chunk;
+    function $hyoo_crowd_chunk_compare(left: $hyoo_crowd_chunk, right: $hyoo_crowd_chunk): number;
+}
+
+declare namespace $ {
+    class $hyoo_crowd_node {
+        readonly doc: $hyoo_crowd_doc;
+        readonly head: $hyoo_crowd_chunk['head'];
+        constructor(doc: $hyoo_crowd_doc, head: $hyoo_crowd_chunk['head']);
+        static for<Node extends typeof $hyoo_crowd_node>(this: Node, doc: $hyoo_crowd_doc, head?: $hyoo_crowd_chunk['head']): InstanceType<Node>;
+        as<Node extends typeof $hyoo_crowd_node>(Node: Node): InstanceType<Node>;
+        chunks(): readonly $hyoo_crowd_chunk[];
+        nodes<Node extends typeof $hyoo_crowd_node>(Node: Node): InstanceType<Node>[];
+    }
+}
+
+declare namespace $ {
+    function $mol_reconcile<Prev, Next>({ prev, from, to, next, equal, drop, insert, update, }: {
+        prev: readonly Prev[];
+        from: number;
+        to: number;
+        next: ArrayLike<Next>;
+        equal: (next: Next, prev: Prev) => boolean;
+        drop: (prev: Prev, lead: Prev | null) => Prev | null;
+        insert: (next: Next, lead: Prev | null) => Prev;
+        update: (next: Next, prev: Prev, lead: Prev | null) => Prev;
+    }): void;
+}
+
+declare namespace $ {
+    class $hyoo_crowd_list extends $hyoo_crowd_node {
+        list(next?: readonly unknown[]): readonly unknown[];
+        insert(next: readonly unknown[], from?: number, to?: number): void;
+        move(from: number, to: number): $hyoo_crowd_chunk;
+        cut(seat: number): $hyoo_crowd_chunk;
+    }
+}
+
+declare namespace $ {
+    let $hyoo_crowd_tokenizer: $mol_regexp<{
+        readonly token: string;
+        readonly indents: string;
+        readonly spaces: string;
+        readonly emoji: string;
+        readonly Word: string;
+        readonly word: string;
+        readonly others: string;
+        readonly 'line-break': string;
+        readonly win_end: string;
+        readonly mac_end: string;
+        readonly tab: string;
+    }>;
+}
+
+declare namespace $ {
+    class $hyoo_crowd_clock extends Map<$hyoo_crowd_chunk['peer'], $hyoo_crowd_chunk['time']> {
+        now: number;
+        constructor(entries?: Iterable<readonly [number, number]>);
+        sync(right: $hyoo_crowd_clock): void;
+        see(peer: number, time: number): number;
+        fresh(peer: number, time: number): boolean;
+        ahead(clock: $hyoo_crowd_clock): boolean;
+        tick(peer: number): number;
+        clear(): void;
+    }
+}
+
+declare namespace $ {
+    function $mol_hash_string(str: string, seed?: number): number;
+}
+
+declare namespace $ {
+    class $hyoo_crowd_struct extends $hyoo_crowd_node {
+        sub<Node extends typeof $hyoo_crowd_node>(key: string, Node: Node): InstanceType<Node>;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_crowd_doc {
+        readonly peer: number;
+        constructor(peer?: number);
+        destructor(): void;
+        readonly _clock: $hyoo_crowd_clock;
+        get clock(): $hyoo_crowd_clock;
+        readonly pub: $mol_wire_pub;
+        protected _chunk_all: Map<`${number}/${number}`, $hyoo_crowd_chunk>;
+        protected _chunk_lists: Map<number, $hyoo_crowd_chunk[] & {
+            dirty: boolean;
+        }>;
+        protected _chunk_alive: Map<number, $hyoo_crowd_chunk[] | undefined>;
+        size(): number;
+        chunk(head: $hyoo_crowd_chunk['head'], self: $hyoo_crowd_chunk['self']): $hyoo_crowd_chunk | null;
+        protected chunk_list(head: $hyoo_crowd_chunk['head']): $hyoo_crowd_chunk[] & {
+            dirty: boolean;
+        };
+        chunk_alive(head: $hyoo_crowd_chunk['head']): readonly $hyoo_crowd_chunk[];
+        root: $hyoo_crowd_struct;
+        id_new(): number;
+        fork(peer: number): $hyoo_crowd_doc;
+        delta(clock?: $hyoo_crowd_clock): readonly $hyoo_crowd_chunk[];
+        toJSON(): readonly $hyoo_crowd_chunk[];
+        resort(head: $hyoo_crowd_chunk['head']): $hyoo_crowd_chunk[] & {
+            dirty: boolean;
+        };
+        apply(delta: readonly $hyoo_crowd_chunk[]): this;
+        put(head: $hyoo_crowd_chunk['head'], self: $hyoo_crowd_chunk['self'], prev: $hyoo_crowd_chunk['prev'], data: $hyoo_crowd_chunk['data']): $hyoo_crowd_chunk;
+        wipe(chunk: $hyoo_crowd_chunk): $hyoo_crowd_chunk;
+        move(chunk: $hyoo_crowd_chunk, head: $hyoo_crowd_chunk['head'], prev: $hyoo_crowd_chunk['prev']): $hyoo_crowd_chunk;
+        insert(chunk: $hyoo_crowd_chunk, head: $hyoo_crowd_chunk['head'], seat: number): $hyoo_crowd_chunk;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_crowd_text extends $hyoo_crowd_node {
+        text(next?: string): string;
+        write(next: string, str_from?: number, str_to?: number): this;
+        point_by_offset(offset: number): {
+            chunk: number;
+            offset: number;
+        };
+        offset_by_point(point: {
+            chunk: number;
+            offset: number;
+        }): number;
+    }
+}
+
+declare namespace $ {
+    class $mol_example extends $mol_view {
+        tags(): readonly string[];
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_example_large extends $mol_example {
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_button_major extends $mol_button_typed {
+        attr(): {
+            mol_theme: string;
+            disabled: boolean;
+            role: string;
+            tabindex: number;
+            title: string;
+        };
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_textarea extends $mol_view {
+        attr(): {
+            mol_textarea_clickable: boolean;
+            mol_textarea_sidebar_showed: boolean;
+        };
+        event(): {
+            keydown: (event?: any) => any;
+            pointermove: (event?: any) => any;
+        };
+        sub(): readonly any[];
+        clickable(val?: any): boolean;
+        sidebar_showed(): boolean;
+        press(event?: any): any;
+        hover(event?: any): any;
+        value(val?: any): string;
+        hint(): string;
+        enabled(): boolean;
+        length_max(): number;
+        selection(val?: any): readonly number[];
+        Edit(): $mol_textarea_edit;
+        row_numb(index: any): number;
+        highlight(): string;
+        View(): $$.$mol_text_code;
+    }
+    class $mol_textarea_edit extends $mol_string {
+        dom_name(): string;
+        field(): {
+            scrollTop: number;
+            disabled: boolean;
+            value: string;
+            placeholder: string;
+            spellcheck: boolean;
+            autocomplete: string;
+            selectionEnd: number;
+            selectionStart: number;
+        };
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $mol_textarea extends $.$mol_textarea {
+        indent_inc(): void;
+        indent_dec(): void;
+        hover(event: PointerEvent): void;
+        press(event: KeyboardEvent): void;
+        row_numb(index: number): number;
+    }
+}
+
+declare namespace $ {
+    class $mol_section extends $mol_list {
+        rows(): readonly any[];
+        head(): readonly any[];
+        Head(): $mol_view;
+        content(): readonly any[];
+        Content(): $$.$mol_list;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $hyoo_crowd_app extends $mol_book2 {
+        Placeholder(): any;
+        plugins(): readonly any[];
+        pages(): readonly any[];
+        Theme(): $$.$mol_theme_auto;
+        sync_enabled(): boolean;
+        sync(event?: any): any;
+        Sync(): $mol_button_major;
+        Left(): $$.$hyoo_crowd_app_peer;
+        Lights(): $$.$mol_lights_toggle;
+        Source(): $mol_link_source;
+        Right(): $$.$hyoo_crowd_app_peer;
+    }
+    class $hyoo_crowd_app_peer extends $mol_page {
+        store(): $hyoo_crowd_doc;
+        sync(): number;
+        body(): readonly any[];
+        hint(): string;
+        text(val?: any): string;
+        Text(): $$.$mol_textarea;
+        stats(): string;
+        Stats(): $$.$mol_text;
+        delta_view(): {};
+        Delta(): $$.$mol_grid;
+        Delta_section(): $mol_section;
+    }
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $.$$ {
+    class $hyoo_crowd_app extends $.$hyoo_crowd_app {
+        sync_enabled(): boolean;
+        sync(next?: Event): number;
+    }
+    class $hyoo_crowd_app_peer extends $.$hyoo_crowd_app_peer {
+        sync_clock(next?: $hyoo_crowd_clock): $hyoo_crowd_clock;
+        text(next?: string): string;
+        delta(): readonly $hyoo_crowd_chunk[];
+        delta_view(): {
+            head: string;
+            self: string;
+            prev: string;
+            next: string;
+            peer: string;
+            time: string;
+            data: string;
+        }[];
+        changes(): number;
+        size_state(): number;
+        size_delta(): number;
+        size_text(): number;
+        tokens_alive(): number;
+        tokens_total(): number;
+        tokens_dead(): number;
+        size_state_bin(): number;
+        size_delta_bin(): number;
+        stats(): string;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_crowd_text_demo extends $mol_example_large {
+        title(): string;
+        sub(): readonly any[];
+        tags(): readonly any[];
+        Sandbox(): $$.$hyoo_crowd_app;
+    }
+}
+
+declare namespace $ {
     class $mol_icon_upload extends $mol_icon {
         path(): string;
     }
@@ -3801,15 +4149,6 @@ declare namespace $.$$ {
         item_uri(index: number): string;
         item_drop(index: number, event?: Event): void;
     }
-}
-
-declare namespace $ {
-    class $mol_example extends $mol_view {
-        tags(): readonly string[];
-    }
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
@@ -3975,14 +4314,6 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_example_large extends $mol_example {
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
     class $mol_book2_demo extends $mol_example_large {
         title(): string;
         sub(): readonly any[];
@@ -4010,21 +4341,6 @@ declare namespace $ {
         Maps(): $mol_page;
         Calatog(): $$.$mol_book2_catalog;
     }
-}
-
-declare namespace $ {
-    class $mol_button_major extends $mol_button_typed {
-        attr(): {
-            mol_theme: string;
-            disabled: boolean;
-            role: string;
-            tabindex: number;
-            title: string;
-        };
-    }
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
@@ -4087,46 +4403,6 @@ declare namespace $ {
         hint(): string;
         sub(): readonly any[];
         Icon(): $mol_icon_share_variant;
-    }
-}
-
-declare namespace $ {
-    type $mol_type_partial_deep<Val> = {
-        [field in keyof Val]?: $mol_type_partial_deep<Val[field]>;
-    };
-}
-
-declare namespace $ {
-    let $mol_jsx_prefix: string;
-    let $mol_jsx_booked: Set<string> | null;
-    let $mol_jsx_document: $mol_jsx.JSX.ElementClass['ownerDocument'];
-    const $mol_jsx_frag = "";
-    function $mol_jsx<Props extends $mol_jsx.JSX.IntrinsicAttributes, Children extends Array<Node | string>>(Elem: string | ((props: Props, ...children: Children) => Element), props: Props, ...childNodes: Children): Element | DocumentFragment;
-    namespace $mol_jsx.JSX {
-        interface Element extends HTMLElement {
-            class?: string;
-        }
-        interface ElementClass {
-            attributes: {};
-            ownerDocument: Pick<Document, 'getElementById' | 'createElementNS' | 'createDocumentFragment'>;
-            childNodes: Array<Node | string>;
-            valueOf(): Element;
-        }
-        type OrString<Dict> = {
-            [key in keyof Dict]: Dict[key] | string;
-        };
-        type IntrinsicElements = {
-            [key in keyof ElementTagNameMap]?: $.$mol_type_partial_deep<OrString<Element & IntrinsicAttributes & ElementTagNameMap[key]>>;
-        };
-        interface IntrinsicAttributes {
-            id?: string;
-            xmlns?: string;
-        }
-        interface ElementAttributesProperty {
-            attributes: {};
-        }
-        interface ElementChildrenAttribute {
-        }
     }
 }
 
@@ -6916,19 +7192,6 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_section extends $mol_list {
-        rows(): readonly any[];
-        head(): readonly any[];
-        Head(): $mol_view;
-        content(): readonly any[];
-        Content(): $$.$mol_list;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
     class $mol_section_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
@@ -7487,59 +7750,6 @@ declare namespace $ {
         sub(): readonly any[];
         tags(): readonly any[];
         Text(): $$.$mol_text;
-    }
-}
-
-declare namespace $ {
-    class $mol_textarea extends $mol_view {
-        attr(): {
-            mol_textarea_clickable: boolean;
-            mol_textarea_sidebar_showed: boolean;
-        };
-        event(): {
-            keydown: (event?: any) => any;
-            pointermove: (event?: any) => any;
-        };
-        sub(): readonly any[];
-        clickable(val?: any): boolean;
-        sidebar_showed(): boolean;
-        press(event?: any): any;
-        hover(event?: any): any;
-        value(val?: any): string;
-        hint(): string;
-        enabled(): boolean;
-        length_max(): number;
-        selection(val?: any): readonly number[];
-        Edit(): $mol_textarea_edit;
-        row_numb(index: any): number;
-        highlight(): string;
-        View(): $$.$mol_text_code;
-    }
-    class $mol_textarea_edit extends $mol_string {
-        dom_name(): string;
-        field(): {
-            scrollTop: number;
-            disabled: boolean;
-            value: string;
-            placeholder: string;
-            spellcheck: boolean;
-            autocomplete: string;
-            selectionEnd: number;
-            selectionStart: number;
-        };
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $.$$ {
-    class $mol_textarea extends $.$mol_textarea {
-        indent_inc(): void;
-        indent_dec(): void;
-        hover(event: PointerEvent): void;
-        press(event: KeyboardEvent): void;
-        row_numb(index: number): number;
     }
 }
 
@@ -8288,7 +8498,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "list" | "string" | "number" | "get" | "null" | "bool" | "dict" | "bind" | "put";
+    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "string" | "list" | "number" | "get" | "null" | "bool" | "dict" | "bind" | "put";
 }
 
 declare namespace $ {
