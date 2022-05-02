@@ -32391,7 +32391,7 @@ var $;
     $.$mol_view_tree2_prop_signature = $mol_regexp.from([
         begin,
         { name: repeat_greedy(letter, 1) },
-        { key: optional(['!', repeat_greedy(letter, 0)]) },
+        { key: optional(['*', repeat_greedy(letter, 0)]) },
         { next: optional(['?', repeat_greedy(letter, 0)]) },
         end,
     ]);
@@ -34365,11 +34365,11 @@ var $;
         return prop.struct('line', [
             prop.data('( '),
             ...key ? [
-                prop.data(key.slice(1) || 'key'),
+                prop.data('id'),
                 prop.data(': any, '),
             ] : [],
             ...next ? [
-                prop.data(next.slice(1) || 'next'),
+                prop.data('next'),
                 prop.data('?: '),
                 ...val,
                 prop.data(' '),
@@ -34527,8 +34527,15 @@ var $;
     function params_of(prop) {
         const { key, next } = [...prop.type.matchAll($mol_view_tree2_prop_signature)][0].groups;
         return prop.struct('(,)', [
-            ...key ? [prop.struct(key.slice(1) || 'key')] : [],
-            ...next ? [prop.struct(next.slice(1) || 'next')] : [],
+            ...key ? [prop.struct('id')] : [],
+            ...next ? [prop.struct('next')] : [],
+        ]);
+    }
+    function args_of(prop) {
+        const { key, next } = [...prop.type.matchAll($mol_view_tree2_prop_signature)][0].groups;
+        return prop.struct('(,)', [
+            ...key ? [key.length > 1 ? prop.data(key.slice(1)) : prop.struct('id')] : [],
+            ...next ? [prop.struct('next')] : [],
         ]);
     }
     function $mol_view_tree2_to_js(descr) {
@@ -34549,17 +34556,14 @@ var $;
                             res.struct('[]', [
                                 res.data(name_of(res)),
                             ]),
-                            params_of(bind.kids[0]),
+                            args_of(bind.kids[0]),
                         ]),
                     ];
                 };
                 const decorate = () => {
                     return prop.struct('()', [
-                        prop.struct('__decorate'),
+                        prop.struct(key ? '$mol_mem_key' : '$mol_mem'),
                         prop.struct('(,)', [
-                            prop.struct('[,]', [
-                                prop.struct(key ? '$mol_mem_key' : '$mol_mem'),
-                            ]),
                             prop.struct('()', [
                                 klass.clone([]),
                                 prop.struct('[]', [
@@ -34567,7 +34571,6 @@ var $;
                                 ]),
                             ]),
                             prop.data(name),
-                            prop.struct('null'),
                         ]),
                     ]);
                 };
@@ -34650,7 +34653,7 @@ var $;
                                                     over.struct('[]', [
                                                         over.data(name),
                                                     ]),
-                                                    params_of(over),
+                                                    args_of(over),
                                                 ]),
                                             ])
                                         ]),
