@@ -22777,40 +22777,6 @@ var $;
         bid_long(id) {
             return "> 100 letters";
         }
-        Group(id) {
-            const obj = new this.$.$mol_form_group();
-            obj.sub = () => this.group(id);
-            return obj;
-        }
-        Title_field(id) {
-            const obj = new this.$.$mol_form_field();
-            obj.name = () => "Title";
-            obj.bids = () => [
-                this.bid_swearing(id),
-                this.bid_short(id)
-            ];
-            obj.control = () => this.Title(id);
-            return obj;
-        }
-        Type_field(id) {
-            const obj = new this.$.$mol_form_field();
-            obj.name = () => "Type";
-            obj.bids = () => [
-                this.bid_required(id)
-            ];
-            obj.control = () => this.Type(id);
-            return obj;
-        }
-        Content_field(id) {
-            const obj = new this.$.$mol_form_field();
-            obj.name = () => "Content";
-            obj.bids = () => [
-                this.bid_swearing(id),
-                this.bid_long(id)
-            ];
-            obj.control = () => this.Content(id);
-            return obj;
-        }
         sub() {
             return [
                 this.Flow()
@@ -22828,23 +22794,30 @@ var $;
                 "field"
             ];
         }
-        group(id) {
-            return [];
-        }
         value_str(id, val) {
             if (val !== undefined)
                 return val;
             return "";
         }
-        Title(id) {
+        Title() {
             const obj = new this.$.$mol_string();
             obj.hint = () => "How I spent the summer..";
-            obj.value = (val) => this.value_str(id, val);
+            obj.value = (val) => this.value_str("title", val);
             return obj;
         }
-        Type(id) {
+        Title_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Title";
+            obj.bids = () => [
+                this.bid_swearing("title"),
+                this.bid_short("title")
+            ];
+            obj.control = () => this.Title();
+            return obj;
+        }
+        Type() {
             const obj = new this.$.$mol_switch();
-            obj.value = (val) => this.value_str(id, val);
+            obj.value = (val) => this.value_str("type", val);
             obj.options = () => ({
                 article: "Article",
                 news: "News",
@@ -22852,14 +22825,44 @@ var $;
             });
             return obj;
         }
-        Content(id) {
+        Type_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Type";
+            obj.bids = () => [
+                this.bid_required("type")
+            ];
+            obj.control = () => this.Type();
+            return obj;
+        }
+        Main() {
+            const obj = new this.$.$mol_form_group();
+            obj.sub = () => [
+                this.Title_field(),
+                this.Type_field()
+            ];
+            return obj;
+        }
+        Content() {
             const obj = new this.$.$mol_textarea();
             obj.hint = () => "Long long story..";
-            obj.value = (val) => this.value_str(id, val);
+            obj.value = (val) => this.value_str("content", val);
+            return obj;
+        }
+        Content_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Content";
+            obj.bids = () => [
+                this.bid_swearing("content"),
+                this.bid_long("content")
+            ];
+            obj.control = () => this.Content();
             return obj;
         }
         form_body() {
-            return [];
+            return [
+                this.Main(),
+                this.Content_field()
+            ];
         }
         publish(event) {
             if (event !== undefined)
@@ -22909,28 +22912,28 @@ var $;
     ], $mol_form_demo_draft.prototype, "model", null);
     __decorate([
         $mol_mem_key
-    ], $mol_form_demo_draft.prototype, "Group", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_form_demo_draft.prototype, "Title_field", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_form_demo_draft.prototype, "Type_field", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_form_demo_draft.prototype, "Content_field", null);
-    __decorate([
-        $mol_mem_key
     ], $mol_form_demo_draft.prototype, "value_str", null);
     __decorate([
-        $mol_mem_key
+        $mol_mem
     ], $mol_form_demo_draft.prototype, "Title", null);
     __decorate([
-        $mol_mem_key
+        $mol_mem
+    ], $mol_form_demo_draft.prototype, "Title_field", null);
+    __decorate([
+        $mol_mem
     ], $mol_form_demo_draft.prototype, "Type", null);
     __decorate([
-        $mol_mem_key
+        $mol_mem
+    ], $mol_form_demo_draft.prototype, "Type_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo_draft.prototype, "Main", null);
+    __decorate([
+        $mol_mem
     ], $mol_form_demo_draft.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo_draft.prototype, "Content_field", null);
     __decorate([
         $mol_mem
     ], $mol_form_demo_draft.prototype, "publish", null);
@@ -22966,18 +22969,9 @@ var $;
             }
             form_body() {
                 return [
-                    this.Group('main'),
-                    ...this.value_str('type') ? [this.Content_field('content')] : [],
+                    this.Main(),
+                    ...this.value_str('type') ? [this.Content_field()] : [],
                 ];
-            }
-            group(name) {
-                switch (name) {
-                    case 'main': return [
-                        this.Title_field('title'),
-                        this.Type_field('type'),
-                    ];
-                    default: return [];
-                }
             }
             bid_required(field) {
                 return this.value_str(field) ? '' : super.bid_required(field);
@@ -23022,9 +23016,6 @@ var $;
         __decorate([
             $mol_mem
         ], $mol_form_demo_draft.prototype, "form_body", null);
-        __decorate([
-            $mol_mem
-        ], $mol_form_demo_draft.prototype, "group", null);
         __decorate([
             $mol_mem_key
         ], $mol_form_demo_draft.prototype, "bid_required", null);
@@ -32327,7 +32318,7 @@ var $;
     const err = $mol_view_tree2_error_str;
     function $mol_view_tree2_prop_split(src) {
         const prop_name = src.type;
-        let key_pos = prop_name.indexOf('#');
+        let key_pos = prop_name.indexOf('*');
         let next_pos = prop_name.indexOf('?');
         let next_pos_orig = next_pos;
         if (next_pos === -1)
@@ -32434,7 +32425,7 @@ var $;
         let props = this.$mol_view_tree2_class_super(klass);
         props = props.clone(props.hack({
             '': (node, belt) => {
-                const normal = node.type.replace(/!\w+/, '#');
+                const normal = node.type.replace(/!\w+/, '*');
                 if (node.type === normal)
                     return [node.clone(node.hack(belt))];
                 return [node.struct(normal, node.hack(belt))];
