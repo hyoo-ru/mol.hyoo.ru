@@ -10426,8 +10426,8 @@ var $;
                 }
                 return dict;
             }
-            gist(id) {
-                return this.gists_dict()[id];
+            gist(uri) {
+                return this.gists_dict()[uri];
             }
             gist_current() {
                 const uri = this.$.$mol_state_arg.value('gist');
@@ -10471,20 +10471,15 @@ var $;
                 return issue.uri().replace(/.*\/repos\//, '');
             }
             menu_rows() {
-                try {
-                    return this.gists()
-                        .filter($mol_match_text(this.search(), gist => [gist.title(), gist.text()]))
-                        .map(gist => this.Menu_row(gist.uri()));
-                }
-                catch (error) {
-                    return Array.from({ length: 20 }, (_, i) => this.Menu_row(i));
-                }
+                return this.gists()
+                    .filter($mol_match_text(this.search(), gist => [gist.title(), gist.text()]))
+                    .map(gist => this.Menu_row(gist.uri()));
             }
-            gist_title(id) {
-                return this.gist(id).title();
+            gist_title(uri) {
+                return this.gist(uri).title();
             }
-            gist_arg(id) {
-                const gist = this.gist(id);
+            gist_arg(uri) {
+                const gist = this.gist(uri);
                 return {
                     author: gist.owner().name(),
                     repo: gist.repository().name(),

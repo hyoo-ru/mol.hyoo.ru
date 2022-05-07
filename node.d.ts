@@ -3125,7 +3125,7 @@ declare namespace $.$$ {
         gists_dict(): {
             [key: string]: $mol_github_issue;
         };
-        gist(id: number): $mol_github_issue;
+        gist(uri: string): $mol_github_issue;
         gist_current(): $mol_github_issue | null;
         details_link(): string;
         Details_body(): $mol_scroll;
@@ -3135,8 +3135,8 @@ declare namespace $.$$ {
         pages(): $mol_page[];
         chat_seed(issue: $mol_github_issue): string;
         menu_rows(): $mol_view[];
-        gist_title(id: number): string;
-        gist_arg(id: number): {
+        gist_title(uri: string): string;
+        gist_arg(uri: string): {
             author: string;
             repo: string;
             article: string;
