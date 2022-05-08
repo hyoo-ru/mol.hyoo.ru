@@ -920,6 +920,18 @@ $hyoo_slides $mol_view
 				\sing( \S+?)*
 				\спой( \S+?)*
 
+$mol_expander $mol_list
+	rows /
+		<= Label $mol_view
+			sub /
+				<= Trigger $mol_check_expand
+					checked?val <=> expanded?val false
+					label <= label /
+						<= title
+				<= Tools null
+		<= Content $mol_list
+			rows <= content /
+
 $hyoo_apps $mol_book2
 	Placeholder null
 	plugins /
@@ -932,120 +944,158 @@ $hyoo_apps $mol_book2
 				<= Lights $mol_lights_toggle
 			body /
 				<= Menu_items $mol_list
-					rows <= menu_items /$mol_view
-	Menu_item!id $mol_view
-		sub /
-			<= Menu_link_in!id $mol_link
-				title <= app_title!id \
-				arg <= app_arg!id *
-			<= Menu_link_out!id $mol_link_iconed
-				uri <= app_uri_default!id \
-				title \
-	App!id $mol_frame
-		uri?val <=> app_uri_embed!id?val \
-	data *
-		- offer *
-			title @ \$hyoo Business Offer
-			uri \https://offer.hyoo.ru/
-		mol *
-			title @ \$mol UI Framework
-			uri \https://mol.hyoo.ru/
+					rows <= group_list /
+						<= Group*id $mol_expander
+							title <= group_name* \
+							expanded? <=> group_expanded*? true
+							content <= group_items* /
+								<= Menu_item* $mol_view
+									sub /
+										<= Menu_link_in* $mol_link
+											title <= app_title* \
+											arg <= app_arg* *
+										<= Menu_link_out* $mol_link_iconed
+											uri <= app_uri_default* \
+											title \
+		<= App*id $mol_frame
+			uri? <=> app_uri_embed*? \
+	groups *
+		release @ \For All
+		develop @ \For Developers
+		preview @ \For Curious
+	apps *
+		notes *
+			target \release
+			title @ \Private Notes
+			uri \https://notes.hyoo.ru/#
+		slides *
+			target \release
+			title @ \Slideshow
+			uri \https://slides.hyoo.ru/
 		search *
+			target \release
 			title @ \Web Search
 			uri \https://search.hyoo.ru/
 		map *
+			target \release
 			title @ \Earth Map
 			uri \https://map.hyoo.ru/
-		talks *
-			title @ \Messanger
-			uri \https://talks.hyoo.ru/#!roster/chat=RXV3H2EC
-		draw *
-			title @ \Draw Tool
-			uri \https://draw.hyoo.ru/
 		scout *
+			target \release
 			title @ \Scout Games
 			uri \https://scout.hyoo.ru/
-		piterjs *
-			title @ \PiterJS Meetups
-			uri \https://piterjs.org/
 		fallacy *
+			target \release
 			title @ \Fallacies Collection
 			uri \https://fallacy.hyoo.ru/
-		toxic *
-			title @ \Toxic Repos
-			uri \https://nin-jin.github.io/toxic-repos/
 		meme *
+			target \release
 			title @ \Meme maker
 			uri \https://meme.hyoo.ru/
 		calc *
+			target \release
 			title @ \Spreadsheet
 			uri \https://calc.hyoo.ru/#!title=a*x**2%20%2B%20b*x%20%2B%20c%20%3D%200/A1=x%20%3D%20%5B%0A%09%28%20-_.b%20%2B%20sqrt%28_.D%29%20%29%20%2F%202%20%2F%20_.a%2C%0A%09%28%20-_.b%20-%20sqrt%28_.D%29%20%29%20%2F%202%20%2F%20_.a%2C%0A%5D/A2=D%20%3D%20_.b**2%20-%204*_.a*_.c/C1=a%20%3D%203/C2=b%20%3D%206/C3=c%20%3D%20-9
-		notes *
-			title @ \Private Notes
-			uri \https://notes.hyoo.ru/#
 		play *
+			target \release
 			title @ \Media Player
 			uri \https://play.hyoo.ru/
-		invest *
-			title @ \Private Investments
-			uri \https://invest.hyoo.ru/
 		life *
+			target \release
 			title @ \Life game
 			uri \https://life.hyoo.ru/
-		habhub *
-			title @ \Articles Reader
-			uri \https://habhub.hyoo.ru/
-		slides *
-			title @ \Slideshow
-			uri \https://slides.hyoo.ru/
 		iq *
+			target \release
 			title @ \IQ Tester
 			uri \https://iq.hyoo.ru/
-		rdf *
-			title @ \RDF Browser
-			uri \http://rdf.hyoo.ru/
-		lamps *
-			title @ \Lamps Database
-			uri \https://lamps.hyoo.ru/
-		bench *
-			title @ \Online Benchmark
-			uri \https://bench.hyoo.ru/#bench=https%3A%2F%2Fhyoo-ru.github.io%2Ftodomvc%2Fbenchmark%2F/sort=fill
-		request *
-			title @ \HTTP Debug Tool
-			uri \https://http.hyoo.ru/#uri=https%3A%2F%2Fapi.github.com%2Frepos%2Fhyoo-ru%2Fmam_mol
-		jseval *
-			title @ \Instant JS Sandbox
-			uri \https://eval.js.hyoo.ru/#!code=%24mol_import.script%28%0A%09'https%3A%2F%2Funpkg.com%2Fmol_time_all'%0A%29%0A%0Aconst%20interval%20%3D%20new%20%24mol_time_interval%28%20'%2FP1M'%20%29%0A%0Aconsole.log%28%20'start'%2C%20interval.start.toString%28%20'YYYY-MM-DD'%20%29%20%29%0Aconsole.log%28%20'dur'%2C%20interval.duration.count%28%20'P1D'%20%29%20%29%0Aconsole.log%28%20'end'%2C%20interval.end.toString%28%20'YYYY-MM-DD'%20%29%20%29%0A%0Ainterval/run=true
-		jsperf *
-			title @ \JS Performance Tool
-			uri \https://perf.js.hyoo.ru/#sources=%5B%22window.location.href%3B%22%2C%22document.location.href%3B%22%5D/prefix/postfix/optimized=true
-		issues *
-			title @ \GitHub Projects Comparison
-			uri \https://compare.github.hyoo.ru/#projects=hyoo-ru%2Fmam_mol%2Cfacebook%2Freact%2Cvuejs%2Fvue
-		tree *
-			title @ \Tree Sandbox
-			uri \https://tree.hyoo.ru/
-		icons *
-			title @ \Icons Gallery
-			uri \https://nin-jin.github.io/mol_icon/
 		todomvc *
+			target \release
 			title @ \ToDoMVC
 			uri \https://todomvc.hyoo.ru/
+		talks *
+			target \preview
+			title @ \Messanger
+			uri \https://talks.hyoo.ru/#!roster/chat=RXV3H2EC
+		draw *
+			target \preview
+			title @ \Draw Tool
+			uri \https://draw.hyoo.ru/
+		invest *
+			target \preview
+			title @ \Private Investments
+			uri \https://invest.hyoo.ru/
+		lamps *
+			target \preview
+			title @ \Lamps Database
+			uri \https://lamps.hyoo.ru/
 		questions *
+			target \preview
 			title @ \StackOverflow Client
 			uri \https://mol.js.org/app/questions/-/
 		shelter *
+			target \preview
 			title @ \Shelters ERP
 			uri \https://shelter.hyoo.ru/#login=user
 		mail *
+			target \preview
 			title @ \Universal EMail client
 			uri \https://mail.hyoo.ru/#!folder=inbox/mail=qwe
 		gazporn *
+			target \preview
 			title @ \CEO Dashboard
 			uri \https://nin-jin.github.io/chart/
 		toys *
+			target \preview
 			title @ \Online Toys Store
 			uri \https://toys.hyoo.ru/#size=M/popular
+		mol *
+			target \develop
+			title @ \$mol UI Framework
+			uri \https://mol.hyoo.ru/
+		piterjs *
+			target \develop
+			title @ \PiterJS Meetups
+			uri \https://piterjs.org/
+		habhub *
+			target \develop
+			title @ \Articles Reader
+			uri \https://habhub.hyoo.ru/
+		jseval *
+			target \develop
+			title @ \Instant JS Sandbox
+			uri \https://eval.js.hyoo.ru/#!code=%24mol_import.script%28%0A%09'https%3A%2F%2Funpkg.com%2Fmol_time_all'%0A%29%0A%0Aconst%20interval%20%3D%20new%20%24mol_time_interval%28%20'%2FP1M'%20%29%0A%0Aconsole.log%28%20'start'%2C%20interval.start.toString%28%20'YYYY-MM-DD'%20%29%20%29%0Aconsole.log%28%20'dur'%2C%20interval.duration.count%28%20'P1D'%20%29%20%29%0Aconsole.log%28%20'end'%2C%20interval.end.toString%28%20'YYYY-MM-DD'%20%29%20%29%0A%0Ainterval/run=true
+		jsperf *
+			target \develop
+			title @ \JS Performance Tool
+			uri \https://perf.js.hyoo.ru/#sources=%5B%22window.location.href%3B%22%2C%22document.location.href%3B%22%5D/prefix/postfix/optimized=true
+		bench *
+			target \develop
+			title @ \Online Benchmark
+			uri \https://bench.hyoo.ru/#bench=https%3A%2F%2Fhyoo-ru.github.io%2Ftodomvc%2Fbenchmark%2F/sort=fill
+		toxic *
+			target \develop
+			title @ \Toxic Repos
+			uri \https://nin-jin.github.io/toxic-repos/
+		request *
+			target \develop
+			title @ \HTTP Debug Tool
+			uri \https://http.hyoo.ru/#uri=https%3A%2F%2Fapi.github.com%2Frepos%2Fhyoo-ru%2Fmam_mol
+		tree *
+			target \develop
+			title @ \Tree Sandbox
+			uri \https://tree.hyoo.ru/
+		issues *
+			target \develop
+			title @ \GitHub Projects Comparison
+			uri \https://compare.github.hyoo.ru/#projects=hyoo-ru%2Fmam_mol%2Cfacebook%2Freact%2Cvuejs%2Fvue
+		icons *
+			target \develop
+			title @ \Icons Gallery
+			uri \https://nin-jin.github.io/mol_icon/
+		rdf *
+			target \develop
+			title @ \RDF Browser
+			uri \http://rdf.hyoo.ru/
 
 $mol_example $mol_view
 	tags /string
@@ -2428,18 +2478,6 @@ $mol_drag_demo $mol_example_large
 		\dragndrop
 		\list
 
-
-$mol_expander $mol_list
-	rows /
-		<= Label $mol_view
-			sub /
-				<= Trigger $mol_check_expand
-					checked?val <=> expanded?val false
-					label <= label /
-						<= title
-				<= Tools null
-		<= Content $mol_list
-			rows <= content /
 
 $mol_filler $mol_view
 	minimal_height 500

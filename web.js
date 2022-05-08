@@ -12163,6 +12163,93 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_expander extends $mol_list {
+        rows() {
+            return [
+                this.Label(),
+                this.Content()
+            ];
+        }
+        expanded(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        label() {
+            return [
+                this.title()
+            ];
+        }
+        Trigger() {
+            const obj = new this.$.$mol_check_expand();
+            obj.checked = (val) => this.expanded(val);
+            obj.label = () => this.label();
+            return obj;
+        }
+        Tools() {
+            return null;
+        }
+        Label() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Trigger(),
+                this.Tools()
+            ];
+            return obj;
+        }
+        content() {
+            return [];
+        }
+        Content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.content();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_expander.prototype, "expanded", null);
+    __decorate([
+        $mol_mem
+    ], $mol_expander.prototype, "Trigger", null);
+    __decorate([
+        $mol_mem
+    ], $mol_expander.prototype, "Label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_expander.prototype, "Content", null);
+    $.$mol_expander = $mol_expander;
+})($ || ($ = {}));
+//mol/expander/-view.tree/expander.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/expander/expander.view.css", "[mol_expander] {\n\tflex-direction: column;\n\tflex: 1 1 auto;\n}\n\n[mol_expander_label] {\n\tdisplay: flex;\n\tflex-wrap: wrap;\n\tborder-radius: var(--mol_gap_round);\n}\n\n[mol_expander_trigger] {\n\tflex: auto;\n\tposition: relative;\n}\n\n[mol_expander_trigger_icon] {\n\tposition: absolute;\n\tmargin-left: -1rem;\n}\n");
+})($ || ($ = {}));
+//mol/expander/-css/expander.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_expander extends $.$mol_expander {
+            rows() {
+                return [
+                    this.Label(),
+                    ...this.expanded() ? [this.Content()] : []
+                ];
+            }
+        }
+        $$.$mol_expander = $mol_expander;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/expander/expander.view.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $hyoo_apps extends $mol_book2 {
         Placeholder() {
             return null;
@@ -12174,155 +12261,183 @@ var $;
         }
         pages() {
             return [
-                this.Menu()
+                this.Menu(),
+                this.App("id")
             ];
         }
-        Menu_item(id) {
-            const obj = new this.$.$mol_view();
-            obj.sub = () => [
-                this.Menu_link_in(id),
-                this.Menu_link_out(id)
-            ];
-            return obj;
-        }
-        App(id) {
-            const obj = new this.$.$mol_frame();
-            obj.uri = (val) => this.app_uri_embed(id, val);
-            return obj;
-        }
-        data() {
+        groups() {
             return {
-                mol: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_mol_title'),
-                    uri: "https://mol.hyoo.ru/"
+                release: this.$.$mol_locale.text('$hyoo_apps_groups_release'),
+                develop: this.$.$mol_locale.text('$hyoo_apps_groups_develop'),
+                preview: this.$.$mol_locale.text('$hyoo_apps_groups_preview')
+            };
+        }
+        apps() {
+            return {
+                notes: {
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_notes_title'),
+                    uri: "https://notes.hyoo.ru/#"
+                },
+                slides: {
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_slides_title'),
+                    uri: "https://slides.hyoo.ru/"
                 },
                 search: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_search_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_search_title'),
                     uri: "https://search.hyoo.ru/"
                 },
                 map: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_map_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_map_title'),
                     uri: "https://map.hyoo.ru/"
                 },
-                talks: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_talks_title'),
-                    uri: "https://talks.hyoo.ru/#!roster/chat=RXV3H2EC"
-                },
-                draw: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_draw_title'),
-                    uri: "https://draw.hyoo.ru/"
-                },
                 scout: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_scout_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_scout_title'),
                     uri: "https://scout.hyoo.ru/"
                 },
-                piterjs: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_piterjs_title'),
-                    uri: "https://piterjs.org/"
-                },
                 fallacy: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_fallacy_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_fallacy_title'),
                     uri: "https://fallacy.hyoo.ru/"
                 },
-                toxic: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_toxic_title'),
-                    uri: "https://nin-jin.github.io/toxic-repos/"
-                },
                 meme: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_meme_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_meme_title'),
                     uri: "https://meme.hyoo.ru/"
                 },
                 calc: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_calc_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_calc_title'),
                     uri: "https://calc.hyoo.ru/#!title=a*x**2%20%2B%20b*x%20%2B%20c%20%3D%200/A1=x%20%3D%20%5B%0A%09%28%20-_.b%20%2B%20sqrt%28_.D%29%20%29%20%2F%202%20%2F%20_.a%2C%0A%09%28%20-_.b%20-%20sqrt%28_.D%29%20%29%20%2F%202%20%2F%20_.a%2C%0A%5D/A2=D%20%3D%20_.b**2%20-%204*_.a*_.c/C1=a%20%3D%203/C2=b%20%3D%206/C3=c%20%3D%20-9"
                 },
-                notes: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_notes_title'),
-                    uri: "https://notes.hyoo.ru/#"
-                },
                 play: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_play_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_play_title'),
                     uri: "https://play.hyoo.ru/"
                 },
-                invest: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_invest_title'),
-                    uri: "https://invest.hyoo.ru/"
-                },
                 life: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_life_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_life_title'),
                     uri: "https://life.hyoo.ru/"
                 },
-                habhub: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_habhub_title'),
-                    uri: "https://habhub.hyoo.ru/"
-                },
-                slides: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_slides_title'),
-                    uri: "https://slides.hyoo.ru/"
-                },
                 iq: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_iq_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_iq_title'),
                     uri: "https://iq.hyoo.ru/"
                 },
-                rdf: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_rdf_title'),
-                    uri: "http://rdf.hyoo.ru/"
-                },
-                lamps: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_lamps_title'),
-                    uri: "https://lamps.hyoo.ru/"
-                },
-                bench: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_bench_title'),
-                    uri: "https://bench.hyoo.ru/#bench=https%3A%2F%2Fhyoo-ru.github.io%2Ftodomvc%2Fbenchmark%2F/sort=fill"
-                },
-                request: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_request_title'),
-                    uri: "https://http.hyoo.ru/#uri=https%3A%2F%2Fapi.github.com%2Frepos%2Fhyoo-ru%2Fmam_mol"
-                },
-                jseval: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_jseval_title'),
-                    uri: "https://eval.js.hyoo.ru/#!code=%24mol_import.script%28%0A%09'https%3A%2F%2Funpkg.com%2Fmol_time_all'%0A%29%0A%0Aconst%20interval%20%3D%20new%20%24mol_time_interval%28%20'%2FP1M'%20%29%0A%0Aconsole.log%28%20'start'%2C%20interval.start.toString%28%20'YYYY-MM-DD'%20%29%20%29%0Aconsole.log%28%20'dur'%2C%20interval.duration.count%28%20'P1D'%20%29%20%29%0Aconsole.log%28%20'end'%2C%20interval.end.toString%28%20'YYYY-MM-DD'%20%29%20%29%0A%0Ainterval/run=true"
-                },
-                jsperf: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_jsperf_title'),
-                    uri: "https://perf.js.hyoo.ru/#sources=%5B%22window.location.href%3B%22%2C%22document.location.href%3B%22%5D/prefix/postfix/optimized=true"
-                },
-                issues: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_issues_title'),
-                    uri: "https://compare.github.hyoo.ru/#projects=hyoo-ru%2Fmam_mol%2Cfacebook%2Freact%2Cvuejs%2Fvue"
-                },
-                tree: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_tree_title'),
-                    uri: "https://tree.hyoo.ru/"
-                },
-                icons: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_icons_title'),
-                    uri: "https://nin-jin.github.io/mol_icon/"
-                },
                 todomvc: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_todomvc_title'),
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_todomvc_title'),
                     uri: "https://todomvc.hyoo.ru/"
                 },
+                talks: {
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_talks_title'),
+                    uri: "https://talks.hyoo.ru/#!roster/chat=RXV3H2EC"
+                },
+                draw: {
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_draw_title'),
+                    uri: "https://draw.hyoo.ru/"
+                },
+                invest: {
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_invest_title'),
+                    uri: "https://invest.hyoo.ru/"
+                },
+                lamps: {
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_lamps_title'),
+                    uri: "https://lamps.hyoo.ru/"
+                },
                 questions: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_questions_title'),
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_questions_title'),
                     uri: "https://mol.js.org/app/questions/-/"
                 },
                 shelter: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_shelter_title'),
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_shelter_title'),
                     uri: "https://shelter.hyoo.ru/#login=user"
                 },
                 mail: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_mail_title'),
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_mail_title'),
                     uri: "https://mail.hyoo.ru/#!folder=inbox/mail=qwe"
                 },
                 gazporn: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_gazporn_title'),
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_gazporn_title'),
                     uri: "https://nin-jin.github.io/chart/"
                 },
                 toys: {
-                    title: this.$.$mol_locale.text('$hyoo_apps_data_toys_title'),
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_toys_title'),
                     uri: "https://toys.hyoo.ru/#size=M/popular"
+                },
+                mol: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_mol_title'),
+                    uri: "https://mol.hyoo.ru/"
+                },
+                piterjs: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_piterjs_title'),
+                    uri: "https://piterjs.org/"
+                },
+                habhub: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_habhub_title'),
+                    uri: "https://habhub.hyoo.ru/"
+                },
+                jseval: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_jseval_title'),
+                    uri: "https://eval.js.hyoo.ru/#!code=%24mol_import.script%28%0A%09'https%3A%2F%2Funpkg.com%2Fmol_time_all'%0A%29%0A%0Aconst%20interval%20%3D%20new%20%24mol_time_interval%28%20'%2FP1M'%20%29%0A%0Aconsole.log%28%20'start'%2C%20interval.start.toString%28%20'YYYY-MM-DD'%20%29%20%29%0Aconsole.log%28%20'dur'%2C%20interval.duration.count%28%20'P1D'%20%29%20%29%0Aconsole.log%28%20'end'%2C%20interval.end.toString%28%20'YYYY-MM-DD'%20%29%20%29%0A%0Ainterval/run=true"
+                },
+                jsperf: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_jsperf_title'),
+                    uri: "https://perf.js.hyoo.ru/#sources=%5B%22window.location.href%3B%22%2C%22document.location.href%3B%22%5D/prefix/postfix/optimized=true"
+                },
+                bench: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_bench_title'),
+                    uri: "https://bench.hyoo.ru/#bench=https%3A%2F%2Fhyoo-ru.github.io%2Ftodomvc%2Fbenchmark%2F/sort=fill"
+                },
+                toxic: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_toxic_title'),
+                    uri: "https://nin-jin.github.io/toxic-repos/"
+                },
+                request: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_request_title'),
+                    uri: "https://http.hyoo.ru/#uri=https%3A%2F%2Fapi.github.com%2Frepos%2Fhyoo-ru%2Fmam_mol"
+                },
+                tree: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_tree_title'),
+                    uri: "https://tree.hyoo.ru/"
+                },
+                issues: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_issues_title'),
+                    uri: "https://compare.github.hyoo.ru/#projects=hyoo-ru%2Fmam_mol%2Cfacebook%2Freact%2Cvuejs%2Fvue"
+                },
+                icons: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_icons_title'),
+                    uri: "https://nin-jin.github.io/mol_icon/"
+                },
+                rdf: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_rdf_title'),
+                    uri: "http://rdf.hyoo.ru/"
                 }
             };
         }
@@ -12345,22 +12460,13 @@ var $;
                 this.Lights()
             ];
         }
-        menu_items() {
-            return [];
+        group_name(id) {
+            return "";
         }
-        Menu_items() {
-            const obj = new this.$.$mol_list();
-            obj.rows = () => this.menu_items();
-            return obj;
-        }
-        Menu() {
-            const obj = new this.$.$mol_page();
-            obj.title = () => this.$.$mol_locale.text('$hyoo_apps_Menu_title');
-            obj.tools = () => this.tools();
-            obj.body = () => [
-                this.Menu_items()
-            ];
-            return obj;
+        group_expanded(id, next) {
+            if (next !== undefined)
+                return next;
+            return true;
         }
         app_title(id) {
             return "";
@@ -12383,18 +12489,56 @@ var $;
             obj.title = () => "";
             return obj;
         }
-        app_uri_embed(id, val) {
-            if (val !== undefined)
-                return val;
+        Menu_item(id) {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Menu_link_in(id),
+                this.Menu_link_out(id)
+            ];
+            return obj;
+        }
+        group_items(id) {
+            return [
+                this.Menu_item(id)
+            ];
+        }
+        Group(id) {
+            const obj = new this.$.$mol_expander();
+            obj.title = () => this.group_name(id);
+            obj.expanded = (next) => this.group_expanded(id, next);
+            obj.content = () => this.group_items(id);
+            return obj;
+        }
+        group_list() {
+            return [
+                this.Group("id")
+            ];
+        }
+        Menu_items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.group_list();
+            return obj;
+        }
+        Menu() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => this.$.$mol_locale.text('$hyoo_apps_Menu_title');
+            obj.tools = () => this.tools();
+            obj.body = () => [
+                this.Menu_items()
+            ];
+            return obj;
+        }
+        app_uri_embed(id, next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
+        App(id) {
+            const obj = new this.$.$mol_frame();
+            obj.uri = (next) => this.app_uri_embed(id, next);
+            return obj;
+        }
     }
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_apps.prototype, "Menu_item", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_apps.prototype, "App", null);
     __decorate([
         $mol_mem
     ], $hyoo_apps.prototype, "Theme", null);
@@ -12405,11 +12549,8 @@ var $;
         $mol_mem
     ], $hyoo_apps.prototype, "Lights", null);
     __decorate([
-        $mol_mem
-    ], $hyoo_apps.prototype, "Menu_items", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_apps.prototype, "Menu", null);
+        $mol_mem_key
+    ], $hyoo_apps.prototype, "group_expanded", null);
     __decorate([
         $mol_mem_key
     ], $hyoo_apps.prototype, "Menu_link_in", null);
@@ -12418,7 +12559,22 @@ var $;
     ], $hyoo_apps.prototype, "Menu_link_out", null);
     __decorate([
         $mol_mem_key
+    ], $hyoo_apps.prototype, "Menu_item", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_apps.prototype, "Group", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_apps.prototype, "Menu_items", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_apps.prototype, "Menu", null);
+    __decorate([
+        $mol_mem_key
     ], $hyoo_apps.prototype, "app_uri_embed", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_apps.prototype, "App", null);
     $.$hyoo_apps = $hyoo_apps;
 })($ || ($ = {}));
 //hyoo/apps/-view.tree/apps.view.tree.ts
@@ -12426,7 +12582,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/apps/apps.view.css", "[hyoo_apps_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_apps_menu_items] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_apps_menu_link_in] {\n\tflex-grow: 1;\n}\n\n[hyoo_apps_app] {\n\tflex: 1 0 25rem;\n}\n");
+    $mol_style_attach("hyoo/apps/apps.view.css", "[hyoo_apps_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_apps_menu_items] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_apps_group_content] {\n\tpadding-left: var(--mol_gap_block);\n}\n\n[hyoo_apps_menu_link_in] {\n\tflex-grow: 1;\n}\n\n[hyoo_apps_app] {\n\tflex: 1 0 25rem;\n}\n");
 })($ || ($ = {}));
 //hyoo/apps/-css/apps.view.css.ts
 ;
@@ -12439,8 +12595,17 @@ var $;
             app() {
                 return this.$.$mol_state_arg.value('app');
             }
-            menu_items() {
-                return Object.keys(this.data()).map(app => this.Menu_item(app));
+            group_name(id) {
+                return this.groups()[id];
+            }
+            group_list() {
+                return Object.keys(this.groups()).map(group => this.Group(group));
+            }
+            group_items(group) {
+                const apps = this.apps();
+                return Object.keys(this.apps())
+                    .filter(app => apps[app].target === group)
+                    .map(app => this.Menu_item(app));
             }
             pages() {
                 const app = this.app();
@@ -12450,10 +12615,10 @@ var $;
                 ];
             }
             app_title(app) {
-                return this.data()[app].title;
+                return this.apps()[app].title;
             }
             app_uri_default(app, next) {
-                return this.data()[app].uri;
+                return this.apps()[app].uri;
             }
             app_uri_embed(app, next) {
                 const lights = this.$.$mol_lights();
@@ -12470,7 +12635,13 @@ var $;
         }
         __decorate([
             $mol_mem
-        ], $hyoo_apps.prototype, "menu_items", null);
+        ], $hyoo_apps.prototype, "group_list", null);
+        __decorate([
+            $mol_mem_key
+        ], $hyoo_apps.prototype, "group_items", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_apps.prototype, "pages", null);
         __decorate([
             $mol_mem_key
         ], $hyoo_apps.prototype, "app_uri_embed", null);
@@ -21265,93 +21436,6 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //mol/drag/demo/demo.view.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_expander extends $mol_list {
-        rows() {
-            return [
-                this.Label(),
-                this.Content()
-            ];
-        }
-        expanded(val) {
-            if (val !== undefined)
-                return val;
-            return false;
-        }
-        label() {
-            return [
-                this.title()
-            ];
-        }
-        Trigger() {
-            const obj = new this.$.$mol_check_expand();
-            obj.checked = (val) => this.expanded(val);
-            obj.label = () => this.label();
-            return obj;
-        }
-        Tools() {
-            return null;
-        }
-        Label() {
-            const obj = new this.$.$mol_view();
-            obj.sub = () => [
-                this.Trigger(),
-                this.Tools()
-            ];
-            return obj;
-        }
-        content() {
-            return [];
-        }
-        Content() {
-            const obj = new this.$.$mol_list();
-            obj.rows = () => this.content();
-            return obj;
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_expander.prototype, "expanded", null);
-    __decorate([
-        $mol_mem
-    ], $mol_expander.prototype, "Trigger", null);
-    __decorate([
-        $mol_mem
-    ], $mol_expander.prototype, "Label", null);
-    __decorate([
-        $mol_mem
-    ], $mol_expander.prototype, "Content", null);
-    $.$mol_expander = $mol_expander;
-})($ || ($ = {}));
-//mol/expander/-view.tree/expander.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/expander/expander.view.css", "[mol_expander] {\n\tflex-direction: column;\n\tflex: 1 1 auto;\n}\n\n[mol_expander_label] {\n\tdisplay: flex;\n\tflex-wrap: wrap;\n\tborder-radius: var(--mol_gap_round);\n}\n\n[mol_expander_trigger] {\n\tflex: auto;\n\tposition: relative;\n}\n\n[mol_expander_trigger_icon] {\n\tposition: absolute;\n\tmargin-left: -1rem;\n}\n");
-})($ || ($ = {}));
-//mol/expander/-css/expander.view.css.ts
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_expander extends $.$mol_expander {
-            rows() {
-                return [
-                    this.Label(),
-                    ...this.expanded() ? [this.Content()] : []
-                ];
-            }
-        }
-        $$.$mol_expander = $mol_expander;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-//mol/expander/expander.view.ts
 ;
 "use strict";
 var $;
