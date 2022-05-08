@@ -971,6 +971,9 @@ $hyoo_apps $mol_book2
 		fallacy *
 			title @ \Fallacies Collection
 			uri \https://fallacy.hyoo.ru/
+		toxic *
+			title @ \Toxic Repos
+			uri \https://nin-jin.github.io/toxic-repos/
 		meme *
 			title @ \Meme maker
 			uri \https://meme.hyoo.ru/

@@ -3599,6 +3599,10 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            toxic: {
+                title: string;
+                uri: string;
+            };
             meme: {
                 title: string;
                 uri: string;

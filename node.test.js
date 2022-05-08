@@ -12688,6 +12688,10 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_data_fallacy_title'),
                     uri: "https://fallacy.hyoo.ru/"
                 },
+                toxic: {
+                    title: this.$.$mol_locale.text('$hyoo_apps_data_toxic_title'),
+                    uri: "https://nin-jin.github.io/toxic-repos/"
+                },
                 meme: {
                     title: this.$.$mol_locale.text('$hyoo_apps_data_meme_title'),
                     uri: "https://meme.hyoo.ru/"
