@@ -5644,6 +5644,7 @@ var $;
                 display: 'inline-block',
                 whiteSpace: 'nowrap',
                 userSelect: 'none',
+                position: 'absolute',
             },
         });
     })($$ = $.$$ || ($.$$ = {}));
