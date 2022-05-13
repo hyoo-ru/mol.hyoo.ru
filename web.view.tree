@@ -1068,7 +1068,7 @@ $hyoo_apps $mol_book2
 			target \develop
 			title @ \Tree Sandbox
 			uri \https://tree.hyoo.ru/
-		issues *
+		- issues *
 			target \develop
 			title @ \GitHub Projects Comparison
 			uri \https://compare.github.hyoo.ru/#projects=hyoo-ru%2Fmam_mol%2Cfacebook%2Freact%2Cvuejs%2Fvue

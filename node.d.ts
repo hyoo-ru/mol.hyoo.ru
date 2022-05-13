@@ -3715,11 +3715,6 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
-            issues: {
-                target: string;
-                title: string;
-                uri: string;
-            };
             icons: {
                 target: string;
                 title: string;
