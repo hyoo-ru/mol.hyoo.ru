@@ -1,0 +1,218 @@
+$hyoo_mol_bench $mol_book2_catalog
+	menu_title <= title @ \Benchmarks
+	Placeholder null
+	Close_item $mol_link
+		arg * bench null
+		sub / <= Close_item_icon $mol_icon_cross
+	param \bench
+	spreads *
+		toxic <= Toxic $hyoo_mol_bench_visual
+			title \Toxic Repos
+			analysis_uri \https://t.me/mol_bench/28?single
+			Close <= Close_item
+			items /
+				<= Toxic_mol $mol_embed_native
+					title \$mol
+					uri \https://nin-jin.github.io/toxic-repos/
+				<= Toxic_vue $mol_embed_native
+					title \Vue
+					uri \https://toxic-repos.ru/
+		markdown <= Markdown $hyoo_mol_bench_perf
+			title \Markdown Parse
+			analysis_uri \https://t.me/mol_bench/27
+			Close <= Close_item
+			Common null
+			prefix \
+				\const { marked } = $mol_import.script( 'https://unpkg.com/marked' )
+				\let res
+			sources /
+				\res = marked.lexer( 'begin **' + {#} + '** end' )
+				\
+					\res = []
+					\$mol_syntax2_md_line.tokenize(
+					\	'begin **' + {#} + '** end',
+					\	( ... args )=> res.push( args ),
+					\)
+		rope <= Rope $hyoo_mol_bench_bench
+			title \Rope Charts
+			analysis_uri \https://t.me/mol_bench/24
+			Close <= Close_item
+			bench \https://bench.hyoo.ru/chart/rope/
+		dbmon <= DBMon $hyoo_mol_bench_visual
+			title \DB Monitor
+			analysis_uri \https://t.me/mol_bench/23
+			Close <= Close_item
+			items /
+				<= DBMon_mol $mol_embed_native
+					title \$mol
+					uri \https://mol.js.org/perf/dbmon/-/index.html
+				<= DBMon_vue $mol_embed_native
+					title \Vue
+					uri \https://mathieuancelin.github.io/js-repaint-perfs/vue2
+				<= DBMon_react $mol_embed_native
+					title \React
+					uri \https://mathieuancelin.github.io/js-repaint-perfs/react
+				<= DBMon_vanilla $mol_embed_native
+					title \Vanilla
+					uri \https://mathieuancelin.github.io/js-repaint-perfs/vanilla-simple/
+		habr <= Habr $hyoo_mol_bench_visual
+			title \Habr Comments
+			analysis_uri \https://t.me/mol_bench/21
+			Close <= Close_item
+			items /
+				<= Habr_mol $mol_embed_native
+					title \$mol
+					uri \https://nin-jin.github.io/habrcomment/#!article=423889/comment=22820664
+				<= Habr_vue $mol_embed_native
+					title \Vue
+					uri \https://habr.com/ru/post/423889/#comment_22820664
+		init <= Init $hyoo_mol_bench_perf
+			title \Reactive Init
+			analysis_uri \https://github.com/nin-jin/HabHub/issues/48
+			Close <= Close_item
+			Common null
+			prefix \
+				\const { mobx } = $mol_import.script(
+				\	'https://unpkg.com/mobx'
+				\)
+				\
+				\const length = 1000
+				\let res
+				\
+				\const backup = $mol_wire_auto()
+				\$mol_wire_auto( null )
+			postfix \
+				\$mol_wire_auto( backup )
+			prefixes /
+				\
+					\class App extends $mol_object {
+					\	fix( next = true ) { return next }
+					\	src() { return Math.random() }
+					\	res() { return this.fix() ? 0 : this.src() }
+					\}
+					\$mol_mem( App.prototype, 'fix' )
+					\$mol_mem( App.prototype, 'src' )
+					\$mol_mem( App.prototype, 'res' )
+				\
+					\class App extends Object {
+					\	fix = true
+					\	get src() { return Math.random() }
+					\	get res() { return this.fix ? 0 : this.src }
+					\	constructor() {
+					\		mobx.makeAutoObservable( super() )
+					\	}
+					\}
+				\
+					\const App = ()=> ({
+					\	fix: mobx.observable({ val: true }),
+					\	src: mobx.computed( ()=> Math.random() ),
+					\	res: mobx.computed( ()=> fix.val ? 0 : src.get() ),
+					\})
+			sources /
+				\
+					\const app{#} = new App()
+					\app{#}.res()
+				\
+					\const app{#} = new App()
+					\const root{#} = mobx.autorun( ()=> app{#}.res )
+				\
+					\const app{#} = App()
+					\const root{#} = mobx.autorun( ()=> app{#}.res.get() )
+		sierp <= Sierp $hyoo_mol_bench_visual
+			title \Sierpinski Triangle
+			analysis_uri \https://t.me/mol_bench/19
+			Close <= Close_item
+			items /
+				<= Sierp_mol $mol_embed_native
+					title \$mol
+					uri \https://mol.js.org/perf/sierp/-/
+				<= Sierp_react $mol_embed_native
+					title \React
+					uri \https://nin-jin.github.io/sierpinski/fiber.html
+				<= Sierp_glimmer $mol_embed_native
+					title \Glimmer
+					uri \https://lifeart.github.io/sierpinski-glimmer/
+		todomvc <= Todomvc $hyoo_mol_bench_bench
+			title \ToDoMVC
+			analysis_uri \https://t.me/mol_bench/13
+			Close <= Close_item
+			bench \https://hyoo-ru.github.io/todomvc/benchmark/
+		moment <= moment $hyoo_mol_bench_perf
+			title \Time Moments
+			analysis_uri \https://t.me/mol_bench/10
+			Close <= Close_item
+			Common null
+			prefix \
+				\$mol_import.script(
+				\	'https://unpkg.com/mol_time_all@1.1.12/web.js'
+				\)
+				\
+				\$mol_import.script(
+				\	'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js'
+				\)
+				\
+				\$mol_import.script(
+				\	'https://unpkg.com/luxon@1.24.1/build/global/luxon.min.js'
+				\)
+				\
+				\$mol_import.script(
+				\	'https://unpkg.com/dayjs@1.8.21/dayjs.min.js'
+				\)
+				\
+				\$mol_import.script(
+				\	'https://cdn.jsdelivr.net/npm/@js-joda/core@1.11.0/dist/js-joda.js'
+				\)
+				\const pattern = JSJoda.DateTimeFormatter.ofPattern( 'dd.MM.yyyy' )
+				\
+				\const iso = '2015-07-20T07:48:28.338Z'
+				\
+				\let res
+			postfix \
+				\$mol_assert_equal( res, '20.07.2015' )
+			sources /
+				\res = new $mol_time_moment( iso ).toString( 'DD.MM.YYYY' )
+				\res = moment( iso ).format( 'DD.MM.YYYY' )
+				\
+					\res = luxon.DateTime.fromISO( iso ).toUTC()
+					\.toFormat( 'dd.MM.yyyy' )
+				\res = dayjs( iso ).format( 'DD.MM.YYYY' )
+				\res = JSJoda.ZonedDateTime.parse( iso ).format( pattern )
+
+$hyoo_mol_bench_bench $hyoo_bench_app
+	menu_tools /
+		<= Analysis $hyoo_mol_bench_analysis
+			uri <= analysis_uri \
+		<= Close $mol_view
+
+$hyoo_mol_bench_perf $hyoo_js_perf
+	changable false
+	head /
+		<= Title
+		<= Run
+		<= Tools
+	tools /
+		<= Analysis $hyoo_mol_bench_analysis
+			uri <= analysis_uri \
+		<= Close $mol_view
+
+$hyoo_mol_bench_visual $mol_page
+	head /
+		<= Title
+		<= Switch
+		<= Tools
+	tools /
+		<= Analysis $hyoo_mol_bench_analysis
+			uri <= analysis_uri \
+		<= Close $mol_view
+	body /
+		<= Deck $mol_deck
+			Switch => Switch
+			Content => Content
+			rows /
+				<= Content
+			items <= items /
+
+$hyoo_mol_bench_analysis $mol_link
+	hint @ \Analysiss Analysis
+	sub /
+		<= Icon $mol_icon_poll

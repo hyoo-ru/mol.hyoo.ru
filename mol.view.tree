@@ -28,6 +28,8 @@ $hyoo_mol $mol_book2_catalog
 		demos <= Demos $mol_app_demo
 			title @ \Examples
 			tools / <= Spread_close
+		bench <= Bench $hyoo_mol_bench
+			menu_tools / <= Spread_close
 		view.tree <= View_tree $hyoo_tree
 			title @ \View.Tree Sandbox
 			Presets null

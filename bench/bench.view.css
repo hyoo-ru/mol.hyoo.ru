@@ -1,0 +1,23 @@
+[hyoo_mol_bench_menu] {
+	flex: 0 0 15rem;
+}
+
+[hyoo_mol_bench_perf_title] {
+	flex-grow: 0;
+}
+
+[hyoo_mol_bench_perf_tools] {
+	flex-grow: 1;
+}
+
+[hyoo_mol_bench_visual] {
+	flex: 1 1 auto;
+}
+
+[hyoo_mol_bench_visual_title] {
+	flex-grow: 0;
+}
+
+[hyoo_mol_bench_visual_deck] {
+	flex: 1 1 auto;
+}
