@@ -14,6 +14,10 @@
 	flex: 1 0 auto;
 }
 
+[hyoo_mol_bench_visual_deck_switch] {
+	flex-grow: 1000;
+}
+
 [hyoo_mol_bench_visual_title] {
 	flex-grow: 1;
 }
