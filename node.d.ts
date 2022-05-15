@@ -8560,6 +8560,391 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    class $hyoo_bench_app extends $mol_book2 {
+        samples(next?: any): readonly string[];
+        pages(): readonly any[];
+        Menu_option(id: any): $mol_check_box;
+        Param(id: any): $mol_labeler;
+        result_col_title_sample(): string;
+        addon_title(): string;
+        filter(val?: any): string;
+        Filter(): $$.$mol_search;
+        source_link(): string;
+        Source_link(): $mol_link_source;
+        menu_tools(): readonly any[];
+        menu_options(): readonly any[];
+        Menu(): $$.$mol_list;
+        Menu_tools(): $mol_view;
+        Addon_page(): $mol_page;
+        description(): string;
+        Descr(): $$.$mol_text;
+        param_fields(): readonly any[];
+        Param_fields(): $mol_row;
+        result(): any;
+        result_col_title(id: any): string;
+        result_col_sort(val?: any): string;
+        Result(): $$.$mol_bench;
+        Main_page(): $mol_page;
+        sandbox_title(): string;
+        bench(val?: any): string;
+        Sandbox(): $$.$mol_frame;
+        Sandbox_page(): $mol_page;
+        menu_option_checked(id: any, val?: any): boolean;
+        sample_title(id: any): string;
+        param_title(id: any): string;
+        param_value(id: any, val?: any): number;
+        param_precision(id: any): number;
+        Param_value(id: any): $$.$mol_number;
+    }
+}
+
+declare namespace $ {
+    function $mol_compare_text<Item>(item?: (item: Item) => string): (a: Item, b: Item) => number;
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $hyoo_bench_app extends $.$hyoo_bench_app {
+        bench(next?: string): string;
+        sandbox(): any;
+        command_last(next?: any[] | null): any[] | null;
+        command_result<Result>(command: any[]): Result;
+        command_result_async(command: any[]): Promise<unknown>;
+        meta(): {
+            source: string;
+            title: {
+                [lang: string]: string;
+            };
+            descr: {
+                [lang: string]: string;
+            };
+            samples: {
+                [sample: string]: {
+                    title: {
+                        [lang: string]: string;
+                    };
+                };
+            };
+            steps: {
+                [step: string]: {
+                    title: {
+                        [lang: string]: string;
+                    };
+                };
+            };
+            params: {
+                [param: string]: {
+                    title: {
+                        [lang: string]: string;
+                    };
+                    default: number;
+                    type: string;
+                    precision: number;
+                };
+            };
+        };
+        source_link(): string;
+        samples_all(next?: string[]): string[];
+        samples(next?: string[]): string[];
+        steps(next?: string[]): string[];
+        title(): string;
+        description(): string;
+        result_sample(sample_id: string): {
+            [key: string]: any;
+        };
+        result(): {
+            [sample: string]: {
+                [step: string]: any;
+            };
+        };
+        sandbox_title(): string;
+        result_col_title(col_id: string): string;
+        step_title(step: string): string[];
+        result_col_sort(next?: string): string;
+        menu_options(): $mol_check_box[];
+        sample_title(sample: string): string;
+        menu_option_checked(sample: string, next?: boolean): boolean;
+        params(): string[];
+        param_fields(): $mol_labeler[];
+        param_title(id: string): string;
+        param_value(id: string, next?: any): number;
+        param_precision(id: string): number;
+        param_dict(): {};
+    }
+}
+
+declare namespace $ {
+    class $hyoo_js_perf extends $mol_page {
+        title(): string;
+        prefixes(): readonly string[];
+        sources(): readonly string[];
+        plugins(): readonly any[];
+        Body(): $$.$mol_book2;
+        Case(id: any): $$.$hyoo_js_perf_case;
+        tools(): readonly any[];
+        Theme(): $$.$mol_theme_auto;
+        run(event?: any): any;
+        Hotkey(): $$.$mol_hotkey;
+        changable(): boolean;
+        prefix(val?: any): string;
+        Prefix_code(): $$.$mol_textarea;
+        Prefix(): $mol_labeler;
+        postfix(val?: any): string;
+        Postfix_code(): $$.$mol_textarea;
+        Postfix(): $mol_labeler;
+        hint(): string;
+        Hint(): $$.$mol_text;
+        Common(): $$.$mol_scroll;
+        cases(): readonly any[];
+        Cases(): $mol_view;
+        Example1(): $$.$mol_link;
+        Examples(): $mol_row;
+        cases_pane_content(): readonly any[];
+        Cases_pane(): $$.$mol_scroll;
+        case_prefix(id: any, val?: any): string;
+        source(id: any, val?: any): string;
+        results(id: any, val?: any): readonly any[];
+        About_icon(): $mol_icon_help_circle_outline;
+        About(): $$.$mol_link;
+        Lights(): $$.$mol_lights_toggle;
+        Source(): $mol_link_source;
+        permalink(): string;
+        parmalink_hint(): string;
+        Permalink_icon(): $mol_icon_external;
+        Permalink(): $$.$mol_link;
+        new_hint(): string;
+        New_icon(): $mol_icon_plus;
+        New(): $$.$mol_link;
+        Run_icon(): $mol_icon_play;
+        Run(): $mol_button_major;
+    }
+    class $hyoo_js_perf_case extends $mol_view {
+        results(): readonly any[];
+        sub(): readonly any[];
+        Result(id: any): $$.$hyoo_js_perf_case_result;
+        changable(): boolean;
+        prefix(val?: any): string;
+        Prefix_code(): $$.$mol_textarea;
+        Prefix(): $mol_labeler;
+        source(val?: any): string;
+        Source_code(): $$.$mol_textarea;
+        Source(): $mol_labeler;
+        result_rows(): readonly any[];
+        Result_rows(): $$.$mol_list;
+        columns(): readonly any[];
+        result_title(id: any): string;
+        result(id: any): $$.$hyoo_js_perf_stats;
+    }
+    class $hyoo_js_perf_case_result extends $mol_view {
+        result(): $$.$hyoo_js_perf_stats;
+        sub(): readonly any[];
+        title(): string;
+        frequency(): string;
+        Frequency(): $mol_view;
+        time_total(): string;
+        Time(): $mol_view;
+        iterations(): string;
+        Iterations(): $mol_view;
+        memory_per_iteration(): string;
+        Memory_per_iteration(): $mol_view;
+        memory_total(): string;
+        Memory(): $mol_view;
+        Stats(): $mol_view;
+        frequency_portion(): number;
+        Frequency_portion(): $$.$mol_portion;
+        memory_portion(): number;
+        Mmory_ortion(): $$.$mol_portion;
+        Portion(): $mol_view;
+        error(): string;
+        Error(): $mol_view;
+    }
+}
+
+declare namespace $ {
+    class $mol_after_work extends $mol_object2 {
+        delay: number;
+        task: () => void;
+        id: any;
+        constructor(delay: number, task: () => void);
+        destructor(): void;
+    }
+}
+
+declare namespace $ {
+    function $mol_wait_rest_async(this: $): Promise<unknown>;
+    function $mol_wait_rest(this: $): unknown;
+}
+
+declare namespace $ {
+    enum $mol_si_prefix {
+        y = -8,
+        z = -7,
+        a = -6,
+        f = -5,
+        p = -4,
+        n = -3,
+        µ = -2,
+        m = -1,
+        '' = 0,
+        k = 1,
+        M = 2,
+        G = 3,
+        T = 4,
+        P = 5,
+        E = 6,
+        Z = 7,
+        Y = 8
+    }
+}
+
+declare namespace $ {
+    function $mol_si_short(numb: number, unit?: string): string;
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $hyoo_js_perf_stats extends $mol_object2 {
+        elapsed: number;
+        iterations: number;
+        frequency_portion: number;
+        error: string;
+        memory: number;
+        memory_portion: number;
+        get time(): number;
+        get frequency(): number;
+        get memory_per_iteration(): number;
+    }
+    class $hyoo_js_perf extends $.$hyoo_js_perf {
+        prefixes(next?: string[]): string[];
+        sources(next?: string[]): string[];
+        prefix(next?: string): string;
+        postfix(next?: string): string;
+        permalink(): string;
+        cases_count(): number;
+        cases(): $hyoo_js_perf_case[];
+        cases_pane_content(): readonly any[];
+        case_prefix(index: number, next?: string): string;
+        source(index: number, next?: string): string;
+        measures_for(index: number, next?: $hyoo_js_perf_stats[]): $hyoo_js_perf_stats[];
+        measures(): $hyoo_js_perf_stats[][];
+        max_frequency(): number;
+        max_memory(): number;
+        results(index: number): $hyoo_js_perf_stats[];
+        token(): string;
+        measure_step(count: number, prefix: string, inner: string, postfix: string): {
+            total: number;
+            time: any;
+            mem: any;
+        };
+        measure_precise(prefix: string, inner: string, postfix: string): $hyoo_js_perf_stats;
+        measure_safe(prefix: string, inner: string, postfix: string): $hyoo_js_perf_stats;
+        run(): void;
+    }
+    class $hyoo_js_perf_case extends $.$hyoo_js_perf_case {
+        result_rows(): $hyoo_js_perf_case_result[];
+        result(level: number): any;
+        result_title(level: number): string;
+    }
+    class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
+        sub(): $mol_view[];
+        error(): string;
+        iterations(): string;
+        frequency(): string;
+        time_total(): string;
+        memory_total(): string;
+        memory_per_iteration(): string;
+        frequency_portion(): number;
+        memory_portion(): number;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_poll extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_mol_bench extends $mol_book2_catalog {
+        menu_title(): string;
+        Placeholder(): any;
+        Close_item(): $$.$mol_link;
+        param(): string;
+        spreads(): {
+            toxic: $hyoo_mol_bench_visual;
+            markdown: $hyoo_mol_bench_perf;
+            rope: $hyoo_mol_bench_bench;
+            dbmon: $hyoo_mol_bench_visual;
+            habr: $hyoo_mol_bench_visual;
+            init: $hyoo_mol_bench_perf;
+            sierp: $hyoo_mol_bench_visual;
+            todomvc: $hyoo_mol_bench_bench;
+            moment: $hyoo_mol_bench_perf;
+        };
+        title(): string;
+        Close_item_icon(): $mol_icon_cross;
+        Toxic_mol(): $$.$mol_embed_native;
+        Toxic_vue(): $$.$mol_embed_native;
+        Toxic(): $hyoo_mol_bench_visual;
+        Markdown(): $hyoo_mol_bench_perf;
+        Rope(): $hyoo_mol_bench_bench;
+        DBMon_mol(): $$.$mol_embed_native;
+        DBMon_vue(): $$.$mol_embed_native;
+        DBMon_react(): $$.$mol_embed_native;
+        DBMon_vanilla(): $$.$mol_embed_native;
+        DBMon(): $hyoo_mol_bench_visual;
+        Habr_mol(): $$.$mol_embed_native;
+        Habr_vue(): $$.$mol_embed_native;
+        Habr(): $hyoo_mol_bench_visual;
+        Init(): $hyoo_mol_bench_perf;
+        Sierp_mol(): $$.$mol_embed_native;
+        Sierp_react(): $$.$mol_embed_native;
+        Sierp_glimmer(): $$.$mol_embed_native;
+        Sierp(): $hyoo_mol_bench_visual;
+        Todomvc(): $hyoo_mol_bench_bench;
+        moment(): $hyoo_mol_bench_perf;
+    }
+    class $hyoo_mol_bench_bench extends $hyoo_bench_app {
+        menu_tools(): readonly any[];
+        analysis_uri(): string;
+        Analysis(): $hyoo_mol_bench_analysis;
+        Close(): $mol_view;
+    }
+    class $hyoo_mol_bench_perf extends $hyoo_js_perf {
+        changable(): boolean;
+        head(): readonly any[];
+        tools(): readonly any[];
+        analysis_uri(): string;
+        Analysis(): $hyoo_mol_bench_analysis;
+        Close(): $mol_view;
+    }
+    class $hyoo_mol_bench_visual extends $mol_page {
+        head(): readonly any[];
+        tools(): readonly any[];
+        body(): readonly any[];
+        analysis_uri(): string;
+        Analysis(): $hyoo_mol_bench_analysis;
+        Close(): $mol_view;
+        items(): readonly any[];
+        Switch(): $$.$mol_switch;
+        Content(): any;
+        Deck(): $$.$mol_deck;
+    }
+    class $hyoo_mol_bench_analysis extends $mol_link {
+        hint(): string;
+        sub(): readonly any[];
+        Icon(): $mol_icon_poll;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
     class $mol_span extends $mol_object2 {
         readonly uri: string;
         readonly source: string;
@@ -9410,6 +9795,7 @@ declare namespace $ {
             slides: $$.$hyoo_slides;
             apps: $$.$hyoo_apps;
             demos: $$.$mol_app_demo;
+            bench: $hyoo_mol_bench;
             "view.tree": $$.$hyoo_tree;
             icons: $$.$mol_frame;
         };
@@ -9425,6 +9811,7 @@ declare namespace $ {
         Slides(): $$.$hyoo_slides;
         Apps(): $$.$hyoo_apps;
         Demos(): $$.$mol_app_demo;
+        Bench(): $hyoo_mol_bench;
         tree_pipeline(): readonly any[];
         tree_source(): string;
         View_tree(): $$.$hyoo_tree;
