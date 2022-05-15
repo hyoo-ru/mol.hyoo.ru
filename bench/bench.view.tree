@@ -26,13 +26,13 @@ $hyoo_mol_bench $mol_book2_catalog
 				\const { marked } = $mol_import.script( 'https://unpkg.com/marked' )
 				\let res
 			sources /
-				\res = marked.lexer( 'begin **' + {#} + '** end' )
 				\
 					\res = []
 					\$mol_syntax2_md_line.tokenize(
 					\	'begin **' + {#} + '** end',
 					\	( ... args )=> res.push( args ),
 					\)
+				\res = marked.lexer( 'begin **' + {#} + '** end' )
 		rope <= Rope $hyoo_mol_bench_bench
 			title \Rope Charts
 			analysis_uri \https://t.me/mol_bench/24
