@@ -2000,6 +2000,7 @@ declare namespace $ {
         uri(val?: any): string;
         mime(): string;
         title(val?: any): string;
+        Fallback(): $$.$mol_link;
     }
 }
 
