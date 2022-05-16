@@ -33385,6 +33385,7 @@ var $;
                 dbmon: this.DBMon(),
                 habr: this.Habr(),
                 init: this.Init(),
+                reactivity: this.Reactivity(),
                 sierp: this.Sierp(),
                 todomvc: this.Todomvc(),
                 moment: this.moment()
@@ -33507,17 +33508,33 @@ var $;
             obj.analysis_uri = () => "https://github.com/nin-jin/HabHub/issues/48";
             obj.Close = () => this.Close_item();
             obj.Common = () => null;
-            obj.prefix = () => "const { mobx } = $mol_import.script(\n\t'https://unpkg.com/mobx'\n)\n\nconst length = 1000\nlet res\n\nconst backup = $mol_wire_auto()\n$mol_wire_auto( null )";
+            obj.prefix = () => "const { mobx } = $mol_import.script(\n\t'https://unpkg.com/mobx'\n)\n\nconst backup = $mol_wire_auto()\n$mol_wire_auto( null )\nlet res";
             obj.postfix = () => "$mol_wire_auto( backup )";
             obj.prefixes = () => [
                 "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )",
-                "class App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}",
-                "const App = ()=> ({\n\tfix: mobx.observable({ val: true }),\n\tsrc: mobx.computed( ()=> Math.random() ),\n\tres: mobx.computed( ()=> fix.val ? 0 : src.get() ),\n})"
+                "class App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}"
             ];
             obj.sources = () => [
                 "const app{#} = new App()\napp{#}.res()",
-                "const app{#} = new App()\nconst root{#} = mobx.autorun( ()=> app{#}.res )",
-                "const app{#} = App()\nconst root{#} = mobx.autorun( ()=> app{#}.res.get() )"
+                "const app{#} = new App()\nconst root{#} = mobx.autorun( ()=> app{#}.res )"
+            ];
+            return obj;
+        }
+        Reactivity() {
+            const obj = new this.$.$hyoo_mol_bench_perf();
+            obj.title = () => "Reactive Updates";
+            obj.analysis_uri = () => "https://github.com/nin-jin/HabHub/issues/48";
+            obj.Close = () => this.Close_item();
+            obj.Common = () => null;
+            obj.prefix = () => "const { mobx } = $mol_import.script(\n\t'https://unpkg.com/mobx'\n)\n\nconst backup = $mol_wire_auto()\n$mol_wire_auto( null )\nlet res";
+            obj.postfix = () => "$mol_wire_auto( backup )";
+            obj.prefixes = () => [
+                "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )\nconst app = new App()\napp.res()",
+                "class App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}\nconst app = new App()\nconst root = mobx.autorun( ()=> app.res )"
+            ];
+            obj.sources = () => [
+                "app.fix( {#}%2 === 0 )\nres = app.res()",
+                "app.fix = {#}%2 === 0\nres = app.res"
             ];
             return obj;
         }
@@ -33625,6 +33642,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Init", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench.prototype, "Reactivity", null);
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Sierp_mol", null);

@@ -4563,11 +4563,9 @@ $hyoo_mol_bench $mol_book2_catalog
 				\	'https://unpkg.com/mobx'
 				\)
 				\
-				\const length = 1000
-				\let res
-				\
 				\const backup = $mol_wire_auto()
 				\$mol_wire_auto( null )
+				\let res
 			postfix \
 				\$mol_wire_auto( backup )
 			prefixes /
@@ -4589,12 +4587,6 @@ $hyoo_mol_bench $mol_book2_catalog
 					\		mobx.makeAutoObservable( super() )
 					\	}
 					\}
-				\
-					\const App = ()=> ({
-					\	fix: mobx.observable({ val: true }),
-					\	src: mobx.computed( ()=> Math.random() ),
-					\	res: mobx.computed( ()=> fix.val ? 0 : src.get() ),
-					\})
 			sources /
 				\
 					\const app{#} = new App()
@@ -4602,9 +4594,51 @@ $hyoo_mol_bench $mol_book2_catalog
 				\
 					\const app{#} = new App()
 					\const root{#} = mobx.autorun( ()=> app{#}.res )
+		reactivity <= Reactivity $hyoo_mol_bench_perf
+			title \Reactive Updates
+			analysis_uri \https://github.com/nin-jin/HabHub/issues/48
+			Close <= Close_item
+			Common null
+			prefix \
+				\const { mobx } = $mol_import.script(
+				\	'https://unpkg.com/mobx'
+				\)
 				\
-					\const app{#} = App()
-					\const root{#} = mobx.autorun( ()=> app{#}.res.get() )
+				\const backup = $mol_wire_auto()
+				\$mol_wire_auto( null )
+				\let res
+			postfix \
+				\$mol_wire_auto( backup )
+			prefixes /
+				\
+					\class App extends $mol_object {
+					\	fix( next = true ) { return next }
+					\	src() { return Math.random() }
+					\	res() { return this.fix() ? 0 : this.src() }
+					\}
+					\$mol_mem( App.prototype, 'fix' )
+					\$mol_mem( App.prototype, 'src' )
+					\$mol_mem( App.prototype, 'res' )
+					\const app = new App()
+					\app.res()
+				\
+					\class App extends Object {
+					\	fix = true
+					\	get src() { return Math.random() }
+					\	get res() { return this.fix ? 0 : this.src }
+					\	constructor() {
+					\		mobx.makeAutoObservable( super() )
+					\	}
+					\}
+					\const app = new App()
+					\const root = mobx.autorun( ()=> app.res )
+			sources /
+				\
+					\app.fix( {#}%2 === 0 )
+					\res = app.res()
+				\
+					\app.fix = {#}%2 === 0
+					\res = app.res
 		sierp <= Sierp $hyoo_mol_bench_visual
 			title \Sierpinski Triangle
 			analysis_uri \https://t.me/mol_bench/19

@@ -8850,6 +8850,7 @@ declare namespace $ {
             dbmon: $hyoo_mol_bench_visual;
             habr: $hyoo_mol_bench_visual;
             init: $hyoo_mol_bench_perf;
+            reactivity: $hyoo_mol_bench_perf;
             sierp: $hyoo_mol_bench_visual;
             todomvc: $hyoo_mol_bench_bench;
             moment: $hyoo_mol_bench_perf;
@@ -8870,6 +8871,7 @@ declare namespace $ {
         Habr_vue(): $$.$mol_embed_native;
         Habr(): $hyoo_mol_bench_visual;
         Init(): $hyoo_mol_bench_perf;
+        Reactivity(): $hyoo_mol_bench_perf;
         Sierp_mol(): $$.$mol_embed_native;
         Sierp_react(): $$.$mol_embed_native;
         Sierp_glimmer(): $$.$mol_embed_native;
