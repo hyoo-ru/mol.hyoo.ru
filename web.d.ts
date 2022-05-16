@@ -8668,8 +8668,6 @@ declare namespace $ {
         Common(): $$.$mol_scroll;
         cases(): readonly any[];
         Cases(): $mol_view;
-        Example1(): $$.$mol_link;
-        Examples(): $mol_row;
         cases_pane_content(): readonly any[];
         Cases_pane(): $$.$mol_scroll;
         case_prefix(id: any, val?: any): string;
@@ -8702,6 +8700,7 @@ declare namespace $ {
         Source(): $mol_labeler;
         result_rows(): readonly any[];
         Result_rows(): $$.$mol_list;
+        Results(): $mol_labeler;
         columns(): readonly any[];
         result_title(id: any): string;
         result(id: any): $$.$hyoo_js_perf_stats;
@@ -8709,6 +8708,11 @@ declare namespace $ {
     class $hyoo_js_perf_case_result extends $mol_view {
         result(): $$.$hyoo_js_perf_stats;
         sub(): readonly any[];
+        frequency_portion(): number;
+        Frequency_portion(): $$.$mol_portion;
+        memory_portion(): number;
+        Mmory_ortion(): $$.$mol_portion;
+        Portion(): $mol_view;
         title(): string;
         frequency(): string;
         Frequency(): $mol_view;
@@ -8721,11 +8725,6 @@ declare namespace $ {
         memory_total(): string;
         Memory(): $mol_view;
         Stats(): $mol_view;
-        frequency_portion(): number;
-        Frequency_portion(): $$.$mol_portion;
-        memory_portion(): number;
-        Mmory_ortion(): $$.$mol_portion;
-        Portion(): $mol_view;
         error(): string;
         Error(): $mol_view;
     }
@@ -8795,7 +8794,6 @@ declare namespace $.$$ {
         permalink(): string;
         cases_count(): number;
         cases(): $hyoo_js_perf_case[];
-        cases_pane_content(): readonly any[];
         case_prefix(index: number, next?: string): string;
         source(index: number, next?: string): string;
         measures_for(index: number, next?: $hyoo_js_perf_stats[]): $hyoo_js_perf_stats[];

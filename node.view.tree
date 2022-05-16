@@ -4383,15 +4383,17 @@ $hyoo_js_perf $mol_page
 				Content <= Prefix_code $mol_textarea
 					enabled <= changable true
 					value?val <=> prefix?val \
+					hint \let res
 			<= Postfix $mol_labeler
 				title @ \Common Teardown
 				Content <= Postfix_code $mol_textarea
 					enabled <= changable true
 					value?val <=> postfix?val \
+					hint \$mol_assert_like( res, 1 )
 			<= Hint $mol_text text <= hint \
 				\# Placeholders
 				\
-				\`{#}` // iterations count/number
+				\	`{#}` // iterations count/number
 				\
 				\# Load JS or ESM
 				\
@@ -4407,14 +4409,10 @@ $hyoo_js_perf $mol_page
 				\# Measure memory
 				\
 				\Call Chrome with:
-				\`--js-flags="--expose-gc"`
-				\`--enable-precise-memory-info`
+				\	--js-flags="--expose-gc"
+				\	--enable-precise-memory-info
 		<= Cases_pane $mol_scroll sub <= cases_pane_content /
 			<= Cases $mol_view sub <= cases /
-			<= Examples $mol_row sub /
-				<= Example1 $mol_link
-					uri \#!sources=%5B%22res%20%3D%20window.location.href%22%2C%22res%20%3D%20document.location.href%22%2C%22res%20%3D%20location.href%22%5D/prefix=let%20res/postfix=%24mol_assert_like%28%20res%2C%20location.href%20%29/optimized=true
-					title @ \Example benchmark
 	Case!index $hyoo_js_perf_case
 		prefix?val <=> case_prefix!index?val \
 		source?val <=> source!index?val \
@@ -4452,12 +4450,17 @@ $hyoo_js_perf_case $mol_view
 			Content <= Prefix_code $mol_textarea
 				enabled <= changable true
 				value?val <=> prefix?val \
+				hint \let val{#} = 1
 		<= Source $mol_labeler
 			title @ \Measure
 			Content <= Source_code $mol_textarea
 				enabled <= changable true
 				value?val <=> source?val \
-		<= Result_rows $mol_list rows <= result_rows /
+				hint \res = val{#}
+		<= Results $mol_labeler
+			title @ \Results
+			Content <= Result_rows $mol_list
+				rows <= result_rows /
 	Result!level $hyoo_js_perf_case_result
 		title <= result_title!level \
 		result <= result!level $hyoo_js_perf_stats
@@ -4465,22 +4468,22 @@ $hyoo_js_perf_case $mol_view
 $hyoo_js_perf_case_result $mol_view
 	result $hyoo_js_perf_stats
 	sub /
-		<= Stats $mol_view sub /
-			<= title \
-			<= Frequency $mol_view sub / <= frequency \
-			\ ≈ 
-			<= Time $mol_view sub / <= time_total \
-			\ ⋅ 
-			<= Iterations $mol_view sub / <= iterations \
-			\ ⋅
-			<= Memory_per_iteration $mol_view
-				sub / <= memory_per_iteration \
-			\ = 
-			<= Memory $mol_view
-				sub / <= memory_total \
 		<= Portion $mol_view sub /
 			<= Frequency_portion $mol_portion portion <= frequency_portion 0
 			<= Mmory_ortion $mol_portion portion <= memory_portion 0
+		<= Stats $mol_view sub /
+			<= title \
+			<= Frequency $mol_view sub / <= frequency \
+			\≈
+			<= Time $mol_view sub / <= time_total \
+			\×
+			<= Iterations $mol_view sub / <= iterations \
+			\×
+			<= Memory_per_iteration $mol_view
+				sub / <= memory_per_iteration \
+			\=
+			<= Memory $mol_view
+				sub / <= memory_total \
 		<= Error $mol_view sub / <= error \
 
 $mol_icon_poll $mol_icon path \M3,22V8H7V22H3M10,22V2H14V22H10M17,22V14H21V22H17Z
