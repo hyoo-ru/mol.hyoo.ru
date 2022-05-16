@@ -247,6 +247,6 @@ $hyoo_mol_bench_visual $mol_page
 			items <= items /
 
 $hyoo_mol_bench_analysis $mol_link
-	hint @ \Analysiss Analysis
+	hint @ \Analysis
 	sub /
 		<= Icon $mol_icon_poll
