@@ -4445,12 +4445,14 @@ $hyoo_js_perf_case $mol_view
 	sub <= columns /
 		<= Prefix $mol_labeler
 			title @ \Setup
+			minimal_width 150
 			Content <= Prefix_code $mol_textarea
 				enabled <= changable true
 				value?val <=> prefix?val \
 				hint \let val{#} = 1
 		<= Source $mol_labeler
 			title @ \Measure
+			minimal_width 150
 			Content <= Source_code $mol_textarea
 				enabled <= changable true
 				value?val <=> source?val \
@@ -4735,7 +4737,7 @@ $hyoo_mol_bench_visual $mol_page
 			items <= items /
 
 $hyoo_mol_bench_analysis $mol_link
-	hint @ \Analysiss Analysis
+	hint @ \Analysis
 	sub /
 		<= Icon $mol_icon_poll
 
