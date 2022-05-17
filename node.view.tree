@@ -373,6 +373,7 @@ $mol_text $mol_list
 		sub <= line_content* /
 	Code_line* $mol_text_code_row
 		numb_showed false
+		highlight <= highlight \
 		text <= line_text* \
 	Link* $mol_link_iconed
 		uri <= link_uri* \
@@ -1053,7 +1054,7 @@ $hyoo_apps $mol_book2
 		jsperf *
 			target \develop
 			title @ \JS Performance Tool
-			uri \https://perf.js.hyoo.ru/
+			uri \https://perf.js.hyoo.ru/#!prefix=let%20res/sources=%5B"res%20%3D%20window.location.href"%2C"res%20%3D%20document.location.href"%2C"res%20%3D%20location.href"%5D/postfix=%24mol_assert_like%28%20res%2C%20location.href%20%29
 		bench *
 			target \develop
 			title @ \Online Benchmark
