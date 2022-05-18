@@ -5925,7 +5925,7 @@ var $;
                 color: $mol_theme.shade,
                 width: rem(3),
                 margin: {
-                    left: rem(-4),
+                    left: rem(-3.75),
                 },
                 display: 'inline-block',
                 whiteSpace: 'nowrap',
@@ -29664,6 +29664,7 @@ var $;
         }
         Text() {
             const obj = new this.$.$mol_text_code();
+            obj.sidebar_showed = () => true;
             obj.text = () => this.source();
             return obj;
         }
