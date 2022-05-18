@@ -30568,27 +30568,44 @@ var $;
                 const value = this.value();
                 if (typeof value === 'function') {
                     const name = Reflect.getOwnPropertyDescriptor(value, 'name')?.value;
+                    const source = Function.prototype.toString.call(value);
+                    const args = source.replace(/\)[\s\S]*$/g, ')').replace(/^[\s\S]*\(/g, '(');
                     if (name)
-                        return name + '(){}';
+                        return name + args + '{}';
                 }
                 if (value instanceof RegExp)
                     return String(value);
                 if (value instanceof Date)
                     return value.toISOString();
                 return Reflect.getOwnPropertyDescriptor(value, Symbol.toStringTag)?.value
-                    ?? Reflect.getPrototypeOf(value).constructor.name;
+                    ?? Reflect.getPrototypeOf(value)?.constructor.name
+                    ?? 'Object';
             }
             pairs_data() {
                 let value = this.value();
-                const self = Reflect.ownKeys(value)
-                    .map(key => [key, '∶', Reflect.getOwnPropertyDescriptor(value, key)?.value]);
+                const self = [];
+                for (const key of Reflect.ownKeys(value)) {
+                    const descr = Reflect.getOwnPropertyDescriptor(value, key);
+                    if ('value' in descr)
+                        self.push([key, '∶', descr.value]);
+                    if ('get' in descr)
+                        self.push(['get ' + String(key), '∶', descr.get]);
+                    if ('set' in descr)
+                        self.push(['set ' + String(key), '∶', descr.set]);
+                }
                 const map = value instanceof Map
                     ? [...value].map(([key, val]) => [key, '🡒', val])
                     : [];
                 const set = value instanceof Set
                     ? [...value].map(val => [null, '', val])
                     : [];
-                return [...self, ...map, ...set];
+                const proto = Reflect.getPrototypeOf(value);
+                return [
+                    ...self,
+                    ...map,
+                    ...set,
+                    ['[[prototype]]', ':', proto]
+                ];
             }
             expand_content() {
                 return this.pairs_data().map((_, index) => this.Pair(index));
