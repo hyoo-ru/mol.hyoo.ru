@@ -4499,6 +4499,20 @@ $hyoo_mol_bench $mol_book2_catalog
 		sub / <= Close_item_icon $mol_icon_cross
 	param \bench
 	spreads *
+		changelog <= Chanelog $hyoo_mol_bench_visual
+			title \Long ChangeLog
+			analysis_uri \https://t.me/mol_bench/30
+			Close <= Close_item
+			items /
+				<= Chanelog_mol $mol_embed_native
+					title \$mol
+					uri \https://nin-jin.github.io/my_gitlab/
+				<= Changelog_vue $mol_embed_native
+					title \Vue
+					uri \https://gitlab.com/gitlab-org/frontend/playground/echarts/-/commit/562ba199b271bc46621cf1a9a9b37e679a3f47d3
+				<= Changelog_vanilla $mol_embed_native
+					title \Vanilla
+					uri \https://github.com/github/accessibilityjs/commit/2e78680ad0a852973b8f87d793e191d184be9cf8
 		toxic <= Toxic $hyoo_mol_bench_visual
 			title \Toxic Repos
 			analysis_uri \https://t.me/mol_bench/28?single

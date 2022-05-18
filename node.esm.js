@@ -33777,6 +33777,7 @@ var $;
         }
         spreads() {
             return {
+                changelog: this.Chanelog(),
                 toxic: this.Toxic(),
                 markdown: this.Markdown(),
                 rope: this.Rope(),
@@ -33794,6 +33795,36 @@ var $;
         }
         Close_item_icon() {
             const obj = new this.$.$mol_icon_cross();
+            return obj;
+        }
+        Chanelog_mol() {
+            const obj = new this.$.$mol_embed_native();
+            obj.title = () => "$mol";
+            obj.uri = () => "https://nin-jin.github.io/my_gitlab/";
+            return obj;
+        }
+        Changelog_vue() {
+            const obj = new this.$.$mol_embed_native();
+            obj.title = () => "Vue";
+            obj.uri = () => "https://gitlab.com/gitlab-org/frontend/playground/echarts/-/commit/562ba199b271bc46621cf1a9a9b37e679a3f47d3";
+            return obj;
+        }
+        Changelog_vanilla() {
+            const obj = new this.$.$mol_embed_native();
+            obj.title = () => "Vanilla";
+            obj.uri = () => "https://github.com/github/accessibilityjs/commit/2e78680ad0a852973b8f87d793e191d184be9cf8";
+            return obj;
+        }
+        Chanelog() {
+            const obj = new this.$.$hyoo_mol_bench_visual();
+            obj.title = () => "Long ChangeLog";
+            obj.analysis_uri = () => "https://t.me/mol_bench/30";
+            obj.Close = () => this.Close_item();
+            obj.items = () => [
+                this.Chanelog_mol(),
+                this.Changelog_vue(),
+                this.Changelog_vanilla()
+            ];
             return obj;
         }
         Toxic_mol() {
@@ -33998,6 +34029,18 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Close_item_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench.prototype, "Chanelog_mol", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench.prototype, "Changelog_vue", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench.prototype, "Changelog_vanilla", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench.prototype, "Chanelog", null);
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Toxic_mol", null);

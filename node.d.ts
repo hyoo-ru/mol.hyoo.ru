@@ -8874,6 +8874,7 @@ declare namespace $ {
         Close_item(): $$.$mol_link;
         param(): string;
         spreads(): {
+            changelog: $hyoo_mol_bench_visual;
             toxic: $hyoo_mol_bench_visual;
             markdown: $hyoo_mol_bench_perf;
             rope: $hyoo_mol_bench_bench;
@@ -8887,6 +8888,10 @@ declare namespace $ {
         };
         title(): string;
         Close_item_icon(): $mol_icon_cross;
+        Chanelog_mol(): $$.$mol_embed_native;
+        Changelog_vue(): $$.$mol_embed_native;
+        Changelog_vanilla(): $$.$mol_embed_native;
+        Chanelog(): $hyoo_mol_bench_visual;
         Toxic_mol(): $$.$mol_embed_native;
         Toxic_vue(): $$.$mol_embed_native;
         Toxic(): $hyoo_mol_bench_visual;
