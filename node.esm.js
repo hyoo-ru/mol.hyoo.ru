@@ -3918,7 +3918,7 @@ var $;
                     weight: 'normal',
                 },
                 flex: {
-                    grow: 1000,
+                    grow: 1,
                     shrink: 1,
                     basis: 'auto',
                 },
@@ -3926,7 +3926,7 @@ var $;
             Tools: {
                 flex: {
                     basis: 'auto',
-                    grow: 0,
+                    grow: 1000,
                     shrink: 1,
                 },
                 display: 'flex',
@@ -30489,7 +30489,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/eval/eval.view.css", "[hyoo_js_eval_menu_page] {\n\tflex: 0 0 auto;\n}\n\n[hyoo_js_eval_menu] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_eval_code_page] {\n\tflex: 1 0 auto;\n}\n\n[hyoo_js_eval_code_page_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_eval_code] {\n\tflex: 0 0 auto;\n}\n\n[hyoo_js_eval_result] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_eval_result_page] {\n\tflex: 0 0 50%;\n}\n\n[hyoo_js_eval_result_page_body] {\n\tpadding: var(--mol_gap_block);\n}\n");
+    $mol_style_attach("hyoo/js/eval/eval.view.css", "[hyoo_js_eval_menu_page] {\n\tflex: 0 0 auto;\n}\n\n[hyoo_js_eval_menu] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_eval_code_page] {\n\tflex: 1 0 auto;\n}\n\n[hyoo_js_eval_code_page_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_eval_code] {\n\tflex: 0 0 auto;\n}\n\n[hyoo_js_eval_result] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_js_eval_result_page] {\n\tflex: 0 0 50%;\n}\n\n[hyoo_js_eval_result_page_body] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //hyoo/js/eval/-css/eval.view.css.ts
 ;
@@ -32923,18 +32923,25 @@ var $;
             const obj = new this.$.$hyoo_js_perf_case();
             obj.prefix = (val) => this.case_prefix(id, val);
             obj.source = (val) => this.source(id, val);
+            obj.sample = () => this.case_sample(id);
             obj.results = (val) => this.results(id, val);
             obj.changable = () => this.changable();
             return obj;
         }
         tools() {
             return [
+                this.New(),
                 this.About(),
                 this.Lights(),
-                this.Source(),
+                this.Source()
+            ];
+        }
+        head() {
+            return [
+                this.Title(),
+                this.Run(),
                 this.Permalink(),
-                this.New(),
-                this.Run()
+                this.Tools()
             ];
         }
         Theme() {
@@ -33038,10 +33045,29 @@ var $;
                 return val;
             return "";
         }
+        case_sample(id) {
+            return "";
+        }
         results(id, val) {
             if (val !== undefined)
                 return val;
             return [];
+        }
+        new_hint() {
+            return this.$.$mol_locale.text('$hyoo_js_perf_new_hint');
+        }
+        New_icon() {
+            const obj = new this.$.$mol_icon_plus();
+            return obj;
+        }
+        New() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "#";
+            obj.hint = () => this.new_hint();
+            obj.sub = () => [
+                this.New_icon()
+            ];
+            return obj;
         }
         About_icon() {
             const obj = new this.$.$mol_icon_help_circle_outline();
@@ -33064,6 +33090,19 @@ var $;
             obj.uri = () => "https://github.com/hyoo-ru/perf.js.hyoo.ru";
             return obj;
         }
+        Run_icon() {
+            const obj = new this.$.$mol_icon_play();
+            return obj;
+        }
+        Run() {
+            const obj = new this.$.$mol_button_major();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_Run_hint');
+            obj.click = (event) => this.run(event);
+            obj.sub = () => [
+                this.Run_icon()
+            ];
+            return obj;
+        }
         permalink() {
             return "";
         }
@@ -33081,35 +33120,6 @@ var $;
             obj.target = () => "_blank";
             obj.sub = () => [
                 this.Permalink_icon()
-            ];
-            return obj;
-        }
-        new_hint() {
-            return this.$.$mol_locale.text('$hyoo_js_perf_new_hint');
-        }
-        New_icon() {
-            const obj = new this.$.$mol_icon_plus();
-            return obj;
-        }
-        New() {
-            const obj = new this.$.$mol_link();
-            obj.uri = () => "#";
-            obj.hint = () => this.new_hint();
-            obj.sub = () => [
-                this.New_icon()
-            ];
-            return obj;
-        }
-        Run_icon() {
-            const obj = new this.$.$mol_icon_play();
-            return obj;
-        }
-        Run() {
-            const obj = new this.$.$mol_button_major();
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_Run_hint');
-            obj.click = (event) => this.run(event);
-            obj.sub = () => [
-                this.Run_icon()
             ];
             return obj;
         }
@@ -33170,6 +33180,12 @@ var $;
     ], $hyoo_js_perf.prototype, "results", null);
     __decorate([
         $mol_mem
+    ], $hyoo_js_perf.prototype, "New_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "New", null);
+    __decorate([
+        $mol_mem
     ], $hyoo_js_perf.prototype, "About_icon", null);
     __decorate([
         $mol_mem
@@ -33182,26 +33198,28 @@ var $;
     ], $hyoo_js_perf.prototype, "Source", null);
     __decorate([
         $mol_mem
-    ], $hyoo_js_perf.prototype, "Permalink_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Permalink", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "New_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "New", null);
-    __decorate([
-        $mol_mem
     ], $hyoo_js_perf.prototype, "Run_icon", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Run", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Permalink_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Permalink", null);
     $.$hyoo_js_perf = $hyoo_js_perf;
     class $hyoo_js_perf_case extends $mol_view {
         results() {
             return [];
+        }
+        Eval_result() {
+            return this.Eval().Result();
+        }
+        Eval() {
+            const obj = new this.$.$hyoo_js_eval();
+            obj.code = () => this.sample();
+            return obj;
         }
         sub() {
             return this.columns();
@@ -33211,6 +33229,9 @@ var $;
             obj.title = () => this.result_title(id);
             obj.result = () => this.result(id);
             return obj;
+        }
+        sample() {
+            return "";
         }
         changable() {
             return true;
@@ -33253,6 +33274,12 @@ var $;
             obj.Content = () => this.Source_code();
             return obj;
         }
+        Eval_labeler() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Eval_labeler_title');
+            obj.Content = () => this.Eval_result();
+            return obj;
+        }
         result_rows() {
             return [];
         }
@@ -33271,6 +33298,7 @@ var $;
             return [
                 this.Prefix(),
                 this.Source(),
+                this.Eval_labeler(),
                 this.Results()
             ];
         }
@@ -33282,6 +33310,9 @@ var $;
             return obj;
         }
     }
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case.prototype, "Eval", null);
     __decorate([
         $mol_mem_key
     ], $hyoo_js_perf_case.prototype, "Result", null);
@@ -33303,6 +33334,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_js_perf_case.prototype, "Source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case.prototype, "Eval_labeler", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf_case.prototype, "Result_rows", null);
@@ -33562,7 +33596,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 1000 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_hint] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_prefix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_postfix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 auto;\n\tmin-width: 46rem;\n}\n\n[hyoo_js_perf_cases] {\n\tdisplay: table;\n\tborder-spacing: .75rem;\n}\n\n[hyoo_js_perf_case] {\n\tdisplay: table-row;\n\tflex: 0 1 auto;\n}\n\n[hyoo_js_perf_case_prefix] ,\n[hyoo_js_perf_case_source] {\n\tdisplay: table-cell;\n\tmin-width: 14rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_result_rows] {\n\tdisplay: table-cell;\n\twidth: 28rem;\n\theight: 5rem;\n}\n\n[hyoo_js_perf_case_result] {\n\tpadding: .25rem .75rem;\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\tmargin: 0 .5rem;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portion] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(1) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
+    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 1000 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_hint] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_prefix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_postfix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 auto;\n\tmin-width: 46rem;\n}\n\n[hyoo_js_perf_cases] {\n\tdisplay: table;\n\tborder-spacing: .75rem;\n}\n\n[hyoo_js_perf_case] {\n\tdisplay: table-row;\n\tflex: 0 1 auto;\n}\n\n[hyoo_js_perf_case_prefix] ,\n[hyoo_js_perf_case_source] {\n\tdisplay: table-cell;\n\tmin-width: 14rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_eval_labeler] {\n\twidth: 28rem;\n\theight: 7.5rem;\n}\n[hyoo_js_perf_case_result_rows] {\n\twidth: 28rem;\n\tdisplay: table-cell;\n\theight: 5rem;\n}\n\n[hyoo_js_perf_case_result] {\n\tpadding: .25rem .75rem;\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\tmargin: 0 .5rem;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portion] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(1) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/-css/perf.view.css.ts
 ;
@@ -33630,6 +33664,13 @@ var $;
                 sources[index] = next;
                 this.sources(sources);
                 return next;
+            }
+            case_sample(index) {
+                const code = this.prefix()
+                    + '\n' + this.case_prefix(index)
+                    + '\n' + this.source(index)
+                    + '\n' + this.postfix();
+                return code.replace(/\{#\}/g, '1');
             }
             measures_for(index, next) {
                 this.prefix();
@@ -33777,6 +33818,9 @@ var $;
         ], $hyoo_js_perf.prototype, "postfix", null);
         __decorate([
             $mol_mem_key
+        ], $hyoo_js_perf.prototype, "case_sample", null);
+        __decorate([
+            $mol_mem_key
         ], $hyoo_js_perf.prototype, "measures_for", null);
         __decorate([
             $mol_mem
@@ -33810,6 +33854,17 @@ var $;
             result_rows() {
                 return [this.Result(0), this.Result(1)];
             }
+            columns() {
+                return [
+                    this.Prefix(),
+                    this.Source(),
+                    ...this.results().length
+                        ? [this.Results()]
+                        : this.source()
+                            ? [this.Eval_labeler()]
+                            : []
+                ];
+            }
             result(level) {
                 return this.results()[level];
             }
@@ -33820,6 +33875,9 @@ var $;
         __decorate([
             $mol_mem
         ], $hyoo_js_perf_case.prototype, "result_rows", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf_case.prototype, "columns", null);
         $$.$hyoo_js_perf_case = $hyoo_js_perf_case;
         class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
             sub() {

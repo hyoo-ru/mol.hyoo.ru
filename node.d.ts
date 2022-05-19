@@ -8714,6 +8714,7 @@ declare namespace $ {
         Body(): $$.$mol_book2;
         Case(id: any): $$.$hyoo_js_perf_case;
         tools(): readonly any[];
+        head(): readonly any[];
         Theme(): $$.$mol_theme_auto;
         run(event?: any): any;
         Hotkey(): $$.$mol_hotkey;
@@ -8733,25 +8734,29 @@ declare namespace $ {
         Cases_pane(): $$.$mol_scroll;
         case_prefix(id: any, val?: any): string;
         source(id: any, val?: any): string;
+        case_sample(id: any): string;
         results(id: any, val?: any): readonly any[];
+        new_hint(): string;
+        New_icon(): $mol_icon_plus;
+        New(): $$.$mol_link;
         About_icon(): $mol_icon_help_circle_outline;
         About(): $$.$mol_link;
         Lights(): $$.$mol_lights_toggle;
         Source(): $mol_link_source;
+        Run_icon(): $mol_icon_play;
+        Run(): $mol_button_major;
         permalink(): string;
         parmalink_hint(): string;
         Permalink_icon(): $mol_icon_external;
         Permalink(): $$.$mol_link;
-        new_hint(): string;
-        New_icon(): $mol_icon_plus;
-        New(): $$.$mol_link;
-        Run_icon(): $mol_icon_play;
-        Run(): $mol_button_major;
     }
     class $hyoo_js_perf_case extends $mol_view {
         results(): readonly any[];
+        Eval_result(): $$.$mol_list;
+        Eval(): $$.$hyoo_js_eval;
         sub(): readonly any[];
         Result(id: any): $$.$hyoo_js_perf_case_result;
+        sample(): string;
         changable(): boolean;
         prefix(val?: any): string;
         Prefix_code(): $$.$mol_textarea;
@@ -8759,6 +8764,7 @@ declare namespace $ {
         source(val?: any): string;
         Source_code(): $$.$mol_textarea;
         Source(): $mol_labeler;
+        Eval_labeler(): $mol_labeler;
         result_rows(): readonly any[];
         Result_rows(): $$.$mol_list;
         Results(): $mol_labeler;
@@ -8857,6 +8863,7 @@ declare namespace $.$$ {
         cases(): $hyoo_js_perf_case[];
         case_prefix(index: number, next?: string): string;
         source(index: number, next?: string): string;
+        case_sample(index: number): string;
         measures_for(index: number, next?: $hyoo_js_perf_stats[]): $hyoo_js_perf_stats[];
         measures(): $hyoo_js_perf_stats[][];
         max_frequency(): number;
@@ -8874,6 +8881,7 @@ declare namespace $.$$ {
     }
     class $hyoo_js_perf_case extends $.$hyoo_js_perf_case {
         result_rows(): $hyoo_js_perf_case_result[];
+        columns(): $mol_labeler[];
         result(level: number): any;
         result_title(level: number): string;
     }
