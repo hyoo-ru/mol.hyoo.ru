@@ -21394,6 +21394,9 @@ var $;
         __decorate([
             $mol_mem
         ], $mol_dump_list.prototype, "sub", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_dump_list.prototype, "dump_value", null);
         $$.$mol_dump_list = $mol_dump_list;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -30139,7 +30142,7 @@ var $;
             }
             code_enhanced() {
                 let code = this.code();
-                code = code.replaceAll(/^(\s*)(?:const|var|let) +(\w+)/mig, (found, indent, name) => `${indent}this.spy( ()=>[ "${name} =", ${name} ] )\n${found}`);
+                code = code.replaceAll(/^([ \t]*)(?:const|var|let) +(\w+)/mig, (found, indent, name) => `${indent}this.spy( ()=>[ "${indent}${name} =", ${name} ] )\n${found}`);
                 return code;
             }
             execute() {
