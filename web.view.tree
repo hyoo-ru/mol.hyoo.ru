@@ -4707,40 +4707,48 @@ $hyoo_mol_bench $mol_book2_catalog
 			Close <= Close_item
 			Common null
 			prefix \
-				\$mol_import.script(
-				\	'https://unpkg.com/mol_time_all@1.1.12/web.js'
-				\)
-				\
-				\$mol_import.script(
-				\	'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js'
-				\)
-				\
-				\$mol_import.script(
-				\	'https://unpkg.com/luxon@1.24.1/build/global/luxon.min.js'
-				\)
-				\
-				\$mol_import.script(
-				\	'https://unpkg.com/dayjs@1.8.21/dayjs.min.js'
-				\)
-				\
-				\$mol_import.script(
-				\	'https://cdn.jsdelivr.net/npm/@js-joda/core@1.11.0/dist/js-joda.js'
-				\)
-				\const pattern = JSJoda.DateTimeFormatter.ofPattern( 'dd.MM.yyyy' )
-				\
 				\const iso = '2015-07-20T07:48:28.338Z'
-				\
 				\let res
 			postfix \
 				\$mol_assert_equal( res, '20.07.2015' )
+			prefixes /
+				\
+					\$mol_import.script(
+					\	'https://unpkg.com/mol_time_all@1.1.12/web.js'
+					\)
+				\
+					\$mol_import.script(
+					\	'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js'
+					\)
+				\
+					\$mol_import.script(
+					\	'https://unpkg.com/luxon@1.24.1/build/global/luxon.min.js'
+					\)
+				\
+					\$mol_import.script(
+					\	'https://unpkg.com/dayjs@1.8.21/dayjs.min.js'
+					\)
+				\
+					\$mol_import.script(
+					\	'https://cdn.jsdelivr.net/npm/@js-joda/core@1.11.0/dist/js-joda.js'
+					\)
+					\const pattern = JSJoda.DateTimeFormatter.ofPattern( 'dd.MM.yyyy' )
 			sources /
-				\res = new $mol_time_moment( iso ).toString( 'DD.MM.YYYY' )
-				\res = moment( iso ).format( 'DD.MM.YYYY' )
+				\
+					\res = new $mol_time_moment( iso )
+					\	.toString( 'DD.MM.YYYY' )
+				\
+					\res = moment( iso )
+					\	.format( 'DD.MM.YYYY' )
 				\
 					\res = luxon.DateTime.fromISO( iso ).toUTC()
-					\.toFormat( 'dd.MM.yyyy' )
-				\res = dayjs( iso ).format( 'DD.MM.YYYY' )
-				\res = JSJoda.ZonedDateTime.parse( iso ).format( pattern )
+					\	.toFormat( 'dd.MM.yyyy' )
+				\
+					\res = dayjs( iso )
+					\	.format( 'DD.MM.YYYY' )
+				\
+					\res = JSJoda.ZonedDateTime.parse( iso )
+					\	.format( pattern )
 
 $hyoo_mol_bench_bench $hyoo_bench_app
 	menu_tools /

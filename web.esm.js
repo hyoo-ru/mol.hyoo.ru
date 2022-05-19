@@ -33455,7 +33455,7 @@ var $;
                         ? [this.Results()]
                         : this.source()
                             ? [this.Eval_labeler()]
-                            : []
+                            : [this.Results()]
                 ];
             }
             result(level) {
@@ -33779,14 +33779,21 @@ var $;
             obj.analysis_uri = () => "https://t.me/mol_bench/10";
             obj.Close = () => this.Close_item();
             obj.Common = () => null;
-            obj.prefix = () => "$mol_import.script(\n\t'https://unpkg.com/mol_time_all@1.1.12/web.js'\n)\n\n$mol_import.script(\n\t'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js'\n)\n\n$mol_import.script(\n\t'https://unpkg.com/luxon@1.24.1/build/global/luxon.min.js'\n)\n\n$mol_import.script(\n\t'https://unpkg.com/dayjs@1.8.21/dayjs.min.js'\n)\n\n$mol_import.script(\n\t'https://cdn.jsdelivr.net/npm/@js-joda/core@1.11.0/dist/js-joda.js'\n)\nconst pattern = JSJoda.DateTimeFormatter.ofPattern( 'dd.MM.yyyy' )\n\nconst iso = '2015-07-20T07:48:28.338Z'\n\nlet res";
+            obj.prefix = () => "const iso = '2015-07-20T07:48:28.338Z'\nlet res";
             obj.postfix = () => "$mol_assert_equal( res, '20.07.2015' )";
+            obj.prefixes = () => [
+                "$mol_import.script(\n\t'https://unpkg.com/mol_time_all@1.1.12/web.js'\n)",
+                "$mol_import.script(\n\t'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js'\n)",
+                "$mol_import.script(\n\t'https://unpkg.com/luxon@1.24.1/build/global/luxon.min.js'\n)",
+                "$mol_import.script(\n\t'https://unpkg.com/dayjs@1.8.21/dayjs.min.js'\n)",
+                "$mol_import.script(\n\t'https://cdn.jsdelivr.net/npm/@js-joda/core@1.11.0/dist/js-joda.js'\n)\nconst pattern = JSJoda.DateTimeFormatter.ofPattern( 'dd.MM.yyyy' )"
+            ];
             obj.sources = () => [
-                "res = new $mol_time_moment( iso ).toString( 'DD.MM.YYYY' )",
-                "res = moment( iso ).format( 'DD.MM.YYYY' )",
-                "res = luxon.DateTime.fromISO( iso ).toUTC()\n.toFormat( 'dd.MM.yyyy' )",
-                "res = dayjs( iso ).format( 'DD.MM.YYYY' )",
-                "res = JSJoda.ZonedDateTime.parse( iso ).format( pattern )"
+                "res = new $mol_time_moment( iso )\n\t.toString( 'DD.MM.YYYY' )",
+                "res = moment( iso )\n\t.format( 'DD.MM.YYYY' )",
+                "res = luxon.DateTime.fromISO( iso ).toUTC()\n\t.toFormat( 'dd.MM.yyyy' )",
+                "res = dayjs( iso )\n\t.format( 'DD.MM.YYYY' )",
+                "res = JSJoda.ZonedDateTime.parse( iso )\n\t.format( pattern )"
             ];
             return obj;
         }
