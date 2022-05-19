@@ -30643,14 +30643,47 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_time_demo extends $mol_example_large {
-        title() {
-            return "Time processing library sandbox";
-        }
+    class $mol_example_code extends $mol_example_large {
         sub() {
             return [
                 this.Sandbox()
             ];
+        }
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Sandbox() {
+            const obj = new this.$.$hyoo_js_eval();
+            obj.Menu_page = () => null;
+            obj.Perf = () => null;
+            obj.Bookmark = () => null;
+            obj.code = (next) => this.code(next);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_example_code.prototype, "code", null);
+    __decorate([
+        $mol_mem
+    ], $mol_example_code.prototype, "Sandbox", null);
+    $.$mol_example_code = $mol_example_code;
+})($ || ($ = {}));
+//mol/example/code/-view.tree/code.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_time_demo extends $mol_example_code {
+        title() {
+            return "Time processing library sandbox";
+        }
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "const now = new $mol_time_moment\nconst today = now.toString( 'YYYY-MM-DD' )\nconst tomorrow = now.shift( 'P1D' ).toString( 'DD Mon' )\n\nconst week = new $mol_time_duration( 'P7D' )\nconst days = week.count( 'P1D' )\n\nconst nextYear = new $mol_time_interval( '/P1Y' )\nconst anniversary = nextYear.end.toString( 'YYYY-MM-DD hh:mm' )";
         }
         tags() {
             return [
@@ -30660,23 +30693,10 @@ var $;
                 "interval"
             ];
         }
-        code(val) {
-            if (val !== undefined)
-                return val;
-            return "const now = new $mol_time_moment\nconst today = now.toString( 'YYYY-MM-DD' )\nconst tomorrow = now.shift( 'P1D' ).toString( 'DD Mon' )\n\nconst week = new $mol_time_duration( 'P7D' )\nconst days = week.count( 'P1D' )\n\nconst nextYear = new $mol_time_interval( '/P1Y' )\nconst anniversary = nextYear.end.toString( 'YYYY-MM-DD hh:mm' )";
-        }
-        Sandbox() {
-            const obj = new this.$.$hyoo_js_eval();
-            obj.code = (val) => this.code(val);
-            return obj;
-        }
     }
     __decorate([
         $mol_mem
     ], $mol_time_demo.prototype, "code", null);
-    __decorate([
-        $mol_mem
-    ], $mol_time_demo.prototype, "Sandbox", null);
     $.$mol_time_demo = $mol_time_demo;
 })($ || ($ = {}));
 //mol/time/demo/-view.tree/demo.view.tree.ts
