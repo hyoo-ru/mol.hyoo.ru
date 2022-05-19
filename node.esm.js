@@ -33721,6 +33721,8 @@ var $;
                 inner = Array.from({ length: count }, (_, i) => inner.replace(/\{#\}/g, `${i}`)).join(';\n');
                 const source = [
                     prefix,
+                    `const backup_${token} = $mol_wire_auto()`,
+                    `$mol_wire_auto( null )`,
                     `if( window.gc ) gc()`,
                     `let mem_${token} = -performance.memory?.usedJSHeapSize ?? 0`,
                     `let time_${token} = -performance.now()`,
@@ -33729,6 +33731,7 @@ var $;
                     postfix,
                     `if( window.gc ) gc()`,
                     `mem_${token} += performance.memory?.usedJSHeapSize ?? 0`,
+                    `$mol_wire_auto( backup_${token} )`,
                     `return { time: time_${token}, mem: window.gc ? mem_${token} : 0 }`,
                 ].join(';\n');
                 let func = new Function('', source);
@@ -34112,11 +34115,11 @@ var $;
             obj.analysis_uri = () => "https://github.com/nin-jin/HabHub/issues/48";
             obj.Close = () => this.Close_item();
             obj.Common = () => null;
-            obj.prefix = () => "const { mobx } = $mol_import.script(\n\t'https://unpkg.com/mobx'\n)\n\nconst backup = $mol_wire_auto()\n$mol_wire_auto( null )\nlet res";
-            obj.postfix = () => "$mol_wire_auto( backup )";
+            obj.prefix = () => "";
+            obj.postfix = () => "";
             obj.prefixes = () => [
                 "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )",
-                "class App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}"
+                "const mobx = $mol_import.script(\n\t'https://unpkg.com/mobx'\n).mobx\nclass App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}"
             ];
             obj.sources = () => [
                 "const app{#} = new App()\napp{#}.res()",
@@ -34130,11 +34133,11 @@ var $;
             obj.analysis_uri = () => "https://github.com/nin-jin/HabHub/issues/48";
             obj.Close = () => this.Close_item();
             obj.Common = () => null;
-            obj.prefix = () => "const { mobx } = $mol_import.script(\n\t'https://unpkg.com/mobx'\n)\n\nconst backup = $mol_wire_auto()\n$mol_wire_auto( null )\nlet res";
-            obj.postfix = () => "$mol_wire_auto( backup )";
+            obj.prefix = () => "let res";
+            obj.postfix = () => "";
             obj.prefixes = () => [
                 "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )\nconst app = new App()\napp.res()",
-                "class App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}\nconst app = new App()\nconst root = mobx.autorun( ()=> app.res )"
+                "const mobx = $mol_import.script(\n\t'https://unpkg.com/mobx'\n).mobx\nclass App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}\nconst app = new App()\nconst root = mobx.autorun( ()=> app.res )"
             ];
             obj.sources = () => [
                 "app.fix( {#}%2 === 0 )\nres = app.res()",
