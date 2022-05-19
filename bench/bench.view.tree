@@ -86,15 +86,7 @@ $hyoo_mol_bench $mol_book2_catalog
 			Close <= Close_item
 			Common null
 			prefix \
-				\const { mobx } = $mol_import.script(
-				\	'https://unpkg.com/mobx'
-				\)
-				\
-				\const backup = $mol_wire_auto()
-				\$mol_wire_auto( null )
-				\let res
 			postfix \
-				\$mol_wire_auto( backup )
 			prefixes /
 				\
 					\class App extends $mol_object {
@@ -106,6 +98,9 @@ $hyoo_mol_bench $mol_book2_catalog
 					\$mol_mem( App.prototype, 'src' )
 					\$mol_mem( App.prototype, 'res' )
 				\
+					\const mobx = $mol_import.script(
+					\	'https://unpkg.com/mobx'
+					\).mobx
 					\class App extends Object {
 					\	fix = true
 					\	get src() { return Math.random() }
@@ -127,15 +122,8 @@ $hyoo_mol_bench $mol_book2_catalog
 			Close <= Close_item
 			Common null
 			prefix \
-				\const { mobx } = $mol_import.script(
-				\	'https://unpkg.com/mobx'
-				\)
-				\
-				\const backup = $mol_wire_auto()
-				\$mol_wire_auto( null )
 				\let res
 			postfix \
-				\$mol_wire_auto( backup )
 			prefixes /
 				\
 					\class App extends $mol_object {
@@ -149,6 +137,9 @@ $hyoo_mol_bench $mol_book2_catalog
 					\const app = new App()
 					\app.res()
 				\
+					\const mobx = $mol_import.script(
+					\	'https://unpkg.com/mobx'
+					\).mobx
 					\class App extends Object {
 					\	fix = true
 					\	get src() { return Math.random() }
