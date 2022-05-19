@@ -33908,12 +33908,12 @@ var $;
             return [
                 this.Title(),
                 this.Run(),
+                this.Analysis(),
                 this.Tools()
             ];
         }
         tools() {
             return [
-                this.Analysis(),
                 this.Close()
             ];
         }

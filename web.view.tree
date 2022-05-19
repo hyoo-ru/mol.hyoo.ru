@@ -4753,10 +4753,10 @@ $hyoo_mol_bench_perf $hyoo_js_perf
 	head /
 		<= Title
 		<= Run
-		<= Tools
-	tools /
 		<= Analysis $hyoo_mol_bench_analysis
 			uri <= analysis_uri \
+		<= Tools
+	tools /
 		<= Close $mol_view
 
 $hyoo_mol_bench_visual $mol_page
