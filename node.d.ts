@@ -3559,6 +3559,11 @@ declare namespace $ {
             preview: string;
         };
         apps(): {
+            board: {
+                target: string;
+                title: string;
+                uri: string;
+            };
             notes: {
                 target: string;
                 title: string;

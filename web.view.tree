@@ -951,6 +951,10 @@ $hyoo_apps $mol_book2
 		develop @ \For Developers
 		preview @ \For Curious
 	apps *
+		board *
+			target \release
+			title @ \Private Dashboard
+			uri \https://board.hyoo.ru/
 		notes *
 			target \release
 			title @ \Private Notes
