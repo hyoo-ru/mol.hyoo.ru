@@ -938,12 +938,14 @@ $hyoo_apps $mol_book2
 							content <= group_items* /
 								<= Menu_item* $mol_view
 									sub /
-										<= Menu_link_in* $mol_link
-											title <= app_title* \
-											arg <= app_arg* *
 										<= Menu_link_out* $mol_link_iconed
 											uri <= app_uri_default* \
-											title \
+											title <= app_title* \
+											arg <= app_arg* *
+										<= Menu_link_in* $mol_link
+											arg <= app_arg* *
+											sub /
+												<= Menu_link_in_icon* $mol_icon_chevron_right
 		<= App*id $mol_frame
 			uri? <=> app_uri_embed*? \
 	groups *

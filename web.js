@@ -12322,32 +12322,39 @@ var $;
                 return next;
             return true;
         }
+        app_uri_default(id) {
+            return "";
+        }
         app_title(id) {
             return "";
         }
         app_arg(id) {
             return {};
         }
-        Menu_link_in(id) {
-            const obj = new this.$.$mol_link();
+        Menu_link_out(id) {
+            const obj = new this.$.$mol_link_iconed();
+            obj.uri = () => this.app_uri_default(id);
             obj.title = () => this.app_title(id);
             obj.arg = () => this.app_arg(id);
             return obj;
         }
-        app_uri_default(id) {
-            return "";
+        Menu_link_in_icon(id) {
+            const obj = new this.$.$mol_icon_chevron_right();
+            return obj;
         }
-        Menu_link_out(id) {
-            const obj = new this.$.$mol_link_iconed();
-            obj.uri = () => this.app_uri_default(id);
-            obj.title = () => "";
+        Menu_link_in(id) {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => this.app_arg(id);
+            obj.sub = () => [
+                this.Menu_link_in_icon(id)
+            ];
             return obj;
         }
         Menu_item(id) {
             const obj = new this.$.$mol_view();
             obj.sub = () => [
-                this.Menu_link_in(id),
-                this.Menu_link_out(id)
+                this.Menu_link_out(id),
+                this.Menu_link_in(id)
             ];
             return obj;
         }
@@ -12407,10 +12414,13 @@ var $;
     ], $hyoo_apps.prototype, "group_expanded", null);
     __decorate([
         $mol_mem_key
-    ], $hyoo_apps.prototype, "Menu_link_in", null);
+    ], $hyoo_apps.prototype, "Menu_link_out", null);
     __decorate([
         $mol_mem_key
-    ], $hyoo_apps.prototype, "Menu_link_out", null);
+    ], $hyoo_apps.prototype, "Menu_link_in_icon", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_apps.prototype, "Menu_link_in", null);
     __decorate([
         $mol_mem_key
     ], $hyoo_apps.prototype, "Menu_item", null);
@@ -12436,7 +12446,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/apps/apps.view.css", "[hyoo_apps_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_apps_menu_items] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_apps_group_content] {\n\tpadding-left: var(--mol_gap_block);\n}\n\n[hyoo_apps_menu_link_in] {\n\tflex-grow: 1;\n}\n\n[hyoo_apps_app] {\n\tflex: 1 0 25rem;\n}\n");
+    $mol_style_attach("hyoo/apps/apps.view.css", "[hyoo_apps_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_apps_menu_items] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_apps_menu_link_out] {\n\tflex-grow: 1;\n}\n\n[hyoo_apps_app] {\n\tflex: 1 0 25rem;\n}\n");
 })($ || ($ = {}));
 //hyoo/apps/-css/apps.view.css.ts
 ;

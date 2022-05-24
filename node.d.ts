@@ -3731,11 +3731,12 @@ declare namespace $ {
         tools(): readonly any[];
         group_name(id: any): string;
         group_expanded(id: any, next?: any): boolean;
+        app_uri_default(id: any): string;
         app_title(id: any): string;
         app_arg(id: any): {};
-        Menu_link_in(id: any): $$.$mol_link;
-        app_uri_default(id: any): string;
         Menu_link_out(id: any): $$.$mol_link_iconed;
+        Menu_link_in_icon(id: any): $mol_icon_chevron_right;
+        Menu_link_in(id: any): $$.$mol_link;
         Menu_item(id: any): $mol_view;
         group_items(id: any): readonly any[];
         Group(id: any): $$.$mol_expander;
