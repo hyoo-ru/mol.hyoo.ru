@@ -19412,7 +19412,6 @@ var $;
         tags() {
             return [
                 "$mol_check_box",
-                "$mol_list",
                 "checkbox",
                 "multi",
                 "group"
@@ -21709,7 +21708,6 @@ var $;
         tags() {
             return [
                 "$mol_scroll",
-                "$mol_list",
                 "$mol_filler",
                 "scroll",
                 "container"
