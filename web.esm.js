@@ -21600,6 +21600,7 @@ var $;
         }
         tags() {
             return [
+                "$mol_list",
                 "dump",
                 "javascript",
                 "debug"
