@@ -3556,7 +3556,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\tmax-width: 100%;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\tmin-height: .5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n \n[mol_list] > * {\n\tdisplay: flex;\n}\n");
+    $mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\tmax-width: 100%;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\tmin-height: .5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n");
 })($ || ($ = {}));
 //mol/list/-css/list.view.css.ts
 ;
@@ -33072,7 +33072,7 @@ var $;
             const obj = new this.$.$mol_textarea();
             obj.enabled = () => this.changable();
             obj.value = (val) => this.prefix(val);
-            obj.hint = () => "let res";
+            obj.hint = () => "let res = 0";
             return obj;
         }
         Prefix() {
@@ -33090,7 +33090,7 @@ var $;
             const obj = new this.$.$mol_textarea();
             obj.enabled = () => this.changable();
             obj.value = (val) => this.postfix(val);
-            obj.hint = () => "$mol_assert_like( res, 1 )";
+            obj.hint = () => "$mol_assert_like( res, {#} - 1 )";
             return obj;
         }
         Postfix() {
@@ -33344,7 +33344,7 @@ var $;
             const obj = new this.$.$mol_textarea();
             obj.enabled = () => this.changable();
             obj.value = (val) => this.prefix(val);
-            obj.hint = () => "let val{#} = 1";
+            obj.hint = () => "let count = {#}";
             return obj;
         }
         Prefix() {
@@ -33363,7 +33363,7 @@ var $;
             const obj = new this.$.$mol_textarea();
             obj.enabled = () => this.changable();
             obj.value = (val) => this.source(val);
-            obj.hint = () => "res = val{#}";
+            obj.hint = () => "res = {#} % count";
             return obj;
         }
         Source() {
