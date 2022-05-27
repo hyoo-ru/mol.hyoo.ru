@@ -3976,7 +3976,15 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_textarea extends $mol_view {
+    class $mol_stack extends $mol_view {
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_textarea extends $mol_stack {
         attr(): {
             mol_textarea_clickable: boolean;
             mol_textarea_sidebar_showed: boolean;
@@ -8033,6 +8041,19 @@ declare namespace $.$$ {
         message(): string;
         speak(): void;
     }
+}
+
+declare namespace $ {
+    class $mol_stack_demo extends $mol_example_small {
+        sub(): readonly any[];
+        tags(): readonly any[];
+        Back(): $mol_image;
+        Front(): $mol_view;
+        Collage(): $mol_stack;
+    }
+}
+
+declare namespace $ {
 }
 
 declare namespace $ {
