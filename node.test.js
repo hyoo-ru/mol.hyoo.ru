@@ -25377,16 +25377,10 @@ var $;
             },
             Id_labeler: {
                 flex: {
-                    grow: 0,
-                    shrink: 1,
                     basis: rem(7),
                 },
             },
             Id: {
-                padding: $mol_gap.text,
-            },
-            Title: {
-                fontWeight: 'bolder',
                 padding: $mol_gap.text,
             },
         });
@@ -25401,7 +25395,6 @@ var $;
     (function ($$) {
         class $mol_list_demo_table extends $.$mol_list_demo_table {
             rows() {
-                $mol_wire_solid();
                 return Array.from({ length: this.count() }, (_, i) => this.Row(i));
             }
             row_id(id) {
