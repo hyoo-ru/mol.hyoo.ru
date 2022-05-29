@@ -3617,11 +3617,11 @@ var $;
                 let top2 = top;
                 let bottom2 = bottom;
                 if (anchoring && (top <= limit_top) && (bottom2 < limit_bottom)) {
-                    min2 = max;
+                    min2 = Math.max(0, max - 1);
                     top2 = bottom;
                 }
                 if ((bottom >= limit_bottom) && (top2 >= limit_top)) {
-                    max2 = min;
+                    max2 = Math.min(min + 1, kids.length);
                     bottom2 = top;
                 }
                 while (bottom2 < limit_bottom && max2 < kids.length) {
@@ -6015,8 +6015,10 @@ var $;
             '@': {
                 'mol_text_code_sidebar_showed': {
                     true: {
-                        margin: {
-                            left: rem(1.5),
+                        $mol_text_code_row: {
+                            margin: {
+                                left: rem(1.5),
+                            },
                         },
                     },
                 },
@@ -6155,7 +6157,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/check/expand/expand.view.css", "[mol_check_expand] {\n\tmin-width: 20px;\n}\n\n[mol_check_expand][disabled] [mol_check_expand_icon] {\n\tvisibility: hidden;\n}\n\n[mol_check_expand_icon] {\n\tbox-shadow: none;\n\tmargin: .25rem -.25rem;\n}\n[mol_check_expand_icon] {\n\ttransform: rotateZ(0deg);\n}\n\n[mol_check_checked] [mol_check_expand_icon_path] {\n\ttransform: rotateZ(90deg);\n}\n\n[mol_check_expand_icon] {\n\tvertical-align: text-top;\n}\n\n[mol_check_expand_label] {\n\tmargin-left: 0;\n}\n");
+    $mol_style_attach("mol/check/expand/expand.view.css", "[mol_check_expand] {\n\tmin-width: 20px;\n}\n\n:where([mol_check_expand][disabled]) [mol_check_expand_icon] {\n\tvisibility: hidden;\n}\n\n[mol_check_expand_icon] {\n\tbox-shadow: none;\n\tmargin: .25rem -.25rem;\n}\n[mol_check_expand_icon] {\n\ttransform: rotateZ(0deg);\n}\n\n:where([mol_check_checked]) [mol_check_expand_icon_path] {\n\ttransform: rotateZ(90deg);\n}\n\n[mol_check_expand_icon] {\n\tvertical-align: text-top;\n}\n\n[mol_check_expand_label] {\n\tmargin-left: 0;\n}\n");
 })($ || ($ = {}));
 //mol/check/expand/-css/expand.view.css.ts
 ;
@@ -30880,22 +30882,6 @@ var $;
             display: 'flex',
             position: 'relative',
             overflow: 'hidden',
-            '@': {
-                mol_toolbar_expanded: {
-                    true: {
-                        Bar: {
-                            maxHeight: vh(100),
-                        },
-                        Expand: {
-                            Icon: {
-                                Path: {
-                                    transform: 'rotate(90deg) scaleX(-1)',
-                                },
-                            },
-                        },
-                    },
-                },
-            },
             Bar: {
                 display: 'flex',
                 justifyContent: 'flex-end',
@@ -30923,6 +30909,22 @@ var $;
                 Icon: {
                     Path: {
                         transform: 'rotate(90deg)',
+                    },
+                },
+            },
+            '@': {
+                mol_toolbar_expanded: {
+                    true: {
+                        Bar: {
+                            maxHeight: vh(100),
+                        },
+                        Expand: {
+                            Icon: {
+                                Path: {
+                                    transform: 'rotate(90deg) scaleX(-1)',
+                                },
+                            },
+                        },
                     },
                 },
             },
