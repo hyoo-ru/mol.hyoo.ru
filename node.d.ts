@@ -6545,20 +6545,33 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_infinite_demo extends $mol_example {
+    class $mol_infinite_demo extends $mol_example_small {
         title(): string;
         chunk_size(): number;
         sub(): readonly any[];
         tags(): readonly any[];
         after(id: any): readonly any[];
-        Item(id: any): $mol_filler;
+        photo(id: any): string;
+        Photo(id: any): $mol_image;
+        name(id: any): string;
+        Name(id: any): $$.$mol_paragraph;
+        city(id: any): string;
+        City(id: any): $$.$mol_paragraph;
+        Info(id: any): $$.$mol_list;
+        Item(id: any): $mol_row;
         List(): $$.$mol_infinite;
     }
+}
+
+declare namespace $ {
 }
 
 declare namespace $.$$ {
     class $mol_infinite_demo extends $.$mol_infinite_demo {
         after(anchor_id?: number): number[];
+        photo(index: number): string;
+        name(index: number): string;
+        city(index: number): string;
     }
 }
 
