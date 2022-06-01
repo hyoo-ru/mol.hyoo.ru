@@ -12776,6 +12776,11 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_jsperf_title'),
                     uri: "https://perf.js.hyoo.ru/#!prefix=let%20res/sources=%5B\"res%20%3D%20window.location.href\"%2C\"res%20%3D%20document.location.href\"%2C\"res%20%3D%20location.href\"%5D/postfix=%24mol_assert_like%28%20res%2C%20location.href%20%29"
                 },
+                jsopt: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_jsopt_title'),
+                    uri: "https://opt.js.hyoo.ru/"
+                },
                 bench: {
                     target: "develop",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_bench_title'),

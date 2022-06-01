@@ -3667,6 +3667,11 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            jsopt: {
+                target: string;
+                title: string;
+                uri: string;
+            };
             bench: {
                 target: string;
                 title: string;
