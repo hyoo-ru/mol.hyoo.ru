@@ -9549,7 +9549,10 @@ var $;
             return this.json_update(json);
         }
         json_update(patch) {
-            $mol_wire_solid();
+            if (patch)
+                this.json_update();
+            else
+                $mol_wire_solid();
             return patch;
         }
     }
