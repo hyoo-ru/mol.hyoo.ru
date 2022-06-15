@@ -13339,6 +13339,7 @@ var $;
 var $;
 (function ($) {
     $.$mol_jsx_prefix = '';
+    $.$mol_jsx_crumbs = '';
     $.$mol_jsx_booked = null;
     $.$mol_jsx_document = {
         getElementById: () => null,
@@ -13349,6 +13350,7 @@ var $;
     function $mol_jsx(Elem, props, ...childNodes) {
         const id = props && props.id || '';
         const guid = id ? $.$mol_jsx_prefix ? $.$mol_jsx_prefix + '/' + id : id : $.$mol_jsx_prefix;
+        const crumbs_self = id ? $.$mol_jsx_crumbs.replace(/([^ ]+)/, `$1_${id}`) : $.$mol_jsx_crumbs;
         if (Elem && $.$mol_jsx_booked) {
             if ($.$mol_jsx_booked.has(id)) {
                 $mol_fail(new Error(`JSX already has tag with id ${JSON.stringify(guid)}`));
@@ -13361,6 +13363,7 @@ var $;
         if ($.$mol_jsx_prefix) {
             const prefix_ext = $.$mol_jsx_prefix;
             const booked_ext = $.$mol_jsx_booked;
+            const crumbs_ext = $.$mol_jsx_crumbs;
             for (const field in props) {
                 const func = props[field];
                 if (typeof func !== 'function')
@@ -13368,14 +13371,17 @@ var $;
                 const wrapper = function (...args) {
                     const prefix = $.$mol_jsx_prefix;
                     const booked = $.$mol_jsx_booked;
+                    const crumbs = $.$mol_jsx_crumbs;
                     try {
                         $.$mol_jsx_prefix = prefix_ext;
                         $.$mol_jsx_booked = booked_ext;
+                        $.$mol_jsx_crumbs = crumbs_ext;
                         return func.call(this, ...args);
                     }
                     finally {
                         $.$mol_jsx_prefix = prefix;
                         $.$mol_jsx_booked = booked;
+                        $.$mol_jsx_crumbs = crumbs;
                     }
                 };
                 $mol_func_name_from(wrapper, func);
@@ -13390,6 +13396,7 @@ var $;
                 view.childNodes = childNodes;
                 if (!view.ownerDocument)
                     view.ownerDocument = $.$mol_jsx_document;
+                view.className = (crumbs_self ? crumbs_self + ' ' : '') + (Elem['name'] || Elem);
                 node = view.valueOf();
                 node[Elem] = view;
                 return node;
@@ -13397,14 +13404,17 @@ var $;
             else {
                 const prefix = $.$mol_jsx_prefix;
                 const booked = $.$mol_jsx_booked;
+                const crumbs = $.$mol_jsx_crumbs;
                 try {
                     $.$mol_jsx_prefix = guid;
                     $.$mol_jsx_booked = new Set;
+                    $.$mol_jsx_crumbs = (crumbs_self ? crumbs_self + ' ' : '') + (Elem['name'] || Elem);
                     return Elem(props, ...childNodes);
                 }
                 finally {
                     $.$mol_jsx_prefix = prefix;
                     $.$mol_jsx_booked = booked;
+                    $.$mol_jsx_crumbs = crumbs;
                 }
             }
         }
@@ -13435,6 +13445,8 @@ var $;
         }
         if (guid)
             node.id = guid;
+        if ($.$mol_jsx_crumbs)
+            node.className = (props?.['class'] ? props['class'] + ' ' : '') + crumbs_self;
         return node;
     }
     $.$mol_jsx = $mol_jsx;
