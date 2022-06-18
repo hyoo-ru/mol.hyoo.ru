@@ -5213,6 +5213,78 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_icon_emoticon extends $mol_icon {
+        path() {
+            return "M12,2C6.47,2 2,6.5 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M15.5,8C16.33,8 17,8.67 17,9.5C17,10.33 16.33,11 15.5,11C14.67,11 14,10.33 14,9.5C14,8.67 14.67,8 15.5,8M8.5,8C9.33,8 10,8.67 10,9.5C10,10.33 9.33,11 8.5,11C7.67,11 7,10.33 7,9.5C7,8.67 7.67,8 8.5,8M12,17.5C9.67,17.5 7.69,16.04 6.89,14H17.11C16.3,16.04 14.33,17.5 12,17.5Z";
+        }
+    }
+    $.$mol_icon_emoticon = $mol_icon_emoticon;
+})($ || ($ = {}));
+//mol/icon/emoticon/-view.tree/emoticon.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_youtube extends $mol_icon {
+        path() {
+            return "M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 21.78,8.27 21.84,9.07C21.91,9.87 21.94,10.56 21.94,11.16L22,12C22,14.19 21.84,15.8 21.56,16.83C21.31,17.73 20.73,18.31 19.83,18.56C19.36,18.69 18.5,18.78 17.18,18.84C15.88,18.91 14.69,18.94 13.59,18.94L12,19C7.81,19 5.2,18.84 4.17,18.56C3.27,18.31 2.69,17.73 2.44,16.83C2.31,16.36 2.22,15.73 2.16,14.93C2.09,14.13 2.06,13.44 2.06,12.84L2,12C2,9.81 2.16,8.2 2.44,7.17C2.69,6.27 3.27,5.69 4.17,5.44C4.64,5.31 5.5,5.22 6.82,5.16C8.12,5.09 9.31,5.06 10.41,5.06L12,5C16.19,5 18.8,5.16 19.83,5.44C20.73,5.69 21.31,6.27 21.56,7.17Z";
+        }
+    }
+    $.$mol_icon_youtube = $mol_icon_youtube;
+})($ || ($ = {}));
+//mol/icon/youtube/-view.tree/youtube.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_youtube_subscription extends $mol_icon {
+        path() {
+            return "M20,8H4V6H20V8M18,2H6V4H18V2M22,12V20C22,21.1 21.1,22 20,22H4C2.9,22 2,21.1 2,20V12C2,10.9 2.9,10 4,10H20C21.1,10 22,10.9 22,12M16,16L10,12.73V19.26L16,16Z";
+        }
+    }
+    $.$mol_icon_youtube_subscription = $mol_icon_youtube_subscription;
+})($ || ($ = {}));
+//mol/icon/youtube/subscription/-view.tree/subscription.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_rss extends $mol_icon {
+        path() {
+            return "M6.18,15.64C7.38,15.64 8.36,16.62 8.36,17.82C8.36,19 7.38,20 6.18,20C5,20 4,19 4,17.82C4,16.62 4.98,15.64 6.18,15.64M4,4.44C12.59,4.44 19.56,11.41 19.56,20H16.73C16.73,12.97 11.03,7.27 4,7.27V4.44M4,10.1C9.47,10.1 13.9,14.53 13.9,20H11.07C11.07,16.1 7.9,12.93 4,12.93V10.1Z";
+        }
+    }
+    $.$mol_icon_rss = $mol_icon_rss;
+})($ || ($ = {}));
+//mol/icon/rss/-view.tree/rss.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_rss_box extends $mol_icon {
+        path() {
+            return "M5,3H19C20.1,3 21,3.9 21,5V19C21,20.1 20.1,21 19,21H5C3.9,21 3,20.1 3,19V5C3,3.9 3.9,3 5,3M7.5,15C6.67,15 6,15.67 6,16.5C6,17.33 6.67,18 7.5,18C8.33,18 9,17.33 9,16.5C9,15.67 8.33,15 7.5,15M6,10V12C9.31,12 12,14.69 12,18H14C14,13.58 10.42,10 6,10M6,6V8C11.52,8 16,12.48 16,18H18C18,11.37 12.63,6 6,6Z";
+        }
+    }
+    $.$mol_icon_rss_box = $mol_icon_rss_box;
+})($ || ($ = {}));
+//mol/icon/rss/box/-view.tree/box.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_forum extends $mol_icon {
+        path() {
+            return "M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z";
+        }
+    }
+    $.$mol_icon_forum = $mol_icon_forum;
+})($ || ($ = {}));
+//mol/icon/forum/-view.tree/forum.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_paragraph extends $mol_view {
         line_height() {
             return 24;
@@ -8839,18 +8911,6 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //mol/search/jumper/jumper.view.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_icon_forum extends $mol_icon {
-        path() {
-            return "M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z";
-        }
-    }
-    $.$mol_icon_forum = $mol_icon_forum;
-})($ || ($ = {}));
-//mol/icon/forum/-view.tree/forum.view.tree.ts
 ;
 "use strict";
 var $;
@@ -34904,11 +34964,11 @@ var $;
             obj.postfix = () => "";
             obj.prefixes = () => [
                 "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )",
-                "const mobx = $mol_import.script(\n\t'https://unpkg.com/mobx'\n).mobx\nclass App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}"
+                "const mobx = $mol_import.script(\n\t'https://unpkg.com/mobx'\n).mobx\n\nclass App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}"
             ];
             obj.sources = () => [
                 "const app{#} = new App()\napp{#}.res()",
-                "const app{#} = new App()\nconst root{#} = mobx.autorun( ()=> app{#}.res )"
+                "const app{#} = new App()\nconst root{#} = mobx.autorun(\n\t()=> app{#}.res\n)"
             ];
             return obj;
         }
@@ -34921,8 +34981,8 @@ var $;
             obj.prefix = () => "let res";
             obj.postfix = () => "";
             obj.prefixes = () => [
-                "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )\nconst app = new App()\napp.res()",
-                "const mobx = $mol_import.script(\n\t'https://unpkg.com/mobx'\n).mobx\nclass App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}\nconst app = new App()\nconst root = mobx.autorun( ()=> app.res )"
+                "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )\n\nconst app = new App()\napp.res()",
+                "const mobx = $mol_import.script(\n\t'https://unpkg.com/mobx'\n).mobx\n\nclass App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}\n\nconst app = new App()\nconst root = mobx.autorun( ()=> app.res )"
             ];
             obj.sources = () => [
                 "app.fix( {#}%2 === 0 )\nres = app.res()",
@@ -39055,6 +39115,54 @@ var $;
                 this.Lights()
             ];
         }
+        Memes_icon() {
+            const obj = new this.$.$mol_icon_emoticon();
+            return obj;
+        }
+        Memes() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "https://t.me/mol_memes";
+            obj.sub = () => [
+                this.Memes_icon()
+            ];
+            return obj;
+        }
+        Video_icon() {
+            const obj = new this.$.$mol_icon_youtube_subscription();
+            return obj;
+        }
+        Video() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "https://www.youtube.com/channel/UCwRUyzIG4mC8uGhGQsn5FBQ";
+            obj.sub = () => [
+                this.Video_icon()
+            ];
+            return obj;
+        }
+        News_icon() {
+            const obj = new this.$.$mol_icon_rss_box();
+            return obj;
+        }
+        News() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "https://t.me/mol_news";
+            obj.sub = () => [
+                this.News_icon()
+            ];
+            return obj;
+        }
+        Chat_icon() {
+            const obj = new this.$.$mol_icon_forum();
+            return obj;
+        }
+        Chat() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "https://t.me/mam_mol";
+            obj.sub = () => [
+                this.Chat_icon()
+            ];
+            return obj;
+        }
         description() {
             return "";
         }
@@ -39070,6 +39178,12 @@ var $;
         Main() {
             const obj = new this.$.$mol_page();
             obj.title = () => this.$.$mol_locale.text('$hyoo_mol_Main_title');
+            obj.tools = () => [
+                this.Memes(),
+                this.Video(),
+                this.News(),
+                this.Chat()
+            ];
             obj.body = () => [
                 this.Description()
             ];
@@ -39151,6 +39265,30 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_mol.prototype, "Lights", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "Memes_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "Memes", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "Video_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "Video", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "News_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "News", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "Chat_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "Chat", null);
     __decorate([
         $mol_mem
     ], $hyoo_mol.prototype, "Description", null);

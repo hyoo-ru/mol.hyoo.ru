@@ -1514,6 +1514,42 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    class $mol_icon_emoticon extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_youtube extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_youtube_subscription extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_rss extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_rss_box extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_forum extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
     class $mol_paragraph extends $mol_view {
         line_height(): number;
         letter_width(): number;
@@ -2592,12 +2628,6 @@ declare namespace $.$$ {
         results(): $mol_view[][];
         index(next?: number): number;
         anchor_content(): ($mol_button_minor | $mol_string | $mol_paginator)[];
-    }
-}
-
-declare namespace $ {
-    class $mol_icon_forum extends $mol_icon {
-        path(): string;
     }
 }
 
@@ -9999,6 +10029,14 @@ declare namespace $ {
         Sources(): $mol_link_source;
         Lights(): $$.$mol_lights_toggle;
         tools_root(): readonly any[];
+        Memes_icon(): $mol_icon_emoticon;
+        Memes(): $$.$mol_link;
+        Video_icon(): $mol_icon_youtube_subscription;
+        Video(): $$.$mol_link;
+        News_icon(): $mol_icon_rss_box;
+        News(): $$.$mol_link;
+        Chat_icon(): $mol_icon_forum;
+        Chat(): $$.$mol_link;
         description(): string;
         sources_uri(): string;
         Description(): $$.$mol_text;
