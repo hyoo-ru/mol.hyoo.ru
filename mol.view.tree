@@ -12,6 +12,23 @@ $hyoo_mol $mol_book2_catalog
 		\
 			<= Main $mol_page
 				title @ \Introduction
+				tools /
+					<= Memes $mol_link
+						uri \https://t.me/mol_memes
+						sub /
+							<= Memes_icon $mol_icon_emoticon
+					<= Video $mol_link
+						uri \https://www.youtube.com/channel/UCwRUyzIG4mC8uGhGQsn5FBQ
+						sub /
+							<= Video_icon $mol_icon_youtube_subscription
+					<= News $mol_link
+						uri \https://t.me/mol_news
+						sub /
+							<= News_icon $mol_icon_rss_box
+					<= Chat $mol_link
+						uri \https://t.me/mam_mol
+						sub /
+							<= Chat_icon $mol_icon_forum
 				body /
 					<= Description $mol_text
 						text <= description \

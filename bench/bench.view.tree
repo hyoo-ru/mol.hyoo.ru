@@ -101,6 +101,7 @@ $hyoo_mol_bench $mol_book2_catalog
 					\const mobx = $mol_import.script(
 					\	'https://unpkg.com/mobx'
 					\).mobx
+					\
 					\class App extends Object {
 					\	fix = true
 					\	get src() { return Math.random() }
@@ -115,7 +116,9 @@ $hyoo_mol_bench $mol_book2_catalog
 					\app{#}.res()
 				\
 					\const app{#} = new App()
-					\const root{#} = mobx.autorun( ()=> app{#}.res )
+					\const root{#} = mobx.autorun(
+					\	()=> app{#}.res
+					\)
 		reactivity <= Reactivity $hyoo_mol_bench_perf
 			title \Reactive Updates
 			analysis_uri \https://github.com/nin-jin/HabHub/issues/48
@@ -134,12 +137,14 @@ $hyoo_mol_bench $mol_book2_catalog
 					\$mol_mem( App.prototype, 'fix' )
 					\$mol_mem( App.prototype, 'src' )
 					\$mol_mem( App.prototype, 'res' )
+					\
 					\const app = new App()
 					\app.res()
 				\
 					\const mobx = $mol_import.script(
 					\	'https://unpkg.com/mobx'
 					\).mobx
+					\
 					\class App extends Object {
 					\	fix = true
 					\	get src() { return Math.random() }
@@ -148,6 +153,7 @@ $hyoo_mol_bench $mol_book2_catalog
 					\		mobx.makeAutoObservable( super() )
 					\	}
 					\}
+					\
 					\const app = new App()
 					\const root = mobx.autorun( ()=> app.res )
 			sources /
