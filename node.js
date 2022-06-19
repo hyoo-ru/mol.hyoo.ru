@@ -39129,6 +39129,7 @@ var $;
         }
         Memes() {
             const obj = new this.$.$mol_link();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_mol_Memes_hint');
             obj.uri = () => "https://t.me/mol_memes";
             obj.sub = () => [
                 this.Memes_icon()
@@ -39141,6 +39142,7 @@ var $;
         }
         Video() {
             const obj = new this.$.$mol_link();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_mol_Video_hint');
             obj.uri = () => "https://www.youtube.com/channel/UCwRUyzIG4mC8uGhGQsn5FBQ";
             obj.sub = () => [
                 this.Video_icon()
@@ -39153,6 +39155,7 @@ var $;
         }
         News() {
             const obj = new this.$.$mol_link();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_mol_News_hint');
             obj.uri = () => "https://t.me/mol_news";
             obj.sub = () => [
                 this.News_icon()
@@ -39165,6 +39168,7 @@ var $;
         }
         Chat() {
             const obj = new this.$.$mol_link();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_mol_Chat_hint');
             obj.uri = () => "https://t.me/mam_mol";
             obj.sub = () => [
                 this.Chat_icon()
