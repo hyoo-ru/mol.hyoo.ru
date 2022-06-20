@@ -30732,6 +30732,17 @@ var $;
                 "markdown"
             ];
         }
+        search(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Search() {
+            const obj = new this.$.$mol_search_jumper();
+            obj.query = (next) => this.search(next);
+            obj.Root = () => this.View();
+            return obj;
+        }
         Edit_icon() {
             const obj = new this.$.$mol_icon_pencil();
             return obj;
@@ -30749,12 +30760,14 @@ var $;
         View() {
             const obj = new this.$.$mol_text();
             obj.text = () => this.text();
+            obj.highlight = () => this.search();
             return obj;
         }
         View_page() {
             const obj = new this.$.$mol_page();
             obj.title = () => "Output";
             obj.tools = () => [
+                this.Search(),
                 this.Edit()
             ];
             obj.body = () => [
@@ -30810,6 +30823,12 @@ var $;
             return obj;
         }
     }
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "search", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Search", null);
     __decorate([
         $mol_mem
     ], $mol_text_demo.prototype, "Edit_icon", null);

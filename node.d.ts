@@ -8305,6 +8305,8 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        search(next?: any): string;
+        Search(): $$.$mol_search_jumper;
         Edit_icon(): $mol_icon_pencil;
         Edit(): $$.$mol_link;
         View(): $$.$mol_text;
