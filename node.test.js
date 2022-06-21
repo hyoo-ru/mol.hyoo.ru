@@ -1896,7 +1896,9 @@ var $;
 var $;
 (function ($) {
     function $mol_wire_solo(host, field, descr) {
-        const orig = descr.value;
+        if (!descr)
+            descr = Reflect.getOwnPropertyDescriptor(host, field);
+        const orig = descr?.value ?? host[field];
         const sup = Reflect.getPrototypeOf(host);
         if (typeof sup[field] === 'function') {
             Object.defineProperty(orig, 'name', { value: sup[field].name });
@@ -1934,7 +1936,9 @@ var $;
 var $;
 (function ($) {
     function $mol_wire_plex(host, field, descr) {
-        const orig = descr.value;
+        if (!descr)
+            descr = Reflect.getOwnPropertyDescriptor(host, field);
+        const orig = descr?.value ?? host[field];
         const sup = Reflect.getPrototypeOf(host);
         if (typeof sup[field] === 'function') {
             Object.defineProperty(orig, 'name', { value: sup[field].name });
