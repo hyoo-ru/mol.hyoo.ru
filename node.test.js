@@ -7353,6 +7353,7 @@ var $;
             const obj = new this.$.$mol_text();
             obj.uri_resolve = (id) => this.uri_resolve(id);
             obj.text = () => this.quote_text(id);
+            obj.highlight = () => this.highlight();
             obj.auto_scroll = () => null;
             return obj;
         }
@@ -7360,6 +7361,7 @@ var $;
             const obj = new this.$.$mol_text();
             obj.uri_resolve = (id) => this.uri_resolve(id);
             obj.text = () => this.list_text(id);
+            obj.highlight = () => this.highlight();
             obj.auto_scroll = () => null;
             return obj;
         }
@@ -7391,6 +7393,7 @@ var $;
         Table_cell(id) {
             const obj = new this.$.$mol_text();
             obj.auto_scroll = () => null;
+            obj.highlight = () => this.highlight();
             obj.uri_resolve = (id) => this.uri_resolve(id);
             obj.text = () => this.table_cell_text(id);
             return obj;
@@ -7448,6 +7451,9 @@ var $;
         quote_text(id) {
             return "";
         }
+        highlight() {
+            return "";
+        }
         list_text(id) {
             return "";
         }
@@ -7458,9 +7464,6 @@ var $;
             return {};
         }
         code_text(id) {
-            return "";
-        }
-        highlight() {
             return "";
         }
         code_sidebar_showed() {
@@ -10792,22 +10795,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_match_text(query, values) {
-        const tags = query.toLowerCase().trim().split(/\s+/).filter(tag => tag);
-        if (tags.length === 0)
-            return () => true;
-        return (variant) => {
-            const vals = values(variant);
-            return tags.every(tag => vals.some(val => val.toLowerCase().indexOf(tag) >= 0));
-        };
-    }
-    $.$mol_match_text = $mol_match_text;
-})($ || ($ = {}));
-//mol/match/text.ts
-;
-"use strict";
-var $;
-(function ($) {
     $mol_style_attach("hyoo/habhub/habhub.view.css", "[hyoo_habhub] {\n\tmargin: 0;\n}\n\n[hyoo_habhub_created] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_habhub_search] {\n\tflex: none;\n\talign-self: stretch;\n}\n\n[hyoo_habhub_menu_page_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_habhub_menu_page] {\n\tflex: 0 0 20rem;\n\twidth: 100%;\n}\n\n[hyoo_habhub_menu] {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_habhub_placeholder] {\n\t/* flex: 1 1 600px; */\n}\n\n[hyoo_habhub_details] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_habhub_details_body] {\n\tpadding: 0;\n}\n\n[hyoo_habhub_details_chat] {\n\tbox-shadow: none;\n}\n\n[hyoo_habhub_datails_text] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //hyoo/habhub/-css/habhub.view.css.ts
@@ -10819,7 +10806,12 @@ var $;
     (function ($$) {
         class $hyoo_habhub extends $.$hyoo_habhub {
             uriSource() {
-                return 'hyoo/habhub/data/issues.json?';
+                const search = this.search();
+                if (search.length < 2)
+                    return 'hyoo/habhub/data/issues.json?';
+                this.$.$mol_wait_timeout(500);
+                const query = `label:HabHub is:open ${search}`;
+                return `https://api.github.com/search/issues?q=${encodeURIComponent(query)}&sort=updated&per_page=100`;
             }
             gists() {
                 return $mol_github_search_issues.item(this.uriSource()).items();
@@ -10877,7 +10869,6 @@ var $;
             }
             menu_rows() {
                 return this.gists()
-                    .filter($mol_match_text(this.search(), gist => [gist.title(), gist.text()]))
                     .map(gist => this.Menu_row(gist.uri()));
             }
             gist_title(uri) {
@@ -10909,6 +10900,9 @@ var $;
                 return $mol_state_session.value(`${this}.details_scroll_top(${current.uri()})`, next);
             }
         }
+        __decorate([
+            $mol_mem
+        ], $hyoo_habhub.prototype, "uriSource", null);
         __decorate([
             $mol_mem
         ], $hyoo_habhub.prototype, "gists", null);
@@ -23332,6 +23326,22 @@ var $;
     $.$mol_select = $mol_select;
 })($ || ($ = {}));
 //mol/select/-view.tree/select.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_match_text(query, values) {
+        const tags = query.toLowerCase().trim().split(/\s+/).filter(tag => tag);
+        if (tags.length === 0)
+            return () => true;
+        return (variant) => {
+            const vals = values(variant);
+            return tags.every(tag => vals.some(val => val.toLowerCase().indexOf(tag) >= 0));
+        };
+    }
+    $.$mol_match_text = $mol_match_text;
+})($ || ($ = {}));
+//mol/match/text.ts
 ;
 "use strict";
 var $;

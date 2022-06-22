@@ -2170,11 +2170,11 @@ declare namespace $ {
         block_content(id: any): readonly any[];
         uri_resolve(id: any): any;
         quote_text(id: any): string;
+        highlight(): string;
         list_text(id: any): string;
         header_level(id: any): string;
         header_arg(id: any): {};
         code_text(id: any): string;
-        highlight(): string;
         code_sidebar_showed(): boolean;
         table_head_cells(id: any): readonly any[];
         table_rows(id: any): readonly any[];
@@ -3154,10 +3154,6 @@ declare namespace $ {
         items(next?: null): $mol_github_issue[];
         resource_url(): string;
     }
-}
-
-declare namespace $ {
-    function $mol_match_text<Variant>(query: string, values: (variant: Variant) => string[]): (variant: Variant) => boolean;
 }
 
 declare namespace $ {
@@ -6217,6 +6213,10 @@ declare namespace $ {
         submit(event?: any): any;
         enabled(): boolean;
     }
+}
+
+declare namespace $ {
+    function $mol_match_text<Variant>(query: string, values: (variant: Variant) => string[]): (variant: Variant) => boolean;
 }
 
 declare namespace $ {
