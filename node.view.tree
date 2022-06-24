@@ -4680,6 +4680,90 @@ $hyoo_mol_bench $mol_book2_catalog
 		sub / <= Close_item_icon $mol_icon_cross
 	param \bench
 	spreads *
+		equals <= equals $hyoo_mol_bench_perf
+			title \Deep Equals
+			analysis_uri \https://t.me/mol_bench/31
+			Close <= Close_item
+			Common null
+			prefix \
+				\const make = i => {
+				\
+				\	const next = {
+				\		obj: {
+				\			x: new Map([[ el, /3/ ]]),
+				\			y: new Set([ new Date(1) ]),
+				\		},
+				\		val: [ true, 1, '2', i ],
+				\	}
+				\
+				\	next.val.push( next, next.obj, next.val )
+				\
+				\	return next
+				\}
+				\
+				\let el = document.createElement( 'div' )
+				\let base = make(-1)
+				\let res = true
+			postfix \
+				\$mol_assert_ok( res )
+				\$mol_assert_not( compare( make(1), make(2) ) )
+				\$mol_assert_ok( compare( make(1), make(1) ) )
+			prefixes /
+				\
+					\const compare = $mol_import.module(
+					\	'https://esm.sh/mol_compare_deep'
+					\).default.$mol_compare_deep
+				\
+					\const compare = $mol_import.module(
+					\	'https://esm.sh/fast-equals'
+					\).circularDeepEqual
+				\
+					\const compare = $mol_import.module(
+					\	'https://esm.sh/ramda'
+					\).equals
+				\
+					\const compare = $mol_import.module(
+					\	'https://esm.sh/deep-eql'
+					\).default
+				\
+					\const compare = $mol_import.module(
+					\	'https://esm.sh/lodash'
+					\).default.isEqual
+				\
+					\const compare = $mol_import.module(
+					\	'https://esm.sh/deep-equal'
+					\).default
+			sources /
+				\
+					\const next{#} = make({#})
+					\res &&= compare( base, next{#} )
+					\res ||= compare( base.obj, next{#}.obj )
+					\base = next{#}
+				\
+					\const next{#} = make({#})
+					\res &&= compare( base, next{#} )
+					\res ||= compare( base.obj, next{#}.obj )
+					\base = next{#}
+				\
+					\const next{#} = make({#})
+					\res &&= compare( base, next{#} )
+					\res ||= compare( base.obj, next{#}.obj )
+					\base = next{#}
+				\
+					\const next{#} = make({#})
+					\res &&= compare( base, next{#} )
+					\res ||= compare( base.obj, next{#}.obj )
+					\base = next{#}
+				\
+					\const next{#} = make({#})
+					\res &&= compare( base, next{#} )
+					\res ||= compare( base.obj, next{#}.obj )
+					\base = next{#}
+				\
+					\const next{#} = make({#})
+					\res &&= compare( base, next{#}, { strict: true } )
+					\res ||= compare( base.obj, next{#}.obj, { strict: true } )
+					\base = next{#}
 		changelog <= Chanelog $hyoo_mol_bench_visual
 			title \Long ChangeLog
 			analysis_uri \https://t.me/mol_bench/30

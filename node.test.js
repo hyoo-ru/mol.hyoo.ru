@@ -35046,6 +35046,7 @@ var $;
         }
         spreads() {
             return {
+                equals: this.equals(),
                 changelog: this.Chanelog(),
                 toxic: this.Toxic(),
                 markdown: this.Markdown(),
@@ -35064,6 +35065,32 @@ var $;
         }
         Close_item_icon() {
             const obj = new this.$.$mol_icon_cross();
+            return obj;
+        }
+        equals() {
+            const obj = new this.$.$hyoo_mol_bench_perf();
+            obj.title = () => "Deep Equals";
+            obj.analysis_uri = () => "https://t.me/mol_bench/31";
+            obj.Close = () => this.Close_item();
+            obj.Common = () => null;
+            obj.prefix = () => "const make = i => {\n\n\tconst next = {\n\t\tobj: {\n\t\t\tx: new Map([[ el, /3/ ]]),\n\t\t\ty: new Set([ new Date(1) ]),\n\t\t},\n\t\tval: [ true, 1, '2', i ],\n\t}\n\n\tnext.val.push( next, next.obj, next.val )\n\n\treturn next\n}\n\nlet el = document.createElement( 'div' )\nlet base = make(-1)\nlet res = true";
+            obj.postfix = () => "$mol_assert_ok( res )\n$mol_assert_not( compare( make(1), make(2) ) )\n$mol_assert_ok( compare( make(1), make(1) ) )";
+            obj.prefixes = () => [
+                "const compare = $mol_import.module(\n\t'https://esm.sh/mol_compare_deep'\n).default.$mol_compare_deep",
+                "const compare = $mol_import.module(\n\t'https://esm.sh/fast-equals'\n).circularDeepEqual",
+                "const compare = $mol_import.module(\n\t'https://esm.sh/ramda'\n).equals",
+                "const compare = $mol_import.module(\n\t'https://esm.sh/deep-eql'\n).default",
+                "const compare = $mol_import.module(\n\t'https://esm.sh/lodash'\n).default.isEqual",
+                "const compare = $mol_import.module(\n\t'https://esm.sh/deep-equal'\n).default"
+            ];
+            obj.sources = () => [
+                "const next{#} = make({#})\nres &&= compare( base, next{#} )\nres ||= compare( base.obj, next{#}.obj )\nbase = next{#}",
+                "const next{#} = make({#})\nres &&= compare( base, next{#} )\nres ||= compare( base.obj, next{#}.obj )\nbase = next{#}",
+                "const next{#} = make({#})\nres &&= compare( base, next{#} )\nres ||= compare( base.obj, next{#}.obj )\nbase = next{#}",
+                "const next{#} = make({#})\nres &&= compare( base, next{#} )\nres ||= compare( base.obj, next{#}.obj )\nbase = next{#}",
+                "const next{#} = make({#})\nres &&= compare( base, next{#} )\nres ||= compare( base.obj, next{#}.obj )\nbase = next{#}",
+                "const next{#} = make({#})\nres &&= compare( base, next{#}, { strict: true } )\nres ||= compare( base.obj, next{#}.obj, { strict: true } )\nbase = next{#}"
+            ];
             return obj;
         }
         Chanelog_mol() {
@@ -35305,6 +35332,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Close_item_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench.prototype, "equals", null);
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Chanelog_mol", null);

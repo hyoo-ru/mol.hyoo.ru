@@ -9111,6 +9111,7 @@ declare namespace $ {
         Close_item(): $$.$mol_link;
         param(): string;
         spreads(): {
+            equals: $hyoo_mol_bench_perf;
             changelog: $hyoo_mol_bench_visual;
             toxic: $hyoo_mol_bench_visual;
             markdown: $hyoo_mol_bench_perf;
@@ -9125,6 +9126,7 @@ declare namespace $ {
         };
         title(): string;
         Close_item_icon(): $mol_icon_cross;
+        equals(): $hyoo_mol_bench_perf;
         Chanelog_mol(): $$.$mol_embed_native;
         Changelog_vue(): $$.$mol_embed_native;
         Changelog_vanilla(): $$.$mol_embed_native;
