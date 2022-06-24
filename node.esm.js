@@ -34870,6 +34870,9 @@ var $;
                 }
             }
             _run_iteration = 0;
+            iterations_reset() {
+                this._run_iteration = 0;
+            }
             run() {
                 for (const [index, inner] of this.sources().entries()) {
                     this.measures_for(index, []);
@@ -34896,7 +34899,7 @@ var $;
                         `const case_${token} = iter_${token} => {\n ${inner.replace(/\{#\}/g, `iter_${token}`)} \n};`,
                     ].join(';\n'), `case_${token}({#})`, postfix);
                     this.measures_for(index, [cold, hot]);
-                    this._run_iteration = 0;
+                    this.iterations_reset();
                 }
             }
         }
@@ -34942,6 +34945,9 @@ var $;
         __decorate([
             $mol_action
         ], $hyoo_js_perf.prototype, "measure_safe", null);
+        __decorate([
+            $mol_action
+        ], $hyoo_js_perf.prototype, "iterations_reset", null);
         __decorate([
             $mol_action
         ], $hyoo_js_perf.prototype, "run", null);
