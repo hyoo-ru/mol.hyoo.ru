@@ -30066,7 +30066,7 @@ var $;
         ], 1),
         [{ tail: $.$mol_spell_ru_tail }],
         $mol_regexp.end,
-    ]);
+    ], { ignoreCase: true });
 })($ || ($ = {}));
 //mol/spell/ru/ru.ts
 ;
@@ -30075,7 +30075,7 @@ var $;
 (function ($) {
     $.$mol_spell_any = $mol_regexp.from({
         ru: $mol_spell_ru,
-    });
+    }, { ignoreCase: true });
 })($ || ($ = {}));
 //mol/spell/any/any.ts
 ;
