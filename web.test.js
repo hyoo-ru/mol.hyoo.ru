@@ -4775,6 +4775,36 @@ var $;
 var $;
 (function ($) {
     $mol_test({
+        'Word making'() {
+            $mol_assert_ok($mol_spell_ru.test('недоперепила'));
+            $mol_assert_ok($mol_spell_ru.test('пилоело'));
+        },
+        'Wrong words'() {
+            $mol_assert_not($mol_spell_ru.test('недперепила'));
+            $mol_assert_not($mol_spell_ru.test('недоbook'));
+        },
+    });
+})($ || ($ = {}));
+//mol/spell/ru/ru.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Known language'() {
+            $mol_assert_equal([...'пила'.matchAll($mol_spell_any)][0]?.groups.ru, 'пила');
+        },
+        'Unknown language'() {
+            $mol_assert_not([...'пиri'.matchAll($mol_spell_any)][0]?.groups);
+        },
+    });
+})($ || ($ = {}));
+//mol/spell/any/any.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
         'simple sort'() {
             const list = ['abc', 'ac', 'ab'];
             list.sort($mol_compare_text());
