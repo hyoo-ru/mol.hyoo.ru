@@ -7828,6 +7828,72 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_hotkey extends $mol_plugin {
+        event() {
+            return {
+                ...super.event(),
+                keydown: (event) => this.keydown(event)
+            };
+        }
+        key() {
+            return {};
+        }
+        mod_ctrl() {
+            return false;
+        }
+        mod_alt() {
+            return false;
+        }
+        mod_shift() {
+            return false;
+        }
+        keydown(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_hotkey.prototype, "keydown", null);
+    $.$mol_hotkey = $mol_hotkey;
+})($ || ($ = {}));
+//mol/hotkey/-view.tree/hotkey.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_hotkey extends $.$mol_hotkey {
+            key() {
+                return super.key();
+            }
+            keydown(event) {
+                if (!event)
+                    return;
+                if (event.defaultPrevented)
+                    return;
+                let name = $mol_keyboard_code[event.keyCode];
+                if (this.mod_ctrl() !== event.ctrlKey)
+                    return;
+                if (this.mod_alt() !== event.altKey)
+                    return;
+                if (this.mod_shift() !== event.shiftKey)
+                    return;
+                const handle = this.key()[name];
+                if (handle)
+                    handle(event);
+            }
+        }
+        $$.$mol_hotkey = $mol_hotkey;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/hotkey/hotkey.view.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_icon_plus extends $mol_icon {
         path() {
             return "M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z";
@@ -7994,72 +8060,6 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //mol/pop/pop.view.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_hotkey extends $mol_plugin {
-        event() {
-            return {
-                ...super.event(),
-                keydown: (event) => this.keydown(event)
-            };
-        }
-        key() {
-            return {};
-        }
-        mod_ctrl() {
-            return false;
-        }
-        mod_alt() {
-            return false;
-        }
-        mod_shift() {
-            return false;
-        }
-        keydown(event) {
-            if (event !== undefined)
-                return event;
-            return null;
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_hotkey.prototype, "keydown", null);
-    $.$mol_hotkey = $mol_hotkey;
-})($ || ($ = {}));
-//mol/hotkey/-view.tree/hotkey.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_hotkey extends $.$mol_hotkey {
-            key() {
-                return super.key();
-            }
-            keydown(event) {
-                if (!event)
-                    return;
-                if (event.defaultPrevented)
-                    return;
-                let name = $mol_keyboard_code[event.keyCode];
-                if (this.mod_ctrl() !== event.ctrlKey)
-                    return;
-                if (this.mod_alt() !== event.altKey)
-                    return;
-                if (this.mod_shift() !== event.shiftKey)
-                    return;
-                const handle = this.key()[name];
-                if (handle)
-                    handle(event);
-            }
-        }
-        $$.$mol_hotkey = $mol_hotkey;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-//mol/hotkey/hotkey.view.ts
 ;
 "use strict";
 var $;
@@ -9356,7 +9356,8 @@ var $;
     class $hyoo_habhub extends $mol_book2 {
         plugins() {
             return [
-                this.Theme()
+                this.Theme(),
+                this.Search_start()
             ];
         }
         Menu_page() {
@@ -9395,6 +9396,19 @@ var $;
         }
         Theme() {
             const obj = new this.$.$mol_theme_auto();
+            return obj;
+        }
+        search_start(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Search_start() {
+            const obj = new this.$.$mol_hotkey();
+            obj.key = () => ({
+                F: (next) => this.search_start(next)
+            });
+            obj.mod_ctrl = () => true;
             return obj;
         }
         menu_title() {
@@ -9541,6 +9555,12 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_habhub.prototype, "Theme", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_habhub.prototype, "search_start", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_habhub.prototype, "Search_start", null);
     __decorate([
         $mol_mem
     ], $hyoo_habhub.prototype, "Add_icon", null);
@@ -10825,12 +10845,18 @@ var $;
     var $$;
     (function ($$) {
         class $hyoo_habhub extends $.$hyoo_habhub {
+            search_start(event) {
+                const query = this.Search().Query();
+                query.dom_node().scrollIntoView({ behavior: 'smooth' });
+                new $mol_after_timeout(250, () => query.focused(true));
+                event?.preventDefault();
+            }
             uriSource() {
                 const search = this.search();
                 if (search.length < 2)
                     return 'hyoo/habhub/data/issues.json?';
                 this.$.$mol_wait_timeout(500);
-                const query = `label:HabHub is:open ${search}`;
+                const query = `label:HabHub is:open "${search}"`;
                 return `https://api.github.com/search/issues?q=${encodeURIComponent(query)}&sort=updated&per_page=100`;
             }
             gists() {
@@ -10849,14 +10875,14 @@ var $;
             gist_current() {
                 const uri = this.$.$mol_state_arg.value('gist');
                 if (uri)
-                    return this.gists_dict()[uri] ?? null;
+                    return $mol_github_issue.item(uri);
                 if (!this.owner())
                     return null;
                 if (!this.repo())
                     return null;
                 if (!this.article())
                     return null;
-                return this.gists_dict()[`https://api.github.com/repos/${this.owner()}/${this.repo()}/issues/${this.article()}`] ?? null;
+                return $mol_github_issue.item(`https://api.github.com/repos/${this.owner()}/${this.repo()}/issues/${this.article()}`);
             }
             details_link() {
                 return `https://github.com/${this.owner()}/${this.repo()}/issues/${this.article()}`;

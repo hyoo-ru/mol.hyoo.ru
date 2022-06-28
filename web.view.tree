@@ -455,6 +455,15 @@ $mol_text_span $mol_paragraph
 		^
 		mol_text_type <= type \
 
+$mol_hotkey $mol_plugin
+	event *
+		^
+		keydown?event <=> keydown?event null
+	key *
+	mod_ctrl false
+	mod_alt false
+	mod_shift false
+
 $mol_icon_plus $mol_icon path \M19,13H13V19H11V13H5V11H11V5H13V11H19V13Z
 
 $mol_pop $mol_view
@@ -479,15 +488,6 @@ $mol_pop_bubble $mol_scroll
 		^
 		mol_pop_align <= align \
 		tabindex 0
-
-$mol_hotkey $mol_plugin
-	event *
-		^
-		keydown?event <=> keydown?event null
-	key *
-	mod_ctrl false
-	mod_alt false
-	mod_shift false
 
 $mol_nav $mol_plugin
 	cycle?val false
@@ -651,6 +651,9 @@ $mol_chat $mol_link
 $hyoo_habhub $mol_book2
 	plugins /
 		<= Theme $mol_theme_auto
+		<= Search_start $mol_hotkey
+			key * F? <=> search_start? null
+			mod_ctrl true
 	Menu_page $mol_page
 		title <= menu_title @ \HabHub
 		tools <= tools_root /
