@@ -39406,55 +39406,55 @@ var $;
         View() {
             const obj = new this.$.$mol_link();
             obj.title = () => "view.tree ⇒ TS";
-            obj.uri = () => "#source=%24my_app%20%24mol_page%0A%09spec%20%5Chttps%3A%2F%2Fgithub.com%2Fhyoo-ru%2Fmam_mol%2Ftree%2Fmaster%2Fview%23viewtree%0A%09params%20*%20foo%20<%3D%20changable%3Fval%20%2Fstring%0A%09body%20%2F%0A%09%09<%3D%20Info%20%24my_widget%0A%09%09%09empty%20%40%20%5CNo%20content%0A%09%09%09value%3Fval%20<%3D>%20info_value%3Fval%20NaN%0A%09%09%09kids%20<%3D%20info_kids%20%2F%24mol_view_content%0A/pipeline=%24mol_tree2_from_string~%24mol_view_tree2_to_text~%24mol_tree2_text_to_string";
+            obj.uri = () => "#!source=%24my_app%20%24mol_page%0A%09spec%20%5Chttps%3A%2F%2Fgithub.com%2Fhyoo-ru%2Fmam_mol%2Ftree%2Fmaster%2Fview%23viewtree%0A%09params%20*%20foo%20<%3D%20changable%3Fval%20%2Fstring%0A%09body%20%2F%0A%09%09<%3D%20Info%20%24my_widget%0A%09%09%09empty%20%40%20%5CNo%20content%0A%09%09%09value%3Fval%20<%3D>%20info_value%3Fval%20NaN%0A%09%09%09kids%20<%3D%20info_kids%20%2F%24mol_view_content%0A/pipeline=%24mol_tree2_from_string~%24mol_view_tree2_to_text~%24mol_tree2_text_to_string";
             return obj;
         }
         Json() {
             const obj = new this.$.$mol_link();
             obj.title = () => "JSON ⇒ json.tree";
-            obj.uri = () => "#source=%7B%0A%09\"primitives\"%3A%20%5B%0A%09%09\"https%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fjson.tree\"%2C%0A%09%09true%2C%0A%09%09777%2C%0A%09%09null%0A%09%5D%2C%0A%09\"foo%5Cnbar\"%3A\"xxx%5Cnyyy\"%0A%7D/pipeline=%24mol_json_from_string~%24mol_tree2_from_json";
+            obj.uri = () => "#!source=%7B%0A%09\"primitives\"%3A%20%5B%0A%09%09\"https%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fjson.tree\"%2C%0A%09%09true%2C%0A%09%09777%2C%0A%09%09null%0A%09%5D%2C%0A%09\"foo%5Cnbar\"%3A\"xxx%5Cnyyy\"%0A%7D/pipeline=%24mol_json_from_string~%24mol_tree2_from_json";
             return obj;
         }
         Xml() {
             const obj = new this.$.$mol_link();
             obj.title = () => "xml.tree ⇒ XML";
-            obj.uri = () => "#source=!%20doctype%20html%0A%3F%20xml%20version%20%5C1.0%0A--%20%5Centry%20point%0Ahtml%0A%09meta%20%40%20charset%20%5Cutf-8%0A%09body%0A%09%09a%0A%09%09%09%40%20href%20%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fxml.tree%0A%09%09%09%5Cxml.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_xml_to_text~%24mol_tree2_text_to_string";
+            obj.uri = () => "#!source=!%20doctype%20html%0A%3F%20xml%20version%20%5C1.0%0A--%20%5Centry%20point%0Ahtml%0A%09meta%20%40%20charset%20%5Cutf-8%0A%09body%0A%09%09a%0A%09%09%09%40%20href%20%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fxml.tree%0A%09%09%09%5Cxml.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_xml_to_text~%24mol_tree2_text_to_string";
             return obj;
         }
         Js() {
             const obj = new this.$.$mol_link();
             obj.title = () => "js.tree ⇒ JS";
-            obj.uri = () => "#source=function%0A%09main%0A%09%28%2C%29%0A%09%09one%0A%09%09%3D%0A%09%09%09two%0A%09%09%092%0A%09%7B%3B%7D%0A%09%09const%0A%09%09%09%5B%2C%5D%0A%09%09%09%09self%0A%09%09%09%09samples%0A%09%09%09%5B%2C%5D%0A%09%09%09%09this%0A%09%09%09%09%7B%2C%7D%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%5Cvoid%0A%09%09%09%09%09%09%5B%2C%5D%0A%09%09%09%09%09%09%09null%0A%09%09%09%09%09%09%09undefined%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%5Cboolean%0A%09%09%09%09%09%09%5B%2C%5D%0A%09%09%09%09%09%09%09true%0A%09%09%09%09%09%09%09false%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09777%0A%09%09%09%09%09%09%5B%2C%5D%0A%09%09%09%09%09%09%091e%2B5%0A%09%09%09%09%09%09%09NaN%0A%09%09%09%09%09%09%09Infinity%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%28%29%0A%09%09%09%09%09%09%09Symbol%0A%09%09%09%09%09%09%09%5B%5D%20%5CtoStringTag%0A%09%09%09%09%09%09%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fjs.tree%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%5Ctemplate%0A%09%09%09%09%09%09%60%60%0A%09%09%09%09%09%09%09%5Cfoo%3D%20%0A%09%09%09%09%09%09%09foo%0A%09%09%09%09%09%09%09%5C!%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%5Cregexp%0A%09%09%09%09%09%09%2F.%2F%0A%09%09%09%09%09%09%09.source%20%5C%5Ct%0A%09%09%09%09%09%09%09.multiline%0A%09%09%09%09%09%09%09.ignoreCase%0A%09%09%09%09%09%09%09.global%0A%09%09%09%09%09...%20foo%0A%09%09%2B%3D%0A%09%09%09two%0A%09%09%09%28*%29%0A%09%09%09%092%0A%09%09%09%093%0A%09%09%09%09%28%29%0A%09%09%09%09%09Math%0A%09%09%09%09%09%5B%5D%20%5Csin%0A%09%09%09%09%09%28%2C%29%200%0A%09%09delete%20samples%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_js_to_text~%24mol_tree2_text_to_string";
+            obj.uri = () => "#!source=function%0A%09main%0A%09%28%2C%29%0A%09%09one%0A%09%09%3D%0A%09%09%09two%0A%09%09%092%0A%09%7B%3B%7D%0A%09%09const%0A%09%09%09%5B%2C%5D%0A%09%09%09%09self%0A%09%09%09%09samples%0A%09%09%09%5B%2C%5D%0A%09%09%09%09this%0A%09%09%09%09%7B%2C%7D%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%5Cvoid%0A%09%09%09%09%09%09%5B%2C%5D%0A%09%09%09%09%09%09%09null%0A%09%09%09%09%09%09%09undefined%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%5Cboolean%0A%09%09%09%09%09%09%5B%2C%5D%0A%09%09%09%09%09%09%09true%0A%09%09%09%09%09%09%09false%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09777%0A%09%09%09%09%09%09%5B%2C%5D%0A%09%09%09%09%09%09%091e%2B5%0A%09%09%09%09%09%09%09NaN%0A%09%09%09%09%09%09%09Infinity%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%28%29%0A%09%09%09%09%09%09%09Symbol%0A%09%09%09%09%09%09%09%5B%5D%20%5CtoStringTag%0A%09%09%09%09%09%09%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fjs.tree%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%5Ctemplate%0A%09%09%09%09%09%09%60%60%0A%09%09%09%09%09%09%09%5Cfoo%3D%20%0A%09%09%09%09%09%09%09foo%0A%09%09%09%09%09%09%09%5C!%0A%09%09%09%09%09%3A%0A%09%09%09%09%09%09%5Cregexp%0A%09%09%09%09%09%09%2F.%2F%0A%09%09%09%09%09%09%09.source%20%5C%5Ct%0A%09%09%09%09%09%09%09.multiline%0A%09%09%09%09%09%09%09.ignoreCase%0A%09%09%09%09%09%09%09.global%0A%09%09%09%09%09...%20foo%0A%09%09%2B%3D%0A%09%09%09two%0A%09%09%09%28*%29%0A%09%09%09%092%0A%09%09%09%093%0A%09%09%09%09%28%29%0A%09%09%09%09%09Math%0A%09%09%09%09%09%5B%5D%20%5Csin%0A%09%09%09%09%09%28%2C%29%200%0A%09%09delete%20samples%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_js_to_text~%24mol_tree2_text_to_string";
             return obj;
         }
         Wasm() {
             const obj = new this.$.$mol_link();
             obj.title = () => "wasm.tree ⇒ WASM";
-            obj.uri = () => "#source=custom%20xxx%0A%0Atype%20xxx%0A%09%3D>%20i32%0A%09%3D>%20i64%0A%09%3D>%20f32%0A%09<%3D%20f64%0A%0Aimport%20foo.bar%20func%20xxx%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_wasm_to_bin~%24mol_tree2_bin_to_bytes~%24mol_wasm_module";
+            obj.uri = () => "#!source=custom%20xxx%0A%0Atype%20xxx%0A%09%3D>%20i32%0A%09%3D>%20i64%0A%09%3D>%20f32%0A%09<%3D%20f64%0A%0Aimport%20foo.bar%20func%20xxx%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_wasm_to_bin~%24mol_tree2_bin_to_bytes~%24mol_wasm_module";
             return obj;
         }
         jack() {
             const obj = new this.$.$mol_link();
             obj.title = () => "jack.tree ⇒ JS eval";
-            obj.uri = () => "#pipeline=%24mol_tree2_from_string~%24mol_jack_transform~%24mol_tree2_js_to_text~%24mol_tree2_text_to_string~%24mol_js_eval/source=hack%20%2Bpipe%0A%09hack%20%7C>%20var%0A%09%09pipe%0A%09%09from%0A%09hack%20<%7C%20pipe%0A%09from%0A%0Ahack%20%2Bmath%20%2Bpipe%0A%09hack%20square%20%28**%29%0A%09%09<%7C%0A%09%092%0A%09hack%20next%20%28%2B%29%0A%09%09<%7C%0A%09%091%0A%09from%0A%0Ahack%20%2Bdebug%0A%09hack%20log%20%28%29%0A%09%09console%0A%09%09%5B%5D%20%5Clog%0A%09%09%28%2C%29%20from%0A%09from%0A%0A%2Bmath%20%2Bdebug%20%7B%3B%7D%0A%09%7C>%203%0A%09%7C>%20square%0A%09%7C>%20next%0A%09log%20<%7C%0A%09return%20<%7C%0A";
+            obj.uri = () => "#!pipeline=%24mol_tree2_from_string~%24mol_jack_transform~%24mol_tree2_js_to_text~%24mol_tree2_text_to_string~%24mol_js_eval/source=hack%20%2Bpipe%0A%09hack%20%7C>%20var%0A%09%09pipe%0A%09%09from%0A%09hack%20<%7C%20pipe%0A%09from%0A%0Ahack%20%2Bmath%20%2Bpipe%0A%09hack%20square%20%28**%29%0A%09%09<%7C%0A%09%092%0A%09hack%20next%20%28%2B%29%0A%09%09<%7C%0A%09%091%0A%09from%0A%0Ahack%20%2Bdebug%0A%09hack%20log%20%28%29%0A%09%09console%0A%09%09%5B%5D%20%5Clog%0A%09%09%28%2C%29%20from%0A%09from%0A%0A%2Bmath%20%2Bdebug%20%7B%3B%7D%0A%09%7C>%203%0A%09%7C>%20square%0A%09%7C>%20next%0A%09log%20<%7C%0A%09return%20<%7C%0A";
             return obj;
         }
         Mt() {
             const obj = new this.$.$mol_link();
             obj.title = () => "MarkedText ⇒ JS + SM";
-            obj.uri = () => "#source=%5C%5C**MarkedText**%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2FHabHub%2Fissues%2F39%5C%5C/pipeline=%24hyoo_marked_tree_from_line~%24hyoo_marked_tree_to_js~%24mol_tree2_js_to_text~%24mol_tree2_text_to_sourcemap_vis";
+            obj.uri = () => "#!source=%5C%5C**MarkedText**%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2FHabHub%2Fissues%2F39%5C%5C/pipeline=%24hyoo_marked_tree_from_line~%24hyoo_marked_tree_to_js~%24mol_tree2_js_to_text~%24mol_tree2_text_to_sourcemap_vis";
             return obj;
         }
         Grammar() {
             const obj = new this.$.$mol_link();
             obj.title = () => "grammar.tree check";
-            obj.uri = () => "#source=%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fgrammar.tree%0A%0Atree%20.optional%20.list_of%20line%0A%0Aline%20.sequence%0A%09.optional%20indent%0A%09.optional%20nodes%0A%09new_line%0A%0Anodes%20.sequence%0A%09.optional%20.list_of%20struct%0A%09.optional%20data%0A%09.with_delimiter%20space%0A%0Astruct%20.list_of%20.byte%0A%09.except%20special%0A%0Adata%20.sequence%0A%09data_prefix%0A%09.optional%20.list_of%20.byte%0A%09%09.except%20new_line%0A%0Aspecial%20.any_of%0A%09new_line%0A%09data_prefix%0A%09indent%0A%09space%0A%0Anew_line%20.byte%20%5C0A%0Aindent%20.list_of%20.byte%20%5C09%0Adata_prefix%20.byte%20%5C5C%0Aspace%20.byte%20%5C20%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_grammar_check";
+            obj.uri = () => "#!source=%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fgrammar.tree%0A%0Atree%20.optional%20.list_of%20line%0A%0Aline%20.sequence%0A%09.optional%20indent%0A%09.optional%20nodes%0A%09new_line%0A%0Anodes%20.sequence%0A%09.optional%20.list_of%20struct%0A%09.optional%20data%0A%09.with_delimiter%20space%0A%0Astruct%20.list_of%20.byte%0A%09.except%20special%0A%0Adata%20.sequence%0A%09data_prefix%0A%09.optional%20.list_of%20.byte%0A%09%09.except%20new_line%0A%0Aspecial%20.any_of%0A%09new_line%0A%09data_prefix%0A%09indent%0A%09space%0A%0Anew_line%20.byte%20%5C0A%0Aindent%20.list_of%20.byte%20%5C09%0Adata_prefix%20.byte%20%5C5C%0Aspace%20.byte%20%5C20%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_grammar_check";
             return obj;
         }
         Span() {
             const obj = new this.$.$mol_link();
             obj.title = () => "span.tree imprint/reuse";
-            obj.uri = () => "#source=foo%0A%09bar%0A%09%09%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fspan.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_span_imprint~%24mol_tree2_span_reuse~%24mol_tree2_span_imprint";
+            obj.uri = () => "#!source=foo%0A%09bar%0A%09%09%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fspan.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_span_imprint~%24mol_tree2_span_reuse~%24mol_tree2_span_imprint";
             return obj;
         }
         Presets_list() {
