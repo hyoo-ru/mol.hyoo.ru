@@ -1552,20 +1552,46 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_after_timeout extends $mol_object2 {
+        delay;
+        task;
+        id;
+        constructor(delay, task) {
+            super();
+            this.delay = delay;
+            this.task = task;
+            this.id = setTimeout(task, delay);
+        }
+        destructor() {
+            clearTimeout(this.id);
+        }
+    }
+    $.$mol_after_timeout = $mol_after_timeout;
+})($ || ($ = {}));
+//mol/after/timeout/timeout.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_view_selection extends $mol_object {
-        static focused(next) {
+        static focused(next, notify) {
             const parents = [];
             let element = next?.[0] ?? $mol_dom_context.document.activeElement;
             while (element) {
                 parents.push(element);
                 element = element.parentNode;
             }
-            new $mol_after_tick(() => {
-                const element = this.focused()[0];
-                if (element)
-                    element.focus();
-                else
-                    $mol_dom_context.blur();
+            if (!next || notify)
+                return parents;
+            new $mol_after_frame(() => {
+                this.focused()?.[0].scrollIntoView({ behavior: 'smooth' });
+                new $mol_after_timeout(250, () => {
+                    const element = this.focused()[0];
+                    if (element)
+                        element.focus();
+                    else
+                        $mol_dom_context.blur();
+                });
             });
             return parents;
         }
@@ -1592,7 +1618,7 @@ var $;
 (function ($) {
     if ($mol_dom_context.document) {
         $mol_dom_context.document.documentElement.addEventListener('focus', (event) => {
-            $mol_view_selection.focused($mol_maybe($mol_dom_context.document.activeElement));
+            $mol_view_selection.focused($mol_maybe($mol_dom_context.document.activeElement), 'notify');
         }, true);
     }
 })($ || ($ = {}));
@@ -2683,10 +2709,7 @@ var $;
                         break;
                     if (p === n)
                         continue;
-                    new $mol_after_frame(() => {
-                        n.dom_node()['focus']();
-                        n.dom_node().scrollIntoView({ behavior: 'smooth' });
-                    });
+                    new $mol_after_tick(() => n.focused(true));
                     break;
                 }
                 return next;
@@ -2723,27 +2746,6 @@ var $;
     $.$mol_svg = $mol_svg;
 })($ || ($ = {}));
 //mol/svg/-view.tree/svg.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_after_timeout extends $mol_object2 {
-        delay;
-        task;
-        id;
-        constructor(delay, task) {
-            super();
-            this.delay = delay;
-            this.task = task;
-            this.id = setTimeout(task, delay);
-        }
-        destructor() {
-            clearTimeout(this.id);
-        }
-    }
-    $.$mol_after_timeout = $mol_after_timeout;
-})($ || ($ = {}));
-//mol/after/timeout/timeout.ts
 ;
 "use strict";
 var $;
@@ -10617,9 +10619,7 @@ var $;
     (function ($$) {
         class $hyoo_habhub extends $.$hyoo_habhub {
             search_start(event) {
-                const query = this.Search().Query();
-                query.dom_node().scrollIntoView({ behavior: 'smooth' });
-                new $mol_after_timeout(250, () => query.focused(true));
+                this.Search().Query().focused(true);
                 event?.preventDefault();
             }
             uriSource() {
