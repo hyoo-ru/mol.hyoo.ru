@@ -1552,27 +1552,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_after_timeout extends $mol_object2 {
-        delay;
-        task;
-        id;
-        constructor(delay, task) {
-            super();
-            this.delay = delay;
-            this.task = task;
-            this.id = setTimeout(task, delay);
-        }
-        destructor() {
-            clearTimeout(this.id);
-        }
-    }
-    $.$mol_after_timeout = $mol_after_timeout;
-})($ || ($ = {}));
-//mol/after/timeout/timeout.ts
-;
-"use strict";
-var $;
-(function ($) {
     class $mol_view_selection extends $mol_object {
         static focused(next, notify) {
             const parents = [];
@@ -1583,15 +1562,12 @@ var $;
             }
             if (!next || notify)
                 return parents;
-            new $mol_after_frame(() => {
-                this.focused()?.[0].scrollIntoView({ behavior: 'smooth' });
-                new $mol_after_timeout(250, () => {
-                    const element = this.focused()[0];
-                    if (element)
-                        element.focus();
-                    else
-                        $mol_dom_context.blur();
-                });
+            new $mol_after_tick(() => {
+                const element = this.focused()[0];
+                if (element)
+                    element.focus();
+                else
+                    $mol_dom_context.blur();
             });
             return parents;
         }
@@ -1906,6 +1882,51 @@ var $;
     $.$mol_func_name_from = $mol_func_name_from;
 })($ || ($ = {}));
 //mol/func/name/name.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_after_timeout extends $mol_object2 {
+        delay;
+        task;
+        id;
+        constructor(delay, task) {
+            super();
+            this.delay = delay;
+            this.task = task;
+            this.id = setTimeout(task, delay);
+        }
+        destructor() {
+            clearTimeout(this.id);
+        }
+    }
+    $.$mol_after_timeout = $mol_after_timeout;
+})($ || ($ = {}));
+//mol/after/timeout/timeout.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_after_work extends $mol_object2 {
+        delay;
+        task;
+        id;
+        constructor(delay, task) {
+            super();
+            this.delay = delay;
+            this.task = task;
+            this.id = requestIdleCallback(task, { timeout: delay });
+        }
+        destructor() {
+            cancelIdleCallback(this.id);
+        }
+    }
+    $.$mol_after_work = $mol_after_work;
+    if (typeof requestIdleCallback !== 'function') {
+        $.$mol_after_work = $mol_after_timeout;
+    }
+})($ || ($ = {}));
+//mol/after/work/work.ts
 ;
 "use strict";
 //mol/type/keys/extract/extract.ts
@@ -2226,6 +2247,12 @@ var $;
             this.force_render(new Set(path));
             $mol_wire_fiber.sync();
             view.dom_node().scrollIntoView({ block: align });
+        }
+        bring() {
+            new $mol_after_work(16, () => {
+                this.dom_node().scrollIntoView({ behavior: 'smooth' });
+                new $mol_after_timeout(400, () => this.focused(true));
+            });
         }
     }
     __decorate([
@@ -2709,10 +2736,17 @@ var $;
                         break;
                     if (p === n)
                         continue;
-                    new $mol_after_tick(() => n.focused(true));
+                    n.bring();
                     break;
                 }
                 return next;
+            }
+            bring() {
+                const pages = this.pages();
+                if (pages.length)
+                    pages[pages.length - 1].bring();
+                else
+                    super.bring();
             }
         }
         __decorate([
@@ -3748,7 +3782,7 @@ var $;
             pages() {
                 return [
                     this.Menu(),
-                    ...this.spread() != null ? [this.Spread()] : [],
+                    ...$mol_maybe(this.Spread()),
                 ];
             }
             links() {
@@ -10608,7 +10642,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/habhub/habhub.view.css", "[hyoo_habhub] {\n\tmargin: 0;\n}\n\n[hyoo_habhub_created] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_habhub_search] {\n\tflex: none;\n\talign-self: stretch;\n}\n\n[hyoo_habhub_menu_page_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_habhub_menu_page] {\n\tflex: 0 0 20rem;\n\twidth: 100%;\n}\n\n[hyoo_habhub_menu] {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_habhub_placeholder] {\n\t/* flex: 1 1 600px; */\n}\n\n[hyoo_habhub_details] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_habhub_details_body] {\n\tpadding: 0;\n}\n\n[hyoo_habhub_details_chat] {\n\tbox-shadow: none;\n}\n\n[hyoo_habhub_datails_text] {\n\tpadding: var(--mol_gap_block);\n}\n");
+    $mol_style_attach("hyoo/habhub/habhub.view.css", "[hyoo_habhub] {\n\tmargin: 0;\n}\n\n[hyoo_habhub_created] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_habhub_search] {\n\tflex: none;\n\talign-self: stretch;\n}\n\n[hyoo_habhub_menu_page_body] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_habhub_menu_page] {\n\tflex: 0 0 25rem;\n\twidth: 100%;\n}\n\n[hyoo_habhub_menu] {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_habhub_placeholder] {\n\t/* flex: 1 1 600px; */\n}\n\n[hyoo_habhub_details] {\n\tflex: 1000 0 60rem;\n}\n\n[hyoo_habhub_details_body] {\n\tpadding: 0;\n}\n\n[hyoo_habhub_details_chat] {\n\tbox-shadow: none;\n}\n\n[hyoo_habhub_datails_text] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //hyoo/habhub/-css/habhub.view.css.ts
 ;
@@ -10619,8 +10653,8 @@ var $;
     (function ($$) {
         class $hyoo_habhub extends $.$hyoo_habhub {
             search_start(event) {
-                this.Search().Query().focused(true);
                 event?.preventDefault();
+                this.Search().Query().bring();
             }
             uriSource() {
                 const search = this.search();
@@ -33258,8 +33292,7 @@ var $;
                 return this.Widget(name).title();
             }
             search_start(event) {
-                const query = this.Menu().Filter().Query();
-                query.focused(true);
+                this.Menu().Filter().Query().bring();
                 event?.preventDefault();
             }
             filter() {
@@ -34605,30 +34638,6 @@ var $;
     $.$hyoo_js_perf_case_result = $hyoo_js_perf_case_result;
 })($ || ($ = {}));
 //hyoo/js/perf/-view.tree/perf.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_after_work extends $mol_object2 {
-        delay;
-        task;
-        id;
-        constructor(delay, task) {
-            super();
-            this.delay = delay;
-            this.task = task;
-            this.id = requestIdleCallback(task, { timeout: delay });
-        }
-        destructor() {
-            cancelIdleCallback(this.id);
-        }
-    }
-    $.$mol_after_work = $mol_after_work;
-    if (typeof requestIdleCallback !== 'function') {
-        $.$mol_after_work = $mol_after_timeout;
-    }
-})($ || ($ = {}));
-//mol/after/work/work.ts
 ;
 "use strict";
 var $;
