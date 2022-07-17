@@ -5280,6 +5280,8 @@ $hyoo_mol $mol_book2_catalog
 			tools_root / <= Spread_close
 		slides <= Slides $hyoo_slides
 			title @ \Slides
+			Open_listener null
+			Lights null
 			menu_tools / <= Spread_close
 		apps <= Apps $hyoo_apps
 			title @ \Applications

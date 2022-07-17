@@ -39959,6 +39959,8 @@ var $;
         Slides() {
             const obj = new this.$.$hyoo_slides();
             obj.title = () => this.$.$mol_locale.text('$hyoo_mol_Slides_title');
+            obj.Open_listener = () => null;
+            obj.Lights = () => null;
             obj.menu_tools = () => [
                 this.Spread_close()
             ];
