@@ -3836,6 +3836,11 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            page: {
+                target: string;
+                title: string;
+                uri: string;
+            };
             slides: {
                 target: string;
                 title: string;

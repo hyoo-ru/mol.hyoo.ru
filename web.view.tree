@@ -1049,7 +1049,11 @@ $hyoo_apps $mol_book2
 		notes *
 			target \release
 			title @ \Private Notes
-			uri \https://notes.hyoo.ru/#
+			uri \https://notes.hyoo.ru/
+		page *
+			target \release
+			title @ \Wiki Pages
+			uri \https://page.hyoo.ru/
 		slides *
 			target \release
 			title @ \Slideshow
