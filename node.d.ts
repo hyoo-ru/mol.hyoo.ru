@@ -4048,6 +4048,8 @@ declare namespace $.$$ {
     }
 }
 
+declare let $hyoo_crowd_test: string;
+
 declare namespace $ {
     type $mol_int62_string = `${string}_${string}`;
     type $mol_int62_pair = {
