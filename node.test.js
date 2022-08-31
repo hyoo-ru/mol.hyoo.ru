@@ -13913,10 +13913,6 @@ var $;
 //hyoo/apps/apps.view.ts
 ;
 "use strict";
-let $hyoo_crowd_test = "1";
-//hyoo/crowd/-meta.tree/crowd.meta.tree.ts
-;
-"use strict";
 var $;
 (function ($) {
     $.$mol_int62_max = (2 ** 30) - 1;
