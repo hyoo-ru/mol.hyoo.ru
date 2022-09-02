@@ -13533,7 +13533,7 @@ var $;
     }
     $.$hyoo_crowd_node = $hyoo_crowd_node;
 })($ || ($ = {}));
-//hyoo/crowd/node/node.tsx
+//hyoo/crowd/node/node.ts
 ;
 "use strict";
 var $;
@@ -14369,7 +14369,7 @@ var $;
                 this._knights.set(peer.id, peer);
         }
         lands_pub = new $mol_wire_pub;
-        _lands = new $mol_dict();
+        _lands = new Map();
         get lands() {
             this.lands_pub.promote();
             return this._lands;
@@ -14389,7 +14389,7 @@ var $;
         }
         land_sync(id) {
             const land = this.land(id);
-            this.land_init(id);
+            this.land_init(land);
             return land;
         }
         home() {
@@ -14417,25 +14417,26 @@ var $;
             if (!units.length)
                 return [];
             for (const unit of units) {
-                if (!unit.bin) {
-                    const bin = $hyoo_crowd_unit_bin.from_unit(unit);
-                    let sign = this._signs.get(unit);
-                    if (!sign) {
-                        const knight = this._knights.get(unit.auth);
-                        sign = new Uint8Array(await knight.key_private.sign(bin.sens()));
-                    }
-                    bin.sign(sign);
-                    unit.bin = bin;
-                    this._signs.set(unit, sign);
+                if (unit.bin)
+                    continue;
+                const bin = $hyoo_crowd_unit_bin.from_unit(unit);
+                let sign = this._signs.get(unit);
+                if (!sign) {
+                    const knight = this._knights.get(unit.auth);
+                    sign = new Uint8Array(await knight.key_private.sign(bin.sens()));
                 }
+                bin.sign(sign);
+                unit.bin = bin;
+                this._signs.set(unit, sign);
             }
             return units;
         }
-        async *delta_batch(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
+        async delta_batch(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
             const units = await this.delta_land(land, clocks);
             let size = 0;
             const bins = [];
-            function pack() {
+            const packs = [];
+            function wrap() {
                 const batch = new Uint8Array(size);
                 let offset = 0;
                 for (const bin of bins) {
@@ -14444,21 +14445,24 @@ var $;
                 }
                 size = 0;
                 bins.length = 0;
-                return batch;
+                packs.push(batch);
             }
             for (const unit of units) {
                 const bin = unit.bin;
                 bins.push(bin);
                 size += bin.byteLength;
                 if (size >= 2 ** 15)
-                    yield pack();
+                    wrap();
             }
             if (size)
-                yield pack();
+                wrap();
+            return packs;
         }
         async *delta(clocks = new Map()) {
             for (const land of this.lands.values()) {
-                yield* this.delta_batch(land, clocks.get(land.id()));
+                for (const pack of await this.delta_batch(land, clocks.get(land.id()))) {
+                    yield pack;
+                }
             }
         }
         async apply(delta) {
@@ -14590,6 +14594,9 @@ var $;
     class $hyoo_crowd_land extends $mol_object {
         id() {
             return $mol_int62_to_string($mol_int62_random());
+        }
+        toJSON() {
+            return this.id();
         }
         peer() {
             return this.world().peer;
@@ -14746,6 +14753,8 @@ var $;
         level(peer, next) {
             if (next)
                 this.join();
+            else
+                this.pub.promote();
             const level_id = `${this.id()}/${peer}`;
             const prev = this._unit_all.get(level_id)?.level()
                 ?? this._unit_all.get(`${this.id()}/0_0`)?.level()
@@ -14801,6 +14810,9 @@ var $;
             const list = this.unit_list(head);
             const prev = seat ? list[seat - 1].self : '0_0';
             return this.move(unit, head, prev);
+        }
+        [$mol_dev_format_head]() {
+            return $mol_dev_format_native(this);
         }
     }
     __decorate([

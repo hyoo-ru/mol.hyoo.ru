@@ -4314,9 +4314,9 @@ declare namespace $ {
         readonly peer?: $hyoo_crowd_peer | undefined;
         constructor(peer?: $hyoo_crowd_peer | undefined);
         readonly lands_pub: $mol_wire_pub;
-        _lands: $mol_dict<`${string}_${string}`, $hyoo_crowd_land>;
-        get lands(): $mol_dict<`${string}_${string}`, $hyoo_crowd_land>;
-        land_init(id: $mol_int62_string): void;
+        _lands: Map<`${string}_${string}`, $hyoo_crowd_land>;
+        get lands(): Map<`${string}_${string}`, $hyoo_crowd_land>;
+        land_init(id: $hyoo_crowd_land): void;
         land(id: $mol_int62_string): $hyoo_crowd_land;
         land_sync(id: $mol_int62_string): $hyoo_crowd_land;
         home(): $hyoo_crowd_land;
@@ -4324,7 +4324,7 @@ declare namespace $ {
         _signs: WeakMap<$hyoo_crowd_unit, Uint8Array>;
         grab(king_level?: $hyoo_crowd_peer_level, base_level?: $hyoo_crowd_peer_level): Promise<$hyoo_crowd_land>;
         delta_land(land: $hyoo_crowd_land, clocks?: readonly [$hyoo_crowd_clock, $hyoo_crowd_clock]): Promise<readonly $hyoo_crowd_unit[]>;
-        delta_batch(land: $hyoo_crowd_land, clocks?: readonly [$hyoo_crowd_clock, $hyoo_crowd_clock]): AsyncGenerator<Uint8Array, void, unknown>;
+        delta_batch(land: $hyoo_crowd_land, clocks?: readonly [$hyoo_crowd_clock, $hyoo_crowd_clock]): Promise<Uint8Array[]>;
         delta(clocks?: Map<`${string}_${string}`, readonly [$hyoo_crowd_clock, $hyoo_crowd_clock]>): AsyncGenerator<Uint8Array, void, unknown>;
         apply(delta: Uint8Array): Promise<{
             allow: $hyoo_crowd_unit[];
@@ -4346,6 +4346,7 @@ declare namespace $ {
 declare namespace $ {
     class $hyoo_crowd_land extends $mol_object {
         id(): `${string}_${string}`;
+        toJSON(): `${string}_${string}`;
         peer(): $hyoo_crowd_peer;
         world(): $hyoo_crowd_world;
         get clock_auth(): $hyoo_crowd_clock;
