@@ -3997,7 +3997,7 @@ declare namespace $ {
         readonly head: $mol_int62_string;
         constructor(land: $hyoo_crowd_land, head: $mol_int62_string);
         static for<Node extends typeof $hyoo_crowd_node>(this: Node, land: $hyoo_crowd_land, head: $mol_int62_string): InstanceType<Node>;
-        world(): $hyoo_crowd_world;
+        world(): $hyoo_crowd_world | null;
         as<Node extends typeof $hyoo_crowd_node>(Node: Node): InstanceType<Node>;
         units(): readonly $hyoo_crowd_unit[];
         nodes<Node extends typeof $hyoo_crowd_node>(Node: Node): InstanceType<Node>[];
@@ -4018,6 +4018,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    let $hyoo_crowd_tokenizer: RegExp;
+}
+
+declare namespace $ {
     class $hyoo_crowd_list extends $hyoo_crowd_node {
         list(next?: readonly unknown[]): readonly unknown[];
         set(next?: ReadonlySet<string | number | boolean | null>): Set<unknown>;
@@ -4028,51 +4032,6 @@ declare namespace $ {
         add(val: string | number | boolean | null): void;
         drop(val: string | number | boolean | null): void;
     }
-}
-
-declare namespace $ {
-    let $hyoo_crowd_tokenizer: RegExp;
-}
-
-declare namespace $ {
-    type $mol_data_value<Input = any, Output = any> = (val: Input) => Output;
-}
-
-declare namespace $ {
-    function $mol_data_setup<Value extends $mol_data_value, Config = never>(value: Value, config: Config): Value & {
-        config: Config;
-        Value: ReturnType<Value>;
-    };
-}
-
-declare namespace $ {
-    function $mol_diff_path<Item>(...paths: Item[][]): {
-        prefix: Item[];
-        suffix: Item[][];
-    };
-}
-
-declare namespace $ {
-    class $mol_error_mix extends Error {
-        errors: Error[];
-        constructor(message: string, ...errors: Error[]);
-        toJSON(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_data_error extends $mol_error_mix {
-    }
-}
-
-declare namespace $ {
-    function $mol_data_enum<Dict extends Record<number | string, number | string>>(name: string, dict: Dict): ((value: Dict[keyof Dict]) => Dict[keyof Dict]) & {
-        config: {
-            name: string;
-            dict: Dict;
-        };
-        Value: Dict[keyof Dict];
-    };
 }
 
 declare namespace $ {
@@ -4133,6 +4092,70 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    let $mol_dict_key: typeof $mol_key;
+    class $mol_dict<Key, Value> extends Map<Key, Value> {
+        get(key: Key): Value | undefined;
+        has(key: Key): boolean;
+        set(key: Key, value: Value): this;
+        delete(key: Key): boolean;
+        forEach(back: (value: Value, key: Key, dict: Map<Key, Value>) => void, context?: any): void;
+        keys(): {
+            [Symbol.iterator](): any;
+            next(): IteratorReturnResult<any> | IteratorYieldResult<Key>;
+        };
+        entries(): {
+            [Symbol.iterator](): any;
+            next(): IteratorReturnResult<any> | IteratorYieldResult<[Key, Value]>;
+        };
+        [Symbol.iterator](): {
+            [Symbol.iterator](): any;
+            next(): IteratorReturnResult<any> | IteratorYieldResult<[Key, Value]>;
+        };
+    }
+}
+
+declare namespace $ {
+    type $mol_data_value<Input = any, Output = any> = (val: Input) => Output;
+}
+
+declare namespace $ {
+    function $mol_data_setup<Value extends $mol_data_value, Config = never>(value: Value, config: Config): Value & {
+        config: Config;
+        Value: ReturnType<Value>;
+    };
+}
+
+declare namespace $ {
+    function $mol_diff_path<Item>(...paths: Item[][]): {
+        prefix: Item[];
+        suffix: Item[][];
+    };
+}
+
+declare namespace $ {
+    class $mol_error_mix extends Error {
+        errors: Error[];
+        constructor(message: string, ...errors: Error[]);
+        toJSON(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_data_error extends $mol_error_mix {
+    }
+}
+
+declare namespace $ {
+    function $mol_data_enum<Dict extends Record<number | string, number | string>>(name: string, dict: Dict): ((value: Dict[keyof Dict]) => Dict[keyof Dict]) & {
+        config: {
+            name: string;
+            dict: Dict;
+        };
+        Value: Dict[keyof Dict];
+    };
+}
+
+declare namespace $ {
     type $hyoo_crowd_unit_id = `${$mol_int62_string}/${$mol_int62_string}`;
     enum $hyoo_crowd_unit_kind {
         grab = 0,
@@ -4170,39 +4193,6 @@ declare namespace $ {
         unit(): $hyoo_crowd_unit;
     }
     function $hyoo_crowd_unit_compare(left: $hyoo_crowd_unit, right: $hyoo_crowd_unit): number;
-}
-
-declare namespace $ {
-    class $hyoo_crowd_reg extends $hyoo_crowd_node {
-        value(next?: unknown): {} | null;
-        str(next?: string): string;
-        numb(next?: number): number;
-        bool(next?: boolean): boolean;
-        yoke(king_level: $hyoo_crowd_peer_level, base_level: $hyoo_crowd_peer_level): $hyoo_crowd_land | null;
-    }
-}
-
-declare namespace $ {
-    let $mol_dict_key: typeof $mol_key;
-    class $mol_dict<Key, Value> extends Map<Key, Value> {
-        get(key: Key): Value | undefined;
-        has(key: Key): boolean;
-        set(key: Key, value: Value): this;
-        delete(key: Key): boolean;
-        forEach(back: (value: Value, key: Key, dict: Map<Key, Value>) => void, context?: any): void;
-        keys(): {
-            [Symbol.iterator](): any;
-            next(): IteratorReturnResult<any> | IteratorYieldResult<Key>;
-        };
-        entries(): {
-            [Symbol.iterator](): any;
-            next(): IteratorReturnResult<any> | IteratorYieldResult<[Key, Value]>;
-        };
-        [Symbol.iterator](): {
-            [Symbol.iterator](): any;
-            next(): IteratorReturnResult<any> | IteratorYieldResult<[Key, Value]>;
-        };
-    }
 }
 
 declare namespace $ {
@@ -4261,6 +4251,16 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $hyoo_crowd_reg extends $hyoo_crowd_node {
+        value(next?: unknown): {} | null;
+        str(next?: string): string;
+        numb(next?: number): number;
+        bool(next?: boolean): boolean;
+        yoke(king_level: $hyoo_crowd_peer_level, base_level: $hyoo_crowd_peer_level): $hyoo_crowd_land | null;
+    }
+}
+
+declare namespace $ {
     class $hyoo_crowd_struct extends $hyoo_crowd_node {
         sub<Node extends typeof $hyoo_crowd_node>(key: string, Node: Node): InstanceType<Node>;
         yoke<Node extends typeof $hyoo_crowd_node>(key: string, Node: Node, king_level: $hyoo_crowd_peer_level, base_level: $hyoo_crowd_peer_level): InstanceType<Node> | null;
@@ -4272,7 +4272,8 @@ declare namespace $ {
         id(): `${string}_${string}`;
         toJSON(): `${string}_${string}`;
         peer(): $hyoo_crowd_peer;
-        world(): $hyoo_crowd_world;
+        peer_id(): `${string}_${string}`;
+        world(): $hyoo_crowd_world | null;
         get clock_auth(): $hyoo_crowd_clock;
         get clock_data(): $hyoo_crowd_clock;
         get clocks(): readonly [$hyoo_crowd_clock, $hyoo_crowd_clock];
@@ -4289,6 +4290,7 @@ declare namespace $ {
             dirty: boolean;
         };
         unit_alives(head: $mol_int62_string): readonly $hyoo_crowd_unit[];
+        node<Node extends typeof $hyoo_crowd_node>(head: $mol_int62_string, Node: Node): InstanceType<Node>;
         chief: $hyoo_crowd_struct;
         id_new(): $mol_int62_string;
         fork(auth: $hyoo_crowd_peer): $hyoo_crowd_land;
@@ -4303,6 +4305,7 @@ declare namespace $ {
         level(peer: $mol_int62_string, next?: $hyoo_crowd_peer_level): $hyoo_crowd_peer_level;
         lords(): readonly `${string}_${string}`[];
         authors(): Set<`${string}_${string}`>;
+        selection(peer: $mol_int62_string): $hyoo_crowd_reg;
         put(head: $mol_int62_string, self: $mol_int62_string, prev: $mol_int62_string, data: unknown): $hyoo_crowd_unit;
         wipe(unit: $hyoo_crowd_unit): $hyoo_crowd_unit;
         move(unit: $hyoo_crowd_unit, head: $mol_int62_string, prev: $mol_int62_string): $hyoo_crowd_unit;
@@ -4313,15 +4316,10 @@ declare namespace $ {
 declare namespace $ {
     class $hyoo_crowd_text extends $hyoo_crowd_node {
         text(next?: string): string;
+        str(next?: string): string;
         write(next: string, str_from?: number, str_to?: number): this;
-        point_by_offset(offset: number): {
-            self: `${string}_${string}`;
-            offset: number;
-        };
-        offset_by_point(point: {
-            self: $mol_int62_string;
-            offset: number;
-        }): number;
+        point_by_offset(offset: number): readonly [$mol_int62_string, number];
+        offset_by_point([self, offset]: [$mol_int62_string, number]): readonly [$mol_int62_string, number];
         selection(peer: $mol_int62_string, next?: number[]): number[];
     }
 }
@@ -4479,9 +4477,9 @@ declare namespace $.$$ {
         }[];
         changes(): number;
         size_text(): number;
-        tokens_alive(): number;
-        tokens_total(): number;
-        tokens_dead(): number;
+        units_alive(): number;
+        units_total(): number;
+        units_dead(): number;
         size_state_bin(): number;
         size_delta_bin(): number;
         stats(): string;
@@ -9907,7 +9905,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "string" | "list" | "number" | "get" | "null" | "bool" | "dict" | "bind" | "put";
+    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "list" | "string" | "number" | "get" | "null" | "bool" | "dict" | "bind" | "put";
 }
 
 declare namespace $ {
