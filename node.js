@@ -7416,7 +7416,7 @@ var $;
                 src: this.uri(),
                 srcdoc: this.html(),
                 allow: this.allow(),
-                allowFullscreen: this.fullscreen()
+                allowfullscreen: this.fullscreen()
             };
         }
         accelerometer() {
@@ -14184,7 +14184,7 @@ var $;
                 from,
                 to,
                 next,
-                equal: (next, prev) => prev.data === next,
+                equal: (next, prev) => $mol_compare_deep(prev.data, next),
                 drop: (prev, lead) => this.land.wipe(prev),
                 insert: (next, lead) => this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', next),
                 update: (next, prev, lead) => this.land.put(prev.head, prev.self, lead?.self ?? '0_0', next),
