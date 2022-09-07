@@ -24244,10 +24244,8 @@ var $;
                 this.Bid()
             ];
         }
-        content() {
-            return [
-                this.control()
-            ];
+        Content() {
+            return this.control();
         }
         name() {
             return "";
