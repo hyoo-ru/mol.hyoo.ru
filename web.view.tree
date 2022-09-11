@@ -1103,7 +1103,7 @@ $hyoo_apps $mol_book2
 		talks *
 			target \preview
 			title @ \Messanger
-			uri \https://talks.hyoo.ru/#!roster/chat=RXV3H2EC
+			uri \https://talks.hyoo.ru/#!chat=fsh1o2_jdzewo
 		draw *
 			target \preview
 			title @ \Draw Tool

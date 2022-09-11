@@ -13168,7 +13168,7 @@ var $;
                 talks: {
                     target: "preview",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_talks_title'),
-                    uri: "https://talks.hyoo.ru/#!roster/chat=RXV3H2EC"
+                    uri: "https://talks.hyoo.ru/#!chat=fsh1o2_jdzewo"
                 },
                 draw: {
                     target: "preview",
@@ -14596,27 +14596,13 @@ var $;
 (function ($) {
     class $hyoo_crowd_reg extends $hyoo_crowd_node {
         value(next) {
-            const units = this.units();
-            let last;
-            for (const unit of units) {
-                if (!last || $hyoo_crowd_unit_compare(unit, last) > 0)
-                    last = unit;
-            }
-            if (next === undefined) {
-                return last?.data ?? null;
-            }
-            else {
-                if (last?.data === next)
-                    return next;
-                for (const unit of units) {
-                    if (unit === last)
-                        continue;
-                    this.land.wipe(unit);
-                }
-                const self = last?.self ?? this.land.id_new();
-                this.land.put(this.head, self, '0_0', next);
+            const unit = this.units()[0];
+            if (next === undefined)
+                return unit?.data ?? null;
+            if (unit?.data === next)
                 return next;
-            }
+            this.land.put(this.head, unit?.self ?? this.land.id_new(), '0_0', next);
+            return next;
         }
         str(next) {
             return String(this.value(next) ?? '');
