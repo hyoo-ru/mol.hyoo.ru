@@ -25425,6 +25425,14 @@ var $;
                 this.Moment()
             ];
         }
+        tags() {
+            return [
+                "$mol_format",
+                "$mol_string",
+                "$mol_phone",
+                "input"
+            ];
+        }
         ip(next) {
             if (next !== undefined)
                 return next;
