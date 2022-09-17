@@ -39185,7 +39185,7 @@ var $;
             return value.data(type);
         if (type === 'null')
             return value.data(type);
-        if (Number(type).toString() === type)
+        if (Number(type).toString() === type.replace(/^\+/, ''))
             return value.data(type);
         return this.$mol_fail(err `Value ${value.toString()} not allowed at ${value.span}, use ${example}`);
     }
@@ -40899,6 +40899,10 @@ var $;
                                 input.data(input.type.slice(1)),
                                 input.data('[]'),
                             ];
+                        if (Number(input.type).toString() === input.type.replace(/^\+/, ''))
+                            return [
+                                input.data('number'),
+                            ];
                         if (/^[$A-Z]/.test(input.type)) {
                             const first = input.kids[0];
                             if (first && first.type === '/') {
@@ -40952,10 +40956,6 @@ var $;
                                 input.data(input.type),
                             ];
                         }
-                        if (Number(input.type).toString() === input.type)
-                            return [
-                                input.data('number'),
-                            ];
                         return [
                             input.data(input.type || 'string'),
                         ];
