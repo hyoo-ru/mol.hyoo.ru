@@ -5100,7 +5100,8 @@ var $;
             return 7;
         }
         width_limit() {
-            return Infinity;
+            const obj = new this.$.Infinity();
+            return obj;
         }
         sub() {
             return [
@@ -5108,6 +5109,9 @@ var $;
             ];
         }
     }
+    __decorate([
+        $mol_mem
+    ], $mol_paragraph.prototype, "width_limit", null);
     $.$mol_paragraph = $mol_paragraph;
 })($ || ($ = {}));
 //mol/paragraph/-view.tree/paragraph.view.tree.ts
@@ -8494,7 +8498,8 @@ var $;
             return "text";
         }
         length_max() {
-            return Infinity;
+            const obj = new this.$.Infinity();
+            return obj;
         }
         type(val) {
             if (val !== undefined)
@@ -8530,6 +8535,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_string.prototype, "value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_string.prototype, "length_max", null);
     __decorate([
         $mol_mem
     ], $mol_string.prototype, "type", null);
@@ -15147,7 +15155,8 @@ var $;
             return true;
         }
         length_max() {
-            return Infinity;
+            const obj = new this.$.Infinity();
+            return obj;
         }
         selection(val) {
             if (val !== undefined)
@@ -15191,6 +15200,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_textarea.prototype, "value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_textarea.prototype, "length_max", null);
     __decorate([
         $mol_mem
     ], $mol_textarea.prototype, "selection", null);
@@ -17847,7 +17859,8 @@ var $;
             return obj;
         }
         hue() {
-            return NaN;
+            const obj = new this.$.NaN();
+            return obj;
         }
         Sample() {
             return null;
@@ -17918,6 +17931,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_plot_graph.prototype, "Hint", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "hue", null);
     __decorate([
         $mol_mem
     ], $mol_plot_graph.prototype, "viewport_x", null);
@@ -18149,7 +18165,8 @@ var $;
         hue_base(val) {
             if (val !== undefined)
                 return val;
-            return NaN;
+            const obj = new this.$.NaN();
+            return obj;
         }
         hue_shift(val) {
             if (val !== undefined)
@@ -18975,7 +18992,8 @@ var $;
 (function ($) {
     class $mol_plot_dot extends $mol_plot_graph {
         points_max() {
-            return Infinity;
+            const obj = new this.$.Infinity();
+            return obj;
         }
         aspect() {
             return 1;
@@ -19009,6 +19027,9 @@ var $;
             return obj;
         }
     }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_dot.prototype, "points_max", null);
     __decorate([
         $mol_mem
     ], $mol_plot_dot.prototype, "Sample", null);
@@ -21958,7 +21979,8 @@ var $;
         value_number(val) {
             if (val !== undefined)
                 return val;
-            return NaN;
+            const obj = new this.$.NaN();
+            return obj;
         }
         value_moment(val) {
             if (val !== undefined)
@@ -23968,7 +23990,8 @@ var $;
         value(val) {
             if (val !== undefined)
                 return val;
-            return NaN;
+            const obj = new this.$.NaN();
+            return obj;
         }
         sub() {
             return [
@@ -28995,7 +29018,8 @@ var $;
         year(val) {
             if (val !== undefined)
                 return val;
-            return NaN;
+            const obj = new this.$.NaN();
+            return obj;
         }
         one() {
             const obj = new this.$.$mol_number();
@@ -38712,10 +38736,10 @@ var $;
         const first_char = val.type && val.type[0];
         if (first_char === '/')
             return 'list';
-        if (first_char === '$')
-            return 'object';
         if (Number(val.type).toString() == val.type)
             return 'number';
+        if (/^[$A-Z]/.test(first_char))
+            return 'object';
         return this.$mol_fail(err `Unknown value type ${val.type} at ${val.span}`);
     }
     $.$mol_view_tree2_value_type = $mol_view_tree2_value_type;
@@ -39014,7 +39038,7 @@ var $;
 (function ($) {
     const err = $mol_view_tree2_error_str;
     function $mol_view_tree2_ts_factory(klass, factory, factory_context) {
-        if (klass.type[0] !== '$')
+        if (!/^[$A-Z]/.test(klass.type))
             return this.$mol_fail(err `Need a valid class name at ${klass.span}, use ${example}`);
         const obj_node = klass.data('obj');
         const body = [];
@@ -39193,7 +39217,7 @@ var $;
             body = add_return(operator, this.$mol_view_tree2_ts_dictionary(operator, context, having_parts));
         else if (type[0] === '/')
             body = add_return(operator, this.$mol_view_tree2_ts_array(operator, context, having_parts));
-        else if (type[0] === '$')
+        else if (/^[$A-Z]/.test(type))
             body = this.$mol_view_tree2_ts_factory(operator, having_parts, context);
         else
             body = add_return(operator, this.$mol_view_tree2_ts_value(operator));
@@ -39219,7 +39243,7 @@ var $;
         const { name, key, next, src } = owner_parts;
         const operator = src.kids.length === 1 ? src.kids[0] : undefined;
         const type = operator?.type;
-        const is_class = type && type[0] === '$';
+        const is_class = type && /^[$A-Z]/.test(type);
         const is_delegate = type === '<=' || type === '<=>';
         let need_cache = false;
         if (is_delegate)
@@ -40454,7 +40478,7 @@ var $;
                                 input.data(input.type.slice(1)),
                                 input.data('[]'),
                             ];
-                        if (input.type[0] === '$') {
+                        if (/^[$A-Z]/.test(input.type)) {
                             const first = input.kids[0];
                             if (first && first.type === '/') {
                                 types.push(first.data(`type ${input.type}__${this.$mol_guid()} = $mol_type_enforce< `), first.struct('indent', [
@@ -40637,7 +40661,7 @@ var $;
                             return [
                                 input.struct('[,]', input.hack(belt)),
                             ];
-                        if (input.type[0] === '$') {
+                        if (/^[$A-Z]/.test(input.type)) {
                             if (!next)
                                 addons.push(decorate());
                             const overrides = [];

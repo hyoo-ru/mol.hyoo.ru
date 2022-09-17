@@ -1555,7 +1555,7 @@ declare namespace $ {
     class $mol_paragraph extends $mol_view {
         line_height(): number;
         letter_width(): number;
-        width_limit(): number;
+        width_limit(): any;
         sub(): readonly any[];
     }
 }
@@ -2622,7 +2622,7 @@ declare namespace $ {
             inputMode: string;
         };
         attr(): {
-            maxlength: number;
+            maxlength: any;
             type: string;
         };
         event(): {
@@ -2641,7 +2641,7 @@ declare namespace $ {
         selection_end(): number;
         selection_start(): number;
         keyboard(): string;
-        length_max(): number;
+        length_max(): any;
         type(val?: any): string;
         event_change(event?: any): any;
         event_key_press(event?: any): any;
@@ -4380,7 +4380,7 @@ declare namespace $ {
         value(val?: any): string;
         hint(): string;
         enabled(): boolean;
-        length_max(): number;
+        length_max(): any;
         selection(val?: any): readonly number[];
         Edit(): $mol_textarea_edit;
         row_numb(id: any): number;
@@ -5082,7 +5082,7 @@ declare namespace $ {
         front(): readonly $mol_svg[];
         back(): readonly $mol_svg[];
         Hint(): $mol_svg_title;
-        hue(): number;
+        hue(): any;
         Sample(): any;
         type(): string;
         color(): string;
@@ -5155,7 +5155,7 @@ declare namespace $.$$ {
 declare namespace $ {
     class $mol_plot_pane extends $mol_svg_root {
         aspect(): string;
-        hue_base(val?: any): number;
+        hue_base(val?: any): any;
         hue_shift(val?: any): number;
         gap_hor(): number;
         gap_vert(): number;
@@ -5314,7 +5314,7 @@ declare namespace $.$$ {
 
 declare namespace $ {
     class $mol_plot_dot extends $mol_plot_graph {
-        points_max(): number;
+        points_max(): any;
         aspect(): number;
         style(): {
             "stroke-width": number;
@@ -6008,7 +6008,7 @@ declare namespace $ {
     class $mol_date extends $mol_pick {
         Icon(): $mol_icon_calendar;
         bubble_content(): readonly any[];
-        value_number(val?: any): number;
+        value_number(val?: any): any;
         value_moment(val?: any): $mol_time_moment;
         value(val?: any): string;
         input_hint(): string;
@@ -6476,7 +6476,7 @@ declare namespace $ {
     class $mol_number extends $mol_view {
         precision_view(): number;
         precision_change(): number;
-        value(val?: any): number;
+        value(val?: any): any;
         sub(): readonly any[];
         precision(): number;
         value_string(val?: any): string;
@@ -6502,7 +6502,7 @@ declare namespace $.$$ {
     class $mol_number extends $.$mol_number {
         event_dec(next?: Event): void;
         event_inc(next?: Event): void;
-        value_string(next?: string): string;
+        value_string(next?: string): any;
     }
 }
 
@@ -7672,7 +7672,7 @@ declare namespace $ {
         sub(): readonly any[];
         tags(): readonly any[];
         zero(): $$.$mol_number;
-        year(val?: any): number;
+        year(val?: any): any;
         one(): $$.$mol_number;
         two(): $$.$mol_number;
         age(val?: any): number;
