@@ -201,7 +201,7 @@ $mol_icon_forum $mol_icon path \M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,
 $mol_paragraph $mol_view
 	line_height 24
 	letter_width 7
-	width_limit Infinity
+	width_limit +Infinity
 	sub / <= title
 
 $mol_dimmer $mol_paragraph
@@ -572,7 +572,7 @@ $mol_string $mol_view
 		inputMode <= keyboard \text
 	attr *
 		^
-		maxlength <= length_max Infinity
+		maxlength <= length_max +Infinity
 		type <= type?val \text
 	event *
 		^
@@ -1215,7 +1215,7 @@ $mol_textarea $mol_stack
 			value?val <=> value?val \
 			hint <= hint \ 
 			enabled <= enabled true
-			length_max <= length_max Infinity
+			length_max <= length_max +Infinity
 			selection?val <=> selection?val /number
 		<= View $mol_text_code
 			text <= value
@@ -1904,7 +1904,7 @@ $mol_plot_line $mol_plot_graph
 		type <= type
 
 $mol_plot_dot $mol_plot_graph
-	points_max Infinity
+	points_max +Infinity
 	aspect 1
 	style *
 		^
