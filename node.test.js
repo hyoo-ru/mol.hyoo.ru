@@ -4076,9 +4076,6 @@ var $;
         menu_tools() {
             return [];
         }
-        menu_foot() {
-            return [];
-        }
         links() {
             return [];
         }
@@ -4087,14 +4084,20 @@ var $;
             obj.rows = () => this.links();
             return obj;
         }
+        menu_body() {
+            return [
+                this.Links()
+            ];
+        }
+        menu_foot() {
+            return [];
+        }
         Menu() {
             const obj = new this.$.$mol_page();
             obj.title = () => this.menu_title();
             obj.tools = () => this.menu_tools();
+            obj.body = () => this.menu_body();
             obj.foot = () => this.menu_foot();
-            obj.body = () => [
-                this.Links()
-            ];
             return obj;
         }
         arg(id) {
@@ -4144,16 +4147,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_maybe(value) {
-        return (value == null) ? [] : [value];
-    }
-    $.$mol_maybe = $mol_maybe;
-})($ || ($ = {}));
-//mol/maybe/maybe.ts
-;
-"use strict";
-var $;
-(function ($) {
     $mol_style_attach("mol/book2/catalog/catalog.view.css", "[mol_book2_catalog_links] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //mol/book2/catalog/-css/catalog.view.css.ts
@@ -4165,9 +4158,14 @@ var $;
     (function ($$) {
         class $mol_book2_catalog extends $.$mol_book2_catalog {
             pages() {
+                const spread = this.Spread();
                 return [
                     this.Menu(),
-                    ...$mol_maybe(this.Spread()),
+                    ...spread
+                        ? spread instanceof $mol_book2
+                            ? spread.pages()
+                            : [spread]
+                        : [],
                 ];
             }
             links() {
@@ -4186,7 +4184,8 @@ var $;
                 return { [this.param()]: null };
             }
             spread_title(spread) {
-                return this.spreads()[spread].title();
+                const page = this.spreads()[spread];
+                return page instanceof $mol_book2 && page.pages()[0]?.title() || page.title();
             }
         }
         __decorate([
@@ -5198,6 +5197,16 @@ var $;
     $.$mol_check = $mol_check;
 })($ || ($ = {}));
 //mol/check/-view.tree/check.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_maybe(value) {
+        return (value == null) ? [] : [value];
+    }
+    $.$mol_maybe = $mol_maybe;
+})($ || ($ = {}));
+//mol/maybe/maybe.ts
 ;
 "use strict";
 var $;
@@ -21557,7 +21566,7 @@ var $;
                 return this.keys().map(key => this.Option(key));
             }
             option_title(key) {
-                return this.options()[key];
+                return this.options()[key] || key;
             }
         }
         __decorate([
@@ -44691,22 +44700,6 @@ var $;
 ;
 "use strict";
 var $;
-(function ($) {
-    $mol_test({
-        'all cases of using maybe'() {
-            $mol_assert_equal($mol_maybe(0)[0], 0);
-            $mol_assert_equal($mol_maybe(false)[0], false);
-            $mol_assert_equal($mol_maybe(null)[0], void 0);
-            $mol_assert_equal($mol_maybe(void 0)[0], void 0);
-            $mol_assert_equal($mol_maybe(void 0).map(v => v.toString())[0], void 0);
-            $mol_assert_equal($mol_maybe(0).map(v => v.toString())[0], '0');
-        },
-    });
-})($ || ($ = {}));
-//mol/maybe/maybe.test.ts
-;
-"use strict";
-var $;
 (function ($_1) {
     var $$;
     (function ($$) {
@@ -44749,6 +44742,22 @@ var $;
     })($$ = $_1.$$ || ($_1.$$ = {}));
 })($ || ($ = {}));
 //mol/button/button.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'all cases of using maybe'() {
+            $mol_assert_equal($mol_maybe(0)[0], 0);
+            $mol_assert_equal($mol_maybe(false)[0], false);
+            $mol_assert_equal($mol_maybe(null)[0], void 0);
+            $mol_assert_equal($mol_maybe(void 0)[0], void 0);
+            $mol_assert_equal($mol_maybe(void 0).map(v => v.toString())[0], void 0);
+            $mol_assert_equal($mol_maybe(0).map(v => v.toString())[0], '0');
+        },
+    });
+})($ || ($ = {}));
+//mol/maybe/maybe.test.ts
 ;
 "use strict";
 //mol/type/merge/merge.test.ts

@@ -1137,9 +1137,10 @@ declare namespace $ {
         Spread_close(): $$.$mol_link;
         menu_title(): string;
         menu_tools(): readonly any[];
-        menu_foot(): readonly any[];
         links(): readonly any[];
         Links(): $$.$mol_list;
+        menu_body(): readonly any[];
+        menu_foot(): readonly any[];
         Menu(): $mol_page;
         arg(id: any): {};
         spread_title(id: any): string;
@@ -1147,10 +1148,6 @@ declare namespace $ {
         spread_close_arg(): {};
         Spread_close_icon(): $mol_icon_cross;
     }
-}
-
-declare namespace $ {
-    function $mol_maybe<Value>(value: Value | null | undefined): Value[];
 }
 
 declare namespace $ {
@@ -1513,6 +1510,10 @@ declare namespace $ {
         Title(): $mol_view;
         label(): readonly any[];
     }
+}
+
+declare namespace $ {
+    function $mol_maybe<Value>(value: Value | null | undefined): Value[];
 }
 
 declare namespace $ {
@@ -5898,7 +5899,7 @@ declare namespace $.$$ {
         options(): {
             [key: string]: string;
         };
-        keys(): string[];
+        keys(): readonly string[];
         items(): $mol_check[];
         option_title(key: string): string;
     }
