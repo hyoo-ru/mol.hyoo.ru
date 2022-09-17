@@ -68,7 +68,7 @@ $hyoo_mol $mol_book2_catalog
 				\	body /
 				\		<= Select $hyoo_mol_example_selector
 				\			empty @ \No content
-				\			value?val <=> info_value?val NaN
+				\			value?val <=> info_value?val +NaN
 				\			kids <= info_kids /$mol_view_content
 				\
 		icons <= Icons $mol_frame
