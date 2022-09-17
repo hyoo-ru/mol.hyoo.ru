@@ -42127,7 +42127,7 @@ var $;
             ];
         }
         tree_source() {
-            return "$hyoo_mol_example $mol_page\n\ttitle \\Example\n\tparams * foo <= changable?val /string\n\tbody /\n\t\t<= Select $hyoo_mol_example_selector\n\t\t\tempty @ \\No content\n\t\t\tvalue?val <=> info_value?val NaN\n\t\t\tkids <= info_kids /$mol_view_content\n";
+            return "$hyoo_mol_example $mol_page\n\ttitle \\Example\n\tparams * foo <= changable?val /string\n\tbody /\n\t\t<= Select $hyoo_mol_example_selector\n\t\t\tempty @ \\No content\n\t\t\tvalue?val <=> info_value?val +NaN\n\t\t\tkids <= info_kids /$mol_view_content\n";
         }
         View_tree() {
             const obj = new this.$.$hyoo_tree();
