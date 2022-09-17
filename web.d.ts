@@ -7598,6 +7598,8 @@ declare namespace $ {
         Theme(): $$.$mol_theme_auto;
         Source(): $mol_link_source;
         Lights(): $$.$mol_lights_toggle;
+        rate(): number;
+        Rate(): $mol_speck;
         uri(next?: any): string;
         Uri(): $$.$mol_textarea;
         json(next?: any): any;
@@ -7621,12 +7623,17 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $hyoo_harp_rate(query: $hyoo_harp_query<any>): number;
+}
+
+declare namespace $ {
 }
 
 declare namespace $.$$ {
     class $hyoo_harp_app extends $.$hyoo_harp_app {
         uri(next?: string): string;
         json(): $hyoo_harp_query<string>;
+        rate(): number;
     }
 }
 
