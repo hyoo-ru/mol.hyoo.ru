@@ -1,5 +1,5 @@
 $hyoo_mol_bench $mol_book2_catalog
-	menu_title <= title @ \Benchmarks
+	menu_title @ \Benchmarks
 	Placeholder null
 	Close_item $mol_link
 		arg * bench null
@@ -316,6 +316,7 @@ $hyoo_mol_bench $mol_book2_catalog
 					\	.format( pattern )
 
 $hyoo_mol_bench_bench $hyoo_bench_app
+	addon_title <= title
 	menu_tools /
 		<= Analysis $hyoo_mol_bench_analysis
 			uri <= analysis_uri \
