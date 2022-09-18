@@ -9870,7 +9870,7 @@ var $;
             return obj;
         }
         menu_title() {
-            return this.$.$mol_locale.text('$hyoo_habhub_menu_title');
+            return "HabHub";
         }
         Add_icon() {
             const obj = new this.$.$mol_icon_plus();
@@ -42154,7 +42154,7 @@ var $;
         }
         Articles() {
             const obj = new this.$.$hyoo_habhub();
-            obj.title = () => this.$.$mol_locale.text('$hyoo_mol_Articles_title');
+            obj.menu_title = () => this.$.$mol_locale.text('$hyoo_mol_Articles_menu_title');
             obj.tools_root = () => [
                 this.Spread_close()
             ];

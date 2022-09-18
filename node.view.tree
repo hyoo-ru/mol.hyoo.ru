@@ -693,7 +693,7 @@ $hyoo_habhub $mol_book2
 			key * F? <=> search_start? null
 			mod_ctrl true
 	Menu_page $mol_page
-		title <= menu_title @ \HabHub
+		title <= menu_title \HabHub
 		tools <= tools_root /
 			<= Add $mol_link
 				hint \Add article
@@ -5390,7 +5390,7 @@ $hyoo_mol $mol_book2_catalog
 						text <= description \
 						uri_base <= sources_uri \https://github.com/hyoo-ru/mam_mol/tree/master/
 		articles <= Articles $hyoo_habhub
-			title @ \Articles
+			menu_title @ \Articles
 			tools_root / <= Spread_close
 		slides <= Slides $hyoo_slides
 			title @ \Slides
