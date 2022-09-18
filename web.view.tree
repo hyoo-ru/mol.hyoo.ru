@@ -1076,6 +1076,10 @@ $hyoo_apps $mol_book2
 			target \release
 			title @ \Web Search
 			uri \https://search.hyoo.ru/
+		talks *
+			target \release
+			title @ \Messanger
+			uri \https://talks.hyoo.ru/#!chat=fsh1o2_jdzewo
 		map *
 			target \release
 			title @ \Earth Map
@@ -1112,10 +1116,6 @@ $hyoo_apps $mol_book2
 			target \release
 			title @ \ToDoMVC
 			uri \https://todomvc.hyoo.ru/
-		talks *
-			target \preview
-			title @ \Messanger
-			uri \https://talks.hyoo.ru/#!chat=fsh1o2_jdzewo
 		draw *
 			target \preview
 			title @ \Draw Tool
@@ -1152,6 +1152,10 @@ $hyoo_apps $mol_book2
 			target \develop
 			title @ \$mol UI Framework
 			uri \https://mol.hyoo.ru/
+		sync *
+			target \develop
+			title @ \DB Watch
+			uri \https://sync.hyoo.ru/watch/
 		piterjs *
 			target \develop
 			title @ \PiterJS Meetups

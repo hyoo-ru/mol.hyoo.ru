@@ -13182,6 +13182,11 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_search_title'),
                     uri: "https://search.hyoo.ru/"
                 },
+                talks: {
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_talks_title'),
+                    uri: "https://talks.hyoo.ru/#!chat=fsh1o2_jdzewo"
+                },
                 map: {
                     target: "release",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_map_title'),
@@ -13227,11 +13232,6 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_todomvc_title'),
                     uri: "https://todomvc.hyoo.ru/"
                 },
-                talks: {
-                    target: "preview",
-                    title: this.$.$mol_locale.text('$hyoo_apps_apps_talks_title'),
-                    uri: "https://talks.hyoo.ru/#!chat=fsh1o2_jdzewo"
-                },
                 draw: {
                     target: "preview",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_draw_title'),
@@ -13276,6 +13276,11 @@ var $;
                     target: "develop",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_mol_title'),
                     uri: "https://mol.hyoo.ru/"
+                },
+                sync: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_sync_title'),
+                    uri: "https://sync.hyoo.ru/watch/"
                 },
                 piterjs: {
                     target: "develop",
