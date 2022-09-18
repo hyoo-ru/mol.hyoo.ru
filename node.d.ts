@@ -9791,7 +9791,6 @@ declare namespace $ {
             todomvc: $hyoo_mol_bench_bench;
             moment: $hyoo_mol_bench_perf;
         };
-        title(): string;
         Close_item_icon(): $mol_icon_cross;
         equals(): $hyoo_mol_bench_perf;
         Chanelog_mol(): $$.$mol_embed_native;
@@ -9821,6 +9820,7 @@ declare namespace $ {
         moment(): $hyoo_mol_bench_perf;
     }
     class $hyoo_mol_bench_bench extends $hyoo_bench_app {
+        addon_title(): string;
         menu_tools(): readonly any[];
         analysis_uri(): string;
         Analysis(): $hyoo_mol_bench_analysis;

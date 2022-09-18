@@ -37701,7 +37701,7 @@ var $;
 (function ($) {
     class $hyoo_mol_bench extends $mol_book2_catalog {
         menu_title() {
-            return this.title();
+            return this.$.$mol_locale.text('$hyoo_mol_bench_menu_title');
         }
         Placeholder() {
             return null;
@@ -37734,9 +37734,6 @@ var $;
                 todomvc: this.Todomvc(),
                 moment: this.moment()
             };
-        }
-        title() {
-            return this.$.$mol_locale.text('$hyoo_mol_bench_title');
         }
         Close_item_icon() {
             const obj = new this.$.$mol_icon_cross();
@@ -38087,6 +38084,9 @@ var $;
     ], $hyoo_mol_bench.prototype, "moment", null);
     $.$hyoo_mol_bench = $hyoo_mol_bench;
     class $hyoo_mol_bench_bench extends $hyoo_bench_app {
+        addon_title() {
+            return this.title();
+        }
         menu_tools() {
             return [
                 this.Analysis(),

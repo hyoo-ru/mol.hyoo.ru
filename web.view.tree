@@ -4835,7 +4835,7 @@ $hyoo_js_perf_case_result $mol_view
 $mol_icon_poll $mol_icon path \M3,22V8H7V22H3M10,22V2H14V22H10M17,22V14H21V22H17Z
 
 $hyoo_mol_bench $mol_book2_catalog
-	menu_title <= title @ \Benchmarks
+	menu_title @ \Benchmarks
 	Placeholder null
 	Close_item $mol_link
 		arg * bench null
@@ -5152,6 +5152,7 @@ $hyoo_mol_bench $mol_book2_catalog
 					\	.format( pattern )
 
 $hyoo_mol_bench_bench $hyoo_bench_app
+	addon_title <= title
 	menu_tools /
 		<= Analysis $hyoo_mol_bench_analysis
 			uri <= analysis_uri \
