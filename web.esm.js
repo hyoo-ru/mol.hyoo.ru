@@ -36274,6 +36274,7 @@ var $;
         Prefix_code() {
             const obj = new this.$.$mol_textarea();
             obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
             obj.value = (val) => this.prefix(val);
             obj.hint = () => "let res = 0";
             return obj;
@@ -36292,6 +36293,7 @@ var $;
         Postfix_code() {
             const obj = new this.$.$mol_textarea();
             obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
             obj.value = (val) => this.postfix(val);
             obj.hint = () => "$mol_assert_like( res, {#} - 1 )";
             return obj;
@@ -36546,6 +36548,7 @@ var $;
         Prefix_code() {
             const obj = new this.$.$mol_textarea();
             obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
             obj.value = (val) => this.prefix(val);
             obj.hint = () => "let count = {#}";
             return obj;
@@ -36565,6 +36568,7 @@ var $;
         Source_code() {
             const obj = new this.$.$mol_textarea();
             obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
             obj.value = (val) => this.source(val);
             obj.hint = () => "res = {#} % count";
             return obj;
