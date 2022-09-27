@@ -14998,13 +14998,10 @@ var $;
             land_inner.apply(land_outer.delta());
             return land_inner;
         }
-        async delta_land(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
-            const units = land.delta(clocks);
-            if (!units.length)
-                return [];
-            for (const unit of units) {
+        sign_units(units) {
+            return Promise.all(units.map(async (unit) => {
                 if (unit.bin)
-                    continue;
+                    return unit;
                 const bin = $hyoo_crowd_unit_bin.from_unit(unit);
                 let sign = this._signs.get(unit);
                 if (!sign) {
@@ -15014,8 +15011,11 @@ var $;
                 bin.sign(sign);
                 unit.bin = bin;
                 this._signs.set(unit, sign);
-            }
-            return units;
+                return unit;
+            }));
+        }
+        delta_land(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
+            return this.sign_units(land.delta(clocks));
         }
         async delta_batch(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
             const units = await this.delta_land(land, clocks);
@@ -15184,6 +15184,9 @@ var $;
             return land;
         }
     }
+    __decorate([
+        $mol_action
+    ], $hyoo_crowd_reg.prototype, "yoke", null);
     $.$hyoo_crowd_reg = $hyoo_crowd_reg;
 })($ || ($ = {}));
 //hyoo/crowd/reg/reg.ts
