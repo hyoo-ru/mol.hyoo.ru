@@ -12304,6 +12304,8 @@ var $;
                 this.event_end(event);
             }
             event_wheel(event) {
+                if (event.defaultPrevented)
+                    return;
                 if (this.pan === $mol_touch.prototype.pan && this.zoom === $mol_touch.prototype.zoom)
                     return;
                 if (this.pan !== $mol_touch.prototype.pan) {
@@ -34709,6 +34711,7 @@ var $;
                 src: this.uri(),
                 controls: this.controls(),
                 autoplay: this.autoplay(),
+                loop: this.loop(),
                 poster: this.poster()
             };
         }
@@ -34730,6 +34733,9 @@ var $;
         }
         autoplay() {
             return true;
+        }
+        loop() {
+            return false;
         }
         poster() {
             return "";
