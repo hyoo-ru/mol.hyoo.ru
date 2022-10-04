@@ -15744,6 +15744,9 @@ var $;
                 return val;
             return [];
         }
+        bring() {
+            return this.Edit().bring();
+        }
         Edit() {
             const obj = new this.$.$mol_textarea_edit();
             obj.value = (val) => this.value(val);
@@ -33878,7 +33881,8 @@ var $;
         }
         plugins() {
             return [
-                this.Theme()
+                this.Theme(),
+                this.Submit()
             ];
         }
         bookmark_list(next) {
@@ -33897,6 +33901,19 @@ var $;
         }
         Theme() {
             const obj = new this.$.$mol_theme_auto();
+            return obj;
+        }
+        submit(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Submit() {
+            const obj = new this.$.$mol_hotkey();
+            obj.key = () => ({
+                enter: (next) => this.submit(next)
+            });
+            obj.mod_ctrl = () => true;
             return obj;
         }
         Clear_icon() {
@@ -34006,6 +34023,9 @@ var $;
                 return val;
             return "";
         }
+        bring() {
+            return this.Code().bring();
+        }
         Code() {
             const obj = new this.$.$mol_textarea();
             obj.hint = () => "javascript..";
@@ -34037,6 +34057,7 @@ var $;
         Code_page() {
             const obj = new this.$.$mol_page();
             obj.title = () => this.$.$mol_locale.text('$hyoo_js_eval_Code_page_title');
+            obj.bring = () => this.bring();
             obj.tools = () => [
                 this.Perf(),
                 this.Bookmark(),
@@ -34102,6 +34123,12 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_js_eval.prototype, "Theme", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_eval.prototype, "submit", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_eval.prototype, "Submit", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_eval.prototype, "Clear_icon", null);
@@ -34195,7 +34222,10 @@ var $;
                 return this.$.$mol_state_arg.value('code', next) ?? '';
             }
             run(next) {
-                return this.$.$mol_state_arg.value('run', next?.valueOf && String(next)) !== 'false';
+                return this.$.$mol_state_arg.value('run', next?.valueOf && String(next)) === 'true';
+            }
+            submit() {
+                this.run(true);
             }
             perf() {
                 const sources = encodeURIComponent(JSON.stringify([this.code()]));
