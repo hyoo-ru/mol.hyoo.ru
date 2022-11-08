@@ -1081,7 +1081,7 @@ $hyoo_apps $mol_book2
 			uri \https://search.hyoo.ru/
 		talks *
 			target \release
-			title @ \Messanger
+			title @ \Messenger
 			uri \https://talks.hyoo.ru/#!chat=fsh1o2_jdzewo
 		map *
 			target \release
