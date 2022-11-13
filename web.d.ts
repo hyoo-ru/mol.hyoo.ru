@@ -8731,6 +8731,14 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_string_button extends $mol_string {
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
     class $mol_string_demo extends $mol_example_small {
         title(): string;
         sub(): readonly any[];
@@ -8741,15 +8749,8 @@ declare namespace $ {
         name2(val?: any): string;
         Filled(): $$.$mol_string;
         Disabled(): $$.$mol_string;
+        Button(): $mol_string_button;
     }
-}
-
-declare namespace $ {
-    class $mol_string_button extends $mol_string {
-    }
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
@@ -9552,6 +9553,18 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    class $mol_icon_link extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_link_variant extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
     class $hyoo_js_perf extends $mol_page {
         title(): string;
         prefixes(): readonly string[];
@@ -9559,8 +9572,8 @@ declare namespace $ {
         plugins(): readonly any[];
         Body(): $$.$mol_book2;
         Case(id: any): $$.$hyoo_js_perf_case;
-        tools(): readonly any[];
         head(): readonly any[];
+        tools(): readonly any[];
         Theme(): $$.$mol_theme_auto;
         run(event?: any): any;
         Hotkey(): $$.$mol_hotkey;
@@ -9583,6 +9596,13 @@ declare namespace $ {
         source(id: any, val?: any): string;
         case_sample(id: any): string;
         results(id: any, val?: any): readonly any[];
+        Run_icon(): $mol_icon_play;
+        Run(): $mol_button_major;
+        permalink(): string;
+        parmalink_hint(): string;
+        Permalink_icon(): $mol_icon_link_variant;
+        Permalink(): $$.$mol_link;
+        Share(): $$.$mol_button_share;
         new_hint(): string;
         New_icon(): $mol_icon_plus;
         New(): $$.$mol_link;
@@ -9590,12 +9610,6 @@ declare namespace $ {
         About(): $$.$mol_link;
         Lights(): $$.$mol_lights_toggle;
         Source(): $mol_link_source;
-        Run_icon(): $mol_icon_play;
-        Run(): $mol_button_major;
-        permalink(): string;
-        parmalink_hint(): string;
-        Permalink_icon(): $mol_icon_external;
-        Permalink(): $$.$mol_link;
     }
     class $hyoo_js_perf_case extends $mol_view {
         results(): readonly any[];
@@ -9611,7 +9625,7 @@ declare namespace $ {
         Prefix(): $$.$mol_expander;
         source_showed(next?: any): boolean;
         title(next?: any): string;
-        Title(): $$.$mol_string;
+        Title(): $mol_string_button;
         source(val?: any): string;
         Source_code(): $$.$mol_textarea;
         Source(): $$.$mol_expander;

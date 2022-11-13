@@ -539,6 +539,8 @@
     "$hyoo_bench",
     "$mol_compare_text",
     "$hyoo_js_perf",
+    "$mol_icon_link_variant",
+    "$mol_icon_link",
     "$mol_wait_rest",
     "$mol_after_work",
     "$mol_si_short",

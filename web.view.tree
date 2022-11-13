@@ -4064,6 +4064,8 @@ $mol_stack_demo $mol_example_small
 		\$mol_stack
 		\layout
 
+$mol_string_button $mol_string
+
 $mol_string_demo $mol_example_small
 	title \String input field in various states
 	sub /
@@ -4077,13 +4079,13 @@ $mol_string_demo $mol_example_small
 		<= Disabled $mol_string
 			disabled true
 			value?val <=> name2?val
+		<= Button $mol_string_button
+			value?val <=> name2?val
 	tags /
 		\input
 		\string
 		\text
 
-
-$mol_string_button $mol_string
 
 $mol_switch_demo $mol_example
 	title \Color switchers in various state
@@ -4700,6 +4702,10 @@ $hyoo_bench_app $mol_book2
 	-
 	result_col_title_sample @ \Sample
 
+$mol_icon_link $mol_icon path \M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7C4.24,7 2,9.24 2,12C2,14.76 4.24,17 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17C19.76,17 22,14.76 22,12C22,9.24 19.76,7 17,7Z
+
+$mol_icon_link_variant $mol_icon path \M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z
+
 $hyoo_js_perf $mol_page
 	title @ \JS Performance
 	prefixes /string
@@ -4763,6 +4769,21 @@ $hyoo_js_perf $mol_page
 		sample <= case_sample!index \
 		results?val <=> results!index?val /
 		changable <= changable true
+	head /
+		<= Title
+		<= Run $mol_button_major
+			hint @ \Run
+			click?event <=> run?event null
+			sub / <= Run_icon $mol_icon_play
+		<= Permalink $mol_link
+			uri <= permalink \
+			hint <= parmalink_hint @ \Permamemnt short link
+			target \_blank
+			sub /
+				<= Permalink_icon $mol_icon_link_variant
+		<= Share $mol_button_share
+			capture <= Cases_pane
+		<= Tools
 	tools /
 		<= New $mol_link
 			uri \#
@@ -4776,19 +4797,6 @@ $hyoo_js_perf $mol_page
 		<= Lights $mol_lights_toggle
 		<= Source $mol_link_source
 			uri \https://github.com/hyoo-ru/perf.js.hyoo.ru
-	head /
-		<= Title
-		<= Run $mol_button_major
-			hint @ \Run
-			click?event <=> run?event null
-			sub / <= Run_icon $mol_icon_play
-		<= Permalink $mol_link
-			uri <= permalink \
-			hint <= parmalink_hint @ \Permamemnt short link
-			target \_blank
-			sub /
-				<= Permalink_icon $mol_icon_external
-		<= Tools
 
 $hyoo_js_perf_case $mol_view
 	results /
@@ -4809,7 +4817,7 @@ $hyoo_js_perf_case $mol_view
 			title @ \Measure
 			expanded? <=> source_showed? true
 			minimal_width 150
-			Tools <= Title $mol_string
+			Tools <= Title $mol_string_button
 				hint @ \Case Name
 				value? <=> title? \
 			Content <= Source_code $mol_textarea
