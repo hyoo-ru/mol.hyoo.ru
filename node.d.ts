@@ -3687,6 +3687,7 @@ declare namespace $ {
             "touch-action": string;
         };
         contents(val?: any): string;
+        auto(): readonly any[];
         Menu(): $mol_page;
         Menu_item(id: any): $$.$mol_link;
         menu_options(): {
@@ -3707,6 +3708,7 @@ declare namespace $ {
         Page(id: any): $$.$hyoo_slides_page;
         plugins(): readonly any[];
         role(): string;
+        message_listener(): any;
         Source_link(): $mol_link_source;
         menu_tools(): readonly any[];
         menu_items(): readonly $mol_view[];
@@ -3788,8 +3790,8 @@ declare namespace $.$$ {
         menu_items(): $mol_link[];
         menu_item_uri(uri: string): string;
         menu_item_title(uri: string): any;
-        contents(): string;
-        call(...message: any[]): Promise<unknown>;
+        contents(next?: string): string;
+        message_listener(): $mol_dom_listener;
         content_pages(): string[];
         page_tokens(index: number): readonly {
             name: string;
