@@ -5006,6 +5006,9 @@ $hyoo_mol_bench $mol_book2_catalog
 			prefix \
 				\const { marked } = $mol_import.script( 'https://unpkg.com/marked' )
 				\let res
+			titles /
+				\$mol_syntax2_md
+				\marked
 			sources /
 				\
 					\res = []
@@ -5054,6 +5057,9 @@ $hyoo_mol_bench $mol_book2_catalog
 			Common null
 			prefix \
 			postfix \
+			titles /
+				\$mol_wire
+				\MobX
 			prefixes /
 				\
 					\class App extends $mol_object {
@@ -5094,6 +5100,9 @@ $hyoo_mol_bench $mol_book2_catalog
 			prefix \
 				\let res
 			postfix \
+			titles /
+				\$mol_wire
+				\MobX
 			prefixes /
 				\
 					\class App extends $mol_object {
@@ -5159,6 +5168,12 @@ $hyoo_mol_bench $mol_book2_catalog
 				\let res
 			postfix \
 				\$mol_assert_equal( res, '20.07.2015' )
+			titles /
+				\$mol_time
+				\Moment
+				\Luxon
+				\DayJS
+				\JSJoda
 			prefixes /
 				\
 					\$mol_import.script(

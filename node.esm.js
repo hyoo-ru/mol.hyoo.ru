@@ -38204,6 +38204,10 @@ var $;
             obj.Close = () => this.Close_item();
             obj.Common = () => null;
             obj.prefix = () => "const { marked } = $mol_import.script( 'https://unpkg.com/marked' )\nlet res";
+            obj.titles = () => [
+                "$mol_syntax2_md",
+                "marked"
+            ];
             obj.sources = () => [
                 "res = []\n$mol_syntax2_md_line.tokenize(\n\t'begin **' + {#} + '** end',\n\t( ... args )=> res.push( args ),\n)",
                 "res = marked.lexer( 'begin **' + {#} + '** end' )"
@@ -38286,6 +38290,10 @@ var $;
             obj.Common = () => null;
             obj.prefix = () => "";
             obj.postfix = () => "";
+            obj.titles = () => [
+                "$mol_wire",
+                "MobX"
+            ];
             obj.prefixes = () => [
                 "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )",
                 "const mobx = $mol_import.script(\n\t'https://unpkg.com/mobx'\n).mobx\n\nclass App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}"
@@ -38304,6 +38312,10 @@ var $;
             obj.Common = () => null;
             obj.prefix = () => "let res";
             obj.postfix = () => "";
+            obj.titles = () => [
+                "$mol_wire",
+                "MobX"
+            ];
             obj.prefixes = () => [
                 "class App extends $mol_object {\n\tfix( next = true ) { return next }\n\tsrc() { return Math.random() }\n\tres() { return this.fix() ? 0 : this.src() }\n}\n$mol_mem( App.prototype, 'fix' )\n$mol_mem( App.prototype, 'src' )\n$mol_mem( App.prototype, 'res' )\n\nconst app = new App()\napp.res()",
                 "const mobx = $mol_import.script(\n\t'https://unpkg.com/mobx'\n).mobx\n\nclass App extends Object {\n\tfix = true\n\tget src() { return Math.random() }\n\tget res() { return this.fix ? 0 : this.src }\n\tconstructor() {\n\t\tmobx.makeAutoObservable( super() )\n\t}\n}\n\nconst app = new App()\nconst root = mobx.autorun( ()=> app.res )"
@@ -38360,6 +38372,13 @@ var $;
             obj.Common = () => null;
             obj.prefix = () => "const iso = '2015-07-20T07:48:28.338Z'\nlet res";
             obj.postfix = () => "$mol_assert_equal( res, '20.07.2015' )";
+            obj.titles = () => [
+                "$mol_time",
+                "Moment",
+                "Luxon",
+                "DayJS",
+                "JSJoda"
+            ];
             obj.prefixes = () => [
                 "$mol_import.script(\n\t'https://unpkg.com/mol_time_all@1.1.12/web.js'\n)",
                 "$mol_import.script(\n\t'https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.26.0/moment.min.js'\n)",
