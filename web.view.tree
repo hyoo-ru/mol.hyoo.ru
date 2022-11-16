@@ -4910,6 +4910,13 @@ $hyoo_mol_bench $mol_book2_catalog
 				\$mol_assert_ok( res )
 				\$mol_assert_not( compare( make(1), make(2) ) )
 				\$mol_assert_ok( compare( make(1), make(1) ) )
+			titles /
+				\$mol_compare_deep
+				\fast-equals
+				\ramda
+				\deep-eql
+				\lodash
+				\deep-equal
 			prefixes /
 				\
 					\const compare = $mol_import.module(

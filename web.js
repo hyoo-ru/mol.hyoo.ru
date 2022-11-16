@@ -37697,6 +37697,14 @@ var $;
             obj.Common = () => null;
             obj.prefix = () => "const make = i => {\n\n\tconst next = {\n\t\tobj: {\n\t\t\tx: new Map([[ el, /3/ ]]),\n\t\t\ty: new Set([ new Date(1) ]),\n\t\t},\n\t\tval: [ true, 1, '2', i ],\n\t}\n\n\tnext.val.push( next, next.obj, next.val )\n\n\treturn next\n}\n\nlet el = document.createElement( 'div' )\nlet base = make(-1)\nlet res = true";
             obj.postfix = () => "$mol_assert_ok( res )\n$mol_assert_not( compare( make(1), make(2) ) )\n$mol_assert_ok( compare( make(1), make(1) ) )";
+            obj.titles = () => [
+                "$mol_compare_deep",
+                "fast-equals",
+                "ramda",
+                "deep-eql",
+                "lodash",
+                "deep-equal"
+            ];
             obj.prefixes = () => [
                 "const compare = $mol_import.module(\n\t'https://esm.sh/mol_compare_deep'\n).default.$mol_compare_deep",
                 "const compare = $mol_import.module(\n\t'https://esm.sh/fast-equals'\n).circularDeepEqual",
