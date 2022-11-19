@@ -15468,9 +15468,23 @@ var $;
                 this.Content()
             ];
         }
+        Title() {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => this.title();
+            return obj;
+        }
+        tools() {
+            return [];
+        }
+        Tools() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.tools();
+            return obj;
+        }
         head() {
             return [
-                this.title()
+                this.Title(),
+                this.Tools()
             ];
         }
         Head() {
@@ -15489,6 +15503,12 @@ var $;
     }
     __decorate([
         $mol_mem
+    ], $mol_section.prototype, "Title", null);
+    __decorate([
+        $mol_mem
+    ], $mol_section.prototype, "Tools", null);
+    __decorate([
+        $mol_mem
     ], $mol_section.prototype, "Head", null);
     __decorate([
         $mol_mem
@@ -15500,7 +15520,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/section/section.view.css", "[mol_section_head] {\n\tpadding: var(--mol_gap_text);\n\tjustify-content: space-between;\n\talign-items: flex-end;\n\tflex-wrap: wrap;\n\ttext-shadow: 0 0;\n}\n");
+    $mol_style_attach("mol/section/section.view.css", "[mol_section_head] {\n\tjustify-content: space-between;\n\talign-items: flex-end;\n\tflex-wrap: wrap;\n}\n\n[mol_section_title] {\n\tpadding: var(--mol_gap_text);\n\ttext-shadow: 0 0;\n}\n");
 })($ || ($ = {}));
 //mol/section/-css/section.view.css.ts
 ;
