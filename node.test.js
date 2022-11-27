@@ -14526,6 +14526,36 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $hyoo_crowd_fund extends $mol_object {
+        world;
+        Node;
+        constructor(world, Node) {
+            super();
+            this.world = world;
+            this.Node = Node;
+        }
+        Item(id) {
+            const [land, head = '0_0'] = id.split('!');
+            return this.world.land_sync(land).node(head, this.Node);
+        }
+        make(law = [''], mod = [], add = []) {
+            const land = $mol_wire_sync(this.world).grab(law, mod, add);
+            return this.Item(land.id());
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_crowd_fund.prototype, "Item", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_crowd_fund.prototype, "make", null);
+    $.$hyoo_crowd_fund = $hyoo_crowd_fund;
+})($ || ($ = {}));
+//hyoo/crowd/fund/fund.ts
+;
+"use strict";
+var $;
+(function ($) {
     $.$mol_dict_key = $mol_key;
     class $mol_dict extends Map {
         get(key) {
@@ -15054,6 +15084,9 @@ var $;
             this.land_init(land);
             return land;
         }
+        Fund(Item) {
+            return new $hyoo_crowd_fund(this, Item);
+        }
         home() {
             return this.land_sync(this.peer.id);
         }
@@ -15222,6 +15255,9 @@ var $;
             return { allow, forbid };
         }
     }
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_crowd_world.prototype, "Fund", null);
     $.$hyoo_crowd_world = $hyoo_crowd_world;
 })($ || ($ = {}));
 //hyoo/crowd/world/world.ts
@@ -15473,6 +15509,8 @@ var $;
                 this.join();
             else
                 this.pub.promote();
+            if (!peer)
+                peer = this.peer_id();
             const level_id = `${this.id()}/${peer}`;
             const prev = this._unit_all.get(level_id)?.level()
                 ?? this._unit_all.get(`${this.id()}/0_0`)?.level()
@@ -17577,6 +17615,13 @@ var $;
                 catch (error) {
                     $mol_fail_log(error);
                 }
+            }
+            if (re instanceof HTMLInputElement) {
+                re.value = el['value'];
+                re.checked = el['checked'];
+            }
+            if (re instanceof HTMLTextAreaElement) {
+                re.value = el['value'];
             }
             const styles = $mol_dom_context.getComputedStyle(el);
             restyle(re, styles);
@@ -36888,28 +36933,892 @@ var $;
 //hyoo/bench/app/app.view.ts
 ;
 "use strict";
-var $;
-(function ($) {
-    class $mol_icon_link extends $mol_icon {
-        path() {
-            return "M3.9,12C3.9,10.29 5.29,8.9 7,8.9H11V7H7C4.24,7 2,9.24 2,12C2,14.76 4.24,17 7,17H11V15.1H7C5.29,15.1 3.9,13.71 3.9,12M8,13H16V11H8V13M17,7H13V8.9H17C18.71,8.9 20.1,10.29 20.1,12C20.1,13.71 18.71,15.1 17,15.1H13V17H17C19.76,17 22,14.76 22,12C22,9.24 19.76,7 17,7Z";
-        }
-    }
-    $.$mol_icon_link = $mol_icon_link;
-})($ || ($ = {}));
-//mol/icon/link/-view.tree/link.view.tree.ts
+let $hyoo_sync_revision = "95333f3";
+//hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
 var $;
 (function ($) {
-    class $mol_icon_link_variant extends $mol_icon {
-        path() {
-            return "M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.54,8.71 19.54,6.81 18.36,5.64C17.19,4.46 15.29,4.46 14.12,5.64L10.59,9.17C9.41,10.34 9.41,12.24 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.46,15.29 4.46,17.19 5.64,18.36C6.81,19.54 8.71,19.54 9.88,18.36L13.41,14.83C14.59,13.66 14.59,11.76 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z";
+    async function $hyoo_sync_peer(path) {
+        let serial = $mol_state_local.value('$hyoo_sync_peer');
+        if (typeof serial === 'string') {
+            return await $hyoo_crowd_peer.restore(serial);
+        }
+        const peer = await $hyoo_crowd_peer.generate();
+        $mol_state_local.value('$hyoo_sync_peer', peer.key_private_serial);
+        return peer;
+    }
+    $.$hyoo_sync_peer = $hyoo_sync_peer;
+})($ || ($ = {}));
+//hyoo/sync/peer/peer.node.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_sync_masters = [
+        `wss://sync.hyoo.ru/`,
+        'wss://sync-hyoo-ru.herokuapp.com/',
+    ];
+})($ || ($ = {}));
+//hyoo/sync/masters/masters.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_sync_yard extends $mol_object2 {
+        log_pack(data) {
+            return data;
+        }
+        peer() {
+            return $mol_wire_sync($hyoo_sync_peer)(this + '.peer()');
+        }
+        world() {
+            const world = new this.$.$hyoo_crowd_world(this.peer());
+            world.land_init = land => this.db_land_init(land);
+            return world;
+        }
+        land(id) {
+            return this.world().land_sync(id);
+        }
+        land_grab(law = [''], mod = [], add = []) {
+            return $mol_wire_sync(this.world()).grab(law, mod, add);
+        }
+        home() {
+            return this.land(this.peer().id);
+        }
+        land_search(query) {
+            const stat = new Map();
+            for (const prefix of query.match(/\p{Letter}{2,}/gu) ?? []) {
+                const caps = prefix.slice(0, 1).toUpperCase() + prefix.slice(1);
+                const prefs = new Set([
+                    caps, ' ' + caps,
+                    prefix, ' ' + prefix,
+                ]);
+                const lands = new Set();
+                const founds = $mol_wire_race(...[...prefs].map(pref => () => $mol_wire_sync(this).db_land_search(pref)));
+                for (const found of founds) {
+                    for (const land of [...found].reverse())
+                        lands.add(land);
+                }
+                for (const land of lands) {
+                    stat.set(land, (stat.get(land) ?? 0) + 1);
+                }
+            }
+            return [...stat].sort((left, right) => right[1] - left[1]).map(pair => pair[0]);
+        }
+        sync() {
+            this.server();
+            for (const land of this.world().lands.values()) {
+                this.db_land_sync(land);
+            }
+            const master = this.master();
+            if (master)
+                $mol_wire_race(...[...this.world().lands.values()].map(land => () => this.line_land_sync({ line: master, land })));
+            $mol_wire_race(...this.slaves().map(line => () => this.line_sync(line)));
+        }
+        land_sync(land) {
+            this.db_land_init(land);
+            try {
+                this.db_land_sync(land);
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+            try {
+                const master = this.master();
+                if (master)
+                    this.line_land_sync({ line: master, land });
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+            try {
+                $mol_wire_race(...this.slaves()
+                    .filter(line => this.line_lands(line).includes(land))
+                    .map(line => () => this.line_land_sync({ line, land })));
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+        }
+        db_land_clocks(land, next) {
+            $mol_wire_solid();
+            return next;
+        }
+        db_land_sync(land) {
+            this.db_land_init(land);
+            const db_clocks = this.db_land_clocks(land.id());
+            land.clocks;
+            const units = land.delta(db_clocks);
+            if (!units.length)
+                return;
+            $mol_wire_sync(this.world()).sign_units(units);
+            $mol_wire_sync(this).db_land_save(land, units);
+            for (const unit of units) {
+                db_clocks[unit.group()].see_peer(unit.auth, unit.time);
+            }
+        }
+        db_land_init(land) {
+            try {
+                var units = $mol_wire_sync(this).db_land_load(land);
+            }
+            catch (error) {
+                if (!(error instanceof Error))
+                    $mol_fail_hidden(error);
+                this.$.$mol_log3_fail({
+                    place: this,
+                    land: land.id(),
+                    message: error.message,
+                });
+                units = [];
+            }
+            units.sort($hyoo_crowd_unit_compare);
+            const clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock];
+            this.db_land_clocks(land.id(), clocks);
+            land.apply(units);
+            for (const unit of units) {
+                clocks[unit.group()].see_peer(unit.auth, unit.time);
+            }
+        }
+        async db_land_load(land) {
+            return [];
+        }
+        async db_land_search(from, to = from) {
+            return new Set();
+        }
+        async db_land_save(land, units) { }
+        master_cursor(next = 0) {
+            return next;
+        }
+        master_link() {
+            return this.$.$hyoo_sync_masters[this.master_cursor()];
+        }
+        master() {
+            return null;
+        }
+        server() {
+            return null;
+        }
+        slaves(next = []) {
+            return next;
+        }
+        line_lands(line, next = []) {
+            return next;
+        }
+        line_land_clocks({ line, land }, next) {
+            $mol_wire_solid();
+            this.master();
+            return next;
+        }
+        line_sync(line) {
+            $mol_wire_race(...this.line_lands(line).map(land => () => this.line_land_sync({ line, land })));
+        }
+        line_land_sync({ line, land }) {
+            this.line_land_init({ line, land });
+            let clocks = this.line_land_clocks({ line, land });
+            if (!clocks)
+                return;
+            const units = land.delta(clocks);
+            if (!units.length)
+                return;
+            $mol_wire_sync(this).line_send_units(line, units);
+            this.$.$mol_log3_rise({
+                place: this,
+                land: land.id(),
+                message: 'Sync Sent',
+                line: $mol_key(line),
+                units: this.log_pack(units),
+            });
+            for (const unit of units) {
+                clocks[unit.group()].see_peer(unit.auth, unit.time);
+            }
+        }
+        line_land_init({ line, land }) {
+            this.db_land_init(land);
+            this.line_send_clocks(line, land);
+        }
+        line_land_neck({ line, land }, next = []) {
+            return next;
+        }
+        async line_receive(line, message) {
+            if (!message.byteLength)
+                return;
+            const view = new DataView(message.buffer, message.byteOffset, message.byteLength);
+            const int0 = view.getInt32(0, true);
+            const int1 = view.getInt32(4, true);
+            const land_id = $mol_int62_to_string({
+                lo: int0 << 1 >> 1,
+                hi: int1 << 1 >> 1,
+            });
+            const handle = async (prev) => {
+                if (prev)
+                    await prev;
+                const world = this.world();
+                const land = await $mol_wire_async(this).land(land_id);
+                let clocks = this.line_land_clocks({ line, land });
+                if (!clocks)
+                    this.line_land_clocks({ line, land }, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]);
+                if (int0 << 1 >> 1 ^ int0) {
+                    const bin = new $hyoo_crowd_clock_bin(message.buffer, message.byteOffset, message.byteLength);
+                    for (let group = 0; group < clocks.length; ++group) {
+                        clocks[group].see_bin(bin, group);
+                    }
+                    const lands = this.line_lands(line);
+                    if (lands.includes(land)) {
+                        this.$.$mol_log3_warn({
+                            place: this,
+                            land: land.id(),
+                            message: 'Already syncing',
+                            hint: 'Bug at $hyoo_sync_yard',
+                            line: $mol_key(line),
+                            clocks,
+                        });
+                    }
+                    else {
+                        this.line_lands(line, [...lands, land]);
+                    }
+                    return;
+                }
+                const { allow, forbid } = await world.apply(message);
+                for (const [unit, error] of forbid) {
+                    this.$.$mol_log3_fail({
+                        place: this,
+                        land: land.id(),
+                        message: error,
+                        line: $mol_key(line),
+                        unit,
+                    });
+                }
+                if (!allow.length)
+                    return;
+                for (const unit of allow) {
+                    clocks[unit.group()].see_peer(unit.auth, unit.time);
+                }
+                this.$.$mol_log3_rise({
+                    place: this,
+                    land: land.id(),
+                    message: 'Sync Gain',
+                    line: $mol_key(line),
+                    units: this.log_pack(allow),
+                });
+            };
+            this.line_land_neck({ line, land: land_id }, [
+                handle(this.line_land_neck({ line, land: land_id })[0])
+            ]);
+        }
+        line_send_clocks(line, land) { }
+        async line_send_units(line, units) { }
+        [$mol_dev_format_head]() {
+            return $mol_dev_format_native(this);
         }
     }
-    $.$mol_icon_link_variant = $mol_icon_link_variant;
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "peer", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "world", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "land", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_sync_yard.prototype, "land_search", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "land_sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "db_land_clocks", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "db_land_sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "db_land_init", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "master_cursor", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "slaves", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_lands", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_land_clocks", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_land_sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_land_init", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_land_neck", null);
+    $.$hyoo_sync_yard = $hyoo_sync_yard;
 })($ || ($ = {}));
-//mol/icon/link/variant/-view.tree/variant.view.tree.ts
+//hyoo/sync/yard/yard.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_db_response(request) {
+        return new Promise((done, fail) => {
+            request.onerror = () => fail(new Error(request.error.message));
+            request.onsuccess = () => done(request.result);
+        });
+    }
+    $.$mol_db_response = $mol_db_response;
+})($ || ($ = {}));
+//mol/db/response/response.ts
+;
+"use strict";
+var $;
+(function ($) {
+    async function $mol_db(name, ...migrations) {
+        const request = this.$mol_dom_context.indexedDB.open(name, migrations.length ? migrations.length + 1 : undefined);
+        request.onupgradeneeded = event => {
+            migrations.splice(0, event.oldVersion - 1);
+            const transaction = new $mol_db_transaction(request.transaction);
+            for (const migrate of migrations)
+                migrate(transaction);
+        };
+        const db = await $mol_db_response(request);
+        return new $mol_db_database(db);
+    }
+    $.$mol_db = $mol_db;
+})($ || ($ = {}));
+//mol/db/db.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_db_store {
+        native;
+        constructor(native) {
+            this.native = native;
+        }
+        get name() {
+            return this.native.name;
+        }
+        get path() {
+            return this.native.keyPath;
+        }
+        get incremental() {
+            return this.native.autoIncrement;
+        }
+        get indexes() {
+            return new Proxy({}, {
+                ownKeys: () => [...this.native.indexNames],
+                has: (_, name) => this.native.indexNames.contains(name),
+                get: (_, name) => new $mol_db_index(this.native.index(name))
+            });
+        }
+        index_make(name, path = [], unique = false, multiEntry = false) {
+            return this.native.createIndex(name, path, { multiEntry, unique });
+        }
+        index_drop(name) {
+            this.native.deleteIndex(name);
+            return this;
+        }
+        get transaction() {
+            return new $mol_db_transaction(this.native.transaction);
+        }
+        get db() {
+            return this.transaction.db;
+        }
+        clear() {
+            return $mol_db_response(this.native.clear());
+        }
+        count(keys) {
+            return $mol_db_response(this.native.count(keys));
+        }
+        put(doc, key) {
+            return $mol_db_response(this.native.put(doc, key));
+        }
+        get(key) {
+            return $mol_db_response(this.native.get(key));
+        }
+        select(key, count) {
+            return $mol_db_response(this.native.getAll(key, count));
+        }
+        drop(keys) {
+            return $mol_db_response(this.native.delete(keys));
+        }
+    }
+    $.$mol_db_store = $mol_db_store;
+})($ || ($ = {}));
+//mol/db/store/store.ts
+;
+"use strict";
+//mol/db/store/store_schema.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_db_index {
+        native;
+        constructor(native) {
+            this.native = native;
+        }
+        get name() {
+            return this.native.name;
+        }
+        get paths() {
+            return this.native.keyPath;
+        }
+        get unique() {
+            return this.native.unique;
+        }
+        get multiple() {
+            return this.native.multiEntry;
+        }
+        get store() {
+            return new $mol_db_store(this.native.objectStore);
+        }
+        get transaction() {
+            return this.store.transaction;
+        }
+        get db() {
+            return this.store.db;
+        }
+        count(keys) {
+            return $mol_db_response(this.native.count(keys));
+        }
+        get(key) {
+            return $mol_db_response(this.native.get(key));
+        }
+        select(key, count) {
+            return $mol_db_response(this.native.getAll(key, count));
+        }
+    }
+    $.$mol_db_index = $mol_db_index;
+})($ || ($ = {}));
+//mol/db/index/index.ts
+;
+"use strict";
+//mol/db/index/index_schema.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_dom_context.indexedDB = $node['fake-indexeddb'].indexedDB;
+    $mol_dom_context.IDBCursor = $node['fake-indexeddb'].IDBCursor;
+    $mol_dom_context.IDBCursorWithValue = $node['fake-indexeddb'].IDBCursorWithValue;
+    $mol_dom_context.IDBDatabase = $node['fake-indexeddb'].IDBDatabase;
+    $mol_dom_context.IDBFactory = $node['fake-indexeddb'].IDBFactory;
+    $mol_dom_context.IDBIndex = $node['fake-indexeddb'].IDBIndex;
+    $mol_dom_context.IDBKeyRange = $node['fake-indexeddb'].IDBKeyRange;
+    $mol_dom_context.IDBObjectStore = $node['fake-indexeddb'].IDBObjectStore;
+    $mol_dom_context.IDBOpenDBRequest = $node['fake-indexeddb'].IDBOpenDBRequest;
+    $mol_dom_context.IDBRequest = $node['fake-indexeddb'].IDBRequest;
+    $mol_dom_context.IDBTransaction = $node['fake-indexeddb'].IDBTransaction;
+    $mol_dom_context.IDBVersionChangeEvent = $node['fake-indexeddb'].IDBVersionChangeEvent;
+})($ || ($ = {}));
+//mol/db/db.node.ts
+;
+"use strict";
+//mol/db/db_schema.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_db_database {
+        native;
+        constructor(native) {
+            this.native = native;
+        }
+        get name() {
+            return this.native.name;
+        }
+        get version() {
+            return this.native.version;
+        }
+        get stores() {
+            return [...this.native.objectStoreNames];
+        }
+        read(...names) {
+            return new $mol_db_transaction(this.native.transaction(names, 'readonly')).stores;
+        }
+        change(...names) {
+            return new $mol_db_transaction(this.native.transaction(names, 'readwrite'));
+        }
+        kill() {
+            this.native.close();
+            const request = $mol_dom_context.indexedDB.deleteDatabase(this.name);
+            request.onblocked = console.warn;
+            return $mol_db_response(request);
+        }
+        destructor() {
+            this.native.close();
+        }
+    }
+    $.$mol_db_database = $mol_db_database;
+})($ || ($ = {}));
+//mol/db/database/database.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_db_transaction {
+        native;
+        constructor(native) {
+            this.native = native;
+        }
+        get stores() {
+            return new Proxy({}, {
+                ownKeys: () => [...this.native.objectStoreNames],
+                has: (_, name) => this.native.objectStoreNames.contains(name),
+                get: (_, name) => new $mol_db_store(this.native.objectStore(name)),
+            });
+        }
+        store_make(name) {
+            return this.native.db.createObjectStore(name, { autoIncrement: true });
+        }
+        store_drop(name) {
+            this.native.db.deleteObjectStore(name);
+            return this;
+        }
+        abort() {
+            if (this.native.error)
+                return;
+            this.native.abort();
+        }
+        commit() {
+            this.native.commit();
+            return new Promise((done, fail) => {
+                this.native.onerror = () => fail(new Error(this.native.error.message));
+                this.native.oncomplete = () => done();
+            });
+        }
+        get db() {
+            return new $mol_db_database(this.native.db);
+        }
+    }
+    $.$mol_db_transaction = $mol_db_transaction;
+})($ || ($ = {}));
+//mol/db/transaction/transaction.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_sync_client extends $hyoo_sync_yard {
+        async db() {
+            const db1 = await this.$.$mol_db('$hyoo_sync_client_db');
+            await db1.kill();
+            return await this.$.$mol_db('$hyoo_sync_client_db2', mig => mig.store_make('Unit'), mig => mig.stores.Unit.index_make('Land', ['land']), mig => mig.stores.Unit.index_make('Data', ['data']));
+        }
+        async db_land_load(land) {
+            try {
+                var db = await this.db();
+            }
+            catch (error) {
+                $mol_fail_log(error);
+                return [];
+            }
+            const Unit = db.read('Unit').Unit;
+            const recs = await Unit.indexes.Land.select([land.id()]);
+            if (!recs)
+                return [];
+            const units = recs.map(rec => new $hyoo_crowd_unit(rec.land, rec.auth, rec.head, rec.self, rec.next, rec.prev, rec.time, rec.data, new $hyoo_crowd_unit_bin(rec.bin.buffer)));
+            return units;
+        }
+        async db_land_search(from, to = from + '\uFFFF') {
+            try {
+                var db = await this.db();
+            }
+            catch (error) {
+                $mol_fail_log(error);
+                return new Set();
+            }
+            const Unit = db.read('Unit').Unit;
+            const query = IDBKeyRange.bound([from], [to]);
+            const recs = await Unit.indexes.Data.select(query);
+            return new Set(recs.map(rec => rec.land));
+        }
+        async db_land_save(land, units) {
+            try {
+                var db = await this.db();
+            }
+            catch (error) {
+                $mol_fail_log(error);
+                return;
+            }
+            const trans = db.change('Unit');
+            const Unit = trans.stores.Unit;
+            for (const unit of units) {
+                Unit.put(unit, [unit.land, unit.head, unit.self]);
+            }
+            await trans.commit();
+        }
+        reconnects(reset) {
+            return ($mol_wire_probe(() => this.reconnects()) ?? 0) + 1;
+        }
+        master() {
+            this.reconnects();
+            const link = this.master_link();
+            const line = new $mol_dom_context.WebSocket(link);
+            line.binaryType = 'arraybuffer';
+            line.onmessage = async (event) => {
+                if (event.data instanceof ArrayBuffer) {
+                    await this.line_receive(line, new Uint8Array(event.data));
+                }
+                else {
+                    this.$.$mol_log3_fail({
+                        place: this,
+                        message: 'Wrong data',
+                        data: event.data
+                    });
+                }
+            };
+            let interval;
+            line.onclose = () => {
+                clearInterval(interval);
+                setTimeout(() => this.reconnects(null), 5000);
+            };
+            Object.assign(line, {
+                destructor: () => line.close()
+            });
+            return new Promise((done, fail) => {
+                line.onopen = () => {
+                    this.$.$mol_log3_come({
+                        place: this,
+                        message: 'Connected to Master',
+                        line: $mol_key(line),
+                        server: link,
+                    });
+                    interval = setInterval(() => line.send(new Uint8Array), 30000);
+                    done(line);
+                };
+                line.onerror = () => {
+                    this.master_cursor((this.master_cursor() + 1) % this.$.$hyoo_sync_masters.length);
+                    fail(new Error(`Master is unabailable`));
+                };
+            });
+        }
+        line_send_clocks(line, land) {
+            if (line instanceof WebSocket) {
+                const message = new Uint8Array($hyoo_crowd_clock_bin.from(land.id(), land._clocks).buffer);
+                line.send(message);
+            }
+            else {
+                const message = land._clocks;
+                line.postMessage(['hyoo_sync_clocks', land.id(), message]);
+            }
+        }
+        async line_send_units(line, units) {
+            if (line instanceof WebSocket) {
+                await this.world().sign_units(units);
+                const message = new Blob(units.map(unit => unit.bin));
+                line.send(message);
+            }
+            else {
+                line.postMessage(['hyoo_sync_units', units[0].land, units]);
+            }
+        }
+    }
+    __decorate([
+        $mol_memo.method
+    ], $hyoo_sync_client.prototype, "db", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_client.prototype, "reconnects", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_client.prototype, "master", null);
+    $.$hyoo_sync_client = $hyoo_sync_client;
+})($ || ($ = {}));
+//hyoo/sync/client/client.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_directions extends $mol_icon {
+        path() {
+            return "M14,14.5V12H10V15H8V11C8,10.45 8.45,10 9,10H14V7.5L17.5,11M21.71,11.29L12.71,2.29H12.7C12.31,1.9 11.68,1.9 11.29,2.29L2.29,11.29C1.9,11.68 1.9,12.32 2.29,12.71L11.29,21.71C11.68,22.09 12.31,22.1 12.71,21.71L21.71,12.71C22.1,12.32 22.1,11.68 21.71,11.29Z";
+        }
+    }
+    $.$mol_icon_directions = $mol_icon_directions;
+})($ || ($ = {}));
+//mol/icon/directions/-view.tree/directions.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_directions_fork extends $mol_icon {
+        path() {
+            return "M3,4V12.5L6,9.5L9,13C10,14 10,15 10,15V21H14V14C14,14 14,13 13.47,12C12.94,11 12,10 12,10L9,6.58L11.5,4M18,4L13.54,8.47L14,9C14,9 14.93,10 15.47,11C15.68,11.4 15.8,11.79 15.87,12.13L21,7";
+        }
+    }
+    $.$mol_icon_directions_fork = $mol_icon_directions_fork;
+})($ || ($ = {}));
+//mol/icon/directions/fork/-view.tree/fork.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_plus_box extends $mol_icon {
+        path() {
+            return "M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3Z";
+        }
+    }
+    $.$mol_icon_plus_box = $mol_icon_plus_box;
+})($ || ($ = {}));
+//mol/icon/plus/box/-view.tree/box.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_sync extends $mol_icon {
+        path() {
+            return "M12,18C8.69,18 6,15.31 6,12C6,11 6.25,10.03 6.7,9.2L5.24,7.74C4.46,8.97 4,10.43 4,12C4,16.42 7.58,20 12,20V23L16,19L12,15M12,4V1L8,5L12,9V6C15.31,6 18,8.69 18,12C18,13 17.75,13.97 17.3,14.8L18.76,16.26C19.54,15.03 20,13.57 20,12C20,7.58 16.42,4 12,4Z";
+        }
+    }
+    $.$mol_icon_sync = $mol_icon_sync;
+})($ || ($ = {}));
+//mol/icon/sync/-view.tree/sync.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_sync_off extends $mol_icon {
+        path() {
+            return "M20,4H14V10L16.24,7.76C17.32,8.85 18,10.34 18,12C18,13 17.75,13.94 17.32,14.77L18.78,16.23C19.55,15 20,13.56 20,12C20,9.79 19.09,7.8 17.64,6.36L20,4M2.86,5.41L5.22,7.77C4.45,9 4,10.44 4,12C4,14.21 4.91,16.2 6.36,17.64L4,20H10V14L7.76,16.24C6.68,15.15 6,13.66 6,12C6,11 6.25,10.06 6.68,9.23L14.76,17.31C14.5,17.44 14.26,17.56 14,17.65V19.74C14.79,19.53 15.54,19.2 16.22,18.78L18.58,21.14L19.85,19.87L4.14,4.14L2.86,5.41M10,6.35V4.26C9.2,4.47 8.45,4.8 7.77,5.22L9.23,6.68C9.5,6.56 9.73,6.44 10,6.35Z";
+        }
+    }
+    $.$mol_icon_sync_off = $mol_icon_sync_off;
+})($ || ($ = {}));
+//mol/icon/sync/off/-view.tree/off.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_sync_online extends $mol_link {
+        minimal_width() {
+            return 40;
+        }
+        minimal_height() {
+            return 40;
+        }
+        yard() {
+            const obj = new this.$.$hyoo_sync_yard();
+            return obj;
+        }
+        uri() {
+            return this.master_link();
+        }
+        sub() {
+            return [
+                this.Well(),
+                this.Fail()
+            ];
+        }
+        attr() {
+            return {
+                ...super.attr(),
+                title: this.message()
+            };
+        }
+        master_link() {
+            return "";
+        }
+        Well() {
+            const obj = new this.$.$mol_avatar();
+            obj.id = () => this.master_link();
+            return obj;
+        }
+        Fail() {
+            const obj = new this.$.$mol_icon_sync_off();
+            return obj;
+        }
+        hint() {
+            return "$hyoo_sync";
+        }
+        message() {
+            return this.hint();
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_online.prototype, "yard", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_online.prototype, "Well", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_online.prototype, "Fail", null);
+    $.$hyoo_sync_online = $hyoo_sync_online;
+})($ || ($ = {}));
+//hyoo/sync/online/-view.tree/online.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("hyoo/sync/online/online.view.css", "[hyoo_sync_online] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_sync_online_well] {\n\tcolor: var(--mol_theme_current);\n}\n\n[hyoo_sync_online_fail] {\n\tcolor: var(--mol_theme_focus);\n}\n\n[hyoo_sync_online][mol_view_error=\"Promise\"] {\n\tanimation: hyoo_sync_online_wait 1s linear infinite;\n}\n\n@keyframes hyoo_sync_online_wait {\n\tfrom {\n\t\topacity: 1;\n\t}\n\tto {\n\t\topacity: .5;\n\t}\n}\n");
+})($ || ($ = {}));
+//hyoo/sync/online/-css/online.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_sync_online extends $.$hyoo_sync_online {
+            message() {
+                try {
+                    this.yard().sync();
+                    return this.hint();
+                }
+                catch (error) {
+                    if (error instanceof Promise)
+                        $mol_fail_hidden(error);
+                    $mol_fail_log(error);
+                    return String(error);
+                }
+            }
+            sub() {
+                try {
+                    this.yard().sync();
+                    return [this.Well()];
+                }
+                catch (error) {
+                    if (error instanceof Promise)
+                        $mol_fail_hidden(error);
+                    $mol_fail_log(error);
+                    return [this.Fail()];
+                }
+            }
+            hint() {
+                return super.hint() + ' ' + $hyoo_sync_revision;
+            }
+            master_link() {
+                return this.yard().master_link().replace(/^ws(s?):/, 'http$1:');
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_sync_online.prototype, "message", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_sync_online.prototype, "sub", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_sync_online.prototype, "hint", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_sync_online.prototype, "master_link", null);
+        $$.$hyoo_sync_online = $hyoo_sync_online;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//hyoo/sync/online/online.view.ts
 ;
 "use strict";
 var $;
@@ -36941,6 +37850,10 @@ var $;
     class $hyoo_js_perf extends $mol_page {
         title() {
             return this.$.$mol_locale.text('$hyoo_js_perf_title');
+        }
+        yard() {
+            const obj = new this.$.$hyoo_sync_client();
+            return obj;
         }
         prefixes() {
             return [];
@@ -36975,21 +37888,22 @@ var $;
             obj.swap = (next) => this.case_swap(id, next);
             return obj;
         }
-        head() {
-            return [
-                this.Title(),
-                this.Run(),
-                this.Permalink(),
-                this.Share(),
-                this.Tools()
-            ];
+        Title() {
+            const obj = new this.$.$mol_string_button();
+            obj.value = (next) => this.bench_title(next);
+            obj.hint = () => this.title();
+            return obj;
         }
         tools() {
             return [
+                this.Run(),
+                this.Share(),
+                this.Fork(),
                 this.New(),
                 this.About(),
                 this.Lights(),
-                this.Source()
+                this.Source(),
+                this.Online()
             ];
         }
         Theme() {
@@ -37123,6 +38037,11 @@ var $;
                 return next;
             return null;
         }
+        bench_title(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
         Run_icon() {
             const obj = new this.$.$mol_icon_play();
             return obj;
@@ -37136,42 +38055,42 @@ var $;
             ];
             return obj;
         }
-        permalink() {
-            return "";
-        }
-        parmalink_hint() {
-            return this.$.$mol_locale.text('$hyoo_js_perf_parmalink_hint');
-        }
-        Permalink_icon() {
-            const obj = new this.$.$mol_icon_link_variant();
+        Share() {
+            const obj = new this.$.$mol_button_share();
+            obj.capture = () => this.Cases();
             return obj;
         }
-        Permalink() {
-            const obj = new this.$.$mol_link();
-            obj.uri = () => this.permalink();
-            obj.hint = () => this.parmalink_hint();
-            obj.target = () => "_blank";
+        bench_fork(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Fork_icon() {
+            const obj = new this.$.$mol_icon_directions_fork();
+            return obj;
+        }
+        Fork() {
+            const obj = new this.$.$mol_button_minor();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_Fork_hint');
+            obj.click = (next) => this.bench_fork(next);
             obj.sub = () => [
-                this.Permalink_icon()
+                this.Fork_icon()
             ];
             return obj;
         }
-        Share() {
-            const obj = new this.$.$mol_button_share();
-            obj.capture = () => this.Cases_pane();
-            return obj;
-        }
-        new_hint() {
-            return this.$.$mol_locale.text('$hyoo_js_perf_new_hint');
+        bench_new(next) {
+            if (next !== undefined)
+                return next;
+            return null;
         }
         New_icon() {
-            const obj = new this.$.$mol_icon_plus();
+            const obj = new this.$.$mol_icon_plus_box();
             return obj;
         }
         New() {
-            const obj = new this.$.$mol_link();
-            obj.uri = () => "#";
-            obj.hint = () => this.new_hint();
+            const obj = new this.$.$mol_button_minor();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_New_hint');
+            obj.click = (next) => this.bench_new(next);
             obj.sub = () => [
                 this.New_icon()
             ];
@@ -37198,13 +38117,24 @@ var $;
             obj.uri = () => "https://github.com/hyoo-ru/perf.js.hyoo.ru";
             return obj;
         }
+        Online() {
+            const obj = new this.$.$hyoo_sync_online();
+            obj.yard = () => this.yard();
+            return obj;
+        }
     }
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "yard", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Body", null);
     __decorate([
         $mol_mem_key
     ], $hyoo_js_perf.prototype, "Case", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Title", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Theme", null);
@@ -37267,19 +38197,28 @@ var $;
     ], $hyoo_js_perf.prototype, "case_swap", null);
     __decorate([
         $mol_mem
+    ], $hyoo_js_perf.prototype, "bench_title", null);
+    __decorate([
+        $mol_mem
     ], $hyoo_js_perf.prototype, "Run_icon", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Run", null);
     __decorate([
         $mol_mem
-    ], $hyoo_js_perf.prototype, "Permalink_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Permalink", null);
-    __decorate([
-        $mol_mem
     ], $hyoo_js_perf.prototype, "Share", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "bench_fork", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Fork_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Fork", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "bench_new", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "New_icon", null);
@@ -37298,6 +38237,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Online", null);
     $.$hyoo_js_perf = $hyoo_js_perf;
     class $hyoo_js_perf_case extends $mol_view {
         results() {
@@ -37382,13 +38324,16 @@ var $;
             ];
             return obj;
         }
-        Prefix_tools() {
-            const obj = new this.$.$mol_bar();
-            obj.sub = () => [
+        prefix_tools() {
+            return [
                 this.Drop(),
                 this.Dupe(),
                 this.Swap()
             ];
+        }
+        Prefix_tools() {
+            const obj = new this.$.$mol_bar();
+            obj.sub = () => this.prefix_tools();
             return obj;
         }
         changable() {
@@ -37431,6 +38376,7 @@ var $;
         Title() {
             const obj = new this.$.$mol_string_button();
             obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Title_hint');
+            obj.enabled = () => this.changable();
             obj.value = (next) => this.title(next);
             return obj;
         }
@@ -37782,6 +38728,125 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $hyoo_js_perf_bench_case extends $hyoo_crowd_struct {
+        title(next) {
+            return this.sub('title', $hyoo_crowd_reg).str(next);
+        }
+        setup(next) {
+            return this.sub('setup', $hyoo_crowd_reg).str(next);
+        }
+        measure(next) {
+            return this.sub('measure', $hyoo_crowd_reg).str(next);
+        }
+        steal(donor) {
+            this.title(donor.title());
+            this.setup(donor.setup());
+            this.measure(donor.measure());
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench_case.prototype, "title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench_case.prototype, "setup", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench_case.prototype, "measure", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench_case.prototype, "steal", null);
+    $.$hyoo_js_perf_bench_case = $hyoo_js_perf_bench_case;
+})($ || ($ = {}));
+//hyoo/js/perf/bench/case/case.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_js_perf_bench extends $hyoo_crowd_struct {
+        title(next) {
+            return this.sub('title', $hyoo_crowd_reg).str(next);
+        }
+        prefix(next) {
+            return this.sub('prefix', $hyoo_crowd_reg).str(next);
+        }
+        postfix(next) {
+            return this.sub('postfix', $hyoo_crowd_reg).str(next);
+        }
+        cases() {
+            return this.sub('cases', $hyoo_crowd_list).nodes($hyoo_js_perf_bench_case);
+        }
+        case_ensure(index) {
+            return this.cases()[index] ?? this.case_add();
+        }
+        case_add() {
+            this.sub('cases', $hyoo_crowd_list).insert([{}]);
+            return this.cases().slice(-1)[0];
+        }
+        case_drop(index) {
+            this.sub('cases', $hyoo_crowd_list).cut(index);
+        }
+        case_dupe(index) {
+            this.sub('cases', $hyoo_crowd_list).insert([[]], index + 1);
+            const [prev, next] = this.cases().slice(index, index + 2);
+            next.steal(prev);
+            return next;
+        }
+        case_swap(index) {
+            const list = this.sub('cases', $hyoo_crowd_list);
+            const pos = index ? index - 1 : list.units().length;
+            list.move(index, pos);
+            return pos;
+        }
+        steal(donor) {
+            this.title(donor.title());
+            this.prefix(donor.prefix());
+            this.postfix(donor.postfix());
+            for (const _case of donor.cases()) {
+                this.case_add().steal(_case);
+            }
+        }
+        changable() {
+            return this.land.level('') >= $hyoo_crowd_peer_level.mod;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "prefix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "postfix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "cases", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "case_add", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "case_drop", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "case_dupe", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "case_swap", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "steal", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "changable", null);
+    $.$hyoo_js_perf_bench = $hyoo_js_perf_bench;
+})($ || ($ = {}));
+//hyoo/js/perf/bench/bench.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_after_work extends $mol_object2 {
         delay;
         task;
@@ -37875,7 +38940,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_hint] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_prefix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_postfix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 auto;\n\tmin-width: 46rem;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_cases] {\n\tdisplay: table;\n\tborder-spacing: .75rem;\n}\n\n[hyoo_js_perf_case] {\n\tdisplay: table-row;\n\tflex: 0 1 auto;\n}\n\n[hyoo_js_perf_case_prefix] ,\n[hyoo_js_perf_case_source] {\n\tdisplay: table-cell;\n\tmin-width: 14rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_title] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_eval_labeler] {\n\twidth: 28rem;\n}\n[hyoo_js_perf_case_result_rows] {\n\twidth: 28rem;\n\tdisplay: table-cell;\n\theight: 5rem;\n}\n\n[hyoo_js_perf_case_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_result] {\n\tpadding: .25rem .75rem .25rem;\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\tmargin: 0 .5rem;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portion] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(1) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
+    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_tools] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_hint] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_prefix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_postfix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 auto;\n\tmin-width: 46rem;\n}\n\n[hyoo_js_perf_cases] {\n\tdisplay: table;\n\tborder-spacing: .75rem;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_case] {\n\tdisplay: table-row;\n\tflex: 0 1 auto;\n}\n\n[hyoo_js_perf_case_prefix] ,\n[hyoo_js_perf_case_source] {\n\tdisplay: table-cell;\n\tmin-width: 14rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_title] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_eval_labeler] {\n\twidth: 28rem;\n}\n[hyoo_js_perf_case_result_rows] {\n\twidth: 28rem;\n\tdisplay: table-cell;\n\theight: 5rem;\n}\n\n[hyoo_js_perf_case_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_result] {\n\tpadding: .25rem .75rem .25rem;\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\tmargin: 0 .5rem;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portion] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(1) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/-css/perf.view.css.ts
 ;
@@ -37897,101 +38962,152 @@ var $;
         }
         $$.$hyoo_js_perf_stats = $hyoo_js_perf_stats;
         class $hyoo_js_perf extends $.$hyoo_js_perf {
+            title() {
+                return (this.bench_title() ? this.bench_title() + ' | ' : '') + super.title();
+            }
+            bench_fund() {
+                return this.yard().world().Fund($hyoo_js_perf_bench);
+            }
+            bench() {
+                const id = $mol_int62_string_ensure(this.$.$mol_state_arg.value('bench'));
+                if (!id)
+                    return null;
+                return this.bench_fund().Item(id);
+            }
+            bench_new() {
+                const bench = this.bench_fund().make();
+                this.$.$mol_state_arg.go({ bench: bench.land.id() });
+                return bench;
+            }
+            bench_fork() {
+                const prev = this.bench();
+                const prefix = this.prefix();
+                const postfix = this.postfix();
+                const titles = this.titles();
+                const prefixes = this.prefixes();
+                const sources = this.sources();
+                const next = this.bench_new();
+                if (prev) {
+                    next.steal(prev);
+                }
+                else {
+                    next.prefix(prefix);
+                    next.postfix(postfix);
+                    const count = this.cases_count();
+                    for (let i = 0; i < count; ++i) {
+                        const case_ = next.case_add();
+                        case_.title(titles[i] ?? '');
+                        case_.setup(prefixes[i] ?? '');
+                        case_.measure(sources[i] ?? '');
+                    }
+                }
+                return next;
+            }
+            bench_changable() {
+                const bench = this.bench();
+                if (bench?.changable())
+                    return bench;
+                return this.bench_fork();
+            }
             titles(next) {
+                const bench = this.bench();
+                if (bench)
+                    return bench.cases().map(case_ => case_.title());
                 return JSON.parse(this.$.$mol_state_arg.value('titles', next === undefined ? undefined : JSON.stringify(next)) || '[]');
             }
             prefixes(next) {
+                const bench = this.bench();
+                if (bench)
+                    return bench.cases().map(case_ => case_.setup());
                 return JSON.parse(this.$.$mol_state_arg.value('prefixes', next === undefined ? undefined : JSON.stringify(next)) || '[]');
             }
             sources(next) {
+                const bench = this.bench();
+                if (bench)
+                    return bench.cases().map(case_ => case_.measure());
                 return JSON.parse(this.$.$mol_state_arg.value('sources', next === undefined ? undefined : JSON.stringify(next)) || '[]');
+            }
+            bench_title(next) {
+                if (next === undefined) {
+                    return this.bench()?.title()
+                        ?? this.$.$mol_state_arg.value('title')
+                        ?? '';
+                }
+                else {
+                    return this.bench_changable().title(next);
+                }
             }
             prefix(next) {
                 if (next === undefined) {
-                    return this.$.$mol_state_arg.value('prefix') || this.$.$mol_state_arg.value('common') || '';
+                    return this.bench()?.prefix()
+                        ?? this.$.$mol_state_arg.value('prefix')
+                        ?? this.$.$mol_state_arg.value('common')
+                        ?? '';
                 }
                 else {
-                    this.$.$mol_state_arg.value('prefix', next);
-                    this.$.$mol_state_arg.value('common', null);
-                    return next;
+                    return this.bench_changable().prefix(next);
                 }
             }
             postfix(next) {
-                return this.$.$mol_state_arg.value('postfix', next) || '';
-            }
-            permalink() {
-                const win = this.$.$mol_dom_context;
-                return 'https://tinyurl.com/create.php?url=' + encodeURIComponent(win.location.href);
-            }
-            transform(task) {
-                const titles = task(this.titles());
-                const prefixes = task(this.prefixes());
-                const sources = task(this.sources());
-                this.titles(titles);
-                this.prefixes(prefixes);
-                this.sources(sources);
-            }
-            case_drop(index) {
-                this.transform(list => [
-                    ...list.slice(0, index),
-                    ...list.slice(index + 1),
-                ]);
-            }
-            case_dupe(index) {
-                this.transform(list => [
-                    ...list.slice(0, index),
-                    list[index],
-                    ...list.slice(index),
-                ]);
-            }
-            case_swap(index) {
-                if (index === 0) {
-                    this.transform(list => [
-                        ...list.slice(1),
-                        list[0],
-                    ]);
+                if (next === undefined) {
+                    return this.bench()?.postfix()
+                        ?? this.$.$mol_state_arg.value('postfix')
+                        ?? '';
                 }
                 else {
-                    this.transform(list => [
-                        ...list.slice(0, index - 1),
-                        list[index],
-                        list[index - 1],
-                        ...list.slice(index + 1),
-                    ]);
+                    return this.bench_changable().postfix(next);
                 }
+            }
+            case_drop(index) {
+                if ((this.bench()?.cases().length ?? 0) <= index)
+                    return;
+                this.bench_changable().case_drop(index);
+            }
+            case_dupe(index) {
+                if ((this.bench()?.cases().length ?? 0) <= index)
+                    return;
+                this.bench_changable().case_dupe(index);
+            }
+            case_swap(index) {
+                if ((this.bench()?.cases().length ?? 0) <= index)
+                    return;
+                this.bench_changable().case_swap(index);
             }
             cases_count() {
                 return Math.max(this.prefixes().length, this.sources().length, this.titles().length);
             }
             cases() {
-                return $mol_range2(index => this.Case(index), () => Math.max(2, this.cases_count()));
+                return $mol_range2(index => this.Case(index), () => Math.max(1, this.cases_count()));
             }
             case_title(index, next) {
-                let titles = this.titles();
-                if (next === undefined)
-                    return titles[index] || '';
-                titles = titles.slice();
-                titles[index] = next;
-                this.titles(titles);
-                return next;
+                if (next === undefined) {
+                    return this.bench()?.cases()[index]?.title()
+                        ?? this.titles()[index]
+                        ?? '';
+                }
+                else {
+                    return this.bench_changable().case_ensure(index).title(next);
+                }
             }
             case_prefix(index, next) {
-                let prefixes = this.prefixes();
-                if (next === undefined)
-                    return prefixes[index] || '';
-                prefixes = prefixes.slice();
-                prefixes[index] = next;
-                this.prefixes(prefixes);
-                return next;
+                if (next === undefined) {
+                    return this.bench()?.cases()[index]?.setup()
+                        ?? this.prefixes()[index]
+                        ?? '';
+                }
+                else {
+                    return this.bench_changable().case_ensure(index).setup(next);
+                }
             }
             source(index, next) {
-                let sources = this.sources();
-                if (next === undefined)
-                    return sources[index] || '';
-                sources = sources.slice();
-                sources[index] = next;
-                this.sources(sources);
-                return next;
+                if (next === undefined) {
+                    return this.bench()?.cases()[index]?.measure()
+                        ?? this.sources()[index]
+                        ?? '';
+                }
+                else {
+                    return this.bench_changable().case_ensure(index).measure(next);
+                }
             }
             case_sample(index) {
                 const token = this.token();
@@ -38148,6 +39264,24 @@ var $;
         }
         __decorate([
             $mol_mem
+        ], $hyoo_js_perf.prototype, "title", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf.prototype, "bench_fund", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf.prototype, "bench", null);
+        __decorate([
+            $mol_action
+        ], $hyoo_js_perf.prototype, "bench_new", null);
+        __decorate([
+            $mol_action
+        ], $hyoo_js_perf.prototype, "bench_fork", null);
+        __decorate([
+            $mol_action
+        ], $hyoo_js_perf.prototype, "bench_changable", null);
+        __decorate([
+            $mol_mem
         ], $hyoo_js_perf.prototype, "titles", null);
         __decorate([
             $mol_mem
@@ -38155,6 +39289,9 @@ var $;
         __decorate([
             $mol_mem
         ], $hyoo_js_perf.prototype, "sources", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf.prototype, "bench_title", null);
         __decorate([
             $mol_mem
         ], $hyoo_js_perf.prototype, "prefix", null);
@@ -38167,6 +39304,15 @@ var $;
         __decorate([
             $mol_mem
         ], $hyoo_js_perf.prototype, "cases", null);
+        __decorate([
+            $mol_mem_key
+        ], $hyoo_js_perf.prototype, "case_title", null);
+        __decorate([
+            $mol_mem_key
+        ], $hyoo_js_perf.prototype, "case_prefix", null);
+        __decorate([
+            $mol_mem_key
+        ], $hyoo_js_perf.prototype, "source", null);
         __decorate([
             $mol_mem_key
         ], $hyoo_js_perf.prototype, "case_sample", null);
@@ -38228,6 +39374,9 @@ var $;
             eval_standalone() {
                 const code = this.sample();
                 return `https://eval.js.hyoo.ru/#!code=${encodeURIComponent(code)}/run=true`;
+            }
+            prefix_tools() {
+                return this.changable() ? super.prefix_tools() : [];
             }
         }
         __decorate([
@@ -48258,6 +49407,167 @@ var $;
     });
 })($ || ($ = {}));
 //mol/compare/text/text.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_sync_masters = [
+        `ws://localhost:9090/`,
+        $mol_dom_context.document.location.origin.replace(/^\w+:/, 'ws:'),
+    ];
+})($ || ($ = {}));
+//hyoo/sync/masters/masters.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        async 'put, get, drop, count records and clear store'() {
+            const db = await $$.$mol_db('$mol_db_test', mig => mig.store_make('letters'));
+            const trans = db.change('letters');
+            try {
+                const { letters } = trans.stores;
+                $mol_assert_like(await letters.get(1), undefined);
+                $mol_assert_like(await letters.get(2), undefined);
+                $mol_assert_like(await letters.count(), 0);
+                await letters.put('a');
+                await letters.put('b', 1);
+                await letters.put('c', 2);
+                $mol_assert_like(await letters.get(1), 'b');
+                $mol_assert_like(await letters.get(2), 'c');
+                $mol_assert_like(await letters.count(), 2);
+                await letters.drop(1);
+                $mol_assert_like(await letters.get(1), undefined);
+                $mol_assert_like(await letters.count(), 1);
+                await letters.clear();
+                $mol_assert_like(await letters.count(), 0);
+            }
+            finally {
+                trans.abort();
+                db.kill();
+            }
+        },
+        async 'select by query'() {
+            const db = await $$.$mol_db('$mol_db_test', mig => mig.store_make('letters'));
+            const trans = db.change('letters');
+            try {
+                const { letters } = trans.stores;
+                await letters.put('a');
+                await letters.put('b');
+                await letters.put('c');
+                await letters.put('d');
+                $mol_assert_like(await letters.select(), ['a', 'b', 'c', 'd']);
+                $mol_assert_like(await letters.select(null, 2), ['a', 'b']);
+                $mol_assert_like(await letters.select($mol_dom_context.IDBKeyRange.bound(2, 3)), ['b', 'c']);
+            }
+            finally {
+                trans.abort();
+                db.kill();
+            }
+        },
+    });
+})($ || ($ = {}));
+//mol/db/store/store.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        async 'take and drop db'() {
+            const db = await $$.$mol_db('$mol_db_test');
+            await db.kill();
+        },
+        async 'make and drop store in separate migrations'() {
+            try {
+                const db1 = await $$.$mol_db('$mol_db_test', mig => mig.store_make('temp'));
+                db1.destructor();
+                $mol_assert_like(db1.stores, ['temp']);
+                $mol_assert_like(db1.version, 2);
+                const db2 = await $$.$mol_db('$mol_db_test', mig => mig.store_make('temp'), mig => mig.store_drop('temp'));
+                db2.destructor();
+                $mol_assert_like(db2.stores, []);
+                $mol_assert_like(db2.version, 3);
+            }
+            finally {
+                const db0 = await $$.$mol_db('$mol_db_test');
+                await db0.kill();
+            }
+        },
+    });
+})($ || ($ = {}));
+//mol/db/db.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        async 'unique index'() {
+            const db = await $$.$mol_db('$mol_db_test', mig => mig.store_make('users'), mig => mig.stores.users.index_make('names', ['name'], !!'unique'));
+            const trans = db.change('users');
+            try {
+                const { users } = trans.stores;
+                await users.put({ name: 'Jin' }, 'jin');
+                await users.put({ name: 'John' }, 'john');
+                await users.put({ name: 'Bin' }, 'bin');
+                const { names } = users.indexes;
+                $mol_assert_like(await names.get(['Jin']), { name: 'Jin' });
+                $mol_assert_like(await names.get(['John']), { name: 'John' });
+                $mol_assert_like(await names.count(), 3);
+                $mol_assert_like(await names.select($mol_dom_context.IDBKeyRange.bound(['J'], ['J\uFFFF'])), [{ name: 'Jin' }, { name: 'John' }]);
+                try {
+                    await users.put({ name: 'Jin' }, 'jin2');
+                    $mol_fail(new Error('Exception expected'));
+                }
+                catch (error) {
+                    $mol_assert_unique(error.message, 'Exception expected');
+                }
+            }
+            finally {
+                trans.abort();
+                await db.kill();
+            }
+        },
+        async 'multi path index'() {
+            const db = await $$.$mol_db('$mol_db_test', mig => mig.store_make('users'), mig => mig.stores.users.index_make('names', ['first', 'last']));
+            const trans = db.change('users');
+            try {
+                const { users } = trans.stores;
+                await users.put({ first: 'Jin', last: 'Johnson' }, 'jin');
+                await users.put({ first: 'John', last: 'Jinson' }, 'john');
+                await users.put({ first: 'Bond', last: 'James' }, '007');
+                const { names } = users.indexes;
+                $mol_assert_like(await names.get(['Jin', 'Johnson']), { first: 'Jin', last: 'Johnson' });
+                $mol_assert_like(await names.get(['John', 'Jinson']), { first: 'John', last: 'Jinson' });
+                $mol_assert_like(await names.count(), 3);
+                $mol_assert_like(await names.select($mol_dom_context.IDBKeyRange.bound(['Jin', 'Johnson'], ['John', 'Jinson'])), [{ first: 'Jin', last: 'Johnson' }, { first: 'John', last: 'Jinson' }]);
+            }
+            finally {
+                trans.abort();
+                await db.kill();
+            }
+        },
+        async 'multiple indexes'() {
+            const db = await $$.$mol_db('$mol_db_test', mig => mig.store_make('users'), mig => mig.stores.users.index_make('names', ['name'], !!'unique'), mig => mig.stores.users.index_make('ages', ['age']));
+            const trans = db.change('users');
+            try {
+                const { users } = trans.stores;
+                await users.put({ name: 'Jin', age: 18 }, 'jin');
+                await users.put({ name: 'John', age: 18 }, 'john');
+                const { names, ages } = users.indexes;
+                $mol_assert_like(await names.select(['Jin']), [{ name: 'Jin', age: 18 }]);
+                $mol_assert_like(await names.select(['John']), [{ name: 'John', age: 18 }]);
+                $mol_assert_like(await names.count(), 2);
+                $mol_assert_like(await ages.select([18]), [{ name: 'Jin', age: 18 }, { name: 'John', age: 18 }]);
+                $mol_assert_like(await ages.count(), 2);
+            }
+            finally {
+                trans.abort();
+                await db.kill();
+            }
+        },
+    });
+})($ || ($ = {}));
+//mol/db/index/index.test.ts
 ;
 "use strict";
 var $;
