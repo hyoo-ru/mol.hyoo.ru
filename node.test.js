@@ -13576,6 +13576,11 @@ var $;
         }
         apps() {
             return {
+                idea: {
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_idea_title'),
+                    uri: "https://idea.hyoo.ru/"
+                },
                 board: {
                     target: "release",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_board_title'),
@@ -22754,12 +22759,12 @@ var $;
                 };
                 if (next !== undefined) {
                     next = normalize(next);
-                    if (next === this.mask(next)) {
-                        next = '';
-                    }
-                    else {
+                    if ([...next].filter(letter => allow.includes(letter)).join('')) {
                         if (next.includes('_'))
                             return next;
+                    }
+                    else {
+                        next = '';
                     }
                 }
                 return normalize(this.value(next));

@@ -1062,6 +1062,10 @@ $hyoo_apps $mol_book2
 		develop @ \For Developers
 		preview @ \For Curious
 	apps *
+		idea *
+			target \release
+			title @ \Fresh Ideas Network
+			uri \https://idea.hyoo.ru/
 		board *
 			target \release
 			title @ \Private Dashboard
