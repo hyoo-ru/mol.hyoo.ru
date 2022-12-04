@@ -640,7 +640,7 @@
   "dependencies": {
     "jsdom": "*",
     "chokidar": "*",
-    "node-fetch": "*",
+    "undici": "*",
     "fake-indexeddb": "*"
   }
 }
