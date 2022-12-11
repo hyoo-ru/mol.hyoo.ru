@@ -50626,7 +50626,6 @@ var $;
     function run(tree) {
         const $ = { $mol_object };
         const src = compile(tree);
-        console.log(src);
         eval(src);
         return $;
     }
