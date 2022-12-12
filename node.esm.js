@@ -42141,7 +42141,7 @@ var $;
                     visit(kid, prefix + 1, false);
                 }
                 if (inline)
-                    indent();
+                    next_line();
             }
             else if (text.type === 'line') {
                 if (!inline)
@@ -42888,7 +42888,7 @@ var $;
 			[] \\$mol_locale
 			[] \\text
 			(,) #key
-	`);
+	`, 'localized_string');
     function $mol_view_tree2_to_js(descr) {
         descr = $mol_view_tree2_classes(descr);
         const definitions = [];
@@ -42916,13 +42916,12 @@ var $;
                         ]),
                     ]);
                 };
-                const localize = (suffix = '') => localized_string.hack({
-                    '#key': key => [key.data(`${klass.type}_${name}${suffix}`)],
-                });
                 if (next)
                     addons.push(decorate());
                 const val = prop.hack({
-                    '@': (locale, belt) => localize(),
+                    '@': (locale, belt) => localized_string.hack({
+                        '#key': key => [locale.data(`${klass.type}_${name}`)],
+                    }),
                     '<=': bind => [
                         bind.struct('()', [
                             bind.kids[0].struct('this'),
@@ -42980,19 +42979,21 @@ var $;
                             for (const over of input.kids) {
                                 if (over.type === '/')
                                     continue;
-                                const name = name_of(over);
+                                const oname = name_of(over);
                                 const bind = over.kids[0];
                                 if (bind.type === '@') {
                                     overrides.push(over.struct('=', [
                                         over.struct('()', [
                                             over.struct('obj'),
                                             over.struct('[]', [
-                                                over.data(name),
+                                                over.data(oname),
                                             ]),
                                         ]),
                                         over.struct('=>', [
                                             params_of(over),
-                                            ...localize('_' + name),
+                                            ...localized_string.hack({
+                                                '#key': key => [bind.data(`${klass.type}_${name}_${oname}`)],
+                                            }),
                                         ]),
                                     ]));
                                 }
@@ -43006,7 +43007,7 @@ var $;
                                                 over.struct('()', [
                                                     over.struct('this'),
                                                     over.struct('[]', [
-                                                        over.data(name),
+                                                        over.data(oname),
                                                     ]),
                                                     args_of(over),
                                                 ]),
@@ -43019,7 +43020,7 @@ var $;
                                         over.struct('()', [
                                             over.struct('obj'),
                                             over.struct('[]', [
-                                                over.data(name),
+                                                over.data(oname),
                                             ]),
                                         ]),
                                         over.struct('()', over.hack(belt)),
