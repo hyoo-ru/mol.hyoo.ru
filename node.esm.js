@@ -36040,6 +36040,7 @@ var $;
         Readme() {
             const obj = new this.$.$mol_text();
             obj.text = () => this.readme();
+            obj.uri_base = () => this.uri_base();
             return obj;
         }
         Not_found() {
@@ -36082,6 +36083,11 @@ var $;
         readme() {
             return "";
         }
+        uri_base(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
         Not_found_caption() {
             return this.$.$mol_locale.text('$mol_app_demo_readme_Not_found_caption');
         }
@@ -36101,6 +36107,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_app_demo_readme.prototype, "Close", null);
+    __decorate([
+        $mol_mem
+    ], $mol_app_demo_readme.prototype, "uri_base", null);
     $.$mol_app_demo_readme = $mol_app_demo_readme;
 })($ || ($ = {}));
 //mol/app/demo/-view.tree/demo.view.tree.ts
@@ -36449,7 +36458,10 @@ var $;
                 let module = this.module();
                 while (module.length) {
                     try {
-                        return this.$.$mol_fetch.text(this.link(module));
+                        const link = this.link(module);
+                        const text = this.$.$mol_fetch.text(link);
+                        this.uri_base(`https://github.com/${this.repo()}/tree/master/${module.join('/')}/`);
+                        return text;
                     }
                     catch (error) {
                         if (error instanceof Promise)
