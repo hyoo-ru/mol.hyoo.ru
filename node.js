@@ -39371,7 +39371,7 @@ var $;
             }
             case_size(index) {
                 return (this.case_prefix(index) + '\n' + this.source(index))
-                    .replace(/\/\/.*$/gm, '')
+                    .replace(/(\/\*)?\/\/.*$/gm, '')
                     .match(/\w+/g)?.length ?? 0;
             }
             case_deps_names(index) {
