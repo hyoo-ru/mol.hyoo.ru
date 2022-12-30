@@ -37145,7 +37145,7 @@ var $;
 //hyoo/bench/app/app.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "de1290f";
+let $hyoo_sync_revision = "8596b61";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -37193,7 +37193,7 @@ var $;
         land_init(land) {
             this.db_land_init(land);
             if (!land.grabbed())
-                $mol_fail_hidden(new Promise(() => { }));
+                this.$.$mol_wait_timeout(10_000);
         }
         land(id) {
             return this.world().land_sync(id);
