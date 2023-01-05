@@ -1815,6 +1815,12 @@ var $;
 //mol/wire/method/method.ts
 ;
 "use strict";
+//mol/type/tail/tail.ts
+;
+"use strict";
+//mol/type/foot/foot.ts
+;
+"use strict";
 var $;
 (function ($) {
     class $mol_wire_atom extends $mol_wire_fiber {
@@ -1867,6 +1873,20 @@ var $;
         }
         once() {
             return this.sync();
+        }
+        channel() {
+            return Object.assign((next) => {
+                if (next !== undefined)
+                    return this.resync([...this.args, next]);
+                if (!$mol_wire_fiber.warm)
+                    return this.result();
+                if ($mol_wire_auto() instanceof $mol_wire_task) {
+                    return this.once();
+                }
+                else {
+                    return this.sync();
+                }
+            }, { atom: this });
         }
         destructor() {
             super.destructor();
@@ -1921,9 +1941,6 @@ var $;
     $mol_wire_atom.watch();
 })($ || ($ = {}));
 //mol/wire/atom/atom.ts
-;
-"use strict";
-//mol/type/tail/tail.ts
 ;
 "use strict";
 var $;
@@ -28777,9 +28794,6 @@ var $;
 //mol/func/is/class/class.ts
 ;
 "use strict";
-//mol/type/foot/foot.ts
-;
-"use strict";
 var $;
 (function ($) {
     function $mol_data_pipe(...funcs) {
@@ -33995,6 +34009,19 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_wire_let(host) {
+        for (const field of Object.keys(host)) {
+            host[field] = new $mol_wire_atom(field, host[field], host).channel();
+        }
+        return host;
+    }
+    $.$mol_wire_let = $mol_wire_let;
+})($ || ($ = {}));
+//mol/wire/let/let.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_wire_set extends Set {
         pub = new $mol_wire_pub;
         has(value) {
@@ -37920,184 +37947,37 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_icon_directions extends $mol_icon {
-        path() {
-            return "M14,14.5V12H10V15H8V11C8,10.45 8.45,10 9,10H14V7.5L17.5,11M21.71,11.29L12.71,2.29H12.7C12.31,1.9 11.68,1.9 11.29,2.29L2.29,11.29C1.9,11.68 1.9,12.32 2.29,12.71L11.29,21.71C11.68,22.09 12.31,22.1 12.71,21.71L21.71,12.71C22.1,12.32 22.1,11.68 21.71,11.29Z";
+    class $hyoo_js_perf_case extends $hyoo_crowd_struct {
+        title(next) {
+            return this.sub('title', $hyoo_crowd_reg).str(next);
         }
-    }
-    $.$mol_icon_directions = $mol_icon_directions;
-})($ || ($ = {}));
-//mol/icon/directions/-view.tree/directions.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_icon_directions_fork extends $mol_icon {
-        path() {
-            return "M3,4V12.5L6,9.5L9,13C10,14 10,15 10,15V21H14V14C14,14 14,13 13.47,12C12.94,11 12,10 12,10L9,6.58L11.5,4M18,4L13.54,8.47L14,9C14,9 14.93,10 15.47,11C15.68,11.4 15.8,11.79 15.87,12.13L21,7";
+        setup(next) {
+            return this.sub('setup', $hyoo_crowd_reg).str(next);
         }
-    }
-    $.$mol_icon_directions_fork = $mol_icon_directions_fork;
-})($ || ($ = {}));
-//mol/icon/directions/fork/-view.tree/fork.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_icon_plus_box extends $mol_icon {
-        path() {
-            return "M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3Z";
+        measure(next) {
+            return this.sub('measure', $hyoo_crowd_reg).str(next);
         }
-    }
-    $.$mol_icon_plus_box = $mol_icon_plus_box;
-})($ || ($ = {}));
-//mol/icon/plus/box/-view.tree/box.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_icon_sync extends $mol_icon {
-        path() {
-            return "M12,18C8.69,18 6,15.31 6,12C6,11 6.25,10.03 6.7,9.2L5.24,7.74C4.46,8.97 4,10.43 4,12C4,16.42 7.58,20 12,20V23L16,19L12,15M12,4V1L8,5L12,9V6C15.31,6 18,8.69 18,12C18,13 17.75,13.97 17.3,14.8L18.76,16.26C19.54,15.03 20,13.57 20,12C20,7.58 16.42,4 12,4Z";
-        }
-    }
-    $.$mol_icon_sync = $mol_icon_sync;
-})($ || ($ = {}));
-//mol/icon/sync/-view.tree/sync.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_icon_sync_off extends $mol_icon {
-        path() {
-            return "M20,4H14V10L16.24,7.76C17.32,8.85 18,10.34 18,12C18,13 17.75,13.94 17.32,14.77L18.78,16.23C19.55,15 20,13.56 20,12C20,9.79 19.09,7.8 17.64,6.36L20,4M2.86,5.41L5.22,7.77C4.45,9 4,10.44 4,12C4,14.21 4.91,16.2 6.36,17.64L4,20H10V14L7.76,16.24C6.68,15.15 6,13.66 6,12C6,11 6.25,10.06 6.68,9.23L14.76,17.31C14.5,17.44 14.26,17.56 14,17.65V19.74C14.79,19.53 15.54,19.2 16.22,18.78L18.58,21.14L19.85,19.87L4.14,4.14L2.86,5.41M10,6.35V4.26C9.2,4.47 8.45,4.8 7.77,5.22L9.23,6.68C9.5,6.56 9.73,6.44 10,6.35Z";
-        }
-    }
-    $.$mol_icon_sync_off = $mol_icon_sync_off;
-})($ || ($ = {}));
-//mol/icon/sync/off/-view.tree/off.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_sync_online extends $mol_link {
-        minimal_width() {
-            return 40;
-        }
-        minimal_height() {
-            return 40;
-        }
-        yard() {
-            const obj = new this.$.$hyoo_sync_yard();
-            return obj;
-        }
-        uri() {
-            return this.master_link();
-        }
-        sub() {
-            return [
-                this.Well(),
-                this.Fail()
-            ];
-        }
-        attr() {
-            return {
-                ...super.attr(),
-                title: this.message()
-            };
-        }
-        master_link() {
-            return "";
-        }
-        Well() {
-            const obj = new this.$.$mol_avatar();
-            obj.id = () => this.master_link();
-            return obj;
-        }
-        Fail() {
-            const obj = new this.$.$mol_icon_sync_off();
-            return obj;
-        }
-        hint() {
-            return "$hyoo_sync";
-        }
-        message() {
-            return this.hint();
+        steal(donor) {
+            this.title(donor.title());
+            this.setup(donor.setup());
+            this.measure(donor.measure());
         }
     }
     __decorate([
         $mol_mem
-    ], $hyoo_sync_online.prototype, "yard", null);
+    ], $hyoo_js_perf_case.prototype, "title", null);
     __decorate([
         $mol_mem
-    ], $hyoo_sync_online.prototype, "Well", null);
+    ], $hyoo_js_perf_case.prototype, "setup", null);
     __decorate([
         $mol_mem
-    ], $hyoo_sync_online.prototype, "Fail", null);
-    $.$hyoo_sync_online = $hyoo_sync_online;
+    ], $hyoo_js_perf_case.prototype, "measure", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_case.prototype, "steal", null);
+    $.$hyoo_js_perf_case = $hyoo_js_perf_case;
 })($ || ($ = {}));
-//hyoo/sync/online/-view.tree/online.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("hyoo/sync/online/online.view.css", "[hyoo_sync_online] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_sync_online_well] {\n\tcolor: var(--mol_theme_current);\n}\n\n[hyoo_sync_online_fail] {\n\tcolor: var(--mol_theme_focus);\n}\n\n[hyoo_sync_online][mol_view_error=\"Promise\"] {\n\tanimation: hyoo_sync_online_wait 1s linear infinite;\n}\n\n@keyframes hyoo_sync_online_wait {\n\tfrom {\n\t\topacity: 1;\n\t}\n\tto {\n\t\topacity: .5;\n\t}\n}\n");
-})($ || ($ = {}));
-//hyoo/sync/online/-css/online.view.css.ts
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $hyoo_sync_online extends $.$hyoo_sync_online {
-            message() {
-                try {
-                    this.yard().sync();
-                    return this.hint();
-                }
-                catch (error) {
-                    if (error instanceof Promise)
-                        $mol_fail_hidden(error);
-                    $mol_fail_log(error);
-                    return String(error);
-                }
-            }
-            sub() {
-                try {
-                    this.yard().sync();
-                    return [this.Well()];
-                }
-                catch (error) {
-                    if (error instanceof Promise)
-                        $mol_fail_hidden(error);
-                    $mol_fail_log(error);
-                    return [this.Fail()];
-                }
-            }
-            hint() {
-                return super.hint() + ' ' + $hyoo_sync_revision;
-            }
-            master_link() {
-                return this.yard().master_link().replace(/^ws(s?):/, 'http$1:');
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $hyoo_sync_online.prototype, "message", null);
-        __decorate([
-            $mol_mem
-        ], $hyoo_sync_online.prototype, "sub", null);
-        __decorate([
-            $mol_mem
-        ], $hyoo_sync_online.prototype, "hint", null);
-        __decorate([
-            $mol_mem
-        ], $hyoo_sync_online.prototype, "master_link", null);
-        $$.$hyoo_sync_online = $hyoo_sync_online;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-//hyoo/sync/online/online.view.ts
+//hyoo/js/perf/case/case.ts
 ;
 "use strict";
 var $;
@@ -38126,700 +38006,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $hyoo_js_perf extends $mol_page {
-        title() {
-            return this.$.$mol_locale.text('$hyoo_js_perf_title');
-        }
-        yard() {
-            const obj = new this.$.$hyoo_sync_client();
-            return obj;
-        }
-        titles() {
-            return [];
-        }
-        prefixes() {
-            return [];
-        }
-        sources() {
-            return [];
-        }
-        plugins() {
-            return [
-                this.Theme(),
-                this.Hotkey()
-            ];
-        }
-        Body() {
-            const obj = new this.$.$mol_book2();
-            obj.pages = () => [
-                this.Common(),
-                this.Cases_pane()
-            ];
-            return obj;
-        }
-        Case(id) {
-            const obj = new this.$.$hyoo_js_perf_case();
-            obj.title = (val) => this.case_title(id, val);
-            obj.prefix = (val) => this.case_prefix(id, val);
-            obj.source = (val) => this.source(id, val);
-            obj.sample = () => this.case_sample(id);
-            obj.results = (val) => this.results(id, val);
-            obj.changable = () => this.changable();
-            obj.drop = (next) => this.case_drop(id, next);
-            obj.dupe = (next) => this.case_dupe(id, next);
-            obj.swap = (next) => this.case_swap(id, next);
-            return obj;
-        }
-        Title() {
-            const obj = new this.$.$mol_string_button();
-            obj.value = (next) => this.bench_title(next);
-            obj.hint = () => this.title();
-            return obj;
-        }
-        tools() {
-            return [
-                this.Run(),
-                this.Share(),
-                this.Fork(),
-                this.New(),
-                this.About(),
-                this.Lights(),
-                this.Source(),
-                this.Online()
-            ];
-        }
-        Theme() {
-            const obj = new this.$.$mol_theme_auto();
-            return obj;
-        }
-        run(event) {
-            if (event !== undefined)
-                return event;
-            return null;
-        }
-        Hotkey() {
-            const obj = new this.$.$mol_hotkey();
-            obj.mod_ctrl = () => true;
-            obj.key = () => ({
-                enter: (event) => this.run(event)
-            });
-            return obj;
-        }
-        changable() {
-            return true;
-        }
-        prefix(val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        Prefix_code() {
-            const obj = new this.$.$mol_textarea();
-            obj.enabled = () => this.changable();
-            obj.spellcheck = () => false;
-            obj.value = (val) => this.prefix(val);
-            obj.hint = () => "let res = 0";
-            return obj;
-        }
-        Prefix() {
-            const obj = new this.$.$mol_labeler();
-            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_Prefix_title');
-            obj.Content = () => this.Prefix_code();
-            return obj;
-        }
-        postfix(val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        Postfix_code() {
-            const obj = new this.$.$mol_textarea();
-            obj.enabled = () => this.changable();
-            obj.spellcheck = () => false;
-            obj.value = (val) => this.postfix(val);
-            obj.hint = () => "$mol_assert_like( res, {#} - 1 )";
-            return obj;
-        }
-        Postfix() {
-            const obj = new this.$.$mol_labeler();
-            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_Postfix_title');
-            obj.Content = () => this.Postfix_code();
-            return obj;
-        }
-        hint() {
-            return "### Iterations count / number\n\t{#}\n\n### Load generic Script\n\n\tconst { some } = $mol_import.script(\n\t\t'https://unpkg.org/...'\n\t)\n\n### Load ESM Module\n\n\tconst { some } = $mol_import.module(\n\t\t'https://esm.sh/...'\n\t).default\n\n### Assert equality\n\n\t$mol_assert_like( [777], [777] )\n\n### Measure memory\n\nCall Chrome with:\n\t--js-flags=\"--expose-gc\"\n\t--enable-precise-memory-info\n\n### Other JS Tools\n\n[V8 Optimizations](https://opt.js.hyoo.ru/) [Sandbox](https://eval.js.hyoo.ru)";
-        }
-        Hint() {
-            const obj = new this.$.$mol_text();
-            obj.text = () => this.hint();
-            return obj;
-        }
-        Common() {
-            const obj = new this.$.$mol_scroll();
-            obj.sub = () => [
-                this.Prefix(),
-                this.Postfix(),
-                this.Hint()
-            ];
-            return obj;
-        }
-        cases() {
-            return [];
-        }
-        Cases() {
-            const obj = new this.$.$mol_view();
-            obj.sub = () => this.cases();
-            return obj;
-        }
-        cases_pane_content() {
-            return [
-                this.Cases()
-            ];
-        }
-        Cases_pane() {
-            const obj = new this.$.$mol_scroll();
-            obj.sub = () => this.cases_pane_content();
-            return obj;
-        }
-        case_title(id, val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        case_prefix(id, val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        source(id, val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        case_sample(id) {
-            return "";
-        }
-        results(id, val) {
-            if (val !== undefined)
-                return val;
-            return [];
-        }
-        case_drop(id, next) {
-            if (next !== undefined)
-                return next;
-            return null;
-        }
-        case_dupe(id, next) {
-            if (next !== undefined)
-                return next;
-            return null;
-        }
-        case_swap(id, next) {
-            if (next !== undefined)
-                return next;
-            return null;
-        }
-        bench_title(next) {
-            if (next !== undefined)
-                return next;
-            return "";
-        }
-        Run_icon() {
-            const obj = new this.$.$mol_icon_play();
-            return obj;
-        }
-        Run() {
-            const obj = new this.$.$mol_button_major();
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_Run_hint');
-            obj.click = (event) => this.run(event);
-            obj.sub = () => [
-                this.Run_icon()
-            ];
-            return obj;
-        }
-        Share() {
-            const obj = new this.$.$mol_button_share();
-            obj.capture = () => this.Cases();
-            return obj;
-        }
-        bench_fork(next) {
-            if (next !== undefined)
-                return next;
-            return null;
-        }
-        Fork_icon() {
-            const obj = new this.$.$mol_icon_directions_fork();
-            return obj;
-        }
-        Fork() {
-            const obj = new this.$.$mol_button_minor();
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_Fork_hint');
-            obj.click = (next) => this.bench_fork(next);
-            obj.sub = () => [
-                this.Fork_icon()
-            ];
-            return obj;
-        }
-        bench_new(next) {
-            if (next !== undefined)
-                return next;
-            return null;
-        }
-        New_icon() {
-            const obj = new this.$.$mol_icon_plus_box();
-            return obj;
-        }
-        New() {
-            const obj = new this.$.$mol_button_minor();
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_New_hint');
-            obj.click = (next) => this.bench_new(next);
-            obj.sub = () => [
-                this.New_icon()
-            ];
-            return obj;
-        }
-        About_icon() {
-            const obj = new this.$.$mol_icon_help_circle_outline();
-            return obj;
-        }
-        About() {
-            const obj = new this.$.$mol_link();
-            obj.uri = () => "https://habhub.hyoo.ru/#author=nin-jin/repo=HabHub/article=42";
-            obj.sub = () => [
-                this.About_icon()
-            ];
-            return obj;
-        }
-        Lights() {
-            const obj = new this.$.$mol_lights_toggle();
-            return obj;
-        }
-        Source() {
-            const obj = new this.$.$mol_link_source();
-            obj.uri = () => "https://github.com/hyoo-ru/perf.js.hyoo.ru";
-            return obj;
-        }
-        Online() {
-            const obj = new this.$.$hyoo_sync_online();
-            obj.yard = () => this.yard();
-            return obj;
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "yard", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Body", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "Case", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Title", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Theme", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "run", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Hotkey", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "prefix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Prefix_code", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Prefix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "postfix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Postfix_code", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Postfix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Hint", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Common", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Cases", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Cases_pane", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "case_title", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "case_prefix", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "source", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "results", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "case_drop", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "case_dupe", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "case_swap", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "bench_title", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Run_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Run", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Share", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "bench_fork", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Fork_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Fork", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "bench_new", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "New_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "New", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "About_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "About", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Lights", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Source", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Online", null);
-    $.$hyoo_js_perf = $hyoo_js_perf;
-    class $hyoo_js_perf_case extends $mol_view {
-        results() {
-            return [];
-        }
-        Eval_result() {
-            return this.Eval().Result();
-        }
-        Eval() {
-            const obj = new this.$.$hyoo_js_eval();
-            obj.code = () => this.sample();
-            obj.run = () => this.eval_showed();
-            return obj;
-        }
-        sub() {
-            return this.columns();
-        }
-        sample() {
-            return "";
-        }
-        prefix_showed(next) {
-            if (next !== undefined)
-                return next;
-            return false;
-        }
-        drop(next) {
-            if (next !== undefined)
-                return next;
-            return null;
-        }
-        Drop_icon() {
-            const obj = new this.$.$mol_icon_cross();
-            return obj;
-        }
-        Drop() {
-            const obj = new this.$.$mol_button_minor();
-            obj.click = (next) => this.drop(next);
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Drop_hint');
-            obj.sub = () => [
-                this.Drop_icon()
-            ];
-            return obj;
-        }
-        dupe(next) {
-            if (next !== undefined)
-                return next;
-            return null;
-        }
-        Dupe_icon() {
-            const obj = new this.$.$mol_icon_chevron_double_down();
-            return obj;
-        }
-        Dupe() {
-            const obj = new this.$.$mol_button_minor();
-            obj.click = (next) => this.dupe(next);
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Dupe_hint');
-            obj.sub = () => [
-                this.Dupe_icon()
-            ];
-            return obj;
-        }
-        swap(next) {
-            if (next !== undefined)
-                return next;
-            return null;
-        }
-        Swap_icon() {
-            const obj = new this.$.$mol_icon_unfold_more_horizontal();
-            return obj;
-        }
-        Swap() {
-            const obj = new this.$.$mol_button_minor();
-            obj.click = (next) => this.swap(next);
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Swap_hint');
-            obj.sub = () => [
-                this.Swap_icon()
-            ];
-            return obj;
-        }
-        prefix_tools() {
-            return [
-                this.Drop(),
-                this.Dupe(),
-                this.Swap()
-            ];
-        }
-        Prefix_tools() {
-            const obj = new this.$.$mol_bar();
-            obj.sub = () => this.prefix_tools();
-            return obj;
-        }
-        changable() {
-            return true;
-        }
-        prefix(val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        Prefix_code() {
-            const obj = new this.$.$mol_textarea();
-            obj.enabled = () => this.changable();
-            obj.spellcheck = () => false;
-            obj.value = (val) => this.prefix(val);
-            obj.hint = () => "let count = {#}";
-            return obj;
-        }
-        Prefix() {
-            const obj = new this.$.$mol_expander();
-            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Prefix_title');
-            obj.expanded = (next) => this.prefix_showed(next);
-            obj.minimal_width = () => 150;
-            obj.Tools = () => this.Prefix_tools();
-            obj.content = () => [
-                this.Prefix_code()
-            ];
-            return obj;
-        }
-        source_showed(next) {
-            if (next !== undefined)
-                return next;
-            return true;
-        }
-        title(next) {
-            if (next !== undefined)
-                return next;
-            return "";
-        }
-        Title() {
-            const obj = new this.$.$mol_string_button();
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Title_hint');
-            obj.enabled = () => this.changable();
-            obj.value = (next) => this.title(next);
-            return obj;
-        }
-        source(val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        Source_code() {
-            const obj = new this.$.$mol_textarea();
-            obj.enabled = () => this.changable();
-            obj.spellcheck = () => false;
-            obj.value = (val) => this.source(val);
-            obj.hint = () => "res = {#} % count";
-            return obj;
-        }
-        Source() {
-            const obj = new this.$.$mol_expander();
-            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Source_title');
-            obj.expanded = (next) => this.source_showed(next);
-            obj.minimal_width = () => 150;
-            obj.Tools = () => this.Title();
-            obj.content = () => [
-                this.Source_code()
-            ];
-            return obj;
-        }
-        eval_showed(next) {
-            if (next !== undefined)
-                return next;
-            return false;
-        }
-        eval_standalone() {
-            return "";
-        }
-        Eval_sandalone() {
-            const obj = new this.$.$mol_link_iconed();
-            obj.title = () => "";
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Eval_sandalone_hint');
-            obj.uri = () => this.eval_standalone();
-            return obj;
-        }
-        Eval_labeler() {
-            const obj = new this.$.$mol_expander();
-            obj.expanded = (next) => this.eval_showed(next);
-            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_Eval_labeler_title');
-            obj.Tools = () => this.Eval_sandalone();
-            obj.Content = () => this.Eval_result();
-            return obj;
-        }
-        result_title(id) {
-            return "";
-        }
-        result(id) {
-            const obj = new this.$.$hyoo_js_perf_stats();
-            return obj;
-        }
-        Result(id) {
-            const obj = new this.$.$hyoo_js_perf_case_result();
-            obj.title = () => this.result_title(id);
-            obj.result = () => this.result(id);
-            return obj;
-        }
-        result_rows() {
-            return [
-                this.Result("0"),
-                this.Result("1"),
-                this.Result("2")
-            ];
-        }
-        Results() {
-            const obj = new this.$.$mol_list();
-            obj.rows = () => this.result_rows();
-            return obj;
-        }
-        columns() {
-            return [
-                this.Prefix(),
-                this.Source(),
-                this.Eval_labeler(),
-                this.Results()
-            ];
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Eval", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "prefix_showed", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "drop", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Drop_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Drop", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "dupe", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Dupe_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Dupe", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "swap", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Swap_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Swap", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Prefix_tools", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "prefix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Prefix_code", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Prefix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "source_showed", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "title", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Title", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "source", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Source_code", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Source", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "eval_showed", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Eval_sandalone", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Eval_labeler", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf_case.prototype, "result", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf_case.prototype, "Result", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "Results", null);
-    $.$hyoo_js_perf_case = $hyoo_js_perf_case;
     class $hyoo_js_perf_case_result extends $mol_view {
         result() {
             const obj = new this.$.$hyoo_js_perf_stats();
@@ -39025,7 +38211,7 @@ var $;
         Stats_deps() {
             const obj = new this.$.$mol_view();
             obj.sub = () => [
-                "🚂",
+                "📦",
                 this.Deps()
             ];
             return obj;
@@ -39113,42 +38299,1134 @@ var $;
     ], $hyoo_js_perf_case_result.prototype, "Error", null);
     $.$hyoo_js_perf_case_result = $hyoo_js_perf_case_result;
 })($ || ($ = {}));
-//hyoo/js/perf/-view.tree/perf.view.tree.ts
+//hyoo/js/perf/case/result/-view.tree/result.view.tree.ts
 ;
 "use strict";
 var $;
 (function ($) {
-    class $hyoo_js_perf_bench_case extends $hyoo_crowd_struct {
+    let $mol_si_prefix;
+    (function ($mol_si_prefix) {
+        $mol_si_prefix[$mol_si_prefix["y"] = -8] = "y";
+        $mol_si_prefix[$mol_si_prefix["z"] = -7] = "z";
+        $mol_si_prefix[$mol_si_prefix["a"] = -6] = "a";
+        $mol_si_prefix[$mol_si_prefix["f"] = -5] = "f";
+        $mol_si_prefix[$mol_si_prefix["p"] = -4] = "p";
+        $mol_si_prefix[$mol_si_prefix["n"] = -3] = "n";
+        $mol_si_prefix[$mol_si_prefix["\u00B5"] = -2] = "\u00B5";
+        $mol_si_prefix[$mol_si_prefix["m"] = -1] = "m";
+        $mol_si_prefix[$mol_si_prefix[""] = 0] = "";
+        $mol_si_prefix[$mol_si_prefix["k"] = 1] = "k";
+        $mol_si_prefix[$mol_si_prefix["M"] = 2] = "M";
+        $mol_si_prefix[$mol_si_prefix["G"] = 3] = "G";
+        $mol_si_prefix[$mol_si_prefix["T"] = 4] = "T";
+        $mol_si_prefix[$mol_si_prefix["P"] = 5] = "P";
+        $mol_si_prefix[$mol_si_prefix["E"] = 6] = "E";
+        $mol_si_prefix[$mol_si_prefix["Z"] = 7] = "Z";
+        $mol_si_prefix[$mol_si_prefix["Y"] = 8] = "Y";
+    })($mol_si_prefix = $.$mol_si_prefix || ($.$mol_si_prefix = {}));
+})($ || ($ = {}));
+//mol/si/prefix.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_si_short(numb, unit = '') {
+        let magnitude = Math.floor(Math.log10(Math.abs(numb)) / 3);
+        if (!Number.isFinite(magnitude)) {
+            const prefix = isNaN(numb) ? `∅` : numb.toLocaleString();
+            const suffix = unit ? ' ' + unit : '';
+            return prefix + suffix;
+        }
+        let normal = numb / 10 ** (3 * magnitude);
+        if (Math.round(Math.abs(normal)) === 1000) {
+            normal /= 1000;
+            ++magnitude;
+        }
+        const prefix = normal.toPrecision(3);
+        if (unit) {
+            return prefix + ' ' + $mol_si_prefix[magnitude] + unit;
+        }
+        else {
+            return prefix + $mol_si_prefix[magnitude];
+        }
+    }
+    $.$mol_si_short = $mol_si_short;
+})($ || ($ = {}));
+//mol/si/short/short.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("hyoo/js/perf/case/result/result.view.css", "[hyoo_js_perf_case_result] {\n\tpadding: .5rem .75rem .25rem;\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\t/* margin: 0 .5rem; */\n}\n\n[hyoo_js_perf_case_result_stats_main],\n[hyoo_js_perf_case_result_stats_mem] {\n\tdisplay: contents;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portions] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: dimgray;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
+})($ || ($ = {}));
+//hyoo/js/perf/case/result/-css/result.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
+            sub() {
+                if (!this.result())
+                    return [];
+                return this.result().error ? [this.Error()] : [this.Stats(), this.Portions()];
+            }
+            portions() {
+                const result = this.result();
+                return [
+                    ...result.frequency ? [this.Frequency_portion()] : [],
+                    ...result.memory ? [this.Memory_portion()] : [],
+                    ...result.size ? [this.Size_portion(), this.Deps_portion()] : [],
+                ];
+            }
+            stats() {
+                const result = this.result();
+                return [
+                    ...result.frequency ? [this.Stats_main()] : [],
+                    ...result.memory ? [this.Stats_mem()] : [],
+                    ...result.size ? [this.Stats_size(), this.Stats_deps()] : [],
+                ];
+            }
+            error() {
+                return `${this.result().error}`;
+            }
+            iterations() {
+                return $mol_si_short(this.result().iterations, 'It');
+            }
+            frequency() {
+                return $mol_si_short(this.result().frequency, 'Hz');
+            }
+            time_total() {
+                return $mol_si_short(this.result().time / 1000, 's');
+            }
+            memory_total() {
+                const val = this.result().memory;
+                return val ? $mol_si_short(val, 'B') : '?B';
+            }
+            memory_per_iteration() {
+                const val = this.result().memory_per_iteration;
+                return val ? $mol_si_short(val, 'B') : '?B';
+            }
+            size() {
+                return this.result().size;
+            }
+            deps() {
+                return $mol_si_short(this.result().deps, 'B');
+            }
+            frequency_portion() {
+                return this.result().frequency_portion;
+            }
+            memory_portion() {
+                return this.result().memory_portion;
+            }
+            size_portion() {
+                return this.result().size_portion;
+            }
+            deps_portion() {
+                return this.result().deps_portion;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf_case_result.prototype, "portions", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf_case_result.prototype, "stats", null);
+        $$.$hyoo_js_perf_case_result = $hyoo_js_perf_case_result;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//hyoo/js/perf/case/result/result.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_js_perf_case_row extends $mol_view {
+        results() {
+            return [];
+        }
+        Eval_result() {
+            return this.Eval().Result();
+        }
+        Eval() {
+            const obj = new this.$.$hyoo_js_eval();
+            obj.code = () => this.sample();
+            obj.run = () => this.eval_showed();
+            return obj;
+        }
+        sub() {
+            return this.columns();
+        }
+        sample() {
+            return "";
+        }
+        prefix_showed(next) {
+            if (next !== undefined)
+                return next;
+            return false;
+        }
+        drop(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Drop_icon() {
+            const obj = new this.$.$mol_icon_cross();
+            return obj;
+        }
+        Drop() {
+            const obj = new this.$.$mol_button_minor();
+            obj.click = (next) => this.drop(next);
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Drop_hint');
+            obj.sub = () => [
+                this.Drop_icon()
+            ];
+            return obj;
+        }
+        dupe(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Dupe_icon() {
+            const obj = new this.$.$mol_icon_chevron_double_down();
+            return obj;
+        }
+        Dupe() {
+            const obj = new this.$.$mol_button_minor();
+            obj.click = (next) => this.dupe(next);
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Dupe_hint');
+            obj.sub = () => [
+                this.Dupe_icon()
+            ];
+            return obj;
+        }
+        swap(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Swap_icon() {
+            const obj = new this.$.$mol_icon_unfold_more_horizontal();
+            return obj;
+        }
+        Swap() {
+            const obj = new this.$.$mol_button_minor();
+            obj.click = (next) => this.swap(next);
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Swap_hint');
+            obj.sub = () => [
+                this.Swap_icon()
+            ];
+            return obj;
+        }
+        prefix_tools() {
+            return [
+                this.Drop(),
+                this.Dupe(),
+                this.Swap()
+            ];
+        }
+        Prefix_tools() {
+            const obj = new this.$.$mol_bar();
+            obj.sub = () => this.prefix_tools();
+            return obj;
+        }
+        changable() {
+            return true;
+        }
+        prefix(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Prefix_code() {
+            const obj = new this.$.$mol_textarea();
+            obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
+            obj.value = (val) => this.prefix(val);
+            obj.hint = () => "let count = {#}";
+            return obj;
+        }
+        Prefix() {
+            const obj = new this.$.$mol_expander();
+            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Prefix_title');
+            obj.expanded = (next) => this.prefix_showed(next);
+            obj.minimal_width = () => 150;
+            obj.Tools = () => this.Prefix_tools();
+            obj.content = () => [
+                this.Prefix_code()
+            ];
+            return obj;
+        }
+        source_showed(next) {
+            if (next !== undefined)
+                return next;
+            return true;
+        }
+        measurable(next) {
+            if (next !== undefined)
+                return next;
+            return true;
+        }
+        Measurable() {
+            const obj = new this.$.$mol_check_box();
+            obj.checked = (next) => this.measurable(next);
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Measurable_hint');
+            return obj;
+        }
         title(next) {
-            return this.sub('title', $hyoo_crowd_reg).str(next);
+            if (next !== undefined)
+                return next;
+            return "";
         }
-        setup(next) {
-            return this.sub('setup', $hyoo_crowd_reg).str(next);
+        Title() {
+            const obj = new this.$.$mol_string_button();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Title_hint');
+            obj.enabled = () => this.changable();
+            obj.value = (next) => this.title(next);
+            return obj;
         }
-        measure(next) {
-            return this.sub('measure', $hyoo_crowd_reg).str(next);
+        eval_standalone() {
+            return "";
         }
-        steal(donor) {
-            this.title(donor.title());
-            this.setup(donor.setup());
-            this.measure(donor.measure());
+        Eval_sandalone() {
+            const obj = new this.$.$mol_link_iconed();
+            obj.title = () => "";
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Eval_sandalone_hint');
+            obj.uri = () => this.eval_standalone();
+            return obj;
+        }
+        Source_tools() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Measurable(),
+                this.Title(),
+                this.Eval_sandalone()
+            ];
+            return obj;
+        }
+        source(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Source_code() {
+            const obj = new this.$.$mol_textarea();
+            obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
+            obj.value = (val) => this.source(val);
+            obj.hint = () => "res = {#} % count";
+            return obj;
+        }
+        Source() {
+            const obj = new this.$.$mol_expander();
+            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Source_title');
+            obj.expanded = (next) => this.source_showed(next);
+            obj.minimal_width = () => 150;
+            obj.Tools = () => this.Source_tools();
+            obj.content = () => [
+                this.Source_code()
+            ];
+            return obj;
+        }
+        eval_showed(next) {
+            if (next !== undefined)
+                return next;
+            return false;
+        }
+        Eval_labeler() {
+            const obj = new this.$.$mol_expander();
+            obj.expanded = (next) => this.eval_showed(next);
+            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Eval_labeler_title');
+            obj.Content = () => this.Eval_result();
+            return obj;
+        }
+        result_title(id) {
+            return "";
+        }
+        result(id) {
+            const obj = new this.$.$hyoo_js_perf_stats();
+            return obj;
+        }
+        Result(id) {
+            const obj = new this.$.$hyoo_js_perf_case_result();
+            obj.title = () => this.result_title(id);
+            obj.result = () => this.result(id);
+            return obj;
+        }
+        result_rows() {
+            return [
+                this.Result("0"),
+                this.Result("1"),
+                this.Result("2")
+            ];
+        }
+        Results() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.result_rows();
+            return obj;
+        }
+        columns() {
+            return [
+                this.Prefix(),
+                this.Source(),
+                this.Eval_labeler(),
+                this.Results()
+            ];
         }
     }
     __decorate([
         $mol_mem
-    ], $hyoo_js_perf_bench_case.prototype, "title", null);
+    ], $hyoo_js_perf_case_row.prototype, "Eval", null);
     __decorate([
         $mol_mem
-    ], $hyoo_js_perf_bench_case.prototype, "setup", null);
+    ], $hyoo_js_perf_case_row.prototype, "prefix_showed", null);
     __decorate([
         $mol_mem
-    ], $hyoo_js_perf_bench_case.prototype, "measure", null);
+    ], $hyoo_js_perf_case_row.prototype, "drop", null);
     __decorate([
-        $mol_action
-    ], $hyoo_js_perf_bench_case.prototype, "steal", null);
-    $.$hyoo_js_perf_bench_case = $hyoo_js_perf_bench_case;
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Drop_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Drop", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "dupe", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Dupe_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Dupe", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "swap", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Swap_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Swap", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Prefix_tools", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "prefix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Prefix_code", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Prefix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "source_showed", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "measurable", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Measurable", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Eval_sandalone", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Source_tools", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Source_code", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "eval_showed", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Eval_labeler", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf_case_row.prototype, "result", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf_case_row.prototype, "Result", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Results", null);
+    $.$hyoo_js_perf_case_row = $hyoo_js_perf_case_row;
 })($ || ($ = {}));
-//hyoo/js/perf/bench/case/case.ts
+//hyoo/js/perf/case/row/-view.tree/row.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("hyoo/js/perf/case/row/row.view.css", "[hyoo_js_perf_case_row] {\n\tdisplay: table-row;\n\tflex: 0 1 auto;\n\tbackground: var(--mol_theme_card);\n}\n\n[hyoo_js_perf_case_row_prefix] ,\n[hyoo_js_perf_case_row_source] {\n\tdisplay: table-cell;\n\tmin-width: 14rem;\n\tvertical-align: top;\n\tpadding: 0.75rem;\n}\n\n[hyoo_js_perf_case_row_source_tools] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_row_eval_labeler] {\n\twidth: 26rem;\n\tpadding: 0.75rem;\n}\n[hyoo_js_perf_case_row_results] {\n\twidth: 26rem;\n\tdisplay: table-cell;\n\tpadding: 0.75rem;\n}\n\n[hyoo_js_perf_case_row_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n");
+})($ || ($ = {}));
+//hyoo/js/perf/case/row/-css/row.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_js_perf_case_row extends $.$hyoo_js_perf_case_row {
+            columns() {
+                return [
+                    this.Prefix(),
+                    this.Source(),
+                    ...this.results().length > 1
+                        ? [this.Results()]
+                        : this.source()
+                            ? [this.Eval_labeler()]
+                            : [this.Results()]
+                ];
+            }
+            result(level) {
+                return this.results()[level];
+            }
+            result_title(level) {
+                return ['🔠', '🥶', '🥵'][level] ?? '';
+            }
+            eval_standalone() {
+                const code = this.sample();
+                return `https://eval.js.hyoo.ru/#!code=${encodeURIComponent(code)}/run=true`;
+            }
+            prefix_tools() {
+                return this.changable() ? super.prefix_tools() : [];
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf_case_row.prototype, "columns", null);
+        $$.$hyoo_js_perf_case_row = $hyoo_js_perf_case_row;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//hyoo/js/perf/case/row/row.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_sync extends $mol_icon {
+        path() {
+            return "M12,18C8.69,18 6,15.31 6,12C6,11 6.25,10.03 6.7,9.2L5.24,7.74C4.46,8.97 4,10.43 4,12C4,16.42 7.58,20 12,20V23L16,19L12,15M12,4V1L8,5L12,9V6C15.31,6 18,8.69 18,12C18,13 17.75,13.97 17.3,14.8L18.76,16.26C19.54,15.03 20,13.57 20,12C20,7.58 16.42,4 12,4Z";
+        }
+    }
+    $.$mol_icon_sync = $mol_icon_sync;
+})($ || ($ = {}));
+//mol/icon/sync/-view.tree/sync.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_sync_off extends $mol_icon {
+        path() {
+            return "M20,4H14V10L16.24,7.76C17.32,8.85 18,10.34 18,12C18,13 17.75,13.94 17.32,14.77L18.78,16.23C19.55,15 20,13.56 20,12C20,9.79 19.09,7.8 17.64,6.36L20,4M2.86,5.41L5.22,7.77C4.45,9 4,10.44 4,12C4,14.21 4.91,16.2 6.36,17.64L4,20H10V14L7.76,16.24C6.68,15.15 6,13.66 6,12C6,11 6.25,10.06 6.68,9.23L14.76,17.31C14.5,17.44 14.26,17.56 14,17.65V19.74C14.79,19.53 15.54,19.2 16.22,18.78L18.58,21.14L19.85,19.87L4.14,4.14L2.86,5.41M10,6.35V4.26C9.2,4.47 8.45,4.8 7.77,5.22L9.23,6.68C9.5,6.56 9.73,6.44 10,6.35Z";
+        }
+    }
+    $.$mol_icon_sync_off = $mol_icon_sync_off;
+})($ || ($ = {}));
+//mol/icon/sync/off/-view.tree/off.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_sync_online extends $mol_link {
+        minimal_width() {
+            return 40;
+        }
+        minimal_height() {
+            return 40;
+        }
+        yard() {
+            const obj = new this.$.$hyoo_sync_yard();
+            return obj;
+        }
+        uri() {
+            return this.master_link();
+        }
+        sub() {
+            return [
+                this.Well(),
+                this.Fail()
+            ];
+        }
+        attr() {
+            return {
+                ...super.attr(),
+                title: this.message()
+            };
+        }
+        master_link() {
+            return "";
+        }
+        Well() {
+            const obj = new this.$.$mol_avatar();
+            obj.id = () => this.master_link();
+            return obj;
+        }
+        Fail() {
+            const obj = new this.$.$mol_icon_sync_off();
+            return obj;
+        }
+        hint() {
+            return "$hyoo_sync";
+        }
+        message() {
+            return this.hint();
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_online.prototype, "yard", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_online.prototype, "Well", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_online.prototype, "Fail", null);
+    $.$hyoo_sync_online = $hyoo_sync_online;
+})($ || ($ = {}));
+//hyoo/sync/online/-view.tree/online.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("hyoo/sync/online/online.view.css", "[hyoo_sync_online] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_sync_online_well] {\n\tcolor: var(--mol_theme_current);\n}\n\n[hyoo_sync_online_fail] {\n\tcolor: var(--mol_theme_focus);\n}\n\n[hyoo_sync_online][mol_view_error=\"Promise\"] {\n\tanimation: hyoo_sync_online_wait 1s linear infinite;\n}\n\n@keyframes hyoo_sync_online_wait {\n\tfrom {\n\t\topacity: 1;\n\t}\n\tto {\n\t\topacity: .5;\n\t}\n}\n");
+})($ || ($ = {}));
+//hyoo/sync/online/-css/online.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_sync_online extends $.$hyoo_sync_online {
+            message() {
+                try {
+                    this.yard().sync();
+                    return this.hint();
+                }
+                catch (error) {
+                    if (error instanceof Promise)
+                        $mol_fail_hidden(error);
+                    $mol_fail_log(error);
+                    return String(error);
+                }
+            }
+            sub() {
+                try {
+                    this.yard().sync();
+                    return [this.Well()];
+                }
+                catch (error) {
+                    if (error instanceof Promise)
+                        $mol_fail_hidden(error);
+                    $mol_fail_log(error);
+                    return [this.Fail()];
+                }
+            }
+            hint() {
+                return super.hint() + ' ' + $hyoo_sync_revision;
+            }
+            master_link() {
+                return this.yard().master_link().replace(/^ws(s?):/, 'http$1:');
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_sync_online.prototype, "message", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_sync_online.prototype, "sub", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_sync_online.prototype, "hint", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_sync_online.prototype, "master_link", null);
+        $$.$hyoo_sync_online = $hyoo_sync_online;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//hyoo/sync/online/online.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_directions extends $mol_icon {
+        path() {
+            return "M14,14.5V12H10V15H8V11C8,10.45 8.45,10 9,10H14V7.5L17.5,11M21.71,11.29L12.71,2.29H12.7C12.31,1.9 11.68,1.9 11.29,2.29L2.29,11.29C1.9,11.68 1.9,12.32 2.29,12.71L11.29,21.71C11.68,22.09 12.31,22.1 12.71,21.71L21.71,12.71C22.1,12.32 22.1,11.68 21.71,11.29Z";
+        }
+    }
+    $.$mol_icon_directions = $mol_icon_directions;
+})($ || ($ = {}));
+//mol/icon/directions/-view.tree/directions.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_directions_fork extends $mol_icon {
+        path() {
+            return "M3,4V12.5L6,9.5L9,13C10,14 10,15 10,15V21H14V14C14,14 14,13 13.47,12C12.94,11 12,10 12,10L9,6.58L11.5,4M18,4L13.54,8.47L14,9C14,9 14.93,10 15.47,11C15.68,11.4 15.8,11.79 15.87,12.13L21,7";
+        }
+    }
+    $.$mol_icon_directions_fork = $mol_icon_directions_fork;
+})($ || ($ = {}));
+//mol/icon/directions/fork/-view.tree/fork.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_plus_box extends $mol_icon {
+        path() {
+            return "M17,13H13V17H11V13H7V11H11V7H13V11H17M19,3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3Z";
+        }
+    }
+    $.$mol_icon_plus_box = $mol_icon_plus_box;
+})($ || ($ = {}));
+//mol/icon/plus/box/-view.tree/box.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_js_perf extends $mol_page {
+        title() {
+            return this.$.$mol_locale.text('$hyoo_js_perf_title');
+        }
+        yard() {
+            const obj = new this.$.$hyoo_sync_client();
+            return obj;
+        }
+        titles() {
+            return [];
+        }
+        prefixes() {
+            return [];
+        }
+        sources() {
+            return [];
+        }
+        plugins() {
+            return [
+                this.Theme(),
+                this.Hotkey()
+            ];
+        }
+        Body() {
+            const obj = new this.$.$mol_book2();
+            obj.pages = () => [
+                this.Common(),
+                this.Cases_pane()
+            ];
+            return obj;
+        }
+        Case_measurable(id) {
+            return this.Case(id).Measurable();
+        }
+        Case(id) {
+            const obj = new this.$.$hyoo_js_perf_case_row();
+            obj.title = (next) => this.case_title(id, next);
+            obj.prefix = (next) => this.case_prefix(id, next);
+            obj.source = (next) => this.source(id, next);
+            obj.measurable = (next) => this.case_measurable(id, next);
+            obj.sample = () => this.case_sample(id);
+            obj.results = (next) => this.results(id, next);
+            obj.changable = () => this.changable();
+            obj.drop = (next) => this.case_drop(id, next);
+            obj.dupe = (next) => this.case_dupe(id, next);
+            obj.swap = (next) => this.case_swap(id, next);
+            return obj;
+        }
+        Title() {
+            const obj = new this.$.$mol_string_button();
+            obj.value = (next) => this.bench_title(next);
+            obj.hint = () => this.title();
+            return obj;
+        }
+        tools() {
+            return [
+                this.Measurable_all(),
+                this.Run(),
+                this.Share(),
+                this.Fork(),
+                this.New(),
+                this.About()
+            ];
+        }
+        Theme() {
+            const obj = new this.$.$mol_theme_auto();
+            return obj;
+        }
+        run(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        Hotkey() {
+            const obj = new this.$.$mol_hotkey();
+            obj.mod_ctrl = () => true;
+            obj.key = () => ({
+                enter: (event) => this.run(event)
+            });
+            return obj;
+        }
+        Online() {
+            const obj = new this.$.$hyoo_sync_online();
+            obj.yard = () => this.yard();
+            return obj;
+        }
+        Source() {
+            const obj = new this.$.$mol_link_source();
+            obj.uri = () => "https://github.com/hyoo-ru/perf.js.hyoo.ru";
+            return obj;
+        }
+        Lights() {
+            const obj = new this.$.$mol_lights_toggle();
+            return obj;
+        }
+        changable() {
+            return true;
+        }
+        prefix(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Prefix_code() {
+            const obj = new this.$.$mol_textarea();
+            obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
+            obj.value = (val) => this.prefix(val);
+            obj.hint = () => "let res = 0";
+            return obj;
+        }
+        Prefix() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_Prefix_title');
+            obj.Content = () => this.Prefix_code();
+            return obj;
+        }
+        postfix(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Postfix_code() {
+            const obj = new this.$.$mol_textarea();
+            obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
+            obj.value = (val) => this.postfix(val);
+            obj.hint = () => "$mol_assert_like( res, {#} - 1 )";
+            return obj;
+        }
+        Postfix() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_Postfix_title');
+            obj.Content = () => this.Postfix_code();
+            return obj;
+        }
+        hint() {
+            return "### Iterations count / number\n\t{#}\n\n### Load generic Script\n\n\tconst { some } = $mol_import.script(\n\t\t'https://unpkg.org/...'\n\t)\n\n### Load ESM Module\n\n\tconst { some } = $mol_import.module(\n\t\t'https://esm.sh/...'\n\t).default\n\n### Assert equality\n\n\t$mol_assert_like( [777], [777] )\n\n### Measure memory\n\nCall Chrome with:\n\t--js-flags=\"--expose-gc\"\n\t--enable-precise-memory-info\n\n### Other JS Tools\n\n[V8 Optimizations](https://opt.js.hyoo.ru/) [Sandbox](https://eval.js.hyoo.ru)";
+        }
+        Hint() {
+            const obj = new this.$.$mol_text();
+            obj.text = () => this.hint();
+            return obj;
+        }
+        Common() {
+            const obj = new this.$.$mol_page();
+            obj.Head = () => null;
+            obj.foot = () => [
+                this.Online(),
+                this.Source(),
+                this.Lights()
+            ];
+            obj.body = () => [
+                this.Prefix(),
+                this.Postfix(),
+                this.Hint()
+            ];
+            return obj;
+        }
+        cases() {
+            return [];
+        }
+        Cases() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.cases();
+            return obj;
+        }
+        cases_pane_content() {
+            return [
+                this.Cases()
+            ];
+        }
+        Cases_pane() {
+            const obj = new this.$.$mol_scroll();
+            obj.sub = () => this.cases_pane_content();
+            return obj;
+        }
+        case_title(id, next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        case_prefix(id, next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        source(id, next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        case_measurable(id, next) {
+            if (next !== undefined)
+                return next;
+            return true;
+        }
+        case_sample(id) {
+            return "";
+        }
+        results(id, next) {
+            if (next !== undefined)
+                return next;
+            return [];
+        }
+        case_drop(id, next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        case_dupe(id, next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        case_swap(id, next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        bench_title(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        measurable_all() {
+            return [];
+        }
+        Measurable_all() {
+            const obj = new this.$.$mol_check_group();
+            obj.checks = () => this.measurable_all();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_Measurable_all_hint');
+            return obj;
+        }
+        Run_icon() {
+            const obj = new this.$.$mol_icon_play();
+            return obj;
+        }
+        Run() {
+            const obj = new this.$.$mol_button_major();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_Run_hint');
+            obj.click = (event) => this.run(event);
+            obj.sub = () => [
+                this.Run_icon()
+            ];
+            return obj;
+        }
+        Share() {
+            const obj = new this.$.$mol_button_share();
+            obj.capture = () => this.Cases();
+            return obj;
+        }
+        bench_fork(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Fork_icon() {
+            const obj = new this.$.$mol_icon_directions_fork();
+            return obj;
+        }
+        Fork() {
+            const obj = new this.$.$mol_button_minor();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_Fork_hint');
+            obj.click = (next) => this.bench_fork(next);
+            obj.sub = () => [
+                this.Fork_icon()
+            ];
+            return obj;
+        }
+        bench_new(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        New_icon() {
+            const obj = new this.$.$mol_icon_plus_box();
+            return obj;
+        }
+        New() {
+            const obj = new this.$.$mol_button_minor();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_New_hint');
+            obj.click = (next) => this.bench_new(next);
+            obj.sub = () => [
+                this.New_icon()
+            ];
+            return obj;
+        }
+        About_icon() {
+            const obj = new this.$.$mol_icon_help_circle_outline();
+            return obj;
+        }
+        About() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "https://habhub.hyoo.ru/#author=nin-jin/repo=HabHub/article=42";
+            obj.sub = () => [
+                this.About_icon()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "yard", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Body", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "Case", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Theme", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "run", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Hotkey", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Online", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Lights", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "prefix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Prefix_code", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Prefix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "postfix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Postfix_code", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Postfix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Hint", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Common", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Cases", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Cases_pane", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "case_title", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "case_prefix", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "source", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "case_measurable", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "results", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "case_drop", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "case_dupe", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "case_swap", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "bench_title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Measurable_all", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Run_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Run", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Share", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "bench_fork", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Fork_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Fork", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "bench_new", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "New_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "New", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "About_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "About", null);
+    $.$hyoo_js_perf = $hyoo_js_perf;
+})($ || ($ = {}));
+//hyoo/js/perf/-view.tree/perf.view.tree.ts
 ;
 "use strict";
 var $;
@@ -39164,7 +39442,7 @@ var $;
             return this.sub('postfix', $hyoo_crowd_reg).str(next);
         }
         cases() {
-            return this.sub('cases', $hyoo_crowd_list).nodes($hyoo_js_perf_bench_case);
+            return this.sub('cases', $hyoo_crowd_list).nodes($hyoo_js_perf_case);
         }
         case_ensure(index) {
             return this.cases()[index] ?? this.case_add();
@@ -39277,60 +39555,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    let $mol_si_prefix;
-    (function ($mol_si_prefix) {
-        $mol_si_prefix[$mol_si_prefix["y"] = -8] = "y";
-        $mol_si_prefix[$mol_si_prefix["z"] = -7] = "z";
-        $mol_si_prefix[$mol_si_prefix["a"] = -6] = "a";
-        $mol_si_prefix[$mol_si_prefix["f"] = -5] = "f";
-        $mol_si_prefix[$mol_si_prefix["p"] = -4] = "p";
-        $mol_si_prefix[$mol_si_prefix["n"] = -3] = "n";
-        $mol_si_prefix[$mol_si_prefix["\u00B5"] = -2] = "\u00B5";
-        $mol_si_prefix[$mol_si_prefix["m"] = -1] = "m";
-        $mol_si_prefix[$mol_si_prefix[""] = 0] = "";
-        $mol_si_prefix[$mol_si_prefix["k"] = 1] = "k";
-        $mol_si_prefix[$mol_si_prefix["M"] = 2] = "M";
-        $mol_si_prefix[$mol_si_prefix["G"] = 3] = "G";
-        $mol_si_prefix[$mol_si_prefix["T"] = 4] = "T";
-        $mol_si_prefix[$mol_si_prefix["P"] = 5] = "P";
-        $mol_si_prefix[$mol_si_prefix["E"] = 6] = "E";
-        $mol_si_prefix[$mol_si_prefix["Z"] = 7] = "Z";
-        $mol_si_prefix[$mol_si_prefix["Y"] = 8] = "Y";
-    })($mol_si_prefix = $.$mol_si_prefix || ($.$mol_si_prefix = {}));
-})($ || ($ = {}));
-//mol/si/prefix.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_si_short(numb, unit = '') {
-        let magnitude = Math.floor(Math.log10(Math.abs(numb)) / 3);
-        if (!Number.isFinite(magnitude)) {
-            const prefix = isNaN(numb) ? `∅` : numb.toLocaleString();
-            const suffix = unit ? ' ' + unit : '';
-            return prefix + suffix;
-        }
-        let normal = numb / 10 ** (3 * magnitude);
-        if (Math.round(Math.abs(normal)) === 1000) {
-            normal /= 1000;
-            ++magnitude;
-        }
-        const prefix = normal.toPrecision(3);
-        if (unit) {
-            return prefix + ' ' + $mol_si_prefix[magnitude] + unit;
-        }
-        else {
-            return prefix + $mol_si_prefix[magnitude];
-        }
-    }
-    $.$mol_si_short = $mol_si_short;
-})($ || ($ = {}));
-//mol/si/short/short.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_tools] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_hint] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_prefix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_postfix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 auto;\n\tmin-width: 46rem;\n}\n\n[hyoo_js_perf_cases] {\n\tdisplay: table;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_case] {\n\tdisplay: table-row;\n\tflex: 0 1 auto;\n}\n\n[hyoo_js_perf_case_prefix] ,\n[hyoo_js_perf_case_source] {\n\tdisplay: table-cell;\n\tmin-width: 14rem;\n\tvertical-align: top;\n\tpadding: 0.75rem;\n}\n\n[hyoo_js_perf_case_title] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_eval_labeler] {\n\twidth: 26rem;\n\tpadding: 0.75rem;\n}\n[hyoo_js_perf_case_results] {\n\twidth: 26rem;\n\tdisplay: table-cell;\n\tpadding: 0.75rem;\n}\n\n[hyoo_js_perf_case_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_result] {\n\tpadding: .5rem .75rem .25rem;\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\t/* margin: 0 .5rem; */\n}\n\n[hyoo_js_perf_case_result_stats_main],\n[hyoo_js_perf_case_result_stats_mem] {\n\tdisplay: contents;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portions] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: dimgray;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
+    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_tools] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_hint] {\n\tpadding: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_prefix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_postfix] {\n\tmargin: .75rem;\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 auto;\n\tmin-width: 46rem;\n}\n\n[hyoo_js_perf_cases] {\n\tdisplay: table;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_common_foot] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/-css/perf.view.css.ts
 ;
@@ -39675,6 +39900,11 @@ var $;
             iterations_reset() {
                 this._run_iteration = 0;
             }
+            measurable_all() {
+                return [...this.sources().entries()]
+                    .filter(([index, inner]) => inner.trim())
+                    .map(([index]) => this.Case_measurable(index));
+            }
             run() {
                 for (const [index, inner] of this.sources().entries()) {
                     this.measures_for(index, []);
@@ -39685,6 +39915,8 @@ var $;
                 const token = this.token();
                 for (const [index, inner] of this.sources().entries()) {
                     if (!inner.trim())
+                        continue;
+                    if (!this.case_measurable(index))
                         continue;
                     const cold = this.measure_safe(index, [
                         '/*cold*/',
@@ -39808,107 +40040,12 @@ var $;
             $mol_action
         ], $hyoo_js_perf.prototype, "iterations_reset", null);
         __decorate([
+            $mol_mem
+        ], $hyoo_js_perf.prototype, "measurable_all", null);
+        __decorate([
             $mol_action
         ], $hyoo_js_perf.prototype, "run", null);
         $$.$hyoo_js_perf = $hyoo_js_perf;
-        class $hyoo_js_perf_case extends $.$hyoo_js_perf_case {
-            columns() {
-                return [
-                    this.Prefix(),
-                    this.Source(),
-                    ...this.results().length > 1
-                        ? [this.Results()]
-                        : this.source()
-                            ? [this.Eval_labeler()]
-                            : [this.Results()]
-                ];
-            }
-            result(level) {
-                return this.results()[level];
-            }
-            result_title(level) {
-                return ['🔠', '🥶', '🥵'][level] ?? '';
-            }
-            eval_standalone() {
-                const code = this.sample();
-                return `https://eval.js.hyoo.ru/#!code=${encodeURIComponent(code)}/run=true`;
-            }
-            prefix_tools() {
-                return this.changable() ? super.prefix_tools() : [];
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $hyoo_js_perf_case.prototype, "columns", null);
-        $$.$hyoo_js_perf_case = $hyoo_js_perf_case;
-        class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
-            sub() {
-                if (!this.result())
-                    return [];
-                return this.result().error ? [this.Error()] : [this.Stats(), this.Portions()];
-            }
-            portions() {
-                const result = this.result();
-                return [
-                    ...result.frequency ? [this.Frequency_portion()] : [],
-                    ...result.memory ? [this.Memory_portion()] : [],
-                    ...result.size ? [this.Size_portion(), this.Deps_portion()] : [],
-                ];
-            }
-            stats() {
-                const result = this.result();
-                return [
-                    ...result.frequency ? [this.Stats_main()] : [],
-                    ...result.memory ? [this.Stats_mem()] : [],
-                    ...result.size ? [this.Stats_size(), this.Stats_deps()] : [],
-                ];
-            }
-            error() {
-                return `${this.result().error}`;
-            }
-            iterations() {
-                return $mol_si_short(this.result().iterations, 'It');
-            }
-            frequency() {
-                return $mol_si_short(this.result().frequency, 'Hz');
-            }
-            time_total() {
-                return $mol_si_short(this.result().time / 1000, 's');
-            }
-            memory_total() {
-                const val = this.result().memory;
-                return val ? $mol_si_short(val, 'B') : '?B';
-            }
-            memory_per_iteration() {
-                const val = this.result().memory_per_iteration;
-                return val ? $mol_si_short(val, 'B') : '?B';
-            }
-            size() {
-                return this.result().size;
-            }
-            deps() {
-                return $mol_si_short(this.result().deps, 'B');
-            }
-            frequency_portion() {
-                return this.result().frequency_portion;
-            }
-            memory_portion() {
-                return this.result().memory_portion;
-            }
-            size_portion() {
-                return this.result().size_portion;
-            }
-            deps_portion() {
-                return this.result().deps_portion;
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $hyoo_js_perf_case_result.prototype, "portions", null);
-        __decorate([
-            $mol_mem
-        ], $hyoo_js_perf_case_result.prototype, "stats", null);
-        $$.$hyoo_js_perf_case_result = $hyoo_js_perf_case_result;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //hyoo/js/perf/perf.view.ts
@@ -46157,6 +46294,9 @@ var $;
 //mol/key/key.test.tsx
 ;
 "use strict";
+//mol/type/foot/foot.test.ts
+;
+"use strict";
 var $;
 (function ($) {
     $mol_wire_log.active();
@@ -49156,9 +49296,6 @@ var $;
 //mol/func/is/class/class.test.ts
 ;
 "use strict";
-//mol/type/foot/foot.test.ts
-;
-"use strict";
 var $;
 (function ($) {
     $mol_test({
@@ -49732,6 +49869,34 @@ var $;
 ;
 "use strict";
 var $;
+(function ($) {
+    $mol_test({
+        'define as methods'() {
+            const { foo, bar } = $mol_wire_let({
+                foo(next = 1) { return next; },
+                bar() { return this.foo() + 1; },
+            });
+            $mol_assert_equal(foo(), 1);
+            $mol_assert_equal(bar(), 2);
+            $mol_assert_equal(foo(5), 5);
+            $mol_assert_equal(bar(), 6);
+        },
+        'define as closures'() {
+            const { foo, bar } = $mol_wire_let({
+                foo: (next = 1) => next,
+                bar: () => foo() + 1,
+            });
+            $mol_assert_equal(foo(), 1);
+            $mol_assert_equal(bar(), 2);
+            $mol_assert_equal(foo(5), 5);
+            $mol_assert_equal(bar(), 6);
+        },
+    });
+})($ || ($ = {}));
+//mol/wire/let/let.test.ts
+;
+"use strict";
+var $;
 (function ($_1) {
     $mol_test({
         'Watch one value'($) {
@@ -50145,15 +50310,6 @@ var $;
 ;
 "use strict";
 var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_after_work = $mol_after_mock_timeout;
-    });
-})($ || ($ = {}));
-//mol/after/work/work.test.ts
-;
-"use strict";
-var $;
 (function ($) {
     $mol_test({
         'Special'() {
@@ -50203,6 +50359,15 @@ var $;
     });
 })($ || ($ = {}));
 //mol/si/short/short.test.ts
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_after_work = $mol_after_mock_timeout;
+    });
+})($ || ($ = {}));
+//mol/after/work/work.test.ts
 ;
 "use strict";
 var $;

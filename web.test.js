@@ -1497,6 +1497,9 @@ var $;
 //mol/key/key.test.tsx
 ;
 "use strict";
+//mol/type/foot/foot.test.ts
+;
+"use strict";
 var $;
 (function ($) {
     $mol_wire_log.active();
@@ -4940,9 +4943,6 @@ var $;
 //mol/func/is/class/class.test.ts
 ;
 "use strict";
-//mol/type/foot/foot.test.ts
-;
-"use strict";
 var $;
 (function ($) {
     $mol_test({
@@ -5516,6 +5516,34 @@ var $;
 ;
 "use strict";
 var $;
+(function ($) {
+    $mol_test({
+        'define as methods'() {
+            const { foo, bar } = $mol_wire_let({
+                foo(next = 1) { return next; },
+                bar() { return this.foo() + 1; },
+            });
+            $mol_assert_equal(foo(), 1);
+            $mol_assert_equal(bar(), 2);
+            $mol_assert_equal(foo(5), 5);
+            $mol_assert_equal(bar(), 6);
+        },
+        'define as closures'() {
+            const { foo, bar } = $mol_wire_let({
+                foo: (next = 1) => next,
+                bar: () => foo() + 1,
+            });
+            $mol_assert_equal(foo(), 1);
+            $mol_assert_equal(bar(), 2);
+            $mol_assert_equal(foo(5), 5);
+            $mol_assert_equal(bar(), 6);
+        },
+    });
+})($ || ($ = {}));
+//mol/wire/let/let.test.ts
+;
+"use strict";
+var $;
 (function ($_1) {
     $mol_test({
         'Watch one value'($) {
@@ -5929,15 +5957,6 @@ var $;
 ;
 "use strict";
 var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_after_work = $mol_after_mock_timeout;
-    });
-})($ || ($ = {}));
-//mol/after/work/work.test.ts
-;
-"use strict";
-var $;
 (function ($) {
     $mol_test({
         'Special'() {
@@ -5987,6 +6006,15 @@ var $;
     });
 })($ || ($ = {}));
 //mol/si/short/short.test.ts
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_after_work = $mol_after_mock_timeout;
+    });
+})($ || ($ = {}));
+//mol/after/work/work.test.ts
 ;
 "use strict";
 var $;

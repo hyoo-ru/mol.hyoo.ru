@@ -377,6 +377,14 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    type $mol_type_tail<Tuple extends readonly any[]> = ((...tail: Tuple) => any) extends ((head: any, ...tail: infer Tail) => any) ? Tail : never;
+}
+
+declare namespace $ {
+    type $mol_type_foot<Tuple extends readonly any[]> = Tuple['length'] extends 0 ? never : Tuple[$mol_type_tail<Tuple>['length']];
+}
+
+declare namespace $ {
     class $mol_wire_atom<Host, Args extends readonly unknown[], Result> extends $mol_wire_fiber<Host, Args, Result> {
         static solo<Host, Args extends readonly unknown[], Result>(host: Host, task: (this: Host, ...args: Args) => Result): $mol_wire_atom<Host, Args, Result>;
         static plex<Host, Args extends readonly unknown[], Result>(host: Host, task: (this: Host, ...args: Args) => Result, key: Args[0]): $mol_wire_atom<Host, Args, Result>;
@@ -385,13 +393,12 @@ declare namespace $ {
         watch(): void;
         resync(args: Args): Error | Result | Promise<Error | Result>;
         once(): Awaited<Result>;
+        channel(): ((next?: $mol_type_foot<Args>) => Awaited<Result>) & {
+            atom: $mol_wire_atom<Host, Args, Result>;
+        };
         destructor(): void;
         put(next: Result | Error | Promise<Result | Error>): Error | Result | Promise<Error | Result>;
     }
-}
-
-declare namespace $ {
-    type $mol_type_tail<Tuple extends readonly any[]> = ((...tail: Tuple) => any) extends ((head: any, ...tail: infer Tail) => any) ? Tail : never;
 }
 
 declare namespace $ {
@@ -7612,10 +7619,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    type $mol_type_foot<Tuple extends readonly any[]> = Tuple['length'] extends 0 ? never : Tuple[$mol_type_tail<Tuple>['length']];
-}
-
-declare namespace $ {
     type Guard_value<Funcs extends $mol_type_unary[], Index extends keyof Funcs> = $mol_type_param<Index extends keyof $mol_type_tail<Funcs> ? $mol_type_tail<Funcs>[Index] : any, 0>;
     type Guard<Funcs extends $mol_type_unary[]> = {
         [Index in keyof Funcs]: (Funcs[Index] extends $mol_type_unary_func ? (input: $mol_type_param<Funcs[Index], 0>) => Guard_value<Funcs, Index> : new (input: $mol_type_param<Funcs[Index], 0>) => Guard_value<Funcs, Index>);
@@ -9031,6 +9034,12 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_wire_let<Host extends {}>(host: Host): Host & { [Field in keyof Host]: {
+        atom: $mol_wire_atom<Host, Parameters<Extract<Host[Field], (...args: any[]) => any>>, $mol_type_result<Host[Field]>>;
+    }; };
+}
+
+declare namespace $ {
     class $mol_wire_set<Value> extends Set<Value> {
         pub: $mol_wire_pub;
         has(value: Value): boolean;
@@ -9899,20 +9908,177 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_icon_directions extends $mol_icon {
+    class $hyoo_js_perf_case extends $hyoo_crowd_struct {
+        title(next?: string): string;
+        setup(next?: string): string;
+        measure(next?: string): string;
+        steal(donor: $hyoo_js_perf_case): void;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_chevron_double_down extends $mol_icon {
         path(): string;
     }
 }
 
 declare namespace $ {
-    class $mol_icon_directions_fork extends $mol_icon {
+    class $mol_icon_unfold_more_horizontal extends $mol_icon {
         path(): string;
     }
 }
 
 declare namespace $ {
-    class $mol_icon_plus_box extends $mol_icon {
-        path(): string;
+    class $hyoo_js_perf_case_result extends $mol_view {
+        result(): $$.$hyoo_js_perf_stats;
+        sub(): readonly any[];
+        frequency_portion(): number;
+        Frequency_portion(): $$.$mol_portion;
+        memory_portion(): number;
+        Memory_portion(): $$.$mol_portion;
+        size_portion(): number;
+        Size_portion(): $$.$mol_portion;
+        deps_portion(): number;
+        Deps_portion(): $$.$mol_portion;
+        portions(): readonly any[];
+        Portions(): $mol_view;
+        title(): string;
+        frequency_hint(): string;
+        frequency(): string;
+        Frequency(): $mol_view;
+        time_hint(): string;
+        time_total(): string;
+        Time(): $mol_view;
+        iterations_hint(): string;
+        iterations(): string;
+        Iterations(): $mol_view;
+        Stats_main(): $mol_view;
+        memory_per_iteration_hint(): string;
+        memory_per_iteration(): string;
+        Memory_per_iteration(): $mol_view;
+        memory_hint(): string;
+        memory_total(): string;
+        Memory(): $mol_view;
+        Stats_mem(): $mol_view;
+        size_hint(): string;
+        size(): number;
+        Size(): $mol_view;
+        Stats_size(): $mol_view;
+        deps_hint(): string;
+        deps(): string;
+        Deps(): $mol_view;
+        Stats_deps(): $mol_view;
+        stats(): readonly any[];
+        Stats(): $mol_view;
+        error(): string;
+        Error(): $mol_view;
+    }
+}
+
+declare namespace $ {
+    enum $mol_si_prefix {
+        y = -8,
+        z = -7,
+        a = -6,
+        f = -5,
+        p = -4,
+        n = -3,
+        µ = -2,
+        m = -1,
+        '' = 0,
+        k = 1,
+        M = 2,
+        G = 3,
+        T = 4,
+        P = 5,
+        E = 6,
+        Z = 7,
+        Y = 8
+    }
+}
+
+declare namespace $ {
+    function $mol_si_short(numb: number, unit?: string): string;
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
+        sub(): $mol_view[];
+        portions(): $mol_portion[];
+        stats(): $mol_view[];
+        error(): string;
+        iterations(): string;
+        frequency(): string;
+        time_total(): string;
+        memory_total(): string;
+        memory_per_iteration(): string;
+        size(): number;
+        deps(): string;
+        frequency_portion(): number;
+        memory_portion(): number;
+        size_portion(): number;
+        deps_portion(): number;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_js_perf_case_row extends $mol_view {
+        results(): readonly any[];
+        Eval_result(): $$.$mol_list;
+        Eval(): $$.$hyoo_js_eval;
+        sub(): readonly any[];
+        sample(): string;
+        prefix_showed(next?: any): boolean;
+        drop(next?: any): any;
+        Drop_icon(): $mol_icon_cross;
+        Drop(): $mol_button_minor;
+        dupe(next?: any): any;
+        Dupe_icon(): $mol_icon_chevron_double_down;
+        Dupe(): $mol_button_minor;
+        swap(next?: any): any;
+        Swap_icon(): $mol_icon_unfold_more_horizontal;
+        Swap(): $mol_button_minor;
+        prefix_tools(): readonly any[];
+        Prefix_tools(): $mol_bar;
+        changable(): boolean;
+        prefix(val?: any): string;
+        Prefix_code(): $$.$mol_textarea;
+        Prefix(): $$.$mol_expander;
+        source_showed(next?: any): boolean;
+        measurable(next?: any): boolean;
+        Measurable(): $mol_check_box;
+        title(next?: any): string;
+        Title(): $mol_string_button;
+        eval_standalone(): string;
+        Eval_sandalone(): $$.$mol_link_iconed;
+        Source_tools(): $mol_view;
+        source(val?: any): string;
+        Source_code(): $$.$mol_textarea;
+        Source(): $$.$mol_expander;
+        eval_showed(next?: any): boolean;
+        Eval_labeler(): $$.$mol_expander;
+        result_title(id: any): string;
+        result(id: any): $$.$hyoo_js_perf_stats;
+        Result(id: any): $$.$hyoo_js_perf_case_result;
+        result_rows(): readonly any[];
+        Results(): $$.$mol_list;
+        columns(): readonly any[];
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $hyoo_js_perf_case_row extends $.$hyoo_js_perf_case_row {
+        columns(): ($mol_list | $mol_expander)[];
+        result(level: number): any;
+        result_title(level: number): string;
+        eval_standalone(): string;
+        prefix_tools(): readonly any[];
     }
 }
 
@@ -9963,13 +10129,19 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_icon_chevron_double_down extends $mol_icon {
+    class $mol_icon_directions extends $mol_icon {
         path(): string;
     }
 }
 
 declare namespace $ {
-    class $mol_icon_unfold_more_horizontal extends $mol_icon {
+    class $mol_icon_directions_fork extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_plus_box extends $mol_icon {
         path(): string;
     }
 }
@@ -9983,12 +10155,16 @@ declare namespace $ {
         sources(): readonly string[];
         plugins(): readonly any[];
         Body(): $$.$mol_book2;
-        Case(id: any): $$.$hyoo_js_perf_case;
+        Case_measurable(id: any): $mol_check_box;
+        Case(id: any): $$.$hyoo_js_perf_case_row;
         Title(): $mol_string_button;
         tools(): readonly any[];
         Theme(): $$.$mol_theme_auto;
         run(event?: any): any;
         Hotkey(): $$.$mol_hotkey;
+        Online(): $$.$hyoo_sync_online;
+        Source(): $mol_link_source;
+        Lights(): $$.$mol_lights_toggle;
         changable(): boolean;
         prefix(val?: any): string;
         Prefix_code(): $$.$mol_textarea;
@@ -9998,20 +10174,23 @@ declare namespace $ {
         Postfix(): $mol_labeler;
         hint(): string;
         Hint(): $$.$mol_text;
-        Common(): $$.$mol_scroll;
+        Common(): $mol_page;
         cases(): readonly any[];
         Cases(): $mol_view;
         cases_pane_content(): readonly any[];
         Cases_pane(): $$.$mol_scroll;
-        case_title(id: any, val?: any): string;
-        case_prefix(id: any, val?: any): string;
-        source(id: any, val?: any): string;
+        case_title(id: any, next?: any): string;
+        case_prefix(id: any, next?: any): string;
+        source(id: any, next?: any): string;
+        case_measurable(id: any, next?: any): boolean;
         case_sample(id: any): string;
-        results(id: any, val?: any): readonly any[];
+        results(id: any, next?: any): readonly any[];
         case_drop(id: any, next?: any): any;
         case_dupe(id: any, next?: any): any;
         case_swap(id: any, next?: any): any;
         bench_title(next?: any): string;
+        measurable_all(): readonly any[];
+        Measurable_all(): $$.$mol_check_group;
         Run_icon(): $mol_icon_play;
         Run(): $mol_button_major;
         Share(): $$.$mol_button_share;
@@ -10023,101 +10202,6 @@ declare namespace $ {
         New(): $mol_button_minor;
         About_icon(): $mol_icon_help_circle_outline;
         About(): $$.$mol_link;
-        Lights(): $$.$mol_lights_toggle;
-        Source(): $mol_link_source;
-        Online(): $$.$hyoo_sync_online;
-    }
-    class $hyoo_js_perf_case extends $mol_view {
-        results(): readonly any[];
-        Eval_result(): $$.$mol_list;
-        Eval(): $$.$hyoo_js_eval;
-        sub(): readonly any[];
-        sample(): string;
-        prefix_showed(next?: any): boolean;
-        drop(next?: any): any;
-        Drop_icon(): $mol_icon_cross;
-        Drop(): $mol_button_minor;
-        dupe(next?: any): any;
-        Dupe_icon(): $mol_icon_chevron_double_down;
-        Dupe(): $mol_button_minor;
-        swap(next?: any): any;
-        Swap_icon(): $mol_icon_unfold_more_horizontal;
-        Swap(): $mol_button_minor;
-        prefix_tools(): readonly any[];
-        Prefix_tools(): $mol_bar;
-        changable(): boolean;
-        prefix(val?: any): string;
-        Prefix_code(): $$.$mol_textarea;
-        Prefix(): $$.$mol_expander;
-        source_showed(next?: any): boolean;
-        title(next?: any): string;
-        Title(): $mol_string_button;
-        source(val?: any): string;
-        Source_code(): $$.$mol_textarea;
-        Source(): $$.$mol_expander;
-        eval_showed(next?: any): boolean;
-        eval_standalone(): string;
-        Eval_sandalone(): $$.$mol_link_iconed;
-        Eval_labeler(): $$.$mol_expander;
-        result_title(id: any): string;
-        result(id: any): $$.$hyoo_js_perf_stats;
-        Result(id: any): $$.$hyoo_js_perf_case_result;
-        result_rows(): readonly any[];
-        Results(): $$.$mol_list;
-        columns(): readonly any[];
-    }
-    class $hyoo_js_perf_case_result extends $mol_view {
-        result(): $$.$hyoo_js_perf_stats;
-        sub(): readonly any[];
-        frequency_portion(): number;
-        Frequency_portion(): $$.$mol_portion;
-        memory_portion(): number;
-        Memory_portion(): $$.$mol_portion;
-        size_portion(): number;
-        Size_portion(): $$.$mol_portion;
-        deps_portion(): number;
-        Deps_portion(): $$.$mol_portion;
-        portions(): readonly any[];
-        Portions(): $mol_view;
-        title(): string;
-        frequency_hint(): string;
-        frequency(): string;
-        Frequency(): $mol_view;
-        time_hint(): string;
-        time_total(): string;
-        Time(): $mol_view;
-        iterations_hint(): string;
-        iterations(): string;
-        Iterations(): $mol_view;
-        Stats_main(): $mol_view;
-        memory_per_iteration_hint(): string;
-        memory_per_iteration(): string;
-        Memory_per_iteration(): $mol_view;
-        memory_hint(): string;
-        memory_total(): string;
-        Memory(): $mol_view;
-        Stats_mem(): $mol_view;
-        size_hint(): string;
-        size(): number;
-        Size(): $mol_view;
-        Stats_size(): $mol_view;
-        deps_hint(): string;
-        deps(): string;
-        Deps(): $mol_view;
-        Stats_deps(): $mol_view;
-        stats(): readonly any[];
-        Stats(): $mol_view;
-        error(): string;
-        Error(): $mol_view;
-    }
-}
-
-declare namespace $ {
-    class $hyoo_js_perf_bench_case extends $hyoo_crowd_struct {
-        title(next?: string): string;
-        setup(next?: string): string;
-        measure(next?: string): string;
-        steal(donor: $hyoo_js_perf_bench_case): void;
     }
 }
 
@@ -10126,11 +10210,11 @@ declare namespace $ {
         title(next?: string): string;
         prefix(next?: string): string;
         postfix(next?: string): string;
-        cases(): $hyoo_js_perf_bench_case[];
-        case_ensure(index: number): $hyoo_js_perf_bench_case;
-        case_add(): $hyoo_js_perf_bench_case;
+        cases(): $hyoo_js_perf_case[];
+        case_ensure(index: number): $hyoo_js_perf_case;
+        case_add(): $hyoo_js_perf_case;
         case_drop(index: number): void;
-        case_dupe(index: number): $hyoo_js_perf_bench_case;
+        case_dupe(index: number): $hyoo_js_perf_case;
         case_swap(index: number): number;
         steal(donor: $hyoo_js_perf_bench): void;
         changable(): boolean;
@@ -10150,32 +10234,6 @@ declare namespace $ {
 declare namespace $ {
     function $mol_wait_rest_async(this: $): Promise<unknown>;
     function $mol_wait_rest(this: $): unknown;
-}
-
-declare namespace $ {
-    enum $mol_si_prefix {
-        y = -8,
-        z = -7,
-        a = -6,
-        f = -5,
-        p = -4,
-        n = -3,
-        µ = -2,
-        m = -1,
-        '' = 0,
-        k = 1,
-        M = 2,
-        G = 3,
-        T = 4,
-        P = 5,
-        E = 6,
-        Z = 7,
-        Y = 8
-    }
-}
-
-declare namespace $ {
-    function $mol_si_short(numb: number, unit?: string): string;
 }
 
 declare namespace $ {
@@ -10214,7 +10272,7 @@ declare namespace $.$$ {
         case_dupe(index: number): void;
         case_swap(index: number): void;
         cases_count(): number;
-        cases(): $hyoo_js_perf_case[];
+        cases(): $hyoo_js_perf_case_row[];
         case_title(index: number, next?: string): string;
         case_prefix(index: number, next?: string): string;
         source(index: number, next?: string): string;
@@ -10240,31 +10298,8 @@ declare namespace $.$$ {
         measure_safe(index: number, prefix: string, inner: string, postfix: string): $hyoo_js_perf_stats;
         _run_iteration: number;
         iterations_reset(): void;
+        measurable_all(): $mol_check_box[];
         run(): void;
-    }
-    class $hyoo_js_perf_case extends $.$hyoo_js_perf_case {
-        columns(): ($mol_list | $mol_expander)[];
-        result(level: number): any;
-        result_title(level: number): string;
-        eval_standalone(): string;
-        prefix_tools(): readonly any[];
-    }
-    class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
-        sub(): $mol_view[];
-        portions(): $mol_portion[];
-        stats(): $mol_view[];
-        error(): string;
-        iterations(): string;
-        frequency(): string;
-        time_total(): string;
-        memory_total(): string;
-        memory_per_iteration(): string;
-        size(): number;
-        deps(): string;
-        frequency_portion(): number;
-        memory_portion(): number;
-        size_portion(): number;
-        deps_portion(): number;
     }
 }
 
