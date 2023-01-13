@@ -4963,14 +4963,36 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_status extends $mol_view {
+        status(): string;
+        minimal_height(): number;
+        minimal_width(): number;
+        sub(): readonly any[];
+        message(): string;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $.$$ {
+    class $mol_status extends $.$mol_status {
+        message(): any;
+    }
+}
+
+declare namespace $ {
     class $mol_book2_catalog_demo extends $mol_example_large {
         title(): string;
-        Spread_content(): $mol_row;
+        Content(): $mol_filler;
+        Empty(): $$.$mol_status;
         sub(): readonly any[];
         tags(): readonly any[];
-        Filler(): $mol_filler;
-        Add_icon(): $mol_icon_plus;
-        Add(): $mol_button_minor;
+        Pizza(): $mol_page;
+        Hot_dogs(): $mol_page;
+        Fries(): $mol_page;
+        Foods_spread_close(): $$.$mol_link;
+        Foods(): $$.$mol_book2_catalog;
         Cats(): $mol_page;
         Dogs(): $mol_page;
         Horses(): $mol_page;
@@ -4981,6 +5003,8 @@ declare namespace $ {
         Mice(): $mol_page;
         Ants(): $mol_page;
         Bugs(): $mol_page;
+        Animals_spread_close(): $$.$mol_link;
+        Animals(): $$.$mol_book2_catalog;
         Spread_close(): $$.$mol_link;
         Calatog(): $$.$mol_book2_catalog;
     }
@@ -6727,6 +6751,9 @@ declare namespace $ {
     }
 }
 
+declare namespace $ {
+}
+
 declare namespace $.$$ {
     class $mol_form extends $.$mol_form {
         form_fields(): readonly $mol_form_field[];
@@ -6836,25 +6863,6 @@ declare namespace $.$$ {
         nav_components(): ($mol_string | $mol_button_minor)[];
         trigger_content(): readonly $mol_view_content[];
         menu_content(): $mol_view[];
-    }
-}
-
-declare namespace $ {
-    class $mol_status extends $mol_view {
-        status(): any;
-        minimal_height(): number;
-        minimal_width(): number;
-        sub(): readonly any[];
-        message(): string;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $.$$ {
-    class $mol_status extends $.$mol_status {
-        message(): any;
     }
 }
 
@@ -8126,7 +8134,6 @@ declare namespace $ {
         Button_tools(): $mol_button_minor;
         Text(): $mol_filler;
         Button_foot(): $mol_button_minor;
-        Foot_content(): $mol_row;
         Page(): $mol_page;
     }
 }
@@ -9001,7 +9008,7 @@ declare namespace $ {
         Enabled_labeler(): $mol_labeler;
         Disabled(): $$.$mol_switch;
         Disabled_labeler(): $mol_labeler;
-        Demo_items(): $mol_row;
+        Demo_items(): $$.$mol_list;
     }
 }
 
