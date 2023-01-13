@@ -4953,16 +4953,35 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_filler extends $mol_view {
+        minimal_height(): number;
+        sub(): readonly any[];
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
     class $mol_book2_catalog_demo extends $mol_example_large {
         title(): string;
+        Spread_content(): $mol_row;
         sub(): readonly any[];
         tags(): readonly any[];
-        Articles_content(): $mol_row;
-        Articles(): $mol_page;
-        Images_content(): $mol_row;
-        Images(): $mol_page;
-        Maps_content(): $mol_row;
-        Maps(): $mol_page;
+        Filler(): $mol_filler;
+        Add_icon(): $mol_icon_plus;
+        Add(): $mol_button_minor;
+        Cats(): $mol_page;
+        Dogs(): $mol_page;
+        Horses(): $mol_page;
+        Racoons(): $mol_page;
+        Pigs(): $mol_page;
+        Rabbits(): $mol_page;
+        Wolfs(): $mol_page;
+        Mice(): $mol_page;
+        Ants(): $mol_page;
+        Bugs(): $mol_page;
+        Spread_close(): $$.$mol_link;
         Calatog(): $$.$mol_book2_catalog;
     }
 }
@@ -6628,16 +6647,6 @@ declare namespace $.$$ {
             buffer: Uint8Array;
         };
     }
-}
-
-declare namespace $ {
-    class $mol_filler extends $mol_view {
-        minimal_height(): number;
-        sub(): readonly any[];
-    }
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
