@@ -1141,6 +1141,10 @@ $hyoo_apps $mol_book2
 			target \release
 			title @ \ToDoMVC
 			uri \https://todomvc.hyoo.ru/
+		game *
+			target \preview
+			title @ \3D Arcade
+			uri \https://game.hyoo.ru/
 		draw *
 			target \preview
 			title @ \Draw Tool

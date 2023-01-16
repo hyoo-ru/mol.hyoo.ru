@@ -3919,6 +3919,11 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            game: {
+                target: string;
+                title: string;
+                uri: string;
+            };
             draw: {
                 target: string;
                 title: string;

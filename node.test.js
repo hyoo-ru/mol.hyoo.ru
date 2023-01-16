@@ -13772,6 +13772,11 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_todomvc_title'),
                     uri: "https://todomvc.hyoo.ru/"
                 },
+                game: {
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_game_title'),
+                    uri: "https://game.hyoo.ru/"
+                },
                 draw: {
                     target: "preview",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_draw_title'),
