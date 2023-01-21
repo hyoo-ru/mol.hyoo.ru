@@ -23990,6 +23990,13 @@ var $;
                 return transfer;
             return null;
         }
+        allow() {
+            return [
+                "link",
+                "copy",
+                "move"
+            ];
+        }
         enter(event) {
             if (event !== undefined)
                 return event;
@@ -24059,7 +24066,7 @@ var $;
                     return;
                 this.status('drag');
                 this._target = event.target;
-                event.dataTransfer.dropEffect = 'move';
+                event.dataTransfer.dropEffect = this.decide_action(event);
                 event.preventDefault();
             }
             move(event) {
@@ -24067,8 +24074,19 @@ var $;
                     return;
                 if (!this.enabled())
                     return;
-                event.dataTransfer.dropEffect = 'move';
+                event.dataTransfer.dropEffect = this.decide_action(event);
                 event.preventDefault();
+            }
+            decide_action(event) {
+                const allow = this.allow();
+                if (allow.includes('move') && event.shiftKey)
+                    return 'move';
+                else if (allow.includes('copy') && event.ctrlKey)
+                    return 'copy';
+                else if (allow.includes('link') && event.altKey)
+                    return 'link';
+                else
+                    return allow[0];
             }
             leave(event) {
                 if (this._target === event.target) {
