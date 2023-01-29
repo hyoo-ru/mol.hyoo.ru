@@ -13793,223 +13793,100 @@ var $;
 //mol/int62/int62.ts
 ;
 "use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_node extends Object {
-        land;
-        head;
-        constructor(land = new $hyoo_crowd_land, head = '0_0') {
-            super();
-            this.land = land;
-            this.head = head;
-        }
-        static for(land, head) {
-            return new this(land, head);
-        }
-        world() {
-            return this.land.world();
-        }
-        as(Node) {
-            return new Node(this.land, this.head);
-        }
-        units() {
-            return this.land.unit_alives(this.head);
-        }
-        nodes(Node) {
-            return this.units().map(unit => new Node(this.land, unit.self));
-        }
-        virgin() {
-            return this.land.unit_list(this.head).length === 0;
-        }
-        [Symbol.toPrimitive]() {
-            return `${this.constructor.name}("${this.land.id()}","${this.head}")`;
-        }
-        [$mol_dev_format_head]() {
-            return $mol_dev_format_span({}, $mol_dev_format_native(this), $mol_dev_format_shade('/'), $mol_dev_format_auto(this.units().map(unit => unit.data)), $mol_dev_format_shade('/'), $mol_dev_format_auto(this.nodes($hyoo_crowd_node)));
-        }
-    }
-    $.$hyoo_crowd_node = $hyoo_crowd_node;
-})($ || ($ = {}));
-//hyoo/crowd/node/node.ts
+//mol/data/value/value.ts
 ;
 "use strict";
 var $;
 (function ($) {
-    function $mol_reconcile({ prev, from, to, next, equal, drop, insert, update, }) {
-        if (!update)
-            update = (next, prev, lead) => insert(next, drop(prev, lead));
-        let p = from;
-        let n = 0;
-        let lead = p ? prev[p - 1] : null;
-        if (to > prev.length)
-            $mol_fail(new RangeError(`To(${to}) greater then length(${prev.length})`));
-        if (from > to)
-            $mol_fail(new RangeError(`From(${to}) greater then to(${to})`));
-        while (p < to || n < next.length) {
-            if (p < to && n < next.length && equal(next[n], prev[p])) {
-                lead = prev[p];
-                ++p;
-                ++n;
-            }
-            else if (next.length - n > to - p) {
-                lead = insert(next[n], lead);
-                ++n;
-            }
-            else if (next.length - n < to - p) {
-                lead = drop(prev[p], lead);
-                ++p;
-            }
-            else {
-                lead = update(next[n], prev[p], lead);
-                ++p;
-                ++n;
-            }
-        }
+    function $mol_data_setup(value, config) {
+        return Object.assign(value, {
+            config,
+            Value: null
+        });
     }
-    $.$mol_reconcile = $mol_reconcile;
+    $.$mol_data_setup = $mol_data_setup;
 })($ || ($ = {}));
-//mol/reconcile/reconcile.ts
+//mol/data/setup/setup.ts
 ;
 "use strict";
 var $;
 (function ($) {
-    const { unicode_only, line_end, tab, repeat_greedy, optional, forbid_after, force_after, char_only, char_except } = $mol_regexp;
-    $.$hyoo_crowd_tokenizer = $mol_regexp.from({
-        token: {
-            'line-break': line_end,
-            'indents': repeat_greedy(tab, 1),
-            'emoji': [
-                unicode_only('Extended_Pictographic'),
-                optional(unicode_only('Emoji_Modifier')),
-                repeat_greedy([
-                    unicode_only('Emoji_Component'),
-                    unicode_only('Extended_Pictographic'),
-                    optional(unicode_only('Emoji_Modifier')),
-                ]),
-            ],
-            'link': /\b(https?:\/\/[^\s,.;:!?")]+(?:[,.;:!?")][^\s,.;:!?")]+)+)/,
-            'Word': [
-                [
-                    forbid_after(line_end),
-                    unicode_only('White_Space'),
-                ],
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]), 1),
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ])),
-            ],
-            'word': [
-                [
-                    forbid_after(line_end),
-                    unicode_only('White_Space'),
-                ],
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]), 1),
-            ],
-            'spaces': [
-                forbid_after(line_end),
-                repeat_greedy(unicode_only('White_Space'), 1),
-                force_after(unicode_only('White_Space')),
-            ],
-            'space': [
-                forbid_after(line_end),
-                unicode_only('White_Space'),
-                forbid_after([
-                    unicode_only('White_Space'),
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]),
-            ],
-            'others': [
-                repeat_greedy(char_except([
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                    unicode_only('White_Space'),
-                ]), 1),
-            ],
-        },
-    }).native;
+    function $mol_diff_path(...paths) {
+        const limit = Math.min(...paths.map(path => path.length));
+        lookup: for (var i = 0; i < limit; ++i) {
+            const first = paths[0][i];
+            for (let j = 1; j < paths.length; ++j) {
+                if (paths[j][i] !== first)
+                    break lookup;
+            }
+        }
+        return {
+            prefix: paths[0].slice(0, i),
+            suffix: paths.map(path => path.slice(i)),
+        };
+    }
+    $.$mol_diff_path = $mol_diff_path;
 })($ || ($ = {}));
-//hyoo/crowd/tokenizer/tokenizer.ts
+//mol/diff/path/path.ts
 ;
 "use strict";
 var $;
 (function ($) {
-    class $hyoo_crowd_list extends $hyoo_crowd_node {
-        list(next) {
-            const units = this.units();
-            if (next === undefined) {
-                return units.map(unit => unit.data);
-            }
-            else {
-                this.insert(next, 0, units.length);
-                return next;
-            }
-        }
-        set(next) {
-            return new Set(this.list(next && [...next]));
-        }
-        insert(next, from = this.units().length, to = from) {
-            $mol_reconcile({
-                prev: this.units(),
-                from,
-                to,
-                next,
-                equal: (next, prev) => $mol_compare_deep(prev.data, next),
-                drop: (prev, lead) => this.land.wipe(prev),
-                insert: (next, lead) => this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', next),
-                update: (next, prev, lead) => this.land.put(prev.head, prev.self, lead?.self ?? '0_0', next),
-            });
-        }
-        move(from, to) {
-            const units = this.units();
-            const lead = to ? units[to - 1] : null;
-            return this.land.move(units[from], this.head, lead?.self ?? '0_0');
-        }
-        cut(seat) {
-            return this.land.wipe(this.units()[seat]);
-        }
-        has(val) {
-            for (const unit of this.units()) {
-                if (unit.data === val)
-                    return true;
-            }
-            return false;
-        }
-        add(val) {
-            if (this.has(val))
-                return;
-            this.insert([val]);
-        }
-        drop(val) {
-            for (const unit of this.units()) {
-                if (unit.data !== val)
-                    continue;
-                this.land.wipe(unit);
+    class $mol_error_mix extends Error {
+        errors;
+        constructor(message, ...errors) {
+            super(message);
+            this.errors = errors;
+            if (errors.length) {
+                const stacks = [...errors.map(error => error.stack), this.stack];
+                const diff = $mol_diff_path(...stacks.map(stack => {
+                    if (!stack)
+                        return [];
+                    return stack.split('\n').reverse();
+                }));
+                const head = diff.prefix.reverse().join('\n');
+                const tails = diff.suffix.map(path => path.reverse().map(line => line.replace(/^(?!\s+at)/, '\tat (.) ')).join('\n')).join('\n\tat (.) -----\n');
+                this.stack = `Error: ${this.constructor.name}\n\tat (.) /"""\\\n${tails}\n\tat (.) \\___/\n${head}`;
+                this.message += errors.map(error => '\n' + error.message).join('');
             }
         }
-        node_make(val, Node) {
-            this.insert([val]);
-            const unit = this.units().at(-1);
-            return this.land.node(unit.self, Node);
+        toJSON() {
+            return this.message;
         }
     }
-    $.$hyoo_crowd_list = $hyoo_crowd_list;
+    $.$mol_error_mix = $mol_error_mix;
 })($ || ($ = {}));
-//hyoo/crowd/list/list.ts
+//mol/error/mix/mix.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_data_error extends $mol_error_mix {
+    }
+    $.$mol_data_error = $mol_data_error;
+})($ || ($ = {}));
+//mol/data/error/error.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_data_enum(name, dict) {
+        const index = {};
+        for (let key in dict) {
+            if (Number.isNaN(Number(key))) {
+                index[dict[key]] = key;
+            }
+        }
+        return $mol_data_setup((value) => {
+            if (typeof index[value] !== 'string') {
+                return $mol_fail(new $mol_data_error(`${value} is not value of ${name} enum`));
+            }
+            return value;
+        }, { name, dict });
+    }
+    $.$mol_data_enum = $mol_data_enum;
+})($ || ($ = {}));
+//mol/data/enum/enum.ts
 ;
 "use strict";
 var $;
@@ -14134,194 +14011,6 @@ var $;
     $.$hyoo_crowd_peer = $hyoo_crowd_peer;
 })($ || ($ = {}));
 //hyoo/crowd/peer/peer.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_fund extends $mol_object {
-        world;
-        Node;
-        constructor(world, Node) {
-            super();
-            this.world = world;
-            this.Node = Node;
-        }
-        Item(id) {
-            const [land, head = '0_0'] = id.split('!');
-            return this.world.land_sync(land).node(head, this.Node);
-        }
-        make(law = [''], mod = [], add = []) {
-            const land = $mol_wire_sync(this.world).grab(law, mod, add);
-            return this.Item(land.id());
-        }
-    }
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_crowd_fund.prototype, "Item", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_crowd_fund.prototype, "make", null);
-    $.$hyoo_crowd_fund = $hyoo_crowd_fund;
-})($ || ($ = {}));
-//hyoo/crowd/fund/fund.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_dict_key = $mol_key;
-    class $mol_dict extends Map {
-        get(key) {
-            return super.get($mol_key(key));
-        }
-        has(key) {
-            return super.has($mol_key(key));
-        }
-        set(key, value) {
-            return super.set($mol_key(key), value);
-        }
-        delete(key) {
-            return super.delete($mol_key(key));
-        }
-        forEach(back, context) {
-            return super.forEach((val, key, dict) => {
-                if (typeof key === 'string')
-                    key = JSON.parse(key);
-                return back.call(this, val, key, dict);
-            }, context);
-        }
-        keys() {
-            const iterator = super.keys();
-            return {
-                [Symbol.iterator]() {
-                    return this;
-                },
-                next() {
-                    const iteration = iterator.next();
-                    if (iteration.done)
-                        return iteration;
-                    iteration.value = JSON.parse(iteration.value);
-                    return iteration;
-                }
-            };
-        }
-        entries() {
-            const iterator = super.entries();
-            return {
-                [Symbol.iterator]() {
-                    return this;
-                },
-                next() {
-                    const iteration = iterator.next();
-                    if (iteration.done)
-                        return iteration;
-                    iteration.value = [JSON.parse(iteration.value[0]), iteration.value[1]];
-                    return iteration;
-                }
-            };
-        }
-        [Symbol.iterator]() {
-            return this.entries();
-        }
-    }
-    $.$mol_dict = $mol_dict;
-})($ || ($ = {}));
-//mol/dict/dict.ts
-;
-"use strict";
-//mol/data/value/value.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_data_setup(value, config) {
-        return Object.assign(value, {
-            config,
-            Value: null
-        });
-    }
-    $.$mol_data_setup = $mol_data_setup;
-})($ || ($ = {}));
-//mol/data/setup/setup.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_diff_path(...paths) {
-        const limit = Math.min(...paths.map(path => path.length));
-        lookup: for (var i = 0; i < limit; ++i) {
-            const first = paths[0][i];
-            for (let j = 1; j < paths.length; ++j) {
-                if (paths[j][i] !== first)
-                    break lookup;
-            }
-        }
-        return {
-            prefix: paths[0].slice(0, i),
-            suffix: paths.map(path => path.slice(i)),
-        };
-    }
-    $.$mol_diff_path = $mol_diff_path;
-})($ || ($ = {}));
-//mol/diff/path/path.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_error_mix extends Error {
-        errors;
-        constructor(message, ...errors) {
-            super(message);
-            this.errors = errors;
-            if (errors.length) {
-                const stacks = [...errors.map(error => error.stack), this.stack];
-                const diff = $mol_diff_path(...stacks.map(stack => {
-                    if (!stack)
-                        return [];
-                    return stack.split('\n').reverse();
-                }));
-                const head = diff.prefix.reverse().join('\n');
-                const tails = diff.suffix.map(path => path.reverse().map(line => line.replace(/^(?!\s+at)/, '\tat (.) ')).join('\n')).join('\n\tat (.) -----\n');
-                this.stack = `Error: ${this.constructor.name}\n\tat (.) /"""\\\n${tails}\n\tat (.) \\___/\n${head}`;
-                this.message += errors.map(error => '\n' + error.message).join('');
-            }
-        }
-        toJSON() {
-            return this.message;
-        }
-    }
-    $.$mol_error_mix = $mol_error_mix;
-})($ || ($ = {}));
-//mol/error/mix/mix.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_data_error extends $mol_error_mix {
-    }
-    $.$mol_data_error = $mol_data_error;
-})($ || ($ = {}));
-//mol/data/error/error.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_data_enum(name, dict) {
-        const index = {};
-        for (let key in dict) {
-            if (Number.isNaN(Number(key))) {
-                index[dict[key]] = key;
-            }
-        }
-        return $mol_data_setup((value) => {
-            if (typeof index[value] !== 'string') {
-                return $mol_fail(new $mol_data_error(`${value} is not value of ${name} enum`));
-            }
-            return value;
-        }, { name, dict });
-    }
-    $.$mol_data_enum = $mol_data_enum;
-})($ || ($ = {}));
-//mol/data/enum/enum.ts
 ;
 "use strict";
 var $;
@@ -14545,6 +14234,326 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $hyoo_crowd_node extends Object {
+        land;
+        head;
+        constructor(land = new $hyoo_crowd_land, head = '0_0') {
+            super();
+            this.land = land;
+            this.head = head;
+        }
+        static for(land, head) {
+            return new this(land, head);
+        }
+        id() {
+            return this.head === '0_0'
+                ? this.land.id()
+                : `${this.land.id()}!${this.head}`;
+        }
+        world() {
+            return this.land.world();
+        }
+        as(Node) {
+            return this.world()?.Fund(Node).Item(`${this.land.id()}!${this.head}`) ?? new Node(this.land, this.head);
+        }
+        units() {
+            return this.land.unit_alives(this.head);
+        }
+        nodes(Node) {
+            const fund = this.world()?.Fund(Node);
+            return this.units().map(unit => fund?.Item(`${this.land.id()}!${unit.self}`) ?? new Node(this.land, unit.self));
+        }
+        virgin() {
+            return this.land.unit_list(this.head).length === 0;
+        }
+        [Symbol.toPrimitive]() {
+            return `${this.constructor.name}("${this.land.id()}","${this.head}")`;
+        }
+        [$mol_dev_format_head]() {
+            return $mol_dev_format_span({}, $mol_dev_format_native(this), $mol_dev_format_shade('/'), $mol_dev_format_auto(this.units().map(unit => unit.data)), $mol_dev_format_shade('/'), $mol_dev_format_auto(this.nodes($hyoo_crowd_node)));
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_crowd_node.prototype, "nodes", null);
+    $.$hyoo_crowd_node = $hyoo_crowd_node;
+})($ || ($ = {}));
+//hyoo/crowd/node/node.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_reconcile({ prev, from, to, next, equal, drop, insert, update, }) {
+        if (!update)
+            update = (next, prev, lead) => insert(next, drop(prev, lead));
+        let p = from;
+        let n = 0;
+        let lead = p ? prev[p - 1] : null;
+        if (to > prev.length)
+            $mol_fail(new RangeError(`To(${to}) greater then length(${prev.length})`));
+        if (from > to)
+            $mol_fail(new RangeError(`From(${to}) greater then to(${to})`));
+        while (p < to || n < next.length) {
+            if (p < to && n < next.length && equal(next[n], prev[p])) {
+                lead = prev[p];
+                ++p;
+                ++n;
+            }
+            else if (next.length - n > to - p) {
+                lead = insert(next[n], lead);
+                ++n;
+            }
+            else if (next.length - n < to - p) {
+                lead = drop(prev[p], lead);
+                ++p;
+            }
+            else {
+                lead = update(next[n], prev[p], lead);
+                ++p;
+                ++n;
+            }
+        }
+    }
+    $.$mol_reconcile = $mol_reconcile;
+})($ || ($ = {}));
+//mol/reconcile/reconcile.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const { unicode_only, line_end, tab, repeat_greedy, optional, forbid_after, force_after, char_only, char_except } = $mol_regexp;
+    $.$hyoo_crowd_tokenizer = $mol_regexp.from({
+        token: {
+            'line-break': line_end,
+            'indents': repeat_greedy(tab, 1),
+            'emoji': [
+                unicode_only('Extended_Pictographic'),
+                optional(unicode_only('Emoji_Modifier')),
+                repeat_greedy([
+                    unicode_only('Emoji_Component'),
+                    unicode_only('Extended_Pictographic'),
+                    optional(unicode_only('Emoji_Modifier')),
+                ]),
+            ],
+            'link': /\b(https?:\/\/[^\s,.;:!?")]+(?:[,.;:!?")][^\s,.;:!?")]+)+)/,
+            'Word': [
+                [
+                    forbid_after(line_end),
+                    unicode_only('White_Space'),
+                ],
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]), 1),
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ])),
+            ],
+            'word': [
+                [
+                    forbid_after(line_end),
+                    unicode_only('White_Space'),
+                ],
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]), 1),
+            ],
+            'spaces': [
+                forbid_after(line_end),
+                repeat_greedy(unicode_only('White_Space'), 1),
+                force_after(unicode_only('White_Space')),
+            ],
+            'space': [
+                forbid_after(line_end),
+                unicode_only('White_Space'),
+                forbid_after([
+                    unicode_only('White_Space'),
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]),
+            ],
+            'others': [
+                repeat_greedy(char_except([
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                    unicode_only('White_Space'),
+                ]), 1),
+            ],
+        },
+    }).native;
+})($ || ($ = {}));
+//hyoo/crowd/tokenizer/tokenizer.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_list extends $hyoo_crowd_node {
+        list(next) {
+            const units = this.units();
+            if (next === undefined) {
+                return units.map(unit => unit.data);
+            }
+            else {
+                this.insert(next, 0, units.length);
+                return next;
+            }
+        }
+        set(next) {
+            return new Set(this.list(next && [...next]));
+        }
+        insert(next, from = this.units().length, to = from) {
+            $mol_reconcile({
+                prev: this.units(),
+                from,
+                to,
+                next,
+                equal: (next, prev) => $mol_compare_deep(prev.data, next),
+                drop: (prev, lead) => this.land.wipe(prev),
+                insert: (next, lead) => this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', next),
+                update: (next, prev, lead) => this.land.put(prev.head, prev.self, lead?.self ?? '0_0', next),
+            });
+        }
+        move(from, to) {
+            const units = this.units();
+            const lead = to ? units[to - 1] : null;
+            return this.land.move(units[from], this.head, lead?.self ?? '0_0');
+        }
+        cut(seat) {
+            return this.land.wipe(this.units()[seat]);
+        }
+        has(val) {
+            for (const unit of this.units()) {
+                if (unit.data === val)
+                    return true;
+            }
+            return false;
+        }
+        add(val) {
+            if (this.has(val))
+                return;
+            this.insert([val]);
+        }
+        drop(val) {
+            for (const unit of this.units()) {
+                if (unit.data !== val)
+                    continue;
+                this.land.wipe(unit);
+            }
+        }
+        node_make(val, Node) {
+            this.insert([val]);
+            const unit = this.units().at(-1);
+            return this.land.node(unit.self, Node);
+        }
+    }
+    $.$hyoo_crowd_list = $hyoo_crowd_list;
+})($ || ($ = {}));
+//hyoo/crowd/list/list.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_fund extends $mol_object {
+        world;
+        Node;
+        constructor(world, Node) {
+            super();
+            this.world = world;
+            this.Node = Node;
+        }
+        Item(id) {
+            const [land, head = '0_0'] = id.split('!');
+            return this.world.land_sync(land).node(head, this.Node);
+        }
+        make(law = [''], mod = [], add = []) {
+            const land = $mol_wire_sync(this.world).grab(law, mod, add);
+            return this.Item(land.id());
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_crowd_fund.prototype, "Item", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_crowd_fund.prototype, "make", null);
+    $.$hyoo_crowd_fund = $hyoo_crowd_fund;
+})($ || ($ = {}));
+//hyoo/crowd/fund/fund.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_dict_key = $mol_key;
+    class $mol_dict extends Map {
+        get(key) {
+            return super.get($mol_key(key));
+        }
+        has(key) {
+            return super.has($mol_key(key));
+        }
+        set(key, value) {
+            return super.set($mol_key(key), value);
+        }
+        delete(key) {
+            return super.delete($mol_key(key));
+        }
+        forEach(back, context) {
+            return super.forEach((val, key, dict) => {
+                if (typeof key === 'string')
+                    key = JSON.parse(key);
+                return back.call(this, val, key, dict);
+            }, context);
+        }
+        keys() {
+            const iterator = super.keys();
+            return {
+                [Symbol.iterator]() {
+                    return this;
+                },
+                next() {
+                    const iteration = iterator.next();
+                    if (iteration.done)
+                        return iteration;
+                    iteration.value = JSON.parse(iteration.value);
+                    return iteration;
+                }
+            };
+        }
+        entries() {
+            const iterator = super.entries();
+            return {
+                [Symbol.iterator]() {
+                    return this;
+                },
+                next() {
+                    const iteration = iterator.next();
+                    if (iteration.done)
+                        return iteration;
+                    iteration.value = [JSON.parse(iteration.value[0]), iteration.value[1]];
+                    return iteration;
+                }
+            };
+        }
+        [Symbol.iterator]() {
+            return this.entries();
+        }
+    }
+    $.$mol_dict = $mol_dict;
+})($ || ($ = {}));
+//mol/dict/dict.ts
+;
+"use strict";
+var $;
+(function ($) {
     function $hyoo_crowd_time_now() {
         return Math.floor(Date.now() / 100) - 1767e7;
     }
@@ -14664,7 +14673,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $hyoo_crowd_world extends $mol_object2 {
+    class $hyoo_crowd_world extends $mol_object {
         peer;
         constructor(peer) {
             super();
@@ -14784,15 +14793,15 @@ var $;
                 return all.get(id) ?? land._unit_all.get(id);
             };
             const get_level = (head, self) => {
-                return get_unit(`${head}/${self}`)?.level()
-                    ?? get_unit(`${head}/0_0`)?.level()
+                return get_unit(`${head}!${self}`)?.level()
+                    ?? get_unit(`${head}!0_0`)?.level()
                     ?? $hyoo_crowd_peer_level.get;
             };
             const check_unit = async (unit) => {
                 const bin = unit.bin;
                 if (unit.time > deadline)
                     return 'Far future';
-                const auth_unit = get_unit(`${unit.auth}/${unit.auth}`);
+                const auth_unit = get_unit(`${unit.auth}!${unit.auth}`);
                 const kind = unit.kind();
                 switch (kind) {
                     case $hyoo_crowd_unit_kind.grab:
@@ -14808,7 +14817,7 @@ var $;
                         const valid = await key.verify(bin.sens(), sign);
                         if (!valid)
                             return 'Wrong join sign';
-                        all.set(`${unit.head}/${unit.auth}`, unit);
+                        all.set(`${unit.head}!${unit.auth}`, unit);
                         this._signs.set(unit, sign);
                         return '';
                     }
@@ -14826,7 +14835,7 @@ var $;
                         if (level >= $hyoo_crowd_peer_level.mod)
                             break;
                         if (level === $hyoo_crowd_peer_level.add) {
-                            const exists = get_unit(`${unit.head}/${unit.self}`);
+                            const exists = get_unit(`${unit.head}!${unit.self}`);
                             if (!exists)
                                 break;
                             if (exists.auth === unit.auth)
@@ -14843,7 +14852,7 @@ var $;
                 const valid = await key.verify(bin.sens(), sign);
                 if (!valid)
                     return 'Wrong auth sign';
-                all.set(`${unit.head}/${unit.self}`, unit);
+                all.set(`${unit.head}!${unit.self}`, unit);
                 this._signs.set(unit, sign);
                 return '';
             };
@@ -14918,7 +14927,8 @@ var $;
 (function ($) {
     class $hyoo_crowd_struct extends $hyoo_crowd_node {
         sub(key, Node) {
-            return new Node(this.land, $mol_int62_hash_string(key + '\n' + this.head));
+            const head = $mol_int62_hash_string(key + '\n' + this.head);
+            return this.world()?.Fund(Node).Item(`${this.land.id()}!${head}`) ?? new Node(this.land, head);
         }
         yoke(key, Node, law = [''], mod = [], add = []) {
             const land = this.sub(key, $hyoo_crowd_reg).yoke(law, mod, add);
@@ -14964,7 +14974,7 @@ var $;
         _clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock];
         _unit_all = new Map();
         unit(head, self) {
-            return this._unit_all.get(`${head}/${self}`);
+            return this._unit_all.get(`${head}!${self}`);
         }
         _unit_lists = new Map();
         _unit_alives = new Map();
@@ -15061,7 +15071,7 @@ var $;
             for (const next of delta) {
                 this._clocks[next.group()].see_peer(next.auth, next.time);
                 const kids = this.unit_list(next.head);
-                const next_id = `${next.head}/${next.self}`;
+                const next_id = `${next.head}!${next.self}`;
                 let prev = this._unit_all.get(next_id);
                 if (prev) {
                     if ($hyoo_crowd_unit_compare(prev, next) > 0)
@@ -15087,7 +15097,7 @@ var $;
                 return;
             if (!auth.key_public_serial)
                 return;
-            const auth_id = `${auth.id}/${auth.id}`;
+            const auth_id = `${auth.id}!${auth.id}`;
             const auth_unit = this._unit_all.get(auth_id);
             if (auth_unit?.data)
                 return this._joined = true;
@@ -15103,7 +15113,7 @@ var $;
                 return;
             if (!auth.key_public_serial)
                 return;
-            const auth_id = `${auth.id}/${auth.id}`;
+            const auth_id = `${auth.id}!${auth.id}`;
             const auth_unit = this._unit_all.get(auth_id);
             if (!auth_unit || !auth_unit.data)
                 return this._joined = false;
@@ -15132,9 +15142,9 @@ var $;
                 this.pub.promote();
             if (!peer)
                 peer = this.peer_id();
-            const level_id = `${this.id()}/${peer}`;
+            const level_id = `${this.id()}!${peer}`;
             const prev = this._unit_all.get(level_id)?.level()
-                ?? this._unit_all.get(`${this.id()}/0_0`)?.level()
+                ?? this._unit_all.get(`${this.id()}!0_0`)?.level()
                 ?? (this.id() === peer ? $hyoo_crowd_peer_level.law : $hyoo_crowd_peer_level.get);
             if (next === undefined)
                 return prev;
@@ -15196,7 +15206,7 @@ var $;
         }
         first_stamp() {
             this.pub.promote();
-            const grab_unit = this._unit_all.get(`${this.id()}/${this.id()}`);
+            const grab_unit = this._unit_all.get(`${this.id()}!${this.id()}`);
             return (grab_unit && $hyoo_crowd_time_stamp(grab_unit.time)) ?? null;
         }
         last_stamp() {
@@ -15208,10 +15218,10 @@ var $;
         }
         put(head, self, prev, data) {
             this.join();
-            const old_id = `${head}/${self}`;
+            const old_id = `${head}!${self}`;
             let unit_old = this._unit_all.get(old_id);
             let unit_prev = prev !== '0_0'
-                ? this._unit_all.get(`${head}/${prev}`)
+                ? this._unit_all.get(`${head}!${prev}`)
                 : null;
             const unit_list = this.unit_list(head);
             if (unit_old)
