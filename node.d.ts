@@ -4962,6 +4962,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        Side(): $mol_view;
         First(): $mol_view;
         Second(): $mol_view;
         Third(): $mol_view;
