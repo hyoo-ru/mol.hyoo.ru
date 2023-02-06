@@ -576,11 +576,11 @@ $mol_text $mol_list
 		text <= quote_text* \
 		highlight <= highlight \
 		auto_scroll null
-	List* $mol_text
+	List* $mol_text_list
 		uri_resolve* <= uri_resolve* \
+		type <= list_type* \-
 		text <= list_text* \
 		highlight <= highlight \
-		auto_scroll null
 	Header* $mol_text_header
 		minimal_height 40
 		level <= header_level* 1
@@ -5643,6 +5643,12 @@ $hyoo_tree $mol_book2
 				<= Result_text $mol_text_code
 					render_visible_only false
 					text <= result_text null
+
+$mol_text_list $mol_text
+	auto_scroll null
+	attr *
+		^
+		mol_text_list_type <= type \
 
 $hyoo_mol $mol_book2_catalog
 	plugins /
