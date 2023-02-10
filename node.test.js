@@ -7234,8 +7234,8 @@ var $;
         'list': /^((?:(?: ?([*+-])|(?:\d+[\.\)])+) +(?:[^]*?)$(?:\r?\n?)(?:  (?:[^]*?)$(?:\r?\n?))*)+)((?:\r?\n)*)/,
         'code': /^(```\s*)([\w.-]*)[\r\n]+([^]*?)^(```)$([\n\r]*)/,
         'code-indent': /^((?:(?:  |\t)(?:[^]*?)$([\n\r]*))+)/,
-        'table': /((?:^\|.+?$\r?\n)+)([\n\r]*)/,
-        'grid': /((?:^ *! .+?$\r?\n)+)([\n\r]*)/,
+        'table': /((?:^\|.+?$\r?\n?)+)([\n\r]*)/,
+        'grid': /((?:^ *! .*?$\r?\n?)+)([\n\r]*)/,
         'cut': /^--+$((?:\r?\n)*)/,
         'block': /^(.*?)$((?:\r?\n)*)/,
     });
@@ -9251,7 +9251,7 @@ var $;
                 return this.cell_content(id.block)[id.row][id.cell];
             }
             grid_content(indexBlock) {
-                return [...this.flow_tokens()[indexBlock].chunks[0].match(/(?:^! .*?$\r?\n)+(?:^ +! .*?$\r?\n)*/gm)]
+                return [...this.flow_tokens()[indexBlock].chunks[0].match(/(?:^! .*?$\r?\n?)+(?:^ +! .*?$\r?\n?)*/gm)]
                     .map((row, rowId) => {
                     const cells = [];
                     for (const line of row.trim().split(/\r?\n/)) {
@@ -14548,7 +14548,7 @@ var $;
                 case $hyoo_crowd_unit_kind.give:
                     return $mol_dev_format_div({}, $mol_dev_format_native(this), $mol_dev_format_shade(' 🏅 ', this.self, ' '), $mol_dev_format_native($hyoo_crowd_peer_level[this.data] ?? this.data));
                 case $hyoo_crowd_unit_kind.data:
-                    return $mol_dev_format_div({}, $mol_dev_format_native(this), $mol_dev_format_shade(' 📦 ', this.head, ' '), $mol_dev_format_native(this.data));
+                    return $mol_dev_format_div({}, $mol_dev_format_native(this), $mol_dev_format_shade(' 📦 ', this.head, '!', this.self, ' '), $mol_dev_format_native(this.data));
             }
         }
     }
@@ -14694,7 +14694,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $hyoo_crowd_node extends Object {
+    class $hyoo_crowd_node extends $mol_object2 {
         land;
         head;
         constructor(land = new $hyoo_crowd_land, head = '0_0') {
@@ -14730,7 +14730,7 @@ var $;
             return `${this.constructor.name}("${this.land.id()}","${this.head}")`;
         }
         [$mol_dev_format_head]() {
-            return $mol_dev_format_span({}, $mol_dev_format_native(this), $mol_dev_format_shade('/'), $mol_dev_format_auto(this.units().map(unit => unit.data)), $mol_dev_format_shade('/'), $mol_dev_format_auto(this.nodes($hyoo_crowd_node)));
+            return $mol_dev_format_span({}, $mol_dev_format_native(this), $mol_dev_format_shade(':'), $mol_dev_format_auto(this.land.unit_list(this.head)));
         }
     }
     __decorate([
@@ -14885,7 +14885,7 @@ var $;
         move(from, to) {
             const units = this.units();
             const lead = to ? units[to - 1] : null;
-            return this.land.move(units[from], this.head, lead?.self ?? '0_0');
+            this.land.move(units[from], this.head, lead?.self ?? '0_0');
         }
         cut(seat) {
             return this.land.wipe(this.units()[seat]);
@@ -15497,6 +15497,12 @@ var $;
         }
         resort(head) {
             const kids = this._unit_lists.get(head);
+            if (!kids.dirty)
+                return kids;
+            if (kids.length < 2) {
+                kids.dirty = true;
+                return kids;
+            }
             const queue = kids.splice(0).sort((left, right) => -$hyoo_crowd_unit_compare(left, right));
             const locate = (self) => {
                 for (let i = kids.length - 1; i >= 0; --i) {
@@ -15505,25 +15511,35 @@ var $;
                 }
                 return -1;
             };
-            for (let cursor = queue.length - 1; cursor >= 0; --cursor) {
-                const kid = queue[cursor];
-                let index = 0;
-                if (kid.prev !== '0_0') {
-                    index = locate(kid.prev) + 1;
-                    if (!index) {
-                        index = kids.length;
-                        if (kid.next !== '0_0') {
-                            index = locate(kid.next);
-                            if (index === -1)
-                                continue;
-                        }
+            while (queue.length) {
+                kids.push(queue.pop());
+                for (let cursor = queue.length - 1; cursor >= 0; --cursor) {
+                    const kid = queue[cursor];
+                    let index = 0;
+                    if (kid.prev !== '0_0') {
+                        index = locate(kid.prev) + 1;
+                        if (!index)
+                            continue;
                     }
+                    while (kids[index] && ($hyoo_crowd_unit_compare(kids[index], kid) > 0))
+                        ++index;
+                    const exists = locate(kid.self);
+                    if (index === exists) {
+                        if (cursor === queue.length - 1)
+                            queue.pop();
+                        continue;
+                    }
+                    if (exists >= 0) {
+                        kids.splice(exists, 1);
+                        if (exists < index)
+                            --index;
+                    }
+                    kids.splice(index, 0, kid);
+                    if (cursor === queue.length - 1)
+                        queue.pop();
+                    cursor = queue.length;
                 }
-                kids.splice(index, 0, kid);
-                queue.splice(cursor, 1);
-                cursor = queue.length;
             }
-            this._unit_lists.set(head, kids);
             kids.dirty = false;
             return kids;
         }
@@ -15536,13 +15552,14 @@ var $;
                 if (prev) {
                     if ($hyoo_crowd_unit_compare(prev, next) > 0)
                         continue;
-                    kids.splice(kids.indexOf(prev), 1, next);
+                    kids[kids.indexOf(prev)] = next;
                 }
                 else {
                     kids.push(next);
                 }
                 this._unit_all.set(next_id, next);
-                kids.dirty = true;
+                if (kids.length > 1)
+                    kids.dirty = true;
                 this._unit_alives.set(next.head, undefined);
             }
             this.pub.emit();
@@ -15693,6 +15710,7 @@ var $;
             const unit_new = new $hyoo_crowd_unit(this.id(), auth, head, self, next, prev, time, data, null);
             this._unit_all.set(old_id, unit_new);
             unit_list.splice(seat, 0, unit_new);
+            unit_list.dirty = true;
             this._unit_alives.set(head, undefined);
             this.pub.emit();
             return unit_new;
@@ -15706,8 +15724,13 @@ var $;
             return this.put(unit.head, unit.self, prev, null);
         }
         move(unit, head, prev) {
+            const unit_list = this.unit_list(unit.head);
+            const seat = unit_list.indexOf(unit);
+            const next = unit_list[seat + 1];
             this.wipe(unit);
-            return this.put(head, unit.self, prev, unit.data);
+            if (next)
+                this.put(next.head, next.self, unit_list[unit_list.indexOf(next) - 2]?.self ?? '0_0', next.data);
+            this.put(head, unit.self, prev, unit.data);
         }
         insert(unit, head, seat) {
             const list = this.unit_list(head);
@@ -39267,7 +39290,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/perf/case/result/result.view.css", "[hyoo_js_perf_case_result] {\n\tpadding: .5rem .75rem .25rem;\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\t/* margin: 0 .5rem; */\n}\n\n[hyoo_js_perf_case_result_stats_main],\n[hyoo_js_perf_case_result_stats_mem] {\n\tdisplay: contents;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portions] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: dimgray;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
+    $mol_style_attach("hyoo/js/perf/case/result/result.view.css", "[hyoo_js_perf_case_result] {\n\tpadding: .5rem .75rem .25rem;\n\tflex-direction: column;\n\tflex: 1 1 24rem;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\t/* margin: 0 .5rem; */\n}\n\n[hyoo_js_perf_case_result_stats_main],\n[hyoo_js_perf_case_result_stats_mem] {\n\tdisplay: contents;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portions] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: dimgray;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/case/result/-css/result.view.css.ts
 ;
@@ -39572,8 +39595,8 @@ var $;
             ];
         }
         Results() {
-            const obj = new this.$.$mol_list();
-            obj.rows = () => this.result_rows();
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.result_rows();
             return obj;
         }
         columns() {
@@ -39682,7 +39705,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/perf/case/row/row.view.css", "[hyoo_js_perf_case_row] {\n\tdisplay: table-row;\n\tflex: 0 1 auto;\n\tbackground: var(--mol_theme_card);\n}\n\n[hyoo_js_perf_case_row_prefix] ,\n[hyoo_js_perf_case_row_source] {\n\tdisplay: table-cell;\n\tmin-width: 14rem;\n\tvertical-align: top;\n\tpadding: 0.75rem;\n}\n\n[hyoo_js_perf_case_row_source_tools] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_row_eval_labeler] {\n\twidth: 26rem;\n\tpadding: 0.75rem;\n}\n[hyoo_js_perf_case_row_results] {\n\twidth: 26rem;\n\tdisplay: table-cell;\n\tpadding: 0.75rem;\n}\n\n[hyoo_js_perf_case_row_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n");
+    $mol_style_attach("hyoo/js/perf/case/row/row.view.css", "[hyoo_js_perf_case_row] {\n\tflex: 0 1 auto;\n\tflex-wrap: wrap;\n\tbackground: var(--mol_theme_card);\n}\n\n[hyoo_js_perf_case_row_prefix] ,\n[hyoo_js_perf_case_row_source] {\n\tflex: 1 1 40rem;\n\tvertical-align: top;\n\tpadding: 0.75rem;\n}\n\n[hyoo_js_perf_case_row_source_tools] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_row_eval_labeler] {\n\tflex: 1 1 26rem;\n\tpadding: var(--mol_gap_block);\n}\n[hyoo_js_perf_case_row_results] {\n\tflex: 1 1 26rem;\n\tflex-wrap: wrap;\n\tpadding: var(--mol_gap_block);\n\talign-content: flex-start;\n}\n\n[hyoo_js_perf_case_row_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/case/row/-css/row.view.css.ts
 ;
@@ -40047,7 +40070,7 @@ var $;
             return obj;
         }
         hint() {
-            return "### Results Legend\n\t🔠 Source Size 📦 Bundle Size\n\t🥶 Cold Run 🥵 Hot Run\n\n### Iterations count / number\n\t{#}\n\n### Load generic Script\n\n\tconst { some } = $mol_import.script(\n\t\t'https://unpkg.org/...'\n\t)\n\n### Load ESM Module\n\n\tconst { some } = $mol_import.module(\n\t\t'https://esm.sh/...'\n\t).default\n\n### Assert equality\n\n\t$mol_assert_like( [777], [777] )\n\n### Measure memory\n\nCall Chrome with:\n\t--js-flags=\"--expose-gc\"\n\t--enable-precise-memory-info\n\n### Other JS Tools\n\n[V8 Optimizations](https://opt.js.hyoo.ru/) [Sandbox](https://eval.js.hyoo.ru)";
+            return "### Results Legend\n🔠 Source Size 📦 Bundle Size\n🥶 Cold Run 🥵 Hot Run\n\n### Iterations count / number\n\t{#}\n\n### Load generic Script\n\n\tconst { some } = $mol_import.script(\n\t\t'https://unpkg.org/...'\n\t)\n\n### Load ESM Module\n\n\tconst { some } = $mol_import.module(\n\t\t'https://esm.sh/...'\n\t).default\n\n### Assert equality\n\n\t$mol_assert_like( [777], [777] )\n\n### Measure memory\n\nCall Chrome with:\n\t--js-flags=\"--expose-gc\"\n\t--enable-precise-memory-info\n\n### Other JS Tools\n\n[V8 Optimizations](https://opt.js.hyoo.ru/) [Sandbox](https://eval.js.hyoo.ru)";
         }
         Hint() {
             const obj = new this.$.$mol_text();
@@ -40080,8 +40103,8 @@ var $;
             return [];
         }
         Cases() {
-            const obj = new this.$.$mol_view();
-            obj.sub = () => this.cases();
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.cases();
             return obj;
         }
         cases_pane_content() {
@@ -40375,7 +40398,7 @@ var $;
             this.sub('cases', $hyoo_crowd_list).cut(index);
         }
         case_dupe(index) {
-            this.sub('cases', $hyoo_crowd_list).insert([[]], index + 1);
+            this.sub('cases', $hyoo_crowd_list).insert([{}], index + 1);
             const [prev, next] = this.cases().slice(index, index + 2);
             next.steal(prev);
             return next;
@@ -40475,7 +40498,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_tools] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_common_content] {\n\tgap: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 auto;\n\tmin-width: 46rem;\n}\n\n[hyoo_js_perf_cases] {\n\tdisplay: table;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_common_foot] {\n\tpadding: var(--mol_gap_block);\n}\n");
+    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_tools] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_common_content] {\n\tgap: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 120rem;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_cases] {\n\tpadding: var(--mol_gap_block);\n\tgap: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_common_foot] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/-css/perf.view.css.ts
 ;
@@ -49636,6 +49659,30 @@ var $;
             store.chief.as($hyoo_crowd_list).move(0, 2);
             $mol_assert_like(store.chief.as($hyoo_crowd_text).str(), 'BarFooLol');
         },
+        async 'Many moves'() {
+            const store = await make_land();
+            const text = store.chief.as($hyoo_crowd_text);
+            const list = store.chief.as($hyoo_crowd_list);
+            text.str('FooBarLol');
+            list.move(2, 1);
+            list.move(2, 1);
+            list.move(0, 3);
+            list.move(2, 1);
+            $mol_assert_like(text.str(), 'BarFooLol');
+        },
+        async 'Separated sublists'() {
+            const store = await make_land();
+            const text = store.chief.as($hyoo_crowd_text);
+            const list = store.chief.as($hyoo_crowd_list);
+            text.str('AaBbCcDdEeFf');
+            list.move(3, 5);
+            list.move(3, 5);
+            list.move(5, 4);
+            list.move(0, 2);
+            list.move(0, 2);
+            list.move(2, 1);
+            $mol_assert_like(text.str(), 'AaCcBbDdFfEe');
+        },
         async 'Deltas for different versions'() {
             const store = await make_land();
             Object.assign(store.peer(), { key_public_serial: null });
@@ -49781,7 +49828,7 @@ var $;
             const right_delta = right.delta(base.clocks);
             left.apply(right_delta);
             right.apply(left_delta);
-            $mol_assert_like(left.chief.as($hyoo_crowd_text).str(), right.chief.as($hyoo_crowd_text).str(), 'XxxBarFooZak');
+            $mol_assert_like(left.chief.as($hyoo_crowd_text).str(), right.chief.as($hyoo_crowd_text).str(), 'BarFooXxxZak');
         },
         async 'Insert before moved left'() {
             const base = await make_land();
@@ -49799,17 +49846,17 @@ var $;
         },
         async 'Insert before moved right'() {
             const base = await make_land();
-            base.chief.as($hyoo_crowd_text).str('FooBarZak');
+            base.chief.as($hyoo_crowd_text).str('FooBarZakPew');
             const left = base.fork(await $hyoo_crowd_peer.generate());
-            left.chief.as($hyoo_crowd_text).str('FooXxxBarZak');
+            left.chief.as($hyoo_crowd_text).str('FooXxxBarZakPew');
             const right = base.fork(await $hyoo_crowd_peer.generate());
             right.clock_data.tick(right.peer().id);
-            right.insert(right.chief.units()[1], '0_0', 3);
+            right.insert(right.chief.units()[1], '0_0', 4);
             const left_delta = left.delta(base.clocks);
             const right_delta = right.delta(base.clocks);
             left.apply(right_delta);
             right.apply(left_delta);
-            $mol_assert_like(left.chief.as($hyoo_crowd_text).str(), right.chief.as($hyoo_crowd_text).str(), 'FooXxxZakBar');
+            $mol_assert_like(left.chief.as($hyoo_crowd_text).str(), right.chief.as($hyoo_crowd_text).str(), 'FooZakXxxPewBar');
         },
         async 'Insert after removed'() {
             const base = await make_land();
@@ -49827,18 +49874,18 @@ var $;
         },
         async 'Insert after removed out'() {
             const base = await make_land();
-            $hyoo_crowd_text.for(base, '1_1').str('FooBarZak');
+            base.node('1_1', $hyoo_crowd_text).str('FooBarZak');
             const left = base.fork(await $hyoo_crowd_peer.generate());
-            $hyoo_crowd_text.for(left, '1_1').str('FooBarXxxZak');
+            left.node('1_1', $hyoo_crowd_text).str('FooBarXxxZak');
             const right = base.fork(await $hyoo_crowd_peer.generate());
             right.clock_data.tick(right.peer().id);
-            right.insert($hyoo_crowd_node.for(right, '1_1').units()[1], '2_2', 0);
+            right.insert(right.node('1_1', $hyoo_crowd_node).units()[1], '2_2', 0);
             const left_delta = left.delta(base.clocks);
             const right_delta = right.delta(base.clocks);
             left.apply(right_delta);
             right.apply(left_delta);
-            $mol_assert_like($hyoo_crowd_text.for(left, '1_1').str(), $hyoo_crowd_text.for(right, '1_1').str(), 'FooXxxZak');
-            $mol_assert_like($hyoo_crowd_text.for(left, '2_2').str(), $hyoo_crowd_text.for(right, '2_2').str(), 'Bar');
+            $mol_assert_like(left.node('1_1', $hyoo_crowd_text).str(), right.node('1_1', $hyoo_crowd_text).str(), 'FooZakXxx');
+            $mol_assert_like(left.node('2_2', $hyoo_crowd_text).str(), left.node('2_2', $hyoo_crowd_text).str(), 'Bar');
         },
         async 'Insert before changed'() {
             const base = await make_land();
