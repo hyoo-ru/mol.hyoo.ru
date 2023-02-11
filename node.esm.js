@@ -38176,7 +38176,7 @@ var $;
 //hyoo/bench/app/app.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "27f600d";
+let $hyoo_sync_revision = "b5b9292";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
