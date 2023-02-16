@@ -9323,8 +9323,8 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_wire_race<Tasks extends (() => any)[]>(...tasks: Tasks): {
-        [index in keyof Tasks]: ReturnType<Tasks[index]>;
+    function $mol_wire_race<Tasks extends ((...args: any) => any)[]>(...tasks: Tasks): {
+        [index in keyof Tasks]: index extends number ? ReturnType<Tasks[index]> : Tasks[index];
     };
 }
 
