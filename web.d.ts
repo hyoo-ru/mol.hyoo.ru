@@ -2250,6 +2250,7 @@ declare namespace $ {
         text(): string;
         sub(): readonly any[];
         Icon(): $mol_icon_clipboard_outline;
+        title(): string;
     }
 }
 
