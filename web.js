@@ -40475,6 +40475,13 @@ var $;
                 return this.case_deps_names(index)
                     .reduce((sum, name) => sum + this.module_size(name), 0);
             }
+            case_measurable(index, next) {
+                const bench = this.bench();
+                if (!bench)
+                    return next ?? true;
+                const key = `${this}.case_measurable("${bench.cases()[index].id()}")`;
+                return this.$.$mol_state_local.value(key, next) ?? true;
+            }
             module_size(name) {
                 return this.$.$mol_fetch.json(`https://bundlephobia.com/api/size?record=true&package=${name}`).gzip;
             }
@@ -40726,6 +40733,9 @@ var $;
         __decorate([
             $mol_mem_key
         ], $hyoo_js_perf.prototype, "case_deps", null);
+        __decorate([
+            $mol_mem_key
+        ], $hyoo_js_perf.prototype, "case_measurable", null);
         __decorate([
             $mol_mem_key
         ], $hyoo_js_perf.prototype, "module_size", null);
