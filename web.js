@@ -17359,6 +17359,7 @@ var $;
         }
         Duration_num() {
             const obj = new this.$.$mol_number();
+            obj.precision_change = () => 50;
             obj.value = (next) => this.duration(next);
             return obj;
         }
@@ -17380,6 +17381,7 @@ var $;
         }
         Frequency_num() {
             const obj = new this.$.$mol_number();
+            obj.precision_change = () => 50;
             obj.value = (next) => this.frequency(next);
             return obj;
         }
