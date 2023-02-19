@@ -1358,15 +1358,15 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const cacthed = new WeakMap();
+    const catched = new WeakMap();
     function $mol_fail_catch(error) {
         if (typeof error !== 'object')
             return false;
         if (error instanceof Promise)
             $mol_fail_hidden(error);
-        if (cacthed.get(error))
+        if (catched.get(error))
             return false;
-        cacthed.set(error, true);
+        catched.set(error, true);
         return true;
     }
     $.$mol_fail_catch = $mol_fail_catch;
@@ -16505,19 +16505,28 @@ var $;
 var $;
 (function ($) {
     class $mol_audio_node extends $mol_object2 {
-        audio(next = new AudioContext) { return next; }
-        node() { return this.audio().destination; }
+        static context = new AudioContext;
+        node() { return $mol_audio_node.context.destination; }
         input(next = []) { return next; }
-        output() {
-            const audio = this.audio();
+        input_connected() {
             const node = this.node();
-            for (const src of this.input()) {
-                src.audio(audio);
+            const prev = $mol_mem_cached(() => this.input_connected()) ?? [];
+            const next = this.input();
+            for (const src of prev) {
+                if (next.includes(src))
+                    continue;
+                src.output().disconnect(node);
+            }
+            for (const src of next) {
                 src.output().connect(node);
             }
-            return node;
+            return next;
         }
-        time() { return this.audio().currentTime; }
+        output() {
+            this.input_connected();
+            return this.node();
+        }
+        time() { return $mol_audio_node.context.currentTime; }
         destructor() {
             const node = this.node();
             for (const src of this.input()) {
@@ -16527,19 +16536,19 @@ var $;
     }
     __decorate([
         $mol_mem
-    ], $mol_audio_node.prototype, "audio", null);
-    __decorate([
-        $mol_mem
     ], $mol_audio_node.prototype, "node", null);
     __decorate([
         $mol_mem
     ], $mol_audio_node.prototype, "input", null);
     __decorate([
         $mol_mem
+    ], $mol_audio_node.prototype, "input_connected", null);
+    __decorate([
+        $mol_mem
     ], $mol_audio_node.prototype, "output", null);
     $.$mol_audio_node = $mol_audio_node;
 })($ || ($ = {}));
-//mol/audio/node/node.ts
+//mol/audio/node/node.web.ts
 ;
 "use strict";
 var $;
@@ -16558,13 +16567,13 @@ var $;
     ], $mol_audio_room.prototype, "play", null);
     $.$mol_audio_room = $mol_audio_room;
 })($ || ($ = {}));
-//mol/audio/room/room.ts
+//mol/audio/room/room.web.ts
 ;
 "use strict";
 var $;
 (function ($) {
     class $mol_audio_vibe extends $mol_audio_node {
-        node() { return this.audio().createOscillator(); }
+        node() { return $mol_audio_node.context.createOscillator(); }
         freq(next = 440) { return next; }
         active(next) {
             $mol_wire_solid();
@@ -16601,7 +16610,7 @@ var $;
     ], $mol_audio_vibe.prototype, "output", null);
     $.$mol_audio_vibe = $mol_audio_vibe;
 })($ || ($ = {}));
-//mol/audio/vibe/vibe.ts
+//mol/audio/vibe/vibe.web.ts
 ;
 "use strict";
 var $;
@@ -16690,7 +16699,7 @@ var $;
     ], $mol_audio_demo.prototype, "Noise_play", null);
     $.$mol_audio_demo = $mol_audio_demo;
 })($ || ($ = {}));
-//mol/audio/demo/-view.tree/demo.view.tree.ts
+//mol/audio/demo/-view.tree/demo.web.view.tree.ts
 ;
 "use strict";
 var $;
@@ -16706,7 +16715,7 @@ var $;
         $$.$mol_audio_demo = $mol_audio_demo;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-//mol/audio/demo/demo.view.ts
+//mol/audio/demo/demo.web.view.ts
 ;
 "use strict";
 var $;
