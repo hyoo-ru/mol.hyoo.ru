@@ -16757,6 +16757,9 @@ var $;
         precision() {
             return 1;
         }
+        type() {
+            return "tel";
+        }
         value_string(val) {
             if (val !== undefined)
                 return val;
@@ -16773,7 +16776,7 @@ var $;
         }
         String() {
             const obj = new this.$.$mol_string();
-            obj.type = () => "tel";
+            obj.type = () => this.type();
             obj.value = (val) => this.value_string(val);
             obj.hint = () => this.hint();
             obj.enabled = () => this.string_enabled();
