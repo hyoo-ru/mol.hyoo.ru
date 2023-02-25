@@ -13711,6 +13711,9 @@ var $;
                 return val;
             return false;
         }
+        expandable() {
+            return true;
+        }
         label() {
             return [
                 this.title()
@@ -13719,6 +13722,7 @@ var $;
         Trigger() {
             const obj = new this.$.$mol_check_expand();
             obj.checked = (val) => this.expanded(val);
+            obj.expandable = () => this.expandable();
             obj.label = () => this.label();
             return obj;
         }
@@ -13777,7 +13781,13 @@ var $;
                     ...this.expanded() ? [this.Content()] : []
                 ];
             }
+            expandable() {
+                return this.content().length > 0;
+            }
         }
+        __decorate([
+            $mol_mem
+        ], $mol_expander.prototype, "rows", null);
         $$.$mol_expander = $mol_expander;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -24689,11 +24699,15 @@ var $;
         prototypes() {
             return false;
         }
+        preview_show() {
+            return true;
+        }
         Dump(id) {
             const obj = new this.$.$mol_dump_value();
             obj.value = () => this.dump_value(id);
             obj.expanded = (next) => this.dump_expanded(id, next);
             obj.prototypes = () => this.prototypes();
+            obj.preview_show = () => this.preview_show();
             return obj;
         }
     }
@@ -24745,6 +24759,9 @@ var $;
         value() {
             return null;
         }
+        preview_show() {
+            return true;
+        }
         sub() {
             return [
                 this.Simple(),
@@ -24764,6 +24781,9 @@ var $;
                 return next;
             return false;
         }
+        expandable() {
+            return true;
+        }
         expand_all(next) {
             if (next !== undefined)
                 return next;
@@ -24781,7 +24801,8 @@ var $;
             const obj = new this.$.$mol_check_expand();
             obj.minimal_height = () => 24;
             obj.minimal_width = () => 24;
-            obj.checked = (next) => this.expanded(next);
+            obj.expanded = (next) => this.expanded(next);
+            obj.expandable = () => this.expandable();
             obj.clicks = (next) => this.expand_all(next);
             obj.label = () => [
                 this.Expand_title()
@@ -24817,6 +24838,7 @@ var $;
             const obj = new this.$.$mol_dump_list();
             obj.values = () => this.row_values(id);
             obj.prototypes = () => this.prototypes();
+            obj.preview_show = () => this.preview_show();
             return obj;
         }
         expand_content() {
@@ -24983,9 +25005,12 @@ var $;
             }
             expand_content() {
                 return [
-                    ...this.preview_dom() ? [this.Preview()] : [],
+                    ...this.preview_show() && this.preview_dom() ? [this.Preview()] : [],
                     ...this.rows_values().map((_, index) => this.Row(index)),
                 ];
+            }
+            expandable() {
+                return this.expand_content().length > 0;
             }
             row_values(index) {
                 return this.rows_values()[index];
@@ -27632,7 +27657,6 @@ var $;
         },
         Strong: {
             display: 'inline',
-            color: $mol_theme.special,
             textShadow: '0 0',
         },
         Emphasis: {
