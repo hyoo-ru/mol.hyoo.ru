@@ -41898,7 +41898,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_tree2_from_string(str, uri = 'unknown') {
+    function $mol_tree2_from_string(str, uri = '?') {
         const span = $mol_span.entire(uri, str);
         var root = $mol_tree2.list([], span);
         var stack = [root];
@@ -52090,7 +52090,7 @@ var $;
         'wrong name'() {
             $mol_assert_fail(() => convert(`
 					foo+bar
-				`), 'Wrong node type\nfoo+bar\nunknown#2:6/7');
+				`), 'Wrong node type\nfoo+bar\n?#2:6/7');
         },
         'array'() {
             $mol_assert_equal(convert(`
