@@ -1067,6 +1067,13 @@ $hyoo_apps $mol_book2
 			tools <= tools /
 				<= Source $mol_link_source uri \https://github.com/hyoo-ru/apps.hyoo.ru
 				<= Lights $mol_lights_toggle
+			Title => Menu_title
+			Tools => Menu_tools
+			head /
+				<= Menu_title
+				<= Menu_tools
+				<= Filter $mol_search
+					query? <=> filter? \
 			body /
 				<= Menu_items $mol_list
 					rows <= group_list /
@@ -1078,8 +1085,11 @@ $hyoo_apps $mol_book2
 									sub /
 										<= Menu_link_out* $mol_link_iconed
 											uri <= app_uri_default* \
-											title <= app_title* \
 											arg <= app_arg* *
+											sub /
+												<= Menu_link_title* $mol_dimmer
+													haystack <= app_title* \
+													needle <= filter
 										<= Menu_link_in* $mol_link
 											arg <= app_arg* *
 											sub /
@@ -1163,6 +1173,10 @@ $hyoo_apps $mol_book2
 			target \preview
 			title @ \Draw Tool
 			uri \https://draw.hyoo.ru/
+		artist *
+			target \preview
+			title @ \Artificial Artist
+			uri \https://artist.hyoo.ru/
 		invest *
 			target \preview
 			title @ \Private Investments

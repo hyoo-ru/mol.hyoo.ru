@@ -13422,6 +13422,11 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_draw_title'),
                     uri: "https://draw.hyoo.ru/"
                 },
+                artist: {
+                    target: "preview",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_artist_title'),
+                    uri: "https://artist.hyoo.ru/"
+                },
                 invest: {
                     target: "preview",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_invest_title'),
@@ -13543,6 +13548,16 @@ var $;
                 this.Lights()
             ];
         }
+        filter(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Filter() {
+            const obj = new this.$.$mol_search();
+            obj.query = (next) => this.filter(next);
+            return obj;
+        }
         group_name(id) {
             return "";
         }
@@ -13554,17 +13569,25 @@ var $;
         app_uri_default(id) {
             return "";
         }
+        app_arg(id) {
+            return {};
+        }
         app_title(id) {
             return "";
         }
-        app_arg(id) {
-            return {};
+        Menu_link_title(id) {
+            const obj = new this.$.$mol_dimmer();
+            obj.haystack = () => this.app_title(id);
+            obj.needle = () => this.filter();
+            return obj;
         }
         Menu_link_out(id) {
             const obj = new this.$.$mol_link_iconed();
             obj.uri = () => this.app_uri_default(id);
-            obj.title = () => this.app_title(id);
             obj.arg = () => this.app_arg(id);
+            obj.sub = () => [
+                this.Menu_link_title(id)
+            ];
             return obj;
         }
         Menu_link_in_icon(id) {
@@ -13609,10 +13632,21 @@ var $;
             obj.rows = () => this.group_list();
             return obj;
         }
+        Menu_title() {
+            return this.Menu().Title();
+        }
+        Menu_tools() {
+            return this.Menu().Tools();
+        }
         Menu() {
             const obj = new this.$.$mol_page();
             obj.title = () => this.$.$mol_locale.text('$hyoo_apps_Menu_title');
             obj.tools = () => this.tools();
+            obj.head = () => [
+                this.Menu_title(),
+                this.Menu_tools(),
+                this.Filter()
+            ];
             obj.body = () => [
                 this.Menu_items()
             ];
@@ -13639,8 +13673,17 @@ var $;
         $mol_mem
     ], $hyoo_apps.prototype, "Lights", null);
     __decorate([
+        $mol_mem
+    ], $hyoo_apps.prototype, "filter", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_apps.prototype, "Filter", null);
+    __decorate([
         $mol_mem_key
     ], $hyoo_apps.prototype, "group_expanded", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_apps.prototype, "Menu_link_title", null);
     __decorate([
         $mol_mem_key
     ], $hyoo_apps.prototype, "Menu_link_out", null);
@@ -13675,7 +13718,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/apps/apps.view.css", "[hyoo_apps_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_apps_menu_link_out] {\n\tflex-grow: 1;\n}\n\n[hyoo_apps_app] {\n\tflex: 1 0 25rem;\n}\n");
+    $mol_style_attach("hyoo/apps/apps.view.css", "[hyoo_apps_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_apps_menu_link_out] {\n\tflex-grow: 1;\n}\n\n[hyoo_apps_app] {\n\tflex: 1 0 25rem;\n}\n\n[hyoo_apps_filter] {\n\talign-self: stretch;\n}\n");
 })($ || ($ = {}));
 //hyoo/apps/-css/apps.view.css.ts
 ;
@@ -13696,8 +13739,14 @@ var $;
             }
             group_items(group) {
                 const apps = this.apps();
+                const filter = this.filter();
                 return Object.keys(this.apps())
                     .filter(app => apps[app].target === group)
+                    .filter($mol_match_text(filter, app => [
+                    app,
+                    apps[app].title,
+                    apps[app].uri,
+                ]))
                     .map(app => this.Menu_item(app));
             }
             pages() {

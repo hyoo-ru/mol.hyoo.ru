@@ -4026,6 +4026,11 @@ declare namespace $ {
                 title: string;
                 uri: string;
             };
+            artist: {
+                target: string;
+                title: string;
+                uri: string;
+            };
             invest: {
                 target: string;
                 title: string;
@@ -4131,11 +4136,14 @@ declare namespace $ {
         Source(): $mol_link_source;
         Lights(): $$.$mol_lights_toggle;
         tools(): readonly any[];
+        filter(next?: any): string;
+        Filter(): $$.$mol_search;
         group_name(id: any): string;
         group_expanded(id: any, next?: any): boolean;
         app_uri_default(id: any): string;
-        app_title(id: any): string;
         app_arg(id: any): {};
+        app_title(id: any): string;
+        Menu_link_title(id: any): $$.$mol_dimmer;
         Menu_link_out(id: any): $$.$mol_link_iconed;
         Menu_link_in_icon(id: any): $mol_icon_chevron_right;
         Menu_link_in(id: any): $$.$mol_link;
@@ -4144,6 +4152,8 @@ declare namespace $ {
         Group(id: any): $$.$mol_expander;
         group_list(): readonly any[];
         Menu_items(): $$.$mol_list;
+        Menu_title(): $mol_view;
+        Menu_tools(): $mol_view;
         Menu(): $mol_page;
         app_uri_embed(id: any, next?: any): string;
         App(id: any): $$.$mol_frame;
