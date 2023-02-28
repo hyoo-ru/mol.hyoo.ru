@@ -16851,10 +16851,19 @@ var $;
         precision_change() {
             return this.precision();
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value_min() {
+            return -Infinity;
+        }
+        value_max() {
+            return +Infinity;
+        }
+        value(next) {
+            if (next !== undefined)
+                return next;
             return +NaN;
+        }
+        enabled() {
+            return true;
         }
         sub() {
             return [
@@ -16877,9 +16886,6 @@ var $;
         hint() {
             return " ";
         }
-        enabled() {
-            return true;
-        }
         string_enabled() {
             return this.enabled();
         }
@@ -16891,9 +16897,9 @@ var $;
             obj.enabled = () => this.string_enabled();
             return obj;
         }
-        event_dec(val) {
-            if (val !== undefined)
-                return val;
+        event_dec(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         dec_enabled() {
@@ -16905,16 +16911,16 @@ var $;
         }
         Dec() {
             const obj = new this.$.$mol_button_minor();
-            obj.event_click = (val) => this.event_dec(val);
+            obj.event_click = (next) => this.event_dec(next);
             obj.enabled = () => this.dec_enabled();
             obj.sub = () => [
                 this.dec_icon()
             ];
             return obj;
         }
-        event_inc(val) {
-            if (val !== undefined)
-                return val;
+        event_inc(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         inc_enabled() {
@@ -16926,7 +16932,7 @@ var $;
         }
         Inc() {
             const obj = new this.$.$mol_button_minor();
-            obj.event_click = (val) => this.event_inc(val);
+            obj.event_click = (next) => this.event_inc(next);
             obj.enabled = () => this.inc_enabled();
             obj.sub = () => [
                 this.inc_icon()
@@ -16978,31 +16984,54 @@ var $;
     var $$;
     (function ($$) {
         class $mol_number extends $.$mol_number {
+            value_limited(next) {
+                if (next === undefined)
+                    return this.value();
+                if (next === '')
+                    return this.value(null);
+                const min = this.value_min();
+                const max = this.value_max();
+                const val = Number(next);
+                if (val < min)
+                    return this.value(min);
+                if (val > max)
+                    return this.value(max);
+                return this.value(val);
+            }
             event_dec(next) {
-                this.value((Number(this.value()) || 0) - this.precision_change());
+                this.value_limited((this.value_limited() || 0) - this.precision_change());
             }
             event_inc(next) {
-                this.value((Number(this.value()) || 0) + this.precision_change());
+                this.value_limited((this.value_limited() || 0) + this.precision_change());
             }
             value_string(next) {
-                if (next !== void 0) {
-                    this.value(next === '' ? null : Number(next));
-                }
+                const next_num = this.value_limited(next);
                 const precisionView = this.precision_view();
-                const value = next ? Number(next) : this.value();
-                if (value === 0)
+                if (next_num === 0)
                     return '0';
-                if (!value)
+                if (!next_num)
                     return '';
                 if (precisionView >= 1) {
-                    return (value / precisionView).toFixed();
+                    return (next_num / precisionView).toFixed();
                 }
                 else {
                     const fixedNumber = Math.log10(1 / precisionView);
-                    return value.toFixed(fixedNumber);
+                    return next_num.toFixed(Math.ceil(fixedNumber));
                 }
             }
+            dec_enabled() {
+                return this.enabled() && (!((this.value() || 0) <= this.value_min()));
+            }
+            inc_enabled() {
+                return this.enabled() && (!((this.value() || 0) >= this.value_max()));
+            }
         }
+        __decorate([
+            $mol_mem
+        ], $mol_number.prototype, "dec_enabled", null);
+        __decorate([
+            $mol_mem
+        ], $mol_number.prototype, "inc_enabled", null);
         $$.$mol_number = $mol_number;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -17631,6 +17660,169 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_avatar extends $mol_icon {
+        view_box() {
+            return "0 0 24 24";
+        }
+        id() {
+            return "";
+        }
+        path() {
+            return "M 12 12 l 0 0 M 0 0 l 0 0 M 24 24 l 0 0 M 0 24 l 0 0 M 24 0 l 0 0";
+        }
+    }
+    $.$mol_avatar = $mol_avatar;
+})($ || ($ = {}));
+//mol/avatar/-view.tree/avatar.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_hash_string(str, seed = 0) {
+        let h1 = 0xdeadbeef ^ seed;
+        let h2 = 0x41c6ce57 ^ seed;
+        for (let i = 0; i < str.length; i++) {
+            const ch = str.charCodeAt(i);
+            h1 = Math.imul(h1 ^ ch, 2654435761);
+            h2 = Math.imul(h2 ^ ch, 1597334677);
+        }
+        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+        return 4294967296 * (((1 << 16) - 1) & h2) + (h1 >>> 0);
+    }
+    $.$mol_hash_string = $mol_hash_string;
+})($ || ($ = {}));
+//mol/hash/string/string.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/avatar/avatar.view.css", "[mol_avatar] {\n\tstroke-linecap: round;\n\tstroke-width: 3.5px;\n\tfill: none;\n\tstroke: currentColor;\n\t/* width: 1.5rem;\n\theight: 1.5rem;\n\tmargin: 0 -.25rem; */\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_line); */\n}\n");
+})($ || ($ = {}));
+//mol/avatar/-css/avatar.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_avatar extends $.$mol_avatar {
+            path() {
+                const id = $mol_hash_string(this.id());
+                const p = 2.1;
+                const m = 2.7;
+                let path = '';
+                for (let x = 0; x < 4; ++x) {
+                    for (let y = 0; y < 8; ++y) {
+                        if ((id >> (x + y * 7)) & 1) {
+                            const mxp = Math.ceil(m * x + p);
+                            const myp = Math.ceil(m * y + p);
+                            path += `M ${mxp} ${myp} l 0 0 ` + `M ${24 - mxp} ${myp} l 0 0 `;
+                        }
+                    }
+                }
+                return path;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_avatar.prototype, "path", null);
+        $$.$mol_avatar = $mol_avatar;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/avatar/avatar.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_avatar_demo extends $mol_example_small {
+        title() {
+            return "Avatar uniquely-generated by id";
+        }
+        sub() {
+            return [
+                this.Avatar_id_label(),
+                this.Avatar_label()
+            ];
+        }
+        tags() {
+            return [
+                "avatar",
+                "generated",
+                "identity",
+                "user"
+            ];
+        }
+        avatar_id(next) {
+            if (next !== undefined)
+                return next;
+            return "$mol_avatar";
+        }
+        Avatar_id_value() {
+            const obj = new this.$.$mol_string();
+            obj.value = (next) => this.avatar_id(next);
+            return obj;
+        }
+        Avatar_id_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Id";
+            obj.content = () => [
+                this.Avatar_id_value()
+            ];
+            return obj;
+        }
+        Avatar() {
+            const obj = new this.$.$mol_avatar();
+            obj.id = () => this.avatar_id();
+            return obj;
+        }
+        Avatar_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Avatar";
+            obj.content = () => [
+                this.Avatar()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "avatar_id", null);
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "Avatar_id_value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "Avatar_id_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "Avatar", null);
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "Avatar_label", null);
+    $.$mol_avatar_demo = $mol_avatar_demo;
+})($ || ($ = {}));
+//mol/avatar/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem } = $mol_style_unit;
+        $mol_style_define($mol_avatar_demo, {
+            Avatar: {
+                width: rem(2),
+                height: rem(2)
+            }
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/avatar/demo/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_icon_tick extends $mol_icon {
         path() {
             return "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
@@ -18086,7 +18278,10 @@ var $;
                 "book",
                 "navigation",
                 "transition",
-                "multipage"
+                "multipage",
+                "dialog",
+                "breadcrumbs",
+                "drawer"
             ];
         }
         Side() {
@@ -19749,7 +19944,8 @@ var $;
             return [
                 "card",
                 "status",
-                "container"
+                "container",
+                "paper"
             ];
         }
         Simple() {
@@ -22937,7 +23133,8 @@ var $;
         }
         tags() {
             return [
-                "checkbox"
+                "checkbox",
+                "switch"
             ];
         }
         base_checked(val) {
@@ -23148,7 +23345,8 @@ var $;
         tags() {
             return [
                 "checkbox",
-                "option"
+                "option",
+                "toggle"
             ];
         }
         right(id, val) {
@@ -23596,6 +23794,7 @@ var $;
             return [
                 "$mol_icon",
                 "checkbox",
+                "switch",
                 "button",
                 "icon"
             ];
@@ -24982,7 +25181,8 @@ var $;
                 "$mol_scroll",
                 "drag",
                 "dragndrop",
-                "list"
+                "list",
+                "transfer"
             ];
         }
         transfer_adopt(transfer) {
@@ -25704,6 +25904,7 @@ var $;
             return [
                 "$mol_filler",
                 "expander",
+                "accordion",
                 "expand",
                 "container",
                 "fold"
@@ -27238,7 +27439,8 @@ var $;
                 "$mol_paragraph",
                 "gallery",
                 "image",
-                "adaptive"
+                "adaptive",
+                "masonry"
             ];
         }
         items() {
@@ -28068,81 +28270,6 @@ var $;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 //mol/infinite/infinite.view.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_avatar extends $mol_icon {
-        view_box() {
-            return "0 0 24 24";
-        }
-        id() {
-            return "";
-        }
-        path() {
-            return "M 12 12 l 0 0 M 0 0 l 0 0 M 24 24 l 0 0 M 0 24 l 0 0 M 24 0 l 0 0";
-        }
-    }
-    $.$mol_avatar = $mol_avatar;
-})($ || ($ = {}));
-//mol/avatar/-view.tree/avatar.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_hash_string(str, seed = 0) {
-        let h1 = 0xdeadbeef ^ seed;
-        let h2 = 0x41c6ce57 ^ seed;
-        for (let i = 0; i < str.length; i++) {
-            const ch = str.charCodeAt(i);
-            h1 = Math.imul(h1 ^ ch, 2654435761);
-            h2 = Math.imul(h2 ^ ch, 1597334677);
-        }
-        h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-        h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-        return 4294967296 * (((1 << 16) - 1) & h2) + (h1 >>> 0);
-    }
-    $.$mol_hash_string = $mol_hash_string;
-})($ || ($ = {}));
-//mol/hash/string/string.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/avatar/avatar.view.css", "[mol_avatar] {\n\tstroke-linecap: round;\n\tstroke-width: 3.5px;\n\tfill: none;\n\tstroke: currentColor;\n\t/* width: 1.5rem;\n\theight: 1.5rem;\n\tmargin: 0 -.25rem; */\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_line); */\n}\n");
-})($ || ($ = {}));
-//mol/avatar/-css/avatar.view.css.ts
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_avatar extends $.$mol_avatar {
-            path() {
-                const id = $mol_hash_string(this.id());
-                const p = 2.1;
-                const m = 2.7;
-                let path = '';
-                for (let x = 0; x < 4; ++x) {
-                    for (let y = 0; y < 8; ++y) {
-                        if ((id >> (x + y * 7)) & 1) {
-                            const mxp = Math.ceil(m * x + p);
-                            const myp = Math.ceil(m * y + p);
-                            path += `M ${mxp} ${myp} l 0 0 ` + `M ${24 - mxp} ${myp} l 0 0 `;
-                        }
-                    }
-                }
-                return path;
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $mol_avatar.prototype, "path", null);
-        $$.$mol_avatar = $mol_avatar;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-//mol/avatar/avatar.view.ts
 ;
 "use strict";
 var $;
@@ -29244,6 +29371,112 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_list_demo extends $mol_example_small {
+        sub() {
+            return [
+                this.Items_count_label(),
+                this.Items()
+            ];
+        }
+        tags() {
+            return [
+                "list",
+                "rows",
+                "stack"
+            ];
+        }
+        items_сount(next) {
+            if (next !== undefined)
+                return next;
+            return 50;
+        }
+        Items_count() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.items_сount(next);
+            obj.value_min = () => 0;
+            obj.value_max = () => 100000;
+            return obj;
+        }
+        Items_count_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Items count";
+            obj.content = () => [
+                this.Items_count()
+            ];
+            return obj;
+        }
+        item_title(id) {
+            return "";
+        }
+        Item(id) {
+            const obj = new this.$.$mol_link();
+            obj.title = () => this.item_title(id);
+            return obj;
+        }
+        list_items() {
+            return [
+                this.Item("0")
+            ];
+        }
+        List_empty() {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => "No items in this list";
+            return obj;
+        }
+        Items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.list_items();
+            obj.Empty = () => this.List_empty();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "items_\u0441ount", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "Items_count", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "Items_count_label", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo.prototype, "Item", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "List_empty", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "Items", null);
+    $.$mol_list_demo = $mol_list_demo;
+})($ || ($ = {}));
+//mol/list/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_list_demo extends $.$mol_list_demo {
+            item_title(id) {
+                return `Item #${id + 1}`;
+            }
+            list_items() {
+                const rows = [];
+                for (let key = 0; key < this.items_сount(); key++) {
+                    rows.push(this.Item(key));
+                }
+                return rows;
+            }
+        }
+        $$.$mol_list_demo = $mol_list_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/list/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_list_demo_table extends $mol_example {
         title() {
             return "Large list of rows with dynamic content";
@@ -29266,7 +29499,9 @@ var $;
                 "$mol_link",
                 "list",
                 "table",
-                "scroll"
+                "scroll",
+                "divider",
+                "grid"
             ];
         }
         check_list() {
@@ -31327,134 +31562,664 @@ var $;
         title() {
             return "Number input control with various configuration";
         }
+        value(next) {
+            if (next !== undefined)
+                return next;
+            return +NaN;
+        }
         sub() {
             return [
-                this.zero(),
-                this.one(),
-                this.two(),
-                this.three(),
-                this.four(),
-                this.five(),
-                this.six(),
-                this.seven(),
-                this.eight(),
-                this.nine()
+                this.Rows()
             ];
         }
         tags() {
             return [
+                "$mol_labeler",
+                "$mol_number",
+                "$mol_section",
                 "number",
-                "field"
+                "field",
+                "label",
+                "section"
             ];
         }
-        zero() {
-            const obj = new this.$.$mol_number();
+        value_string() {
+            return "";
+        }
+        Value_string() {
+            const obj = new this.$.$mol_string();
+            obj.value = () => this.value_string();
+            obj.disabled = () => true;
             return obj;
         }
-        year(val) {
-            if (val !== undefined)
-                return val;
-            return +NaN;
+        reset_enabled() {
+            return true;
         }
-        one() {
-            const obj = new this.$.$mol_number();
-            obj.value = (val) => this.year(val);
+        reset_value(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Reset() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => "Reset";
+            obj.enabled = (next) => this.reset_enabled();
+            obj.click = (next) => this.reset_value(next);
             return obj;
         }
-        two() {
-            const obj = new this.$.$mol_number();
-            obj.value = (val) => this.year(val);
-            obj.hint = () => "2016";
+        Section_value_bar() {
+            const obj = new this.$.$mol_bar();
+            obj.sub = () => [
+                this.Value_string(),
+                this.Reset()
+            ];
             return obj;
         }
-        age(val) {
-            if (val !== undefined)
-                return val;
-            return 32;
-        }
-        three() {
-            const obj = new this.$.$mol_number();
-            obj.value = (val) => this.age(val);
-            obj.hint = () => "18-99";
-            obj.enabled = () => false;
+        Section_value_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Section_value_bar()
+            ];
             return obj;
         }
-        four() {
+        Section_value() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Stringified number value";
+            obj.content = () => [
+                this.Section_value_row()
+            ];
+            return obj;
+        }
+        Initial_number() {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.year(val);
+            obj.value = (next) => this.value(next);
+            return obj;
+        }
+        Initial_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Initial";
+            obj.content = () => [
+                this.Initial_number()
+            ];
+            return obj;
+        }
+        Hint_number() {
+            const obj = new this.$.$mol_number();
+            obj.hint = () => "Any number";
+            obj.value = (next) => this.value(next);
+            return obj;
+        }
+        Hint_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Hint showed (if empty value)";
+            obj.content = () => [
+                this.Hint_number()
+            ];
+            return obj;
+        }
+        Section_initial_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Initial_number_label(),
+                this.Hint_number_label()
+            ];
+            return obj;
+        }
+        Section_initial() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Simple";
+            obj.content = () => [
+                this.Section_initial_row()
+            ];
+            return obj;
+        }
+        Value_field_disabled_number() {
+            const obj = new this.$.$mol_number();
+            obj.hint = () => "This hint not showed while string_enabled is false";
+            obj.value = (next) => this.value(next);
             obj.string_enabled = () => false;
             return obj;
         }
-        five() {
+        Value_field_disabled_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Value field disabled";
+            obj.content = () => [
+                this.Value_field_disabled_number()
+            ];
+            return obj;
+        }
+        Disabled_number() {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.age(val);
+            obj.hint = () => "This hint not showed while enabled is false";
+            obj.value = (next) => this.value();
+            obj.enabled = () => false;
+            return obj;
+        }
+        Disabled_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Disabled";
+            obj.content = () => [
+                this.Disabled_number()
+            ];
+            return obj;
+        }
+        Dec_disabled_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
             obj.dec_enabled = () => false;
             return obj;
         }
-        six() {
+        Dec_disabled_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Decrement disabled";
+            obj.content = () => [
+                this.Dec_disabled_number()
+            ];
+            return obj;
+        }
+        Inc_disabled_number() {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.year(val);
+            obj.value = (next) => this.value(next);
             obj.inc_enabled = () => false;
             return obj;
         }
-        seven() {
+        Inc_disabled_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Increment disabled";
+            obj.content = () => [
+                this.Inc_disabled_number()
+            ];
+            return obj;
+        }
+        Section_disabled_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Value_field_disabled_number_label(),
+                this.Disabled_number_label(),
+                this.Dec_disabled_number_label(),
+                this.Inc_disabled_number_label()
+            ];
+            return obj;
+        }
+        Section_disabled() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Disabled";
+            obj.content = () => [
+                this.Section_disabled_row()
+            ];
+            return obj;
+        }
+        Precision_change_10_number() {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.year(val);
+            obj.value = (next) => this.value(next);
             obj.precision_change = () => 10;
             return obj;
         }
-        eight() {
-            const obj = new this.$.$mol_number();
-            obj.value = (val) => this.year(val);
-            obj.precision_view = () => 0.01;
+        Precision_change_10_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision change 10";
+            obj.content = () => [
+                this.Precision_change_10_number()
+            ];
             return obj;
         }
-        nine() {
+        Precision_change_01_number() {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.year(val);
-            obj.precision = () => 1000;
+            obj.value = (next) => this.value(next);
+            obj.precision_change = () => 0.1;
+            return obj;
+        }
+        Precision_change_01_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "⚠️ Precision change 0.1";
+            obj.content = () => [
+                this.Precision_change_01_number()
+            ];
+            return obj;
+        }
+        Precision_100_number_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision = () => 100;
+            return obj;
+        }
+        Precision_100_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision 100";
+            obj.content = () => [
+                this.Precision_100_number_number()
+            ];
+            return obj;
+        }
+        Precision_5_number_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision = () => 5;
+            return obj;
+        }
+        Precision_5_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision 5";
+            obj.content = () => [
+                this.Precision_5_number_number()
+            ];
+            return obj;
+        }
+        Precision_01_number_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision = () => 0.1;
+            return obj;
+        }
+        Precision_01_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision 0.1";
+            obj.content = () => [
+                this.Precision_01_number_number()
+            ];
+            return obj;
+        }
+        Precision_005_number_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision = () => 0.05;
+            return obj;
+        }
+        Precision_005_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision 0.05";
+            obj.content = () => [
+                this.Precision_005_number_number()
+            ];
+            return obj;
+        }
+        Precision_view_001_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision_view = () => 0.001;
+            return obj;
+        }
+        Precision_view_001_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision view 0.001";
+            obj.content = () => [
+                this.Precision_view_001_number()
+            ];
+            return obj;
+        }
+        Precision_view_10_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision_view = () => 10;
+            return obj;
+        }
+        Precision_view_10_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "⚠️ Precision view 10";
+            obj.content = () => [
+                this.Precision_view_10_number()
+            ];
+            return obj;
+        }
+        Section_precision_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Precision_change_10_number_label(),
+                this.Precision_change_01_number_label(),
+                this.Precision_100_number_label(),
+                this.Precision_5_number_label(),
+                this.Precision_01_number_label(),
+                this.Precision_005_number_label(),
+                this.Precision_view_001_number_label(),
+                this.Precision_view_10_number_label()
+            ];
+            return obj;
+        }
+        Section_precision() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Precision";
+            obj.content = () => [
+                this.Section_precision_row()
+            ];
+            return obj;
+        }
+        value_min_0(next) {
+            if (next !== undefined)
+                return next;
+            return +NaN;
+        }
+        Min_0_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_min_0(next);
+            obj.value_min = () => 0;
+            return obj;
+        }
+        Min_0_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Min value 0";
+            obj.content = () => [
+                this.Min_0_number()
+            ];
+            return obj;
+        }
+        value_max_100(next) {
+            if (next !== undefined)
+                return next;
+            return 100;
+        }
+        Max_100_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_max_100(next);
+            obj.value_max = () => 100;
+            obj.precision_change = () => 10;
+            return obj;
+        }
+        Max_100_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Max value 100";
+            obj.content = () => [
+                this.Max_100_number()
+            ];
+            return obj;
+        }
+        value_case1_range(next) {
+            if (next !== undefined)
+                return next;
+            return 0;
+        }
+        Range_case1_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_case1_range(next);
+            obj.value_min = () => -5;
+            obj.value_max = () => 5;
+            return obj;
+        }
+        Range_number_case1_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Value from -5 to 5";
+            obj.content = () => [
+                this.Range_case1_number()
+            ];
+            return obj;
+        }
+        value_case2_range(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Range_case2_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_case2_range(next);
+            obj.value_min = () => 5;
+            obj.value_max = () => 10;
+            return obj;
+        }
+        Range_number_case2_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Value from 5 to 10";
+            obj.content = () => [
+                this.Range_case2_number()
+            ];
+            return obj;
+        }
+        value_case3_range(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Range_case3_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_case3_range(next);
+            obj.value_min = () => -10;
+            obj.value_max = () => -5;
+            return obj;
+        }
+        Range_number_case3_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Value from -10 to -5";
+            obj.content = () => [
+                this.Range_case3_number()
+            ];
+            return obj;
+        }
+        Section_range_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Min_0_number_label(),
+                this.Max_100_number_label(),
+                this.Range_number_case1_label(),
+                this.Range_number_case2_label(),
+                this.Range_number_case3_label()
+            ];
+            return obj;
+        }
+        Section_range() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Range";
+            obj.content = () => [
+                this.Section_range_row()
+            ];
+            return obj;
+        }
+        Rows() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Section_value(),
+                this.Section_initial(),
+                this.Section_disabled(),
+                this.Section_precision(),
+                this.Section_range()
+            ];
             return obj;
         }
     }
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "zero", null);
+    ], $mol_number_demo.prototype, "value", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "year", null);
+    ], $mol_number_demo.prototype, "Value_string", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "one", null);
+    ], $mol_number_demo.prototype, "reset_value", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "two", null);
+    ], $mol_number_demo.prototype, "Reset", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "age", null);
+    ], $mol_number_demo.prototype, "Section_value_bar", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "three", null);
+    ], $mol_number_demo.prototype, "Section_value_row", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "four", null);
+    ], $mol_number_demo.prototype, "Section_value", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "five", null);
+    ], $mol_number_demo.prototype, "Initial_number", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "six", null);
+    ], $mol_number_demo.prototype, "Initial_number_label", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "seven", null);
+    ], $mol_number_demo.prototype, "Hint_number", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "eight", null);
+    ], $mol_number_demo.prototype, "Hint_number_label", null);
     __decorate([
         $mol_mem
-    ], $mol_number_demo.prototype, "nine", null);
+    ], $mol_number_demo.prototype, "Section_initial_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_initial", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Value_field_disabled_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Value_field_disabled_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Disabled_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Disabled_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Dec_disabled_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Dec_disabled_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Inc_disabled_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Inc_disabled_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_disabled_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_change_10_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_change_10_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_change_01_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_change_01_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_100_number_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_100_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_5_number_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_5_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_01_number_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_01_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_005_number_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_005_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_view_001_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_view_001_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_view_10_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_view_10_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_precision_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_precision", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_min_0", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Min_0_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Min_0_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_max_100", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Max_100_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Max_100_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_case1_range", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_case1_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_number_case1_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_case2_range", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_case2_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_number_case2_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_case3_range", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_case3_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_number_case3_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_range_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_range", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Rows", null);
     $.$mol_number_demo = $mol_number_demo;
 })($ || ($ = {}));
 //mol/number/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_number_demo extends $.$mol_number_demo {
+            value_string() {
+                return String(this.value());
+            }
+            reset_value() {
+                this.value(null);
+            }
+            reset_enabled() {
+                return !(Number.isNaN(this.value()) || this.value() === null);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_number_demo.prototype, "value_string", null);
+        __decorate([
+            $mol_mem
+        ], $mol_number_demo.prototype, "reset_enabled", null);
+        $$.$mol_number_demo = $mol_number_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/number/demo/demo.view.ts
 ;
 "use strict";
 var $;
@@ -31477,7 +32242,11 @@ var $;
                 "container",
                 "header",
                 "footer",
-                "toolbar"
+                "toolbar",
+                "app",
+                "bar",
+                "bottom",
+                "navigator"
             ];
         }
         Button_tools() {
@@ -32031,7 +32800,8 @@ var $;
                 "popup",
                 "menu",
                 "align",
-                "container"
+                "container",
+                "modal"
             ];
         }
         show_title() {
@@ -32310,7 +33080,8 @@ var $;
                 "popover",
                 "pop",
                 "menu",
-                "hover"
+                "hover",
+                "tooltip"
             ];
         }
         file_title() {
@@ -32461,7 +33232,8 @@ var $;
         tags() {
             return [
                 "dashboard",
-                "progress"
+                "progress",
+                "slider"
             ];
         }
         fist() {
@@ -32667,7 +33439,8 @@ var $;
                 "icon",
                 "container",
                 "confirm",
-                "markdown"
+                "markdown",
+                "modal"
             ];
         }
         Demo_caption() {
@@ -33378,6 +34151,7 @@ var $;
             return [
                 "search",
                 "suggest",
+                "autocomplete",
                 "string",
                 "fulltext",
                 "filter"
@@ -34019,7 +34793,8 @@ var $;
                 "$mol_paragraph",
                 "$mol_button",
                 "speck",
-                "highlight"
+                "highlight",
+                "badge"
             ];
         }
         Link_speck() {
@@ -34542,7 +35317,8 @@ var $;
             return [
                 "input",
                 "string",
-                "text"
+                "text",
+                "field"
             ];
         }
         name(val) {
@@ -34623,7 +35399,9 @@ var $;
         tags() {
             return [
                 "switch",
-                "option"
+                "option",
+                "group",
+                "radio"
             ];
         }
         color(val) {
@@ -36168,6 +36946,14 @@ var $;
                 this.Sandbox()
             ];
         }
+        tags() {
+            return [
+                "sandbox",
+                "eval",
+                "js",
+                "javascript"
+            ];
+        }
         code(next) {
             if (next !== undefined)
                 return next;
@@ -37103,6 +37889,14 @@ var $;
         sub() {
             return [
                 this.Sample()
+            ];
+        }
+        tags() {
+            return [
+                "light",
+                "dark",
+                "theme",
+                "switcher"
             ];
         }
         Theme() {
