@@ -1125,6 +1125,10 @@ $hyoo_apps $mol_book2
 			target \release
 			title @ \Web Search
 			uri \https://search.hyoo.ru/
+		lingua *
+			target \release
+			title @ \Translator
+			uri \https://lingua.hyoo.ru/
 		talks *
 			target \release
 			title @ \Messenger

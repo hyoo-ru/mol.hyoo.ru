@@ -13362,6 +13362,11 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_search_title'),
                     uri: "https://search.hyoo.ru/"
                 },
+                lingua: {
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_lingua_title'),
+                    uri: "https://lingua.hyoo.ru/"
+                },
                 talks: {
                     target: "release",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_talks_title'),
