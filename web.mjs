@@ -28123,6 +28123,18780 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    const { unicode_only, line_end, tab, repeat_greedy, optional, forbid_after, force_after, char_only, char_except } = $mol_regexp;
+    $.$hyoo_crowd_tokenizer = $mol_regexp.from({
+        token: {
+            'line-break': line_end,
+            'indents': repeat_greedy(tab, 1),
+            'emoji': [
+                unicode_only('Extended_Pictographic'),
+                optional(unicode_only('Emoji_Modifier')),
+                repeat_greedy([
+                    unicode_only('Emoji_Component'),
+                    unicode_only('Extended_Pictographic'),
+                    optional(unicode_only('Emoji_Modifier')),
+                ]),
+            ],
+            'link': /\b(https?:\/\/[^\s,.;:!?")]+(?:[,.;:!?")][^\s,.;:!?")]+)+)/,
+            'Word': [
+                [
+                    forbid_after(line_end),
+                    unicode_only('White_Space'),
+                ],
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]), 1),
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ])),
+            ],
+            'word': [
+                [
+                    forbid_after(line_end),
+                    unicode_only('White_Space'),
+                ],
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]), 1),
+            ],
+            'spaces': [
+                forbid_after(line_end),
+                repeat_greedy(unicode_only('White_Space'), 1),
+                force_after(unicode_only('White_Space')),
+            ],
+            'space': [
+                forbid_after(line_end),
+                unicode_only('White_Space'),
+                forbid_after([
+                    unicode_only('White_Space'),
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]),
+            ],
+            'others': [
+                repeat_greedy(char_except([
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                    unicode_only('White_Space'),
+                ]), 1),
+            ],
+        },
+    }).native;
+})($ || ($ = {}));
+//hyoo/crowd/tokenizer/tokenizer.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_text extends $hyoo_crowd_node {
+        text(next) {
+            if (next === undefined) {
+                return this.str();
+            }
+            else {
+                const prev = this.units();
+                const lines = next.match(/.*\n|.+$/g) ?? [];
+                $mol_reconcile({
+                    prev,
+                    from: 0,
+                    to: prev.length,
+                    next: lines,
+                    equal: (next, prev) => {
+                        if (typeof prev.data === 'string')
+                            return false;
+                        return this.land.node(prev.self, $hyoo_crowd_text).str() === next;
+                    },
+                    drop: (prev, lead) => this.land.wipe(prev),
+                    insert: (next, lead) => {
+                        const unit = this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', []);
+                        this.land.node(unit.self, $hyoo_crowd_text).str(next);
+                        return unit;
+                    },
+                    update: (next, prev, lead) => {
+                        this.land.node(prev.self, $hyoo_crowd_text).str(next);
+                        return prev;
+                    },
+                });
+                return next;
+            }
+        }
+        str(next) {
+            if (next === undefined) {
+                let str = '';
+                for (const unit of this.units()) {
+                    if (typeof unit.data === 'string')
+                        str += unit.data;
+                    else
+                        str += this.land.node(unit.self, $hyoo_crowd_text).str();
+                }
+                return str;
+            }
+            else {
+                this.write(next, 0, -1);
+                return next;
+            }
+        }
+        write(next, str_from = -1, str_to = str_from) {
+            const list = this.units();
+            let from = str_from < 0 ? list.length : 0;
+            let word = '';
+            while (from < list.length) {
+                word = String(list[from].data);
+                if (str_from <= word.length) {
+                    next = word.slice(0, str_from) + next;
+                    break;
+                }
+                str_from -= word.length;
+                if (str_to > 0)
+                    str_to -= word.length;
+                from++;
+            }
+            let to = str_to < 0 ? list.length : from;
+            while (to < list.length) {
+                word = String(list[to].data);
+                to++;
+                if (str_to < word.length) {
+                    next = next + word.slice(str_to);
+                    break;
+                }
+                str_to -= word.length;
+            }
+            if (from && from === list.length) {
+                --from;
+                next = String(list[from].data) + next;
+            }
+            const words = next.match($hyoo_crowd_tokenizer) ?? [];
+            this.as($hyoo_crowd_list).insert(words, from, to);
+            return this;
+        }
+        point_by_offset(offset) {
+            let off = offset;
+            for (const unit of this.units()) {
+                if (typeof unit.data === 'string') {
+                    const len = String(unit.data).length;
+                    if (off <= len)
+                        return [unit.self, off];
+                    else
+                        off -= len;
+                }
+                else {
+                    const found = this.land.node(unit.self, $hyoo_crowd_text).point_by_offset(off);
+                    if (found[0] !== '0_0')
+                        return found;
+                    off = found[1];
+                }
+            }
+            return ['0_0', off];
+        }
+        offset_by_point([self, offset]) {
+            for (const unit of this.units()) {
+                if (unit.self === self)
+                    return [self, offset];
+                if (typeof unit.data === 'string') {
+                    offset += unit.data.length;
+                }
+                else {
+                    const found = this.land.node(unit.self, $hyoo_crowd_text).offset_by_point([self, offset]);
+                    if (found[0] !== '0_0')
+                        return [self, found[1]];
+                    offset = found[1];
+                }
+            }
+            return ['0_0', offset];
+        }
+        selection(peer, next) {
+            const reg = this.land.selection(peer);
+            if (next) {
+                reg.value(next.map(offset => this.point_by_offset(offset)));
+                return next;
+            }
+            else {
+                this.units();
+                return reg.value()
+                    ?.map(point => this.offset_by_point(point)[1]) ?? [0, 0];
+            }
+        }
+    }
+    $.$hyoo_crowd_text = $hyoo_crowd_text;
+})($ || ($ = {}));
+//hyoo/crowd/text/text.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_section extends $mol_list {
+        rows() {
+            return [
+                this.Head(),
+                this.Content()
+            ];
+        }
+        Title() {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => this.title();
+            return obj;
+        }
+        tools() {
+            return [];
+        }
+        Tools() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.tools();
+            return obj;
+        }
+        head() {
+            return [
+                this.Title(),
+                this.Tools()
+            ];
+        }
+        Head() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.head();
+            return obj;
+        }
+        content() {
+            return [];
+        }
+        Content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.content();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_section.prototype, "Title", null);
+    __decorate([
+        $mol_mem
+    ], $mol_section.prototype, "Tools", null);
+    __decorate([
+        $mol_mem
+    ], $mol_section.prototype, "Head", null);
+    __decorate([
+        $mol_mem
+    ], $mol_section.prototype, "Content", null);
+    $.$mol_section = $mol_section;
+})($ || ($ = {}));
+//mol/section/-view.tree/section.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/section/section.view.css", "[mol_section_head] {\n\tjustify-content: space-between;\n\talign-items: flex-end;\n\tflex-wrap: wrap;\n}\n\n[mol_section_title] {\n\tpadding: var(--mol_gap_text);\n\ttext-shadow: 0 0;\n}\n");
+})($ || ($ = {}));
+//mol/section/-css/section.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_app extends $mol_book2 {
+        Placeholder() {
+            return null;
+        }
+        plugins() {
+            return [
+                this.Theme()
+            ];
+        }
+        pages() {
+            return [
+                this.Left(),
+                this.Right()
+            ];
+        }
+        Theme() {
+            const obj = new this.$.$mol_theme_auto();
+            return obj;
+        }
+        sync_enabled() {
+            return false;
+        }
+        sync(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        Sync() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => "Sync";
+            obj.enabled = () => this.sync_enabled();
+            obj.click = (event) => this.sync(event);
+            return obj;
+        }
+        Left() {
+            const obj = new this.$.$hyoo_crowd_app_peer();
+            obj.title = () => "CROWD Text Demo";
+            obj.hint = () => "Text of Alice";
+            obj.sync = () => this.sync();
+            obj.tools = () => [
+                this.Sync()
+            ];
+            return obj;
+        }
+        Lights() {
+            const obj = new this.$.$mol_lights_toggle();
+            return obj;
+        }
+        Source() {
+            const obj = new this.$.$mol_link_source();
+            obj.uri = () => "https://github.com/hyoo-ru/crowd.hyoo.ru/";
+            return obj;
+        }
+        Right() {
+            const obj = new this.$.$hyoo_crowd_app_peer();
+            obj.title = () => "";
+            obj.hint = () => "Text of Bob";
+            obj.sync = () => this.sync();
+            obj.tools = () => [
+                this.Lights(),
+                this.Source()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app.prototype, "Theme", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app.prototype, "sync", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app.prototype, "Sync", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app.prototype, "Left", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app.prototype, "Lights", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app.prototype, "Source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app.prototype, "Right", null);
+    $.$hyoo_crowd_app = $hyoo_crowd_app;
+    class $hyoo_crowd_app_peer extends $mol_page {
+        store() {
+            const obj = new this.$.$hyoo_crowd_land();
+            return obj;
+        }
+        sync() {
+            return 0;
+        }
+        body() {
+            return [
+                this.Text(),
+                this.Stats(),
+                this.Delta_section()
+            ];
+        }
+        hint() {
+            return "";
+        }
+        text(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Text() {
+            const obj = new this.$.$mol_textarea();
+            obj.hint = () => this.hint();
+            obj.value = (val) => this.text(val);
+            obj.sidebar_showed = () => true;
+            return obj;
+        }
+        stats() {
+            return "# Stats\n\n~~Peer:~~ {peer}\n~~Changes:~~ {changes}\n\n| | ~~Alive~~ | ~~Dead~~ | ~~Total~~\n|--|--|--\n| ~~Units~~ | {units:alive} | {units:dead} | {units:total}\n\n| | ~~Now~~ | ~~Sync~~\n|--|--|--\n| ~~Time~~ | {stamp:now} | {stamp:sync}\n\n| | ~~Text~~ | ~~State~~ | ~~Delta~~\n|--|--|--|--\n| ~~Bin Size~~ | {size:text} | {size:state} | {size:delta}\n";
+        }
+        Stats() {
+            const obj = new this.$.$mol_text();
+            obj.text = () => this.stats();
+            return obj;
+        }
+        delta_view() {
+            return {};
+        }
+        Delta() {
+            const obj = new this.$.$mol_grid();
+            obj.records = () => this.delta_view();
+            return obj;
+        }
+        Delta_section() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Delta";
+            obj.content = () => [
+                this.Delta()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app_peer.prototype, "store", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app_peer.prototype, "text", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app_peer.prototype, "Text", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app_peer.prototype, "Stats", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app_peer.prototype, "Delta", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app_peer.prototype, "Delta_section", null);
+    $.$hyoo_crowd_app_peer = $hyoo_crowd_app_peer;
+})($ || ($ = {}));
+//hyoo/crowd/app/-view.tree/app.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_crowd_app extends $.$hyoo_crowd_app {
+            sync_enabled() {
+                return this.Left().changes() + this.Right().changes() > 0;
+            }
+            sync(next) {
+                if (next == undefined)
+                    return 0;
+                const left_delta = this.Left().delta();
+                const right_delta = this.Right().delta();
+                this.Left().store().apply(right_delta);
+                this.Right().store().apply(left_delta);
+                this.Left().sync_clocks(this.Left().store().clocks.map(clock => new $hyoo_crowd_clock(clock)));
+                this.Right().sync_clocks(this.Right().store().clocks.map(clock => new $hyoo_crowd_clock(clock)));
+                return Math.random();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_crowd_app.prototype, "sync", null);
+        $$.$hyoo_crowd_app = $hyoo_crowd_app;
+        class $hyoo_crowd_app_peer extends $.$hyoo_crowd_app_peer {
+            store() {
+                return $hyoo_crowd_land.make({
+                    peer: $mol_const($mol_wire_sync($hyoo_crowd_peer).generate()),
+                });
+            }
+            sync_clocks(next = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
+                return next;
+            }
+            text(next) {
+                this.sync();
+                return this.store().chief.as($hyoo_crowd_text).text(next);
+            }
+            delta() {
+                this.text();
+                return this.store().delta(this.sync_clocks());
+            }
+            delta_view() {
+                return this.delta().slice().reverse().map(unit => ({
+                    'kind': $hyoo_crowd_unit_kind[unit.kind()],
+                    'Land': unit.land,
+                    'Auth': unit.auth,
+                    'Head': unit.head,
+                    'Self': unit.self,
+                    'Next': unit.next,
+                    'Prev': unit.prev,
+                    'Time': $hyoo_crowd_time_stamp(unit.time).toString(36),
+                    'Data': unit.data instanceof Uint8Array
+                        ? `Buffer(${unit.data.length})`
+                        : JSON.stringify(unit.data),
+                }));
+            }
+            changes() {
+                return this.delta().length;
+            }
+            size_text() {
+                return $mol_charset_encode(this.text()).length;
+            }
+            units_alive() {
+                this.text();
+                return [...this.store()._unit_all.values()]
+                    .reduce((count, unit) => unit.data === null ? count : count + 1, 0);
+            }
+            units_total() {
+                this.text();
+                return this.store().size();
+            }
+            units_dead() {
+                return this.units_total() - this.units_alive();
+            }
+            size_state_bin() {
+                return this.store().delta().reduce((res, unit) => res + this.$.$hyoo_crowd_unit_bin.from_unit(unit).byteLength, 0);
+            }
+            size_delta_bin() {
+                return this.delta().reduce((res, unit) => res + this.$.$hyoo_crowd_unit_bin.from_unit(unit).byteLength, 0);
+            }
+            stats() {
+                this.text();
+                return super.stats()
+                    .replace('{peer}', this.store().peer_id())
+                    .replace('{changes}', this.changes().toLocaleString())
+                    .replace('{units:alive}', this.units_alive().toLocaleString())
+                    .replace('{units:dead}', this.units_dead().toLocaleString())
+                    .replace('{units:total}', this.units_total().toLocaleString())
+                    .replace('{stamp:now}', this.store().last_stamp().toString(36))
+                    .replace('{stamp:sync}', this.sync_clocks()[1].last_stamp().toString(36))
+                    .replace('{size:text}', this.size_text().toLocaleString())
+                    .replace('{size:state}', this.size_state_bin().toLocaleString())
+                    .replace('{size:delta}', this.size_delta_bin().toLocaleString());
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_crowd_app_peer.prototype, "store", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_crowd_app_peer.prototype, "sync_clocks", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_crowd_app_peer.prototype, "text", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_crowd_app_peer.prototype, "delta", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_crowd_app_peer.prototype, "delta_view", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_crowd_app_peer.prototype, "size_state_bin", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_crowd_app_peer.prototype, "size_delta_bin", null);
+        $$.$hyoo_crowd_app_peer = $hyoo_crowd_app_peer;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//hyoo/crowd/app/app.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem } = $mol_style_unit;
+        $mol_style_define($hyoo_crowd_app_peer, {
+            flex: {
+                grow: 1000,
+                shrink: 0,
+                basis: rem(20),
+            },
+            Body: {
+                padding: 0,
+            },
+            Text: {
+                margin: $mol_gap.block,
+                flex: {
+                    grow: 0,
+                },
+            },
+            Stats: {
+                margin: $mol_gap.block,
+            },
+            Delta_section: {
+                padding: $mol_gap.block,
+            },
+            Delta: {
+                font: {
+                    size: rem(.875),
+                    family: 'monospace',
+                },
+                Cell_text: {
+                    whiteSpace: 'pre',
+                },
+            },
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//hyoo/crowd/app/app.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_text_demo extends $mol_example_large {
+        title() {
+            return "CROWD Text Merge";
+        }
+        sub() {
+            return [
+                this.Sandbox()
+            ];
+        }
+        tags() {
+            return [
+                "CROWD",
+                "text",
+                "merge"
+            ];
+        }
+        Sandbox() {
+            const obj = new this.$.$hyoo_crowd_app();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_text_demo.prototype, "Sandbox", null);
+    $.$hyoo_crowd_text_demo = $hyoo_crowd_text_demo;
+})($ || ($ = {}));
+//hyoo/crowd/text/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_upload extends $mol_icon {
+        path() {
+            return "M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z";
+        }
+    }
+    $.$mol_icon_upload = $mol_icon_upload;
+})($ || ($ = {}));
+//mol/icon/upload/-view.tree/upload.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_button_open extends $mol_button_minor {
+        sub() {
+            return [
+                this.Icon(),
+                this.Native()
+            ];
+        }
+        Icon() {
+            const obj = new this.$.$mol_icon_upload();
+            return obj;
+        }
+        files(next) {
+            if (next !== undefined)
+                return next;
+            return [];
+        }
+        accept() {
+            return "";
+        }
+        multiple() {
+            return true;
+        }
+        Native() {
+            const obj = new this.$.$mol_button_open_native();
+            obj.files = (next) => this.files(next);
+            obj.accept = () => this.accept();
+            obj.multiple = () => this.multiple();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_button_open.prototype, "Icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_open.prototype, "files", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_open.prototype, "Native", null);
+    $.$mol_button_open = $mol_button_open;
+    class $mol_button_open_native extends $mol_view {
+        dom_name() {
+            return "input";
+        }
+        files(next) {
+            if (next !== undefined)
+                return next;
+            return [];
+        }
+        attr() {
+            return {
+                type: "file",
+                accept: this.accept(),
+                multiple: this.multiple()
+            };
+        }
+        event() {
+            return {
+                change: (next) => this.picked(next)
+            };
+        }
+        accept() {
+            return "";
+        }
+        multiple() {
+            return true;
+        }
+        picked(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_button_open_native.prototype, "files", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_open_native.prototype, "picked", null);
+    $.$mol_button_open_native = $mol_button_open_native;
+})($ || ($ = {}));
+//mol/button/open/-view.tree/open.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_button_open_native extends $.$mol_button_open_native {
+            dom_node() {
+                return super.dom_node();
+            }
+            picked() {
+                const files = this.dom_node().files;
+                if (!files || !files.length)
+                    return;
+                this.files([...files]);
+            }
+        }
+        $$.$mol_button_open_native = $mol_button_open_native;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/button/open/open.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/button/open/open.view.css", "[mol_button_open_native] {\n\tposition: absolute;\n\tleft: 0;\n\ttop: -100%;\n\twidth: 100%;\n\theight: 200%;\n\tcursor: pointer;\n\topacity: 0;\n}\n");
+})($ || ($ = {}));
+//mol/button/open/-css/open.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_attach extends $mol_view {
+        items(val) {
+            if (val !== undefined)
+                return val;
+            return [];
+        }
+        sub() {
+            return [
+                this.Content()
+            ];
+        }
+        Add() {
+            const obj = new this.$.$mol_button_open();
+            obj.title = () => this.attach_title();
+            obj.files = (val) => this.attach_new(val);
+            return obj;
+        }
+        Item(id) {
+            const obj = new this.$.$mol_button_minor();
+            obj.click = (event) => this.item_drop(id, event);
+            obj.sub = () => [
+                this.Image(id)
+            ];
+            return obj;
+        }
+        content() {
+            return [];
+        }
+        Content() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => this.content();
+            return obj;
+        }
+        attach_title() {
+            return "";
+        }
+        attach_new(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        item_drop(id, event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        item_uri(id) {
+            return "";
+        }
+        Image(id) {
+            const obj = new this.$.$mol_image();
+            obj.title = () => "";
+            obj.uri = () => this.item_uri(id);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_attach.prototype, "items", null);
+    __decorate([
+        $mol_mem
+    ], $mol_attach.prototype, "Add", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_attach.prototype, "Item", null);
+    __decorate([
+        $mol_mem
+    ], $mol_attach.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_attach.prototype, "attach_new", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_attach.prototype, "item_drop", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_attach.prototype, "Image", null);
+    $.$mol_attach = $mol_attach;
+})($ || ($ = {}));
+//mol/attach/-view.tree/attach.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_attach extends $.$mol_attach {
+            attach_new(files) {
+                this.items([
+                    ...this.items(),
+                    ...files.map(file => URL.createObjectURL(file)),
+                ]);
+            }
+            content() {
+                return [...this.items().map((_, i) => this.Item(i)), this.Add()];
+            }
+            item_uri(index) {
+                return this.items()[index];
+            }
+            item_drop(index, event) {
+                const items = this.items();
+                this.items([
+                    ...items.slice(0, index),
+                    ...items.slice(index + 1),
+                ]);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_attach.prototype, "content", null);
+        $$.$mol_attach = $mol_attach;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/attach/attach.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/attach/attach.view.css", "[mol_attach_item] {\n\twidth: 6rem;\n\theight: 6rem;\n\tborder-radius: var(--mol_gap_round);\n\tpadding: 0;\n}\n\n[mol_attach_image] {\n\tbackground: var(--mol_theme_card);\n\twidth: 100%;\n\theight: 100%;\n}\n\n[mol_attach_add] {\n\tbackground: var(--mol_theme_card);\n\twidth: 6rem;\n\theight: 6rem;\n\talign-items: center;\n\tjustify-content: center;\n\toverflow: hidden;\n}\n\n[mol_attach_add_icon] {\n\twidth: 50%;\n\theight: 50%;\n}\n");
+})($ || ($ = {}));
+//mol/attach/-css/attach.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_attach_demo extends $mol_example_small {
+        title() {
+            return "Attach files an show them";
+        }
+        sub() {
+            return [
+                this.Filled()
+            ];
+        }
+        tags() {
+            return [
+                "attach",
+                "file",
+                "image",
+                "upload"
+            ];
+        }
+        filled_items(val) {
+            if (val !== undefined)
+                return val;
+            return [
+                "https://thiscatdoesnotexist.com/",
+                "https://thiscatdoesnotexist.com/"
+            ];
+        }
+        Filled() {
+            const obj = new this.$.$mol_attach();
+            obj.items = (val) => this.filled_items(val);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_attach_demo.prototype, "filled_items", null);
+    __decorate([
+        $mol_mem
+    ], $mol_attach_demo.prototype, "Filled", null);
+    $.$mol_attach_demo = $mol_attach_demo;
+})($ || ($ = {}));
+//mol/attach/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_audio_node extends $mol_object2 {
+        static context() {
+            return new AudioContext;
+        }
+        node() { return $mol_audio_node.context().destination; }
+        input(next = []) { return next; }
+        input_connected() {
+            const node = this.node();
+            const prev = $mol_mem_cached(() => this.input_connected()) ?? [];
+            const next = this.input();
+            for (const src of prev) {
+                if (next.includes(src))
+                    continue;
+                src.output().disconnect(node);
+            }
+            for (const src of next) {
+                src.output().connect(node);
+            }
+            return next;
+        }
+        output() {
+            this.input_connected();
+            return this.node();
+        }
+        time() { return $mol_audio_node.context().currentTime; }
+        destructor() {
+            const node = this.node();
+            for (const src of this.input()) {
+                src.output().disconnect(node);
+            }
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_audio_node.prototype, "node", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_node.prototype, "input", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_node.prototype, "input_connected", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_node.prototype, "output", null);
+    __decorate([
+        $mol_memo.method
+    ], $mol_audio_node, "context", null);
+    $.$mol_audio_node = $mol_audio_node;
+})($ || ($ = {}));
+//mol/audio/node/node.web.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_audio_room extends $mol_audio_node {
+        duration() {
+            return 1000;
+        }
+        play() {
+            this.output();
+            this.$.$mol_wait_timeout(this.duration());
+        }
+    }
+    __decorate([
+        $mol_action
+    ], $mol_audio_room.prototype, "play", null);
+    $.$mol_audio_room = $mol_audio_room;
+})($ || ($ = {}));
+//mol/audio/room/room.web.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_audio_vibe extends $mol_audio_node {
+        node() { return $mol_audio_node.context().createOscillator(); }
+        freq(next = 440) { return next; }
+        shape(next = 'sine') { return next; }
+        active(next) {
+            $mol_wire_solid();
+            const prev = $mol_wire_probe(() => this.active());
+            if (prev === next)
+                return next ?? false;
+            if (next === true)
+                this.node().start();
+            else if (prev === true)
+                this.node().stop();
+            return next ?? false;
+        }
+        output() {
+            const node = this.node();
+            node.frequency.setValueAtTime(this.freq(), this.time());
+            node.type = this.shape();
+            this.active(true);
+            return super.output();
+        }
+        destructor() {
+            this.active(false);
+            super.destructor();
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_audio_vibe.prototype, "node", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_vibe.prototype, "freq", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_vibe.prototype, "shape", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_vibe.prototype, "active", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_vibe.prototype, "output", null);
+    $.$mol_audio_vibe = $mol_audio_vibe;
+})($ || ($ = {}));
+//mol/audio/vibe/vibe.web.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_audio_demo extends $mol_example_small {
+        title() {
+            return "WebAudio API example";
+        }
+        beep_play() {
+            return this.Beep().play();
+        }
+        Beep() {
+            const obj = new this.$.$mol_audio_room();
+            obj.duration = () => 100;
+            obj.input = () => [
+                this.Beep_vibe()
+            ];
+            return obj;
+        }
+        noise_play() {
+            return this.Noise().play();
+        }
+        Noise() {
+            const obj = new this.$.$mol_audio_room();
+            obj.duration = () => 1000;
+            obj.input = () => [
+                this.Noise_vibe()
+            ];
+            return obj;
+        }
+        sub() {
+            return [
+                this.Beep_play(),
+                this.Noise_play()
+            ];
+        }
+        tags() {
+            return [
+                "Audio",
+                "Sound"
+            ];
+        }
+        Beep_vibe() {
+            const obj = new this.$.$mol_audio_vibe();
+            obj.freq = () => 440;
+            return obj;
+        }
+        noise_freq() {
+            return 440;
+        }
+        Noise_vibe() {
+            const obj = new this.$.$mol_audio_vibe();
+            obj.freq = () => this.noise_freq();
+            return obj;
+        }
+        Beep_play() {
+            const obj = new this.$.$mol_button_minor();
+            obj.click = () => this.beep_play();
+            obj.title = () => "Beep";
+            return obj;
+        }
+        Noise_play() {
+            const obj = new this.$.$mol_button_minor();
+            obj.click = () => this.noise_play();
+            obj.title = () => "Noise";
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo.prototype, "Beep", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo.prototype, "Noise", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo.prototype, "Beep_vibe", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo.prototype, "Noise_vibe", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo.prototype, "Beep_play", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo.prototype, "Noise_play", null);
+    $.$mol_audio_demo = $mol_audio_demo;
+})($ || ($ = {}));
+//mol/audio/demo/-view.tree/demo.web.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_audio_demo extends $.$mol_audio_demo {
+            noise_freq() {
+                $mol_wire_watch();
+                return Math.random() * 1000;
+            }
+        }
+        $$.$mol_audio_demo = $mol_audio_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/audio/demo/demo.web.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_audio_demo_vibe extends $mol_example_small {
+        title() {
+            return "WebAudio API complex example";
+        }
+        play() {
+            return this.Room().play();
+        }
+        Room() {
+            const obj = new this.$.$mol_audio_room();
+            obj.duration = () => this.duration();
+            obj.input = () => [
+                this.Beep_vibe()
+            ];
+            return obj;
+        }
+        sub() {
+            return [
+                this.List()
+            ];
+        }
+        tags() {
+            return [
+                "Audio",
+                "Sound"
+            ];
+        }
+        Beep_vibe() {
+            const obj = new this.$.$mol_audio_vibe();
+            obj.freq = () => this.frequency();
+            obj.shape = () => this.shape();
+            return obj;
+        }
+        duration_label() {
+            return "Duration, ms";
+        }
+        duration(next) {
+            if (next !== undefined)
+                return next;
+            return 500;
+        }
+        Duration_num() {
+            const obj = new this.$.$mol_number();
+            obj.precision_change = () => 50;
+            obj.value = (next) => this.duration(next);
+            return obj;
+        }
+        Duration() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => this.duration_label();
+            obj.content = () => [
+                this.Duration_num()
+            ];
+            return obj;
+        }
+        frequency_label() {
+            return "Frequency, Hz";
+        }
+        frequency(next) {
+            if (next !== undefined)
+                return next;
+            return 700;
+        }
+        Frequency_num() {
+            const obj = new this.$.$mol_number();
+            obj.precision_change = () => 50;
+            obj.value = (next) => this.frequency(next);
+            return obj;
+        }
+        Frequency() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => this.frequency_label();
+            obj.content = () => [
+                this.Frequency_num()
+            ];
+            return obj;
+        }
+        shape_label() {
+            return "Shape";
+        }
+        shape(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Shape_select() {
+            const obj = new this.$.$mol_select();
+            obj.Filter = () => null;
+            obj.value = (next) => this.shape(next);
+            obj.options = () => [
+                "sine ",
+                "square",
+                "sawtooth",
+                "triangle"
+            ];
+            return obj;
+        }
+        Shape() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => this.shape_label();
+            obj.content = () => [
+                this.Shape_select()
+            ];
+            return obj;
+        }
+        Play_icon() {
+            const obj = new this.$.$mol_icon_play();
+            return obj;
+        }
+        Play_button() {
+            const obj = new this.$.$mol_button_major();
+            obj.click = () => this.play();
+            obj.sub = () => [
+                this.Play_icon(),
+                "Play"
+            ];
+            return obj;
+        }
+        Button_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Play_button()
+            ];
+            return obj;
+        }
+        List() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Duration(),
+                this.Frequency(),
+                this.Shape(),
+                this.Button_row()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Room", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Beep_vibe", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "duration", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Duration_num", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Duration", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "frequency", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Frequency_num", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Frequency", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "shape", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Shape_select", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Shape", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Play_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Play_button", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "Button_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_demo_vibe.prototype, "List", null);
+    $.$mol_audio_demo_vibe = $mol_audio_demo_vibe;
+})($ || ($ = {}));
+//mol/audio/demo/vibe/-view.tree/vibe.web.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_audio_demo_vibe extends $.$mol_audio_demo_vibe {
+            shape(next) {
+                return next !== undefined ? next : 'sine';
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_audio_demo_vibe.prototype, "shape", null);
+        $$.$mol_audio_demo_vibe = $mol_audio_demo_vibe;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/audio/demo/vibe/vibe.web.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_avatar_demo extends $mol_example_small {
+        title() {
+            return "Avatar uniquely-generated by id";
+        }
+        sub() {
+            return [
+                this.Avatar_id_label(),
+                this.Avatar_label()
+            ];
+        }
+        tags() {
+            return [
+                "avatar",
+                "generated",
+                "identity",
+                "user"
+            ];
+        }
+        avatar_id(next) {
+            if (next !== undefined)
+                return next;
+            return "$mol_avatar";
+        }
+        Avatar_id_value() {
+            const obj = new this.$.$mol_string();
+            obj.value = (next) => this.avatar_id(next);
+            return obj;
+        }
+        Avatar_id_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Id";
+            obj.content = () => [
+                this.Avatar_id_value()
+            ];
+            return obj;
+        }
+        Avatar() {
+            const obj = new this.$.$mol_avatar();
+            obj.id = () => this.avatar_id();
+            return obj;
+        }
+        Avatar_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Avatar";
+            obj.content = () => [
+                this.Avatar()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "avatar_id", null);
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "Avatar_id_value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "Avatar_id_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "Avatar", null);
+    __decorate([
+        $mol_mem
+    ], $mol_avatar_demo.prototype, "Avatar_label", null);
+    $.$mol_avatar_demo = $mol_avatar_demo;
+})($ || ($ = {}));
+//mol/avatar/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem } = $mol_style_unit;
+        $mol_style_define($mol_avatar_demo, {
+            Avatar: {
+                width: rem(2),
+                height: rem(2)
+            }
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/avatar/demo/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_bar_demo extends $mol_example_small {
+        title() {
+            return "Group of controls as one control";
+        }
+        sub() {
+            return [
+                this.Two(),
+                this.Three()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_string",
+                "$mol_check",
+                "$mol_button",
+                "bar",
+                "group",
+                "container"
+            ];
+        }
+        mail_hint() {
+            return "E-mail";
+        }
+        mail(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Two_mail() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => this.mail_hint();
+            obj.value = (val) => this.mail(val);
+            return obj;
+        }
+        submit_title() {
+            return "Submit";
+        }
+        Two_submit() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.submit_title();
+            return obj;
+        }
+        Two() {
+            const obj = new this.$.$mol_bar();
+            obj.sub = () => [
+                this.Two_mail(),
+                this.Two_submit()
+            ];
+            return obj;
+        }
+        Three_mail() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => this.mail_hint();
+            obj.value = (val) => this.mail(val);
+            return obj;
+        }
+        confirm_title() {
+            return "Confirm";
+        }
+        confirmed(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Three_confirm() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.confirm_title();
+            obj.checked = (val) => this.confirmed(val);
+            return obj;
+        }
+        Three() {
+            const obj = new this.$.$mol_bar();
+            obj.sub = () => [
+                this.Three_mail(),
+                this.Three_confirm()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_bar_demo.prototype, "mail", null);
+    __decorate([
+        $mol_mem
+    ], $mol_bar_demo.prototype, "Two_mail", null);
+    __decorate([
+        $mol_mem
+    ], $mol_bar_demo.prototype, "Two_submit", null);
+    __decorate([
+        $mol_mem
+    ], $mol_bar_demo.prototype, "Two", null);
+    __decorate([
+        $mol_mem
+    ], $mol_bar_demo.prototype, "Three_mail", null);
+    __decorate([
+        $mol_mem
+    ], $mol_bar_demo.prototype, "confirmed", null);
+    __decorate([
+        $mol_mem
+    ], $mol_bar_demo.prototype, "Three_confirm", null);
+    __decorate([
+        $mol_mem
+    ], $mol_bar_demo.prototype, "Three", null);
+    $.$mol_bar_demo = $mol_bar_demo;
+})($ || ($ = {}));
+//mol/bar/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_bench_demo extends $mol_example_small {
+        title() {
+            return "Benchmarking results visualization";
+        }
+        sub() {
+            return [
+                this.View()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_portion",
+                "$mol_float",
+                "$mol_grid",
+                "benchmark",
+                "perfomance"
+            ];
+        }
+        col_sort(val) {
+            if (val !== undefined)
+                return val;
+            return "mid";
+        }
+        result() {
+            return {};
+        }
+        View() {
+            const obj = new this.$.$mol_bench();
+            obj.col_sort = (val) => this.col_sort(val);
+            obj.result = () => this.result();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_bench_demo.prototype, "col_sort", null);
+    __decorate([
+        $mol_mem
+    ], $mol_bench_demo.prototype, "View", null);
+    $.$mol_bench_demo = $mol_bench_demo;
+})($ || ($ = {}));
+//mol/bench/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_bench_demo extends $.$mol_bench_demo {
+            result() {
+                return {
+                    'bubble': {
+                        'algorithm': 'bubble',
+                        'min': '1 ms',
+                        'mid': '11 ms',
+                        'max': '99 ms',
+                    },
+                    'qsort': {
+                        'algorithm': 'qsort',
+                        'min': '2 ms',
+                        'mid': '5 ms',
+                        'max': '10 ms',
+                    },
+                };
+            }
+        }
+        $$.$mol_bench_demo = $mol_bench_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/bench/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_book2_demo extends $mol_example_large {
+        title() {
+            return "Adaprive layout for various sizes of screen";
+        }
+        sub() {
+            return [
+                this.View()
+            ];
+        }
+        tags() {
+            return [
+                "app",
+                "page",
+                "book",
+                "navigation",
+                "transition",
+                "multipage",
+                "dialog",
+                "breadcrumbs",
+                "drawer"
+            ];
+        }
+        Side() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                "Side"
+            ];
+            return obj;
+        }
+        First() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                "First"
+            ];
+            return obj;
+        }
+        Second() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                "Second"
+            ];
+            return obj;
+        }
+        Third() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                "Third"
+            ];
+            return obj;
+        }
+        View() {
+            const obj = new this.$.$mol_book2();
+            obj.Placeholder = () => this.Side();
+            obj.pages = () => [
+                this.First(),
+                this.Second(),
+                this.Third()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_book2_demo.prototype, "Side", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_demo.prototype, "First", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_demo.prototype, "Second", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_demo.prototype, "Third", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_demo.prototype, "View", null);
+    $.$mol_book2_demo = $mol_book2_demo;
+})($ || ($ = {}));
+//mol/book2/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/book2/demo/demo.view.css", "[mol_book2_demo_first],\n[mol_book2_demo_second],\n[mol_book2_demo_third],\n[mol_book2_demo_side] { \n\talign-items: center;\n\tjustify-content: center;\n\tfont-size: 2rem;\n\tdisplay: flex;\n}\n\n\n[mol_book2_demo_first] {\n\tflex: 1 0 20rem;\n\tbackground-color: hsla(90, 100%, 50%, .2);\n}\n\n[mol_book2_demo_second] {\n\tflex: 1 0 100%;\n\tbackground-color: hsla(180, 100%, 50%, .2);\n}\n\n[mol_book2_demo_third] {\n\tflex: 1 0 60rem;\n\tbackground-color: hsla(270, 100%, 50%, .2);\n}\n\n[mol_book2_demo_side] {\n\tflex: 0 0 20rem;\n\tbackground-color: hsla(0, 100%, 50%, .2);\n}\n");
+})($ || ($ = {}));
+//mol/book2/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_filler extends $mol_view {
+        minimal_height() {
+            return 500;
+        }
+        sub() {
+            return [
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.",
+                "Vivamus fermentum semper porta. Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. Maecenas convallis ullamcorper ultricies. Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. Fusce eget orci a orci congue vestibulum. Ut dolor diam, elementum et vestibulum eu, porttitor vel elit. Curabitur venenatis pulvinar tellus gravida ornare. Sed et erat faucibus nunc euismod ultricies ut id justo. Nullam cursus suscipit nisi, et ultrices justo sodales nec. Fusce venenatis facilisis lectus ac semper. Aliquam at massa ipsum. Quisque bibendum purus convallis nulla ultrices ultricies. Nullam aliquam, mi eu aliquam tincidunt, purus velit laoreet tortor, viverra pretium nisi quam vitae mi. Fusce vel volutpat elit. Nam sagittis nisi dui.",
+                "Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper. Aenean commodo ultrices imperdiet. Vestibulum ut justo vel sapien venenatis tincidunt. Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. Aliquam ut massa in turpis dapibus convallis. Praesent elit lacus, vestibulum at malesuada et, ornare et est. Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. Mauris ut placerat justo. Mauris in ultricies enim. Quisque nec est eleifend nulla ultrices egestas quis ut quam. Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. Cras quis ligula sem, vel elementum mi. Phasellus non ullamcorper urna.",
+                "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In euismod ultrices facilisis. Vestibulum porta sapien adipiscing augue congue id pretium lectus molestie. Proin quis dictum nisl. Morbi id quam sapien, sed vestibulum sem. Duis elementum rutrum mauris sed convallis. Proin vestibulum magna mi. Aenean tristique hendrerit magna, ac facilisis nulla hendrerit ut. Sed non tortor sodales quam auctor elementum. Donec hendrerit nunc eget elit pharetra pulvinar. Suspendisse id tempus tortor. Aenean luctus, elit commodo laoreet commodo, justo nisi consequat massa, sed vulputate quam urna quis eros. Donec vel.",
+                "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.",
+                "Vivamus fermentum semper porta. Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. Maecenas convallis ullamcorper ultricies. Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. Fusce eget orci a orci congue vestibulum. Ut dolor diam, elementum et vestibulum eu, porttitor vel elit. Curabitur venenatis pulvinar tellus gravida ornare. Sed et erat faucibus nunc euismod ultricies ut id justo. Nullam cursus suscipit nisi, et ultrices justo sodales nec. Fusce venenatis facilisis lectus ac semper. Aliquam at massa ipsum. Quisque bibendum purus convallis nulla ultrices ultricies. Nullam aliquam, mi eu aliquam tincidunt, purus velit laoreet tortor, viverra pretium nisi quam vitae mi. Fusce vel volutpat elit. Nam sagittis nisi dui.",
+                "Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. Etiam luctus porttitor lorem, sed suscipit est rutrum non. Curabitur lobortis nisl a enim congue semper. Aenean commodo ultrices imperdiet. Vestibulum ut justo vel sapien venenatis tincidunt. Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. Aliquam ut massa in turpis dapibus convallis. Praesent elit lacus, vestibulum at malesuada et, ornare et est. Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. Mauris ut placerat justo. Mauris in ultricies enim. Quisque nec est eleifend nulla ultrices egestas quis ut quam. Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. Cras quis ligula sem, vel elementum mi. Phasellus non ullamcorper urna.",
+                "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. In euismod ultrices facilisis. Vestibulum porta sapien adipiscing augue congue id pretium lectus molestie. Proin quis dictum nisl. Morbi id quam sapien, sed vestibulum sem. Duis elementum rutrum mauris sed convallis. Proin vestibulum magna mi. Aenean tristique hendrerit magna, ac facilisis nulla hendrerit ut. Sed non tortor sodales quam auctor elementum. Donec hendrerit nunc eget elit pharetra pulvinar. Suspendisse id tempus tortor. Aenean luctus, elit commodo laoreet commodo, justo nisi consequat massa, sed vulputate quam urna quis eros. Donec vel."
+            ];
+        }
+    }
+    $.$mol_filler = $mol_filler;
+})($ || ($ = {}));
+//mol/filler/-view.tree/filler.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/filler/filler.view.css", "[mol_filler] {\n\ttext-align: left;\n\tpadding: var(--mol_gap_text);\n\tflex-shrink: 0;\n}\n");
+})($ || ($ = {}));
+//mol/filler/-css/filler.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_book2_catalog_demo extends $mol_example_large {
+        title() {
+            return "Catalog of pages";
+        }
+        Content() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Empty() {
+            const obj = new this.$.$mol_status();
+            return obj;
+        }
+        sub() {
+            return [
+                this.Calatog()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_page",
+                "app",
+                "page",
+                "book",
+                "menu",
+                "navigation",
+                "transition",
+                "multipage"
+            ];
+        }
+        Pizza() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🍕 Pizzas";
+            obj.tools = () => [
+                this.Foods_spread_close()
+            ];
+            obj.body = () => [
+                this.Empty()
+            ];
+            return obj;
+        }
+        Hot_dogs() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🌭 Hot Dogs";
+            obj.tools = () => [
+                this.Foods_spread_close()
+            ];
+            obj.body = () => [
+                this.Empty()
+            ];
+            return obj;
+        }
+        Fries() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🍟 Fries";
+            obj.tools = () => [
+                this.Foods_spread_close()
+            ];
+            obj.body = () => [
+                this.Empty()
+            ];
+            return obj;
+        }
+        Foods_spread_close() {
+            return this.Foods().Spread_close();
+        }
+        Foods() {
+            const obj = new this.$.$mol_book2_catalog();
+            obj.param = () => "mol_book2_catalog_demo_foods";
+            obj.menu_title = () => "Foods";
+            obj.menu_tools = () => [
+                this.Spread_close()
+            ];
+            obj.spreads = () => ({
+                pizza: this.Pizza(),
+                hot_dogs: this.Hot_dogs(),
+                fries: this.Fries()
+            });
+            return obj;
+        }
+        Cats() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐱 Cats";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Dogs() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐶 Dogs";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Horses() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐴 Horses";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Racoons() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🦝 Racoons";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Pigs() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐷 Pigs ";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Rabbits() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐰 Rabbits";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Wolfs() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐺 Wolfs";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Mice() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐭 Mice";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Ants() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐜 Ants";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Bugs() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "🐛 Bugs";
+            obj.tools = () => [
+                this.Animals_spread_close()
+            ];
+            obj.body = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Animals_spread_close() {
+            return this.Animals().Spread_close();
+        }
+        Animals() {
+            const obj = new this.$.$mol_book2_catalog();
+            obj.param = () => "mol_book2_catalog_demo_animals";
+            obj.menu_title = () => "Animals";
+            obj.menu_tools = () => [
+                this.Spread_close()
+            ];
+            obj.spreads = () => ({
+                cats: this.Cats(),
+                dogs: this.Dogs(),
+                horses: this.Horses(),
+                racoons: this.Racoons(),
+                pigs: this.Pigs(),
+                rabbits: this.Rabbits(),
+                wolfs: this.Wolfs(),
+                mice: this.Mice(),
+                ants: this.Ants(),
+                bugs: this.Bugs()
+            });
+            return obj;
+        }
+        Spread_close() {
+            return this.Calatog().Spread_close();
+        }
+        Calatog() {
+            const obj = new this.$.$mol_book2_catalog();
+            obj.param = () => "mol_book2_catalog_demo";
+            obj.menu_title = () => "Catalog";
+            obj.spreads = () => ({
+                foods: this.Foods(),
+                anials: this.Animals()
+            });
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Empty", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Pizza", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Hot_dogs", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Fries", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Foods", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Cats", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Dogs", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Horses", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Racoons", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Pigs", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Rabbits", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Wolfs", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Mice", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Ants", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Bugs", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Animals", null);
+    __decorate([
+        $mol_mem
+    ], $mol_book2_catalog_demo.prototype, "Calatog", null);
+    $.$mol_book2_catalog_demo = $mol_book2_catalog_demo;
+})($ || ($ = {}));
+//mol/book2/catalog/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_cursor_default extends $mol_icon {
+        path() {
+            return "M13.64,21.97C13.14,22.21 12.54,22 12.31,21.5L10.13,16.76L7.62,18.78C7.45,18.92 7.24,19 7,19C6.45,19 6,18.55 6,18V3C6,2.45 6.45,2 7,2C7.24,2 7.47,2.09 7.64,2.23L7.65,2.22L19.14,11.86C19.57,12.22 19.62,12.85 19.27,13.27C19.12,13.45 18.91,13.57 18.7,13.61L15.54,14.23L17.74,18.96C18,19.46 17.76,20.05 17.26,20.28L13.64,21.97Z";
+        }
+    }
+    $.$mol_icon_cursor_default = $mol_icon_cursor_default;
+})($ || ($ = {}));
+//mol/icon/cursor/default/-view.tree/default.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_cursor_default_click extends $mol_icon {
+        path() {
+            return "M10.76,8.69C10.34,8.69 10,9.03 10,9.45V20.9C10,21.32 10.34,21.66 10.76,21.66C10.95,21.66 11.11,21.6 11.24,21.5L13.15,19.95L14.81,23.57C14.94,23.84 15.21,24 15.5,24C15.61,24 15.72,24 15.83,23.92L18.59,22.64C18.97,22.46 19.15,22 18.95,21.63L17.28,18L19.69,17.55C19.85,17.5 20,17.43 20.12,17.29C20.39,16.97 20.35,16.5 20,16.21L11.26,8.86L11.25,8.87C11.12,8.76 10.95,8.69 10.76,8.69M15,10V8H20V10H15M13.83,4.76L16.66,1.93L18.07,3.34L15.24,6.17L13.83,4.76M10,0H12V5H10V0M3.93,14.66L6.76,11.83L8.17,13.24L5.34,16.07L3.93,14.66M3.93,3.34L5.34,1.93L8.17,4.76L6.76,6.17L3.93,3.34M7,10H2V8H7V10";
+        }
+    }
+    $.$mol_icon_cursor_default_click = $mol_icon_cursor_default_click;
+})($ || ($ = {}));
+//mol/icon/cursor/default/click/-view.tree/click.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_cursor_default_click_outline extends $mol_icon {
+        path() {
+            return "M11.5,11L17.88,16.37L17,16.55L16.36,16.67C15.73,16.8 15.37,17.5 15.65,18.07L15.92,18.65L17.28,21.59L15.86,22.25L14.5,19.32L14.24,18.74C13.97,18.15 13.22,17.97 12.72,18.38L12.21,18.78L11.5,19.35V11M10.76,8.69C10.34,8.69 10,9.03 10,9.45V20.9C10,21.32 10.34,21.66 10.76,21.66C10.95,21.66 11.11,21.6 11.24,21.5L13.15,19.95L14.81,23.57C14.94,23.84 15.21,24 15.5,24C15.61,24 15.72,24 15.83,23.92L18.59,22.64C18.97,22.46 19.15,22 18.95,21.63L17.28,18L19.69,17.55C19.85,17.5 20,17.43 20.12,17.29C20.39,16.97 20.35,16.5 20,16.21L11.26,8.86L11.25,8.87C11.12,8.76 10.95,8.69 10.76,8.69M15,10V8H20V10H15M13.83,4.76L16.66,1.93L18.07,3.34L15.24,6.17L13.83,4.76M10,0H12V5H10V0M3.93,14.66L6.76,11.83L8.17,13.24L5.34,16.07L3.93,14.66M3.93,3.34L5.34,1.93L8.17,4.76L6.76,6.17L3.93,3.34M7,10H2V8H7V10";
+        }
+    }
+    $.$mol_icon_cursor_default_click_outline = $mol_icon_cursor_default_click_outline;
+})($ || ($ = {}));
+//mol/icon/cursor/default/click/outline/-view.tree/outline.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_button_demo extends $mol_example_small {
+        title() {
+            return "All types of buttons in every states";
+        }
+        sub() {
+            return [
+                this.Major_enabled(),
+                this.Major_disabled(),
+                this.Minor_enabled(),
+                this.Minor_disabled(),
+                this.Minor_icon_only(),
+                this.Minor_iconed()
+            ];
+        }
+        tags() {
+            return [
+                "button"
+            ];
+        }
+        fail(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        Major_enabled() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => "Enabled Major";
+            obj.click = (event) => this.fail(event);
+            return obj;
+        }
+        Major_disabled() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => "Disabled Major";
+            obj.enabled = () => false;
+            return obj;
+        }
+        Minor_enabled() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => "Enabled Minor";
+            obj.click = (event) => this.fail(event);
+            return obj;
+        }
+        Minor_disabled() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => "Disabled Minor";
+            obj.enabled = () => false;
+            return obj;
+        }
+        Minor_icon_only_icon() {
+            const obj = new this.$.$mol_icon_cursor_default_click_outline();
+            return obj;
+        }
+        Minor_icon_only() {
+            const obj = new this.$.$mol_button_minor();
+            obj.click = (event) => this.fail(event);
+            obj.sub = () => [
+                this.Minor_icon_only_icon()
+            ];
+            return obj;
+        }
+        Minor_iconed_icon() {
+            const obj = new this.$.$mol_icon_cursor_default_click_outline();
+            return obj;
+        }
+        Minor_iconed() {
+            const obj = new this.$.$mol_button_minor();
+            obj.click = (event) => this.fail(event);
+            obj.sub = () => [
+                this.Minor_iconed_icon(),
+                "Minor with Icon"
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "fail", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "Major_enabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "Major_disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "Minor_enabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "Minor_disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "Minor_icon_only_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "Minor_icon_only", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "Minor_iconed_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_demo.prototype, "Minor_iconed", null);
+    $.$mol_button_demo = $mol_button_demo;
+})($ || ($ = {}));
+//mol/button/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_button_demo extends $.$mol_button_demo {
+            fail() {
+                this.$.$mol_wait_timeout(2000);
+                throw new Error('Demonstration Error');
+            }
+        }
+        $$.$mol_button_demo = $mol_button_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/button/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_button_share_demo extends $mol_example_small {
+        title() {
+            return "Share button demo";
+        }
+        sub() {
+            return [
+                this.Share_page(),
+                this.Share_screenshot(),
+                this.Share_hyoo()
+            ];
+        }
+        tags() {
+            return [
+                "share",
+                "button",
+                "icon"
+            ];
+        }
+        Share_page() {
+            const obj = new this.$.$mol_button_share();
+            obj.title = () => this.title();
+            obj.hint = () => "Share this page with screenshot";
+            return obj;
+        }
+        Share_screenshot() {
+            const obj = new this.$.$mol_button_share();
+            obj.title = () => "Component screensht";
+            obj.hint = () => "Share screenshot of component";
+            obj.uri = () => null;
+            obj.capture = () => this.Share_hyoo();
+            return obj;
+        }
+        Share_hyoo() {
+            const obj = new this.$.$mol_button_share();
+            obj.title = () => "$hyoo";
+            obj.hint = () => "Share hyoo.ru";
+            obj.uri = () => "https://hyoo.ru";
+            obj.capture = () => null;
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_button_share_demo.prototype, "Share_page", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_share_demo.prototype, "Share_screenshot", null);
+    __decorate([
+        $mol_mem
+    ], $mol_button_share_demo.prototype, "Share_hyoo", null);
+    $.$mol_button_share_demo = $mol_button_share_demo;
+})($ || ($ = {}));
+//mol/button/share/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_hor extends $mol_view {
+    }
+    $.$mol_hor = $mol_hor;
+})($ || ($ = {}));
+//mol/hor/-view.tree/hor.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_hor extends $.$mol_hor {
+            minimal_width() {
+                let min = 0;
+                for (const view of this.sub()) {
+                    if (!(view instanceof $mol_view))
+                        continue;
+                    min += view.minimal_width();
+                }
+                return min;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_hor.prototype, "minimal_width", null);
+        $$.$mol_hor = $mol_hor;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/hor/hor.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_define($mol_hor, {
+        display: 'flex',
+        alignItems: 'flex-start',
+        alignContent: 'flex-start',
+        justifyContent: 'flex-start',
+        flex: {
+            grow: 1,
+            shrink: 0,
+            basis: 'auto',
+        },
+    });
+})($ || ($ = {}));
+//mol/hor/hor.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_calendar extends $mol_list {
+        sub() {
+            return [
+                this.Head(),
+                this.Weekdays()
+            ];
+        }
+        weeks() {
+            return [];
+        }
+        weeks_count() {
+            return 6;
+        }
+        Weekday(id) {
+            const obj = new this.$.$mol_calendar_day();
+            obj.holiday = () => this.weekend(id);
+            obj.sub = () => [
+                this.weekday(id)
+            ];
+            return obj;
+        }
+        Week(id) {
+            const obj = new this.$.$mol_hor();
+            obj.sub = () => this.week_days(id);
+            return obj;
+        }
+        Day(id) {
+            const obj = new this.$.$mol_calendar_day();
+            obj.ghost = () => this.day_ghost(id);
+            obj.holiday = () => this.day_holiday(id);
+            obj.selected = () => this.day_selected(id);
+            obj.theme = () => this.day_theme(id);
+            obj.sub = () => this.day_content(id);
+            return obj;
+        }
+        month_string() {
+            return "";
+        }
+        month_moment() {
+            const obj = new this.$.$mol_time_moment();
+            return obj;
+        }
+        title() {
+            return "";
+        }
+        Title() {
+            const obj = new this.$.$mol_view();
+            obj.minimal_height = () => 24;
+            obj.sub = () => [
+                this.title()
+            ];
+            return obj;
+        }
+        head() {
+            return [
+                this.Title()
+            ];
+        }
+        Head() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.head();
+            return obj;
+        }
+        weekdays() {
+            return [];
+        }
+        Weekdays() {
+            const obj = new this.$.$mol_hor();
+            obj.sub = () => this.weekdays();
+            return obj;
+        }
+        weekend(id) {
+            return false;
+        }
+        weekday(id) {
+            return "";
+        }
+        week_days(id) {
+            return [];
+        }
+        day_ghost(id) {
+            return false;
+        }
+        day_holiday(id) {
+            return false;
+        }
+        day_selected(id) {
+            return false;
+        }
+        day_theme(id) {
+            return "";
+        }
+        day_text(id) {
+            return "";
+        }
+        day_content(id) {
+            return [
+                this.day_text(id)
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_calendar.prototype, "Weekday", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_calendar.prototype, "Week", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_calendar.prototype, "Day", null);
+    __decorate([
+        $mol_mem
+    ], $mol_calendar.prototype, "month_moment", null);
+    __decorate([
+        $mol_mem
+    ], $mol_calendar.prototype, "Title", null);
+    __decorate([
+        $mol_mem
+    ], $mol_calendar.prototype, "Head", null);
+    __decorate([
+        $mol_mem
+    ], $mol_calendar.prototype, "Weekdays", null);
+    $.$mol_calendar = $mol_calendar;
+    class $mol_calendar_day extends $mol_view {
+        minimal_height() {
+            return 24;
+        }
+        minimal_width() {
+            return 36;
+        }
+        attr() {
+            return {
+                mol_calendar_holiday: this.holiday(),
+                mol_calendar_ghost: this.ghost(),
+                mol_calendar_selected: this.selected(),
+                mol_theme: this.theme()
+            };
+        }
+        holiday() {
+            return false;
+        }
+        ghost() {
+            return false;
+        }
+        selected() {
+            return false;
+        }
+        theme() {
+            return "";
+        }
+    }
+    $.$mol_calendar_day = $mol_calendar_day;
+})($ || ($ = {}));
+//mol/calendar/-view.tree/calendar.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_calendar extends $.$mol_calendar {
+            month_moment() {
+                const moment = new $mol_time_moment(this.month_string() || undefined);
+                return new $mol_time_moment({ year: moment.year, month: moment.month });
+            }
+            title() {
+                return this.month_moment().toString('Month YYYY');
+            }
+            day_first() {
+                return this.month_moment().merge({ day: 0 });
+            }
+            day_last() {
+                return this.day_first().shift('P1M');
+            }
+            day_draw_from() {
+                let weekday = this.day_first().weekday;
+                return this.day_first().shift({ day: -weekday });
+            }
+            weekdays() {
+                const next = [];
+                for (let index = 0; index < 7; ++index) {
+                    next.push(this.Weekday(index));
+                }
+                return next;
+            }
+            weekday(index) {
+                return this.day_draw_from().shift({ day: index }).toString('WD');
+            }
+            weekend(index) {
+                return [5, 6].indexOf(index) >= 0;
+            }
+            sub() {
+                return [
+                    ...super.sub(),
+                    ...this.weeks(),
+                ];
+            }
+            weeks() {
+                const weeks = [];
+                let count = this.weeks_count();
+                for (let i = 0; i < count; ++i) {
+                    weeks.push(this.Week(i));
+                }
+                return weeks;
+            }
+            week_days(index) {
+                const days = [];
+                let start = this.day_draw_from().shift({ day: index * 7 });
+                for (let i = 0; i < 7; ++i) {
+                    days.push(this.Day(start.shift({ day: i }).toString('YYYY-MM-DD')));
+                }
+                return days;
+            }
+            day_text(day) {
+                return new $mol_time_moment(day).toString("D");
+            }
+            day_holiday(day) {
+                return this.weekend(new $mol_time_moment(day).weekday);
+            }
+            day_ghost(day) {
+                return new $mol_time_moment(day).toString('YYYY-MM') !== this.day_first().toString('YYYY-MM');
+            }
+            day_selected(day) {
+                return new $mol_time_moment().toString('YYYY-MM-DD') === day;
+            }
+            day_theme(day) {
+                return this.day_selected(day) ? '$mol_theme_current' : super.day_theme(day);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_calendar.prototype, "month_moment", null);
+        __decorate([
+            $mol_mem
+        ], $mol_calendar.prototype, "day_first", null);
+        __decorate([
+            $mol_mem
+        ], $mol_calendar.prototype, "day_last", null);
+        __decorate([
+            $mol_mem
+        ], $mol_calendar.prototype, "day_draw_from", null);
+        __decorate([
+            $mol_mem
+        ], $mol_calendar.prototype, "weekdays", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_calendar.prototype, "weekday", null);
+        __decorate([
+            $mol_mem
+        ], $mol_calendar.prototype, "sub", null);
+        __decorate([
+            $mol_mem
+        ], $mol_calendar.prototype, "weeks", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_calendar.prototype, "week_days", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_calendar.prototype, "day_text", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_calendar.prototype, "day_holiday", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_calendar.prototype, "day_ghost", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_calendar.prototype, "day_selected", null);
+        $$.$mol_calendar = $mol_calendar;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/calendar/calendar.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/calendar/calendar.view.css", "[mol_calendar] {\n\tdisplay: table;\n\tfont-family: monospace;\n}\n\n[mol_calendar_head] {\n\tdisplay: table-caption;\n}\n\n[mol_calendar_title] {\n\tjustify-content: center;\n}\n\n[mol_calendar_weekdays] ,\n[mol_calendar_week] {\n\tdisplay: table-row;\n\tpadding: 0;\n}\n\n[mol_calendar_day] {\n\tdisplay: table-cell;\n\tpadding: .25rem .5rem;\n\ttext-align: center;\n\tword-break: normal;\n\tbox-shadow: none;\n\tborder-radius: var(--mol_gap_round);\n}\n\n[mol_calendar_weekday] {\n\tcolor: var(--mol_theme_shade);\n\tborder-bottom: 1px solid var(--mol_theme_line);\n}\n\n[mol_calendar_holiday] {\n\tcolor: var(--mol_theme_special);\n}\n\n[mol_calendar_ghost] {\n\topacity: .2;\n}\n");
+})($ || ($ = {}));
+//mol/calendar/-css/calendar.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_calendar_demo_holiday extends $mol_example_small {
+        title() {
+            return "Days of month 2018-01 with custom holidays";
+        }
+        holidays() {
+            return [
+                "2018-01-01",
+                "2018-01-02",
+                "2018-01-03",
+                "2018-01-04",
+                "2018-01-05",
+                "2018-01-06",
+                "2018-01-07",
+                "2018-01-08",
+                "2018-01-13",
+                "2018-01-14",
+                "2018-01-20",
+                "2018-01-21",
+                "2018-01-27",
+                "2018-01-28"
+            ];
+        }
+        sub() {
+            return [
+                this.Calendar()
+            ];
+        }
+        tags() {
+            return [
+                "calendar",
+                "date"
+            ];
+        }
+        month() {
+            return "2018-01";
+        }
+        holiday(id) {
+            return false;
+        }
+        Calendar() {
+            const obj = new this.$.$mol_calendar();
+            obj.month_string = () => this.month();
+            obj.day_holiday = (id) => this.holiday(id);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_calendar_demo_holiday.prototype, "Calendar", null);
+    $.$mol_calendar_demo_holiday = $mol_calendar_demo_holiday;
+})($ || ($ = {}));
+//mol/calendar/demo/holiday/-view.tree/holiday.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_calendar_demo_holiday extends $.$mol_calendar_demo_holiday {
+            holiday(day) {
+                return this.holidays().indexOf(day) >= 0;
+            }
+        }
+        $$.$mol_calendar_demo_holiday = $mol_calendar_demo_holiday;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/calendar/demo/holiday/holiday.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_calendar_demo_selection extends $mol_example_small {
+        title() {
+            return "Days of month 2018-01 with custom selection";
+        }
+        interval_config() {
+            return {
+                start: "2018-01-05",
+                end: "2018-01-10"
+            };
+        }
+        days() {
+            return [
+                "2018-01-18",
+                "2018-01-20",
+                "2018-01-26",
+                "2018-02-01",
+                "2018-02-03"
+            ];
+        }
+        sub() {
+            return [
+                this.Calendar()
+            ];
+        }
+        tags() {
+            return [
+                "calendar",
+                "date",
+                "period"
+            ];
+        }
+        month() {
+            return "2018-01";
+        }
+        selected(id) {
+            return false;
+        }
+        Calendar() {
+            const obj = new this.$.$mol_calendar();
+            obj.month_string = () => this.month();
+            obj.day_selected = (id) => this.selected(id);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_calendar_demo_selection.prototype, "Calendar", null);
+    $.$mol_calendar_demo_selection = $mol_calendar_demo_selection;
+})($ || ($ = {}));
+//mol/calendar/demo/selection/-view.tree/selection.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_time_interval extends $mol_time_base {
+        constructor(config) {
+            super();
+            if (typeof config === 'string') {
+                var chunks = config.split('/');
+                if (chunks[0]) {
+                    if (chunks[0][0].toUpperCase() === 'P') {
+                        this._duration = new $mol_time_duration(chunks[0]);
+                    }
+                    else {
+                        this._start = new $mol_time_moment(chunks[0]);
+                    }
+                }
+                else {
+                    this._start = new $mol_time_moment();
+                }
+                if (chunks[1]) {
+                    if (chunks[1][0].toUpperCase() === 'P') {
+                        this._duration = new $mol_time_duration(chunks[1]);
+                    }
+                    else {
+                        this._end = new $mol_time_moment(chunks[1]);
+                    }
+                }
+                else {
+                    this._end = new $mol_time_moment();
+                }
+                return;
+            }
+            if (config.start !== undefined)
+                this._start = new $mol_time_moment(config.start);
+            if (config.end !== undefined)
+                this._end = new $mol_time_moment(config.end);
+            if (config.duration !== undefined)
+                this._duration = new $mol_time_duration(config.duration);
+        }
+        _start;
+        get start() {
+            if (this._start)
+                return this._start;
+            return this._start = this._end.shift(this._duration.mult(-1));
+        }
+        _end;
+        get end() {
+            if (this._end)
+                return this._end;
+            return this._end = this._start.shift(this._duration);
+        }
+        _duration;
+        get duration() {
+            if (this._duration)
+                return this._duration;
+            return this._duration = new $mol_time_duration(this._end.valueOf() - this._start.valueOf());
+        }
+        toJSON() { return this.toString(); }
+        toString() {
+            return (this._start || this._duration || '').toString() + '/' + (this._end || this._duration || '').toString();
+        }
+        [Symbol.toPrimitive](mode) {
+            return this.toString();
+        }
+    }
+    $.$mol_time_interval = $mol_time_interval;
+})($ || ($ = {}));
+//mol/time/interval/interval.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_calendar_demo_selection extends $.$mol_calendar_demo_selection {
+            interval() {
+                return new $mol_time_interval(this.interval_config());
+            }
+            selected(day) {
+                const interval = this.interval();
+                if ((day >= interval.start.toString()) && (day < interval.end.toString()))
+                    return true;
+                if (this.days().includes(day))
+                    return true;
+                return false;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_calendar_demo_selection.prototype, "interval", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_calendar_demo_selection.prototype, "selected", null);
+        $$.$mol_calendar_demo_selection = $mol_calendar_demo_selection;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/calendar/demo/selection/selection.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_calendar_demo_simple extends $mol_example_small {
+        title() {
+            return "Days of curret month";
+        }
+        sub() {
+            return [
+                this.Calendar()
+            ];
+        }
+        tags() {
+            return [
+                "calendar",
+                "date"
+            ];
+        }
+        today() {
+            const obj = new this.$.$mol_time_moment();
+            return obj;
+        }
+        Calendar() {
+            const obj = new this.$.$mol_calendar();
+            obj.month_moment = () => this.today();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_calendar_demo_simple.prototype, "today", null);
+    __decorate([
+        $mol_mem
+    ], $mol_calendar_demo_simple.prototype, "Calendar", null);
+    $.$mol_calendar_demo_simple = $mol_calendar_demo_simple;
+})($ || ($ = {}));
+//mol/calendar/demo/simple/-view.tree/simple.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_calendar_demo_simple extends $.$mol_calendar_demo_simple {
+            month_name() {
+                return this.today().toString('Month YYYY');
+            }
+        }
+        $$.$mol_calendar_demo_simple = $mol_calendar_demo_simple;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/calendar/demo/simple/simple.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_card extends $mol_list {
+        attr() {
+            return {
+                ...super.attr(),
+                mol_card_status_type: this.status()
+            };
+        }
+        rows() {
+            return [
+                this.Content(),
+                this.Status()
+            ];
+        }
+        status() {
+            return "";
+        }
+        content() {
+            return [
+                this.title()
+            ];
+        }
+        Content() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.content();
+            return obj;
+        }
+        status_text() {
+            return this.status();
+        }
+        Status() {
+            const obj = new this.$.$mol_view();
+            obj.minimal_height = () => 30;
+            obj.sub = () => [
+                this.status_text()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_card.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_card.prototype, "Status", null);
+    $.$mol_card = $mol_card;
+})($ || ($ = {}));
+//mol/card/-view.tree/card.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_card extends $.$mol_card {
+            rows() {
+                return [
+                    this.Content(),
+                    ...this.status_text() ? [this.Status()] : [],
+                ];
+            }
+        }
+        $$.$mol_card = $mol_card;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/card/card.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/card/card.view.css", "[mol_card] {\n\tbackground: var(--mol_theme_card);\n\tcolor: var(--mol_theme_text);\n\tborder-radius: var(--mol_gap_round);\n\tdisplay: flex;\n\tflex: 0 1 auto;\n\tflex-direction: column;\n\tposition: relative;\n\toverflow: hidden;\n}\n\n[mol_card_content] {\n\tflex: 1 1 auto;\n\tborder-radius: var(--mol_gap_round);\n\tmargin: 0;\n\tpadding: var(--mol_gap_block);\n}\n\n[mol_card_status] {\n\tbackground: var(--mol_theme_line);\n\ttext-transform: capitalize;\n\tpadding: var(--mol_gap_text);\n\tmargin: 0;\n}\n\n[mol_card_status] {\n\tbackground: var(--mol_theme_line);\n}\n");
+})($ || ($ = {}));
+//mol/card/-css/card.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_card_demo extends $mol_example_small {
+        title() {
+            return "Cards with optional status";
+        }
+        sub() {
+            return [
+                this.Simple(),
+                this.Pending()
+            ];
+        }
+        tags() {
+            return [
+                "card",
+                "status",
+                "container",
+                "paper"
+            ];
+        }
+        Simple() {
+            const obj = new this.$.$mol_card();
+            obj.content = () => [
+                "Hello world!"
+            ];
+            return obj;
+        }
+        Pending() {
+            const obj = new this.$.$mol_card();
+            obj.title = () => "Hello pending!";
+            obj.status = () => "pending";
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_card_demo.prototype, "Simple", null);
+    __decorate([
+        $mol_mem
+    ], $mol_card_demo.prototype, "Pending", null);
+    $.$mol_card_demo = $mol_card_demo;
+})($ || ($ = {}));
+//mol/card/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_svg_group extends $mol_svg {
+        dom_name() {
+            return "g";
+        }
+    }
+    $.$mol_svg_group = $mol_svg_group;
+})($ || ($ = {}));
+//mol/svg/group/-view.tree/group.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_svg_title extends $mol_svg {
+        dom_name() {
+            return "title";
+        }
+        sub() {
+            return [
+                this.title()
+            ];
+        }
+    }
+    $.$mol_svg_title = $mol_svg_title;
+})($ || ($ = {}));
+//mol/svg/title/-view.tree/title.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_graph extends $mol_svg_group {
+        series_x() {
+            return [];
+        }
+        series_y() {
+            return [];
+        }
+        attr() {
+            return {
+                ...super.attr(),
+                mol_plot_graph_type: this.type()
+            };
+        }
+        style() {
+            return {
+                ...super.style(),
+                color: this.color()
+            };
+        }
+        viewport() {
+            const obj = new this.$.$mol_vector_2d(this.viewport_x(), this.viewport_y());
+            return obj;
+        }
+        shift() {
+            return [
+                0,
+                0
+            ];
+        }
+        scale() {
+            return [
+                1,
+                1
+            ];
+        }
+        cursor_position() {
+            const obj = new this.$.$mol_vector_2d(NaN, NaN);
+            return obj;
+        }
+        dimensions_pane() {
+            const obj = new this.$.$mol_vector_2d(this.dimensions_pane_x(), this.dimensions_pane_y());
+            return obj;
+        }
+        dimensions() {
+            const obj = new this.$.$mol_vector_2d(this.dimensions_x(), this.dimensions_y());
+            return obj;
+        }
+        size_real() {
+            const obj = new this.$.$mol_vector_2d(0, 0);
+            return obj;
+        }
+        gap() {
+            const obj = new this.$.$mol_vector_2d(this.gap_x(), this.gap_y());
+            return obj;
+        }
+        repos_x(id) {
+            return 0;
+        }
+        repos_y(id) {
+            return 0;
+        }
+        indexes() {
+            return [];
+        }
+        points() {
+            return [];
+        }
+        front() {
+            return [];
+        }
+        back() {
+            return [];
+        }
+        Hint() {
+            const obj = new this.$.$mol_svg_title();
+            obj.title = () => this.hint();
+            return obj;
+        }
+        hue() {
+            return +NaN;
+        }
+        Sample() {
+            return null;
+        }
+        type() {
+            return "solid";
+        }
+        color() {
+            return "";
+        }
+        viewport_x() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        viewport_y() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        dimensions_pane_x() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        dimensions_pane_y() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        dimensions_x() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        dimensions_y() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        gap_x() {
+            const obj = new this.$.$mol_vector_range(0, 0);
+            return obj;
+        }
+        gap_y() {
+            const obj = new this.$.$mol_vector_range(0, 0);
+            return obj;
+        }
+        title() {
+            return "";
+        }
+        hint() {
+            return this.title();
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "viewport", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "cursor_position", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "dimensions_pane", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "dimensions", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "size_real", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "gap", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "Hint", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "viewport_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "viewport_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "dimensions_pane_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "dimensions_pane_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "dimensions_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "dimensions_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "gap_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_graph.prototype, "gap_y", null);
+    $.$mol_plot_graph = $mol_plot_graph;
+    class $mol_plot_graph_sample extends $mol_view {
+        attr() {
+            return {
+                ...super.attr(),
+                mol_plot_graph_type: this.type()
+            };
+        }
+        style() {
+            return {
+                ...super.style(),
+                color: this.color()
+            };
+        }
+        type() {
+            return "solid";
+        }
+        color() {
+            return "black";
+        }
+    }
+    $.$mol_plot_graph_sample = $mol_plot_graph_sample;
+})($ || ($ = {}));
+//mol/plot/graph/-view.tree/graph.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_graph extends $.$mol_plot_graph {
+            viewport() {
+                const size = this.size_real();
+                return new this.$.$mol_vector_2d(new this.$.$mol_vector_range(0, size.x), new this.$.$mol_vector_range(0, size.y));
+            }
+            indexes() {
+                return this.series_x().map((_, i) => i);
+            }
+            repos_x(val) {
+                return val;
+            }
+            repos_y(val) {
+                return val;
+            }
+            points() {
+                const [shift_x, shift_y] = this.shift();
+                const [scale_x, scale_y] = this.scale();
+                const series_x = this.series_x();
+                const series_y = this.series_y();
+                return this.indexes().map(index => {
+                    let point_x = Math.round(shift_x + this.repos_x(series_x[index]) * scale_x);
+                    let point_y = Math.round(shift_y + this.repos_y(series_y[index]) * scale_y);
+                    point_x = Math.max(Number.MIN_SAFE_INTEGER, Math.min(point_x, Number.MAX_SAFE_INTEGER));
+                    point_y = Math.max(Number.MIN_SAFE_INTEGER, Math.min(point_y, Number.MAX_SAFE_INTEGER));
+                    return [point_x, point_y];
+                });
+            }
+            series_x() {
+                return this.series_y().map((val, index) => index);
+            }
+            dimensions() {
+                let next = new this.$.$mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
+                const series_x = this.series_x();
+                const series_y = this.series_y();
+                for (let i = 0; i < series_x.length; i++) {
+                    if (series_x[i] > next.x.max)
+                        next.x.max = series_x[i];
+                    if (series_x[i] < next.x.min)
+                        next.x.min = series_x[i];
+                    if (series_y[i] > next.y.max)
+                        next.y.max = series_y[i];
+                    if (series_y[i] < next.y.min)
+                        next.y.min = series_y[i];
+                }
+                return next;
+            }
+            color() {
+                const hue = this.hue();
+                return hue ? `hsl( ${hue} , 100% , 35% )` : '';
+            }
+            front() {
+                return [this];
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_graph.prototype, "indexes", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_graph.prototype, "series_x", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_graph.prototype, "dimensions", null);
+        $$.$mol_plot_graph = $mol_plot_graph;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/graph/graph.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/graph/graph.view.css", "[mol_plot_graph] {\n\tstroke: currentColor;\n}\n\n[mol_plot_graph_sample] {\n\tborder-width: 0;\n\tborder-style: solid;\n}\n\n[mol_plot_graph_type=\"dashed\"] {\n\tstroke-dasharray: 4 4;\n\tborder-style: dashed;\n}\n");
+})($ || ($ = {}));
+//mol/plot/graph/-css/graph.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_chart_legend extends $mol_scroll {
+        graphs() {
+            return [];
+        }
+        graphs_front() {
+            return [];
+        }
+        sub() {
+            return this.graph_legends();
+        }
+        Graph_legend(id) {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Graph_sample_box(id),
+                this.Graph_title(id)
+            ];
+            return obj;
+        }
+        graph_legends() {
+            return [];
+        }
+        Graph_sample(id) {
+            return null;
+        }
+        Graph_sample_box(id) {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Graph_sample(id)
+            ];
+            return obj;
+        }
+        graph_title(id) {
+            return "";
+        }
+        Graph_title(id) {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.graph_title(id)
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_chart_legend.prototype, "Graph_legend", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_chart_legend.prototype, "Graph_sample_box", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_chart_legend.prototype, "Graph_title", null);
+    $.$mol_chart_legend = $mol_chart_legend;
+})($ || ($ = {}));
+//mol/chart/legend/-view.tree/legend.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_chart_legend extends $.$mol_chart_legend {
+            graphs_front() {
+                return this.graphs().filter(graph => graph.Sample());
+            }
+            graph_legends() {
+                return this.graphs_front().map((graph, index) => this.Graph_legend(index));
+            }
+            graph_title(index) {
+                return this.graphs_front()[index].title();
+            }
+            Graph_sample(index) {
+                return this.graphs_front()[index].Sample();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_chart_legend.prototype, "graphs_front", null);
+        $$.$mol_chart_legend = $mol_chart_legend;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/chart/legend/legend.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/chart/legend/legend.view.css", "[mol_chart_legend] {\n\tdisplay: flex;\n\tflex-wrap: wrap;\n\tflex-direction: row;\n\tpadding: .5rem;\n\tmargin: .5rem;\n\tflex: 0 1 auto;\n}\n\n[mol_chart_legend_graph_legend] {\n\tdisplay: flex;\n\tjustify-content: flex-start;\n\tflex: 1 1 8rem;\n\tpadding: .5rem;\n}\n\n[mol_chart_legend_graph_title] {\n\tmargin: 0 .25rem;\n\tflex: 1 1 auto;\n}\n\n[mol_chart_legend_graph_sample_box] {\n\tposition: relative;\n\twidth: 1.5rem;\n\tflex: none;\n}\n");
+})($ || ($ = {}));
+//mol/chart/legend/-css/legend.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_pane extends $mol_svg_root {
+        aspect() {
+            return "none";
+        }
+        hue_base(val) {
+            if (val !== undefined)
+                return val;
+            return +NaN;
+        }
+        hue_shift(val) {
+            if (val !== undefined)
+                return val;
+            return 111;
+        }
+        gap_hor() {
+            return 48;
+        }
+        gap_vert() {
+            return 24;
+        }
+        gap_left() {
+            return this.gap_hor();
+        }
+        gap_right() {
+            return this.gap_hor();
+        }
+        gap_top() {
+            return this.gap_vert();
+        }
+        gap_bottom() {
+            return this.gap_vert();
+        }
+        gap() {
+            const obj = new this.$.$mol_vector_2d(this.gap_x(), this.gap_y());
+            return obj;
+        }
+        shift_limit() {
+            const obj = new this.$.$mol_vector_2d(this.shift_limit_x(), this.shift_limit_y());
+            return obj;
+        }
+        shift_default() {
+            const obj = new this.$.$mol_vector_2d(0, 0);
+            return obj;
+        }
+        shift(val) {
+            if (val !== undefined)
+                return val;
+            const obj = new this.$.$mol_vector_2d(0, 0);
+            return obj;
+        }
+        scale_limit() {
+            const obj = new this.$.$mol_vector_2d(this.scale_limit_x(), this.scale_limit_y());
+            return obj;
+        }
+        scale_default() {
+            const obj = new this.$.$mol_vector_2d(0, 0);
+            return obj;
+        }
+        scale(val) {
+            if (val !== undefined)
+                return val;
+            const obj = new this.$.$mol_vector_2d(1, -1);
+            return obj;
+        }
+        scale_x(val) {
+            if (val !== undefined)
+                return val;
+            return 1;
+        }
+        scale_y(val) {
+            if (val !== undefined)
+                return val;
+            return -1;
+        }
+        size() {
+            const obj = new this.$.$mol_vector_2d(0, 0);
+            return obj;
+        }
+        size_real() {
+            const obj = new this.$.$mol_vector_2d(1, 1);
+            return obj;
+        }
+        dimensions() {
+            const obj = new this.$.$mol_vector_2d(this.dimensions_x(), this.dimensions_y());
+            return obj;
+        }
+        dimensions_viewport() {
+            const obj = new this.$.$mol_vector_2d(this.dimensions_viewport_x(), this.dimensions_viewport_y());
+            return obj;
+        }
+        sub() {
+            return this.graphs_sorted();
+        }
+        graphs_colored() {
+            return this.graphs_visible();
+        }
+        plugins() {
+            return [
+                ...super.plugins(),
+                this.Touch()
+            ];
+        }
+        gap_x() {
+            const obj = new this.$.$mol_vector_range(this.gap_left(), this.gap_right());
+            return obj;
+        }
+        gap_y() {
+            const obj = new this.$.$mol_vector_range(this.gap_bottom(), this.gap_top());
+            return obj;
+        }
+        shift_limit_x() {
+            const obj = new this.$.$mol_vector_range(0, 0);
+            return obj;
+        }
+        shift_limit_y() {
+            const obj = new this.$.$mol_vector_range(0, 0);
+            return obj;
+        }
+        scale_limit_x() {
+            const obj = new this.$.$mol_vector_range(0, Infinity);
+            return obj;
+        }
+        scale_limit_y() {
+            const obj = new this.$.$mol_vector_range(0, -Infinity);
+            return obj;
+        }
+        dimensions_x() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        dimensions_y() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        dimensions_viewport_x() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        dimensions_viewport_y() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        graphs_sorted() {
+            return [];
+        }
+        graphs() {
+            return [];
+        }
+        graphs_positioned() {
+            return this.graphs();
+        }
+        graphs_visible() {
+            return this.graphs_positioned();
+        }
+        zoom(val) {
+            if (val !== undefined)
+                return val;
+            return 1;
+        }
+        allow_draw() {
+            return true;
+        }
+        allow_pan() {
+            return true;
+        }
+        allow_zoom() {
+            return true;
+        }
+        draw_start(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        draw(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        draw_end(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        cursor_position() {
+            return this.Touch().pointer_center();
+        }
+        action_type() {
+            return this.Touch().action_type();
+        }
+        action_point() {
+            return this.Touch().action_point();
+        }
+        Touch() {
+            const obj = new this.$.$mol_touch();
+            obj.zoom = (val) => this.zoom(val);
+            obj.pan = (val) => this.shift(val);
+            obj.allow_draw = () => this.allow_draw();
+            obj.allow_pan = () => this.allow_pan();
+            obj.allow_zoom = () => this.allow_zoom();
+            obj.draw_start = (event) => this.draw_start(event);
+            obj.draw = (event) => this.draw(event);
+            obj.draw_end = (event) => this.draw_end(event);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "hue_base", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "hue_shift", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "gap", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "shift_limit", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "shift_default", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "shift", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "scale_limit", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "scale_default", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "scale", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "scale_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "scale_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "size", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "size_real", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "dimensions", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "dimensions_viewport", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "gap_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "gap_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "shift_limit_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "shift_limit_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "scale_limit_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "scale_limit_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "dimensions_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "dimensions_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "dimensions_viewport_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "dimensions_viewport_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "zoom", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "draw_start", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "draw", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "draw_end", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_pane.prototype, "Touch", null);
+    $.$mol_plot_pane = $mol_plot_pane;
+})($ || ($ = {}));
+//mol/plot/pane/-view.tree/pane.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_pane extends $.$mol_plot_pane {
+            dimensions() {
+                const graphs = this.graphs();
+                let next = new this.$.$mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
+                for (let graph of graphs) {
+                    next = next.expanded2(graph.dimensions());
+                }
+                return next;
+            }
+            size() {
+                const dims = this.dimensions();
+                return new this.$.$mol_vector_2d((dims.x.max - dims.x.min) || 1, (dims.y.max - dims.y.min) || 1);
+            }
+            graph_hue(index) {
+                return (360 + (this.hue_base() + this.hue_shift() * index) % 360) % 360;
+            }
+            graphs_colored() {
+                const graphs = this.graphs_visible();
+                for (let index = 0; index < graphs.length; index++) {
+                    graphs[index].hue = () => this.graph_hue(index);
+                }
+                return graphs;
+            }
+            size_real() {
+                const rect = this.view_rect();
+                if (!rect)
+                    return new this.$.$mol_vector_2d(1, 1);
+                return new this.$.$mol_vector_2d(rect.width, rect.height);
+            }
+            view_box() {
+                const size = this.size_real();
+                return `0 0 ${size.x} ${size.y}`;
+            }
+            scale_limit() {
+                const { x: { max: right }, y: { max: top } } = super.scale_limit();
+                const gap = this.gap();
+                const size = this.size();
+                const real = this.size_real();
+                const left = +(real.x - gap.x.min - gap.x.max) / size.x;
+                const bottom = -(real.y - gap.y.max - gap.y.min) / size.y;
+                return new this.$.$mol_vector_2d(new this.$.$mol_vector_range(left, right), new this.$.$mol_vector_range(top, bottom));
+            }
+            scale_default() {
+                const limits = this.scale_limit();
+                return new $mol_vector_2d(limits.x.min, limits.y.max);
+            }
+            scale(next) {
+                if (next === undefined) {
+                    if (!this.graph_touched)
+                        return this.scale_default();
+                    next = $mol_mem_cached(() => this.scale()) ?? this.scale_default();
+                }
+                this.graph_touched = true;
+                return next.limited(this.scale_limit());
+            }
+            scale_x(next) {
+                return this.scale(next === undefined
+                    ? undefined
+                    : new $mol_vector_2d(next, this.scale().y)).x;
+            }
+            scale_y(next) {
+                return this.scale(next === undefined
+                    ? undefined
+                    : new $mol_vector_2d(this.scale().x, next)).y;
+            }
+            shift_limit() {
+                const dims = this.dimensions();
+                const [scale_x, scale_y] = this.scale();
+                const size = this.size_real();
+                const gap = this.gap();
+                const left = gap.x.min - dims.x.min * scale_x;
+                const right = size.x - gap.x.max - dims.x.max * scale_x;
+                const top = gap.y.max - dims.y.max * scale_y;
+                const bottom = size.y - gap.y.min - dims.y.min * scale_y;
+                return new this.$.$mol_vector_2d(new this.$.$mol_vector_range(right, left), new this.$.$mol_vector_range(bottom, top));
+            }
+            shift_default() {
+                const limits = this.shift_limit();
+                return new $mol_vector_2d(limits.x.min, limits.y.min);
+            }
+            graph_touched = false;
+            shift(next) {
+                if (next === undefined) {
+                    if (!this.graph_touched)
+                        return this.shift_default();
+                    next = $mol_mem_cached(() => this.shift()) ?? this.shift_default();
+                }
+                this.graph_touched = true;
+                return next.limited(this.shift_limit());
+            }
+            reset(event) {
+                this.graph_touched = false;
+                this.scale(this.scale_default());
+                this.shift(this.shift_default());
+            }
+            graphs_visible() {
+                const viewport = this.dimensions_viewport();
+                const size_real = this.size_real();
+                const max_x = (viewport.x.max - viewport.x.min) / size_real.x;
+                const max_y = (viewport.y.max - viewport.y.min) / size_real.y;
+                return this.graphs_positioned().filter(graph => {
+                    const dims = graph.dimensions();
+                    if (dims.x.min > dims.x.max)
+                        return true;
+                    if (dims.y.min > dims.y.max)
+                        return true;
+                    const size_x = dims.x.max - dims.x.min;
+                    const size_y = dims.y.max - dims.y.min;
+                    if ((size_x || size_y) && size_x < max_x && size_y < max_y)
+                        return false;
+                    if (dims.x.min > viewport.x.max)
+                        return false;
+                    if (dims.x.max < viewport.x.min)
+                        return false;
+                    if (dims.y.min > viewport.y.max)
+                        return false;
+                    if (dims.y.max < viewport.y.min)
+                        return false;
+                    return true;
+                });
+            }
+            graphs_positioned() {
+                const graphs = this.graphs();
+                for (let graph of graphs) {
+                    graph.shift = () => this.shift();
+                    graph.scale = () => this.scale();
+                    graph.dimensions_pane = () => this.dimensions_viewport();
+                    graph.viewport = () => this.viewport();
+                    graph.size_real = () => this.size_real();
+                    graph.cursor_position = () => this.cursor_position();
+                    graph.gap = () => this.gap();
+                }
+                return graphs;
+            }
+            dimensions_viewport() {
+                const shift = this.shift().multed0(-1);
+                const scale = this.scale().powered0(-1);
+                return this.viewport().map((range, i) => range.added0(shift[i]).multed0(scale[i]).sort((a, b) => a - b));
+            }
+            viewport() {
+                const size = this.size_real();
+                return new this.$.$mol_vector_2d(new this.$.$mol_vector_range(0, size.x), new this.$.$mol_vector_range(0, size.y));
+            }
+            graphs_sorted() {
+                const graphs = this.graphs_colored();
+                const sorted = [];
+                for (let graph of graphs)
+                    sorted.push(...graph.back());
+                for (let graph of graphs)
+                    sorted.push(...graph.front());
+                return sorted;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "dimensions", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "size", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "graphs_colored", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "scale_limit", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "scale", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "shift_limit", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "shift_default", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "shift", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "graphs_visible", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "graphs_positioned", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "dimensions_viewport", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "viewport", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_pane.prototype, "graphs_sorted", null);
+        $$.$mol_plot_pane = $mol_plot_pane;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/pane/pane.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/pane/pane.view.css", "[mol_plot_pane] {\n\tcolor: var(--mol_theme_control);\n\tflex: 1 1 auto;\n\talign-self: stretch;\n\tstroke-width: 2px;\n\tuser-select: none;\n}\n");
+})($ || ($ = {}));
+//mol/plot/pane/-css/pane.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_chart extends $mol_view {
+        gap_hor() {
+            return 48;
+        }
+        gap_vert() {
+            return 24;
+        }
+        gap_left() {
+            return this.gap_hor();
+        }
+        gap_right() {
+            return this.gap_hor();
+        }
+        gap_bottom() {
+            return this.gap_vert();
+        }
+        gap_top() {
+            return this.gap_vert();
+        }
+        graphs() {
+            return [];
+        }
+        sub() {
+            return [
+                this.Legend(),
+                this.Plot()
+            ];
+        }
+        Legend() {
+            const obj = new this.$.$mol_chart_legend();
+            obj.graphs = () => this.graphs_colored();
+            return obj;
+        }
+        hue_base() {
+            return 140;
+        }
+        hue_shift() {
+            return 111;
+        }
+        zoom(val) {
+            return this.Plot().scale_x(val);
+        }
+        graphs_colored() {
+            return this.Plot().graphs_colored();
+        }
+        Plot() {
+            const obj = new this.$.$mol_plot_pane();
+            obj.zoom = (val) => this.zoom(val);
+            obj.gap_left = () => this.gap_left();
+            obj.gap_right = () => this.gap_right();
+            obj.gap_bottom = () => this.gap_bottom();
+            obj.gap_top = () => this.gap_top();
+            obj.graphs = () => this.graphs();
+            obj.hue_base = () => this.hue_base();
+            obj.hue_shift = () => this.hue_shift();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_chart.prototype, "Legend", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart.prototype, "Plot", null);
+    $.$mol_chart = $mol_chart;
+})($ || ($ = {}));
+//mol/chart/-view.tree/chart.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/chart/chart.view.css", "[mol_chart] {\n\tdisplay: flex;\n\tflex-direction: column;\n\talign-self: stretch;\n\tflex: 1 1 auto;\n}\n\n[mol_chart_plot] {\n\tflex: 1 0 50%;\n\tmargin: .5rem;\n}\n");
+})($ || ($ = {}));
+//mol/chart/-css/chart.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_bar extends $mol_plot_graph {
+        style() {
+            return {
+                ...super.style(),
+                "stroke-width": this.stroke_width()
+            };
+        }
+        sub() {
+            return [
+                this.Hint(),
+                this.Curve()
+            ];
+        }
+        Sample() {
+            const obj = new this.$.$mol_plot_graph_sample();
+            obj.color = () => this.color();
+            return obj;
+        }
+        stroke_width() {
+            return "1rem";
+        }
+        curve() {
+            return "";
+        }
+        Curve() {
+            const obj = new this.$.$mol_svg_path();
+            obj.geometry = () => this.curve();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_bar.prototype, "Sample", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_bar.prototype, "Curve", null);
+    $.$mol_plot_bar = $mol_plot_bar;
+})($ || ($ = {}));
+//mol/plot/bar/-view.tree/bar.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_bar extends $.$mol_plot_bar {
+            indexes() {
+                const { x: { min: viewport_left, max: viewport_right }, y: { min: viewport_bottom, max: viewport_top }, } = this.viewport();
+                const [shift_x, shift_y] = this.shift();
+                const [scale_x, scale_y] = this.scale();
+                const indexes = [];
+                const series_x = this.series_x();
+                const series_y = this.series_y();
+                let first_x = null;
+                let last_x = null;
+                for (let i = 0; i < series_x.length; i++) {
+                    const scaled = [
+                        Math.round(shift_x + series_x[i] * scale_x),
+                        Math.round(shift_y + series_y[i] * scale_y),
+                    ];
+                    if (scaled[0] < viewport_left) {
+                        first_x = i;
+                        continue;
+                    }
+                    if (scaled[0] > viewport_right) {
+                        if (last_x === null)
+                            last_x = i;
+                        continue;
+                    }
+                    if (scaled[1] < viewport_bottom)
+                        continue;
+                    if (scaled[1] > viewport_top)
+                        continue;
+                    if (first_x !== null)
+                        indexes.push(first_x);
+                    indexes.push(i);
+                    if (last_x !== null)
+                        indexes.push(last_x);
+                    first_x = last_x = null;
+                }
+                if (first_x !== null)
+                    indexes.push(first_x);
+                if (last_x !== null)
+                    indexes.push(last_x);
+                return indexes;
+            }
+            curve() {
+                const points = this.points();
+                if (points.length === 0)
+                    return '';
+                const [, shift_y] = this.shift();
+                return points.map(point => `M ${point[0]} ${shift_y} V ${point[1]}`).join(' ');
+            }
+            stroke_width() {
+                return (8 / Math.sqrt(this.indexes().length)).toPrecision(2) + '%';
+            }
+            color() {
+                return `hsl( ${this.hue()} , 70% , 85% )`;
+            }
+            dimensions() {
+                let next = new this.$.$mol_vector_2d($mol_vector_range_full.inversed, new this.$.$mol_vector_range(0, 0));
+                const series_x = this.series_x();
+                const series_y = this.series_y();
+                for (let i = 0; i < series_x.length; i++) {
+                    next = next.expanded1([series_x[i], series_y[i]]);
+                }
+                const gap = (next.x.max - next.x.min) / series_x.length || 0.00000001;
+                next[0] = next.x.added1([-gap, gap]);
+                return next;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_bar.prototype, "indexes", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_bar.prototype, "dimensions", null);
+        $$.$mol_plot_bar = $mol_plot_bar;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/bar/bar.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/bar/bar.view.css", "[mol_plot_bar] {\n\tstroke-linecap: butt;\n\tstroke-width: 1rem;\n}\n\n[mol_plot_bar_sample] {\n\tbackground: currentColor;\n\tposition: absolute;\n\ttop:0;\n\tbottom: 0;\n\tleft: 0;\n\tright: 0;\n}\n");
+})($ || ($ = {}));
+//mol/plot/bar/-css/bar.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_line extends $mol_plot_graph {
+        threshold() {
+            return 1;
+        }
+        spacing() {
+            return 2;
+        }
+        color_fill() {
+            return "none";
+        }
+        dom_name() {
+            return "path";
+        }
+        attr() {
+            return {
+                ...super.attr(),
+                d: this.curve()
+            };
+        }
+        sub() {
+            return [
+                this.Hint()
+            ];
+        }
+        Sample() {
+            const obj = new this.$.$mol_plot_graph_sample();
+            obj.color = () => this.color();
+            obj.type = () => this.type();
+            return obj;
+        }
+        curve() {
+            return "";
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_line.prototype, "Sample", null);
+    $.$mol_plot_line = $mol_plot_line;
+})($ || ($ = {}));
+//mol/plot/line/-view.tree/line.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_line extends $.$mol_plot_line {
+            sub() {
+                return this.hint() ? super.sub() : [];
+            }
+            indexes() {
+                const threshold = this.threshold();
+                const { x: { min: viewport_left, max: viewport_right }, y: { min: viewport_bottom, max: viewport_top }, } = this.viewport();
+                const [shift_x, shift_y] = this.shift();
+                const [scale_x, scale_y] = this.scale();
+                const indexes = [];
+                let last = new $mol_vector_2d(Number.NEGATIVE_INFINITY, Number.NEGATIVE_INFINITY);
+                let last_zone = new $mol_vector_2d(0, 0);
+                const series_x = this.series_x();
+                const series_y = this.series_y();
+                const zone_of = (point) => new $mol_vector_2d(point.x < viewport_left ? -1
+                    : point.x > viewport_right ? 1
+                        : 0, point.y < viewport_bottom ? -1
+                    : point.y > viewport_top ? 1
+                        : 0);
+                for (let i = 0; i < series_x.length - 1; i++) {
+                    const scaled = new $mol_vector_2d(Math.round(shift_x + this.repos_x(series_x[i]) * scale_x), Math.round(shift_y + this.repos_y(series_y[i]) * scale_y));
+                    if (Math.abs(scaled.x - last.x) < threshold
+                        && Math.abs(scaled.y - last.y) < threshold)
+                        continue;
+                    const zone = zone_of(scaled);
+                    last = scaled;
+                    if (zone.x !== 0 && zone.x === last_zone.x || zone.y !== 0 && zone.y === last_zone.y) {
+                        continue;
+                    }
+                    if (last_zone.x !== 0 || last_zone.y !== 0) {
+                        indexes.push(i - 1);
+                    }
+                    last_zone = zone;
+                    indexes.push(i);
+                }
+                indexes.push(series_x.length - 1);
+                return indexes;
+            }
+            curve() {
+                const points = this.points();
+                if (points.length === 0)
+                    return '';
+                const main = points.map(point => `L ${point.join(' ')}`).join(' ');
+                return `M ${points[0].join(' ')} ${main}`;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_line.prototype, "indexes", null);
+        $$.$mol_plot_line = $mol_plot_line;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/line/line.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/line/line.view.css", "[mol_plot_line] {\n\tfill: none;\n\tstroke-linejoin: round;\n}\n\n[mol_plot_line_sample] {\n\theight: 0;\n\tleft: 0;\n\tright: 0;\n\tbottom: 0;\n\tborder-width: 2px 0 0;\n\tposition: absolute;\n\ttop: .75em;\n\ttransform: translateY(-50%);\n}\n");
+})($ || ($ = {}));
+//mol/plot/line/-css/line.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_dot extends $mol_plot_graph {
+        points_max() {
+            return +Infinity;
+        }
+        aspect() {
+            return 1;
+        }
+        style() {
+            return {
+                ...super.style(),
+                "stroke-width": this.diameter()
+            };
+        }
+        sub() {
+            return [
+                this.Hint(),
+                this.Curve()
+            ];
+        }
+        Sample() {
+            const obj = new this.$.$mol_plot_graph_sample();
+            obj.color = () => this.color();
+            return obj;
+        }
+        diameter() {
+            return 8;
+        }
+        curve() {
+            return "";
+        }
+        Curve() {
+            const obj = new this.$.$mol_svg_path();
+            obj.geometry = () => this.curve();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_dot.prototype, "Sample", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_dot.prototype, "Curve", null);
+    $.$mol_plot_dot = $mol_plot_dot;
+})($ || ($ = {}));
+//mol/plot/dot/-view.tree/dot.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const mask = 0b11111_11111_11111;
+    function $mol_coord_pack(high, low) {
+        return (high << 17 >>> 2) | (low & mask);
+    }
+    $.$mol_coord_pack = $mol_coord_pack;
+    function $mol_coord_high(pack) {
+        return pack << 2 >> 17;
+    }
+    $.$mol_coord_high = $mol_coord_high;
+    function $mol_coord_low(pack) {
+        return (pack << 17) >> 17;
+    }
+    $.$mol_coord_low = $mol_coord_low;
+})($ || ($ = {}));
+//mol/coord/coord.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_dot extends $.$mol_plot_dot {
+            filled() {
+                return new Set();
+            }
+            indexes() {
+                const radius = this.diameter() / 2;
+                const points_max = this.points_max();
+                const viewport = this.viewport();
+                const viewport_left = viewport.x.min - radius;
+                const viewport_right = viewport.x.max + radius;
+                const viewport_bottom = viewport.y.min - radius;
+                const viewport_top = viewport.y.max + radius;
+                const [shift_x, shift_y] = this.shift();
+                const [scale_x, scale_y] = this.scale();
+                let last_x = Number.NEGATIVE_INFINITY;
+                let last_y = Number.NEGATIVE_INFINITY;
+                let spacing = 0;
+                let filled = this.filled();
+                let indexes;
+                const series_x = this.series_x();
+                const series_y = this.series_y();
+                do {
+                    indexes = [];
+                    for (let i = 0; i < series_x.length; i++) {
+                        const point_x = this.repos_x(series_x[i]);
+                        const point_y = this.repos_y(series_y[i]);
+                        const scaled_x = Math.round(shift_x + point_x * scale_x);
+                        const scaled_y = Math.round(shift_y + point_y * scale_y);
+                        if (Math.abs(scaled_x - last_x) < radius
+                            && Math.abs(scaled_y - last_y) < radius)
+                            continue;
+                        last_x = scaled_x;
+                        last_y = scaled_y;
+                        if (scaled_x < viewport_left)
+                            continue;
+                        if (scaled_y < viewport_bottom)
+                            continue;
+                        if (scaled_x > viewport_right)
+                            continue;
+                        if (scaled_y > viewport_top)
+                            continue;
+                        if (spacing !== 0) {
+                            const key = $mol_coord_pack(Math.round(point_x * scale_x / spacing) * spacing, Math.round(point_y * scale_y / spacing) * spacing);
+                            if (filled.has(key))
+                                continue;
+                            filled.add(key);
+                        }
+                        indexes.push(i);
+                        if (indexes.length > points_max)
+                            break;
+                    }
+                    spacing += Math.ceil(radius);
+                    filled.clear();
+                } while (indexes.length > points_max);
+                return indexes;
+            }
+            curve() {
+                const points = this.points();
+                if (points.length === 0)
+                    return '';
+                const diameter = this.diameter();
+                const aspect = this.aspect();
+                const shift_y = Math.max(0, Math.floor((aspect - 1) * diameter / 2));
+                const shift_x = Math.max(0, Math.floor((1 / aspect - 1) * diameter / 2));
+                const size_y = Math.max(0, Math.ceil((aspect - 1) * diameter));
+                const size_x = Math.max(0, Math.ceil((1 / aspect - 1) * diameter));
+                return points.map(point => `M ${point[0] - shift_x} ${point[1] - shift_y} l ${size_x} ${size_y}`).join(' ');
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_dot.prototype, "filled", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_dot.prototype, "indexes", null);
+        $$.$mol_plot_dot = $mol_plot_dot;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/dot/dot.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/dot/dot.view.css", "[mol_plot_dot] {\n\tstroke-linecap: round;\n\tfill: none;\n}\n\n[mol_plot_dot_sample] {\n\twidth: .5rem;\n\theight: .5rem;\n\tborder-radius: 1rem;\n\tbackground: currentColor;\n\tposition: absolute;\n\ttop: .75em;\n\tleft: 50%;\n\ttransform: translate(-50%, -50%);\n}\n");
+})($ || ($ = {}));
+//mol/plot/dot/-css/dot.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_group extends $mol_plot_graph {
+        sub() {
+            return this.graphs_enriched();
+        }
+        Sample() {
+            const obj = new this.$.$mol_plot_graph_sample();
+            obj.sub = () => this.graph_samples();
+            return obj;
+        }
+        graphs() {
+            return [];
+        }
+        graphs_enriched() {
+            return this.graphs();
+        }
+        graph_samples() {
+            return [];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_group.prototype, "Sample", null);
+    $.$mol_plot_group = $mol_plot_group;
+})($ || ($ = {}));
+//mol/plot/group/-view.tree/group.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_group extends $.$mol_plot_group {
+            graphs_enriched() {
+                const graphs = this.graphs();
+                for (let graph of graphs) {
+                    graph.shift = () => this.shift();
+                    graph.scale = () => this.scale();
+                    graph.size_real = () => this.size_real();
+                    graph.hue = () => this.hue();
+                    graph.series_x = () => this.series_x();
+                    graph.series_y = () => this.series_y();
+                    graph.dimensions_pane = () => this.dimensions_pane();
+                    graph.viewport = () => this.viewport();
+                    graph.cursor_position = () => this.cursor_position();
+                    graph.gap = () => this.gap();
+                    graph.title = () => this.title();
+                    graph.repos_x = val => this.repos_x(val);
+                    graph.repos_y = val => this.repos_y(val);
+                }
+                return graphs;
+            }
+            dimensions() {
+                const graphs = this.graphs_enriched();
+                let next = new this.$.$mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
+                for (let graph of graphs) {
+                    next = next.expanded2(graph.dimensions());
+                }
+                return next;
+            }
+            graph_samples() {
+                return this.graphs_enriched().map(graph => graph.Sample());
+            }
+            back() {
+                const graphs = this.graphs_enriched();
+                const next = [];
+                for (let graph of graphs)
+                    next.push(...graph.back());
+                return next;
+            }
+            front() {
+                const graphs = this.graphs_enriched();
+                const next = [];
+                for (let graph of graphs)
+                    next.push(...graph.front());
+                return next;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_group.prototype, "graphs_enriched", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_group.prototype, "dimensions", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_group.prototype, "graph_samples", null);
+        $$.$mol_plot_group = $mol_plot_group;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/group/group.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_svg_text extends $mol_svg {
+        dom_name() {
+            return "text";
+        }
+        pos() {
+            return [];
+        }
+        attr() {
+            return {
+                ...super.attr(),
+                x: this.pos_x(),
+                y: this.pos_y(),
+                "text-anchor": this.align()
+            };
+        }
+        sub() {
+            return [
+                this.text()
+            ];
+        }
+        pos_x() {
+            return "";
+        }
+        pos_y() {
+            return "";
+        }
+        align() {
+            return "middle";
+        }
+        text() {
+            return "";
+        }
+    }
+    $.$mol_svg_text = $mol_svg_text;
+})($ || ($ = {}));
+//mol/svg/text/-view.tree/text.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_svg_text extends $.$mol_svg_text {
+            pos_x() {
+                return this.pos()[0];
+            }
+            pos_y() {
+                return this.pos()[1];
+            }
+        }
+        $$.$mol_svg_text = $mol_svg_text;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/svg/text/text.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/svg/text/text.view.css", "[mol_svg_text] {\n\tfill: currentColor;\n\tstroke: none;\n}\n");
+})($ || ($ = {}));
+//mol/svg/text/-css/text.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_svg_rect extends $mol_svg {
+        dom_name() {
+            return "rect";
+        }
+        pos() {
+            return [];
+        }
+        attr() {
+            return {
+                ...super.attr(),
+                width: this.width(),
+                height: this.height(),
+                x: this.pos_x(),
+                y: this.pos_y()
+            };
+        }
+        width() {
+            return "0";
+        }
+        height() {
+            return "0";
+        }
+        pos_x() {
+            return "";
+        }
+        pos_y() {
+            return "";
+        }
+    }
+    $.$mol_svg_rect = $mol_svg_rect;
+})($ || ($ = {}));
+//mol/svg/rect/-view.tree/rect.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_svg_rect extends $.$mol_svg_rect {
+            pos_x() {
+                return this.pos()[0];
+            }
+            pos_y() {
+                return this.pos()[1];
+            }
+        }
+        $$.$mol_svg_rect = $mol_svg_rect;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/svg/rect/rect.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_svg_text_box extends $mol_svg_group {
+        font_size() {
+            return 16;
+        }
+        width() {
+            return 0;
+        }
+        sub() {
+            return [
+                this.Back(),
+                this.Text()
+            ];
+        }
+        box_width() {
+            return "0.5rem";
+        }
+        box_height() {
+            return "1rem";
+        }
+        box_pos_x() {
+            return this.pos_x();
+        }
+        box_pos_y() {
+            return "0";
+        }
+        Back() {
+            const obj = new this.$.$mol_svg_rect();
+            obj.width = () => this.box_width();
+            obj.height = () => this.box_height();
+            obj.pos = () => [
+                this.box_pos_x(),
+                this.box_pos_y()
+            ];
+            return obj;
+        }
+        pos_x() {
+            return "0";
+        }
+        pos_y() {
+            return "100%";
+        }
+        align() {
+            return "start";
+        }
+        text() {
+            return "";
+        }
+        Text() {
+            const obj = new this.$.$mol_svg_text();
+            obj.pos = () => [
+                this.pos_x(),
+                this.pos_y()
+            ];
+            obj.align = () => this.align();
+            obj.sub = () => [
+                this.text()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_svg_text_box.prototype, "Back", null);
+    __decorate([
+        $mol_mem
+    ], $mol_svg_text_box.prototype, "Text", null);
+    $.$mol_svg_text_box = $mol_svg_text_box;
+})($ || ($ = {}));
+//mol/svg/text/box/-view.tree/box.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    let canvas;
+    function $mol_font_canvas(next = canvas) {
+        if (!next)
+            next = $mol_dom_context.document.createElement('canvas').getContext('2d');
+        return canvas = next;
+    }
+    $.$mol_font_canvas = $mol_font_canvas;
+})($ || ($ = {}));
+//mol/font/canvas/canvas.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_font_measure(font, text) {
+        const canvas = $mol_font_canvas();
+        canvas.font = font;
+        return canvas.measureText(text).width;
+    }
+    $.$mol_font_measure = $mol_font_measure;
+})($ || ($ = {}));
+//mol/font/measure/measure.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_svg_text_box extends $.$mol_svg_text_box {
+            box_width() {
+                return `${this.width()}px`;
+            }
+            width() {
+                return $mol_font_measure(this.font_size() + 'px ' + this.font_family(), this.text());
+            }
+            box_pos_x() {
+                const align = this.align();
+                if (align === 'end')
+                    return `calc(${this.pos_x()} - ${this.width()})`;
+                if (align === 'middle')
+                    return `calc(${this.pos_x()} - ${Math.round(this.width() / 2)})`;
+                return this.pos_x();
+            }
+            box_pos_y() {
+                return `calc(${this.pos_y()} - ${this.font_size() - 2})`;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_svg_text_box.prototype, "width", null);
+        $$.$mol_svg_text_box = $mol_svg_text_box;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/svg/text/box/box.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/svg/text/box/box.view.css", "[mol_svg_text_box_back] {\n\tstroke: none;\n\tfill: var(--mol_theme_back);\n}\n");
+})($ || ($ = {}));
+//mol/svg/text/box/-css/box.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_ruler extends $mol_plot_graph {
+        step() {
+            return 0;
+        }
+        scale_axis() {
+            return 1;
+        }
+        scale_step() {
+            return 1;
+        }
+        shift_axis() {
+            return 1;
+        }
+        dimensions_axis() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        viewport_axis() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        axis_points() {
+            return [];
+        }
+        normalize(val) {
+            if (val !== undefined)
+                return val;
+            return 0;
+        }
+        precision() {
+            return 1;
+        }
+        sub() {
+            return [
+                this.Background(),
+                this.Curve(),
+                this.labels_formatted(),
+                this.Title()
+            ];
+        }
+        Label(id) {
+            const obj = new this.$.$mol_svg_text();
+            obj.pos = () => this.label_pos(id);
+            obj.text = () => this.label_text(id);
+            obj.align = () => this.label_align();
+            return obj;
+        }
+        background_x() {
+            return "0";
+        }
+        background_y() {
+            return "0";
+        }
+        background_width() {
+            return "100%";
+        }
+        background_height() {
+            return "14";
+        }
+        Background() {
+            const obj = new this.$.$mol_svg_rect();
+            obj.pos_x = () => this.background_x();
+            obj.pos_y = () => this.background_y();
+            obj.width = () => this.background_width();
+            obj.height = () => this.background_height();
+            return obj;
+        }
+        curve() {
+            return "";
+        }
+        Curve() {
+            const obj = new this.$.$mol_svg_path();
+            obj.geometry = () => this.curve();
+            return obj;
+        }
+        labels_formatted() {
+            return [];
+        }
+        title_pos_x() {
+            return "0";
+        }
+        title_pos_y() {
+            return "100%";
+        }
+        title_align() {
+            return "start";
+        }
+        Title() {
+            const obj = new this.$.$mol_svg_text_box();
+            obj.pos_x = () => this.title_pos_x();
+            obj.pos_y = () => this.title_pos_y();
+            obj.align = () => this.title_align();
+            obj.text = () => this.title();
+            return obj;
+        }
+        label_pos_x(id) {
+            return "";
+        }
+        label_pos_y(id) {
+            return "";
+        }
+        label_pos(id) {
+            return [
+                this.label_pos_x(id),
+                this.label_pos_y(id)
+            ];
+        }
+        label_text(id) {
+            return "";
+        }
+        label_align() {
+            return "";
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_ruler.prototype, "dimensions_axis", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_ruler.prototype, "viewport_axis", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_ruler.prototype, "normalize", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_plot_ruler.prototype, "Label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_ruler.prototype, "Background", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_ruler.prototype, "Curve", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_ruler.prototype, "Title", null);
+    $.$mol_plot_ruler = $mol_plot_ruler;
+})($ || ($ = {}));
+//mol/plot/ruler/-view.tree/ruler.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_math_round_expand(val, gap = 1) {
+        if (val === 0)
+            return 0;
+        const val_abs = Math.abs(val);
+        const val_sign = val ? Math.round(val / val_abs) : 0;
+        const digits = Math.floor(Math.log(val_abs) / Math.log(10));
+        const precission = Math.pow(10, digits - gap);
+        const val_expanded = precission * Math.ceil(val_abs / precission);
+        return val_sign * val_expanded;
+    }
+    $.$mol_math_round_expand = $mol_math_round_expand;
+})($ || ($ = {}));
+//mol/math/round/expand/expand.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_ruler extends $.$mol_plot_ruler {
+            labels_formatted() {
+                return this.axis_points().map((point, index) => this.Label(index));
+            }
+            step() {
+                const scale = Math.abs(this.scale_step());
+                const dims = this.dimensions_axis();
+                const range = dims.max - dims.min;
+                const min_width = (Math.abs(Math.log10(range)) + 2) * 15;
+                const size = $mol_math_round_expand(range, -1);
+                const count = Math.max(1, Math.pow(10, Math.floor(Math.log(size * scale / min_width) / Math.log(10))));
+                let step = size / count;
+                const step_max = min_width * 2 / scale;
+                if (step > step_max)
+                    step /= 2;
+                if (step > step_max)
+                    step /= 2;
+                return Math.max(step, Math.abs(dims.min) / 1e10, Math.abs(dims.max) / 1e10);
+            }
+            snap_to_grid(coord) {
+                const viewport = this.viewport_axis();
+                const scale = this.scale_axis();
+                const shift = this.shift_axis();
+                const step = this.step();
+                const val = Math.round(coord / step) * step;
+                if (scale == 0)
+                    return val;
+                const step_scaled = step * scale;
+                const scaled = val * scale + shift;
+                let count = 0;
+                if (scaled < viewport.min)
+                    count = (scaled - viewport.min) / step_scaled;
+                if (scaled > viewport.max)
+                    count = (scaled - viewport.max) / step_scaled;
+                return val - Math.floor(count) * step;
+            }
+            axis_points() {
+                const dims = this.dimensions_axis();
+                const start = this.snap_to_grid(dims.min);
+                const end = this.snap_to_grid(dims.max);
+                const step = this.step();
+                const next = [];
+                for (let val = start; val <= end; val += step) {
+                    next.push(val);
+                }
+                return next;
+            }
+            precision() {
+                const step = this.step();
+                return Math.max(0, Math.min(15, (step - Math.floor(step)).toString().length - 2));
+            }
+            label_text(index) {
+                const point = this.axis_points()[index];
+                return point.toFixed(this.precision());
+            }
+            font_size() {
+                return this.Background().font_size();
+            }
+            back() {
+                return [this.Curve()];
+            }
+            front() {
+                return [this.Background(), ...this.labels_formatted(), this.Title()];
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_ruler.prototype, "step", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_ruler.prototype, "axis_points", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_ruler.prototype, "precision", null);
+        $$.$mol_plot_ruler = $mol_plot_ruler;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/ruler/ruler.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/ruler/ruler.view.css", "[mol_plot_ruler_curve] {\n\tcolor: var(--mol_theme_line);\n\tstroke-width: 1px;\n\tstroke: currentColor;\n}\n\n[mol_plot_ruler_label] {\n\tcolor: var(--mol_theme_text);\n}\n\n[mol_plot_ruler_title] {\n\tcolor: var(--mol_theme_shade);\n\tbackground-color: var(--mol_theme_back);\n}\n\n[mol_plot_ruler_background] {\n\tstroke: none;\n\tfill: var(--mol_theme_back);\n\topacity: 0.8;\n}\n");
+})($ || ($ = {}));
+//mol/plot/ruler/-css/ruler.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_ruler_vert extends $mol_plot_ruler {
+        title_align() {
+            return "end";
+        }
+        label_align() {
+            return "end";
+        }
+        title_pos_y() {
+            return "14";
+        }
+        label_pos_x(id) {
+            return this.title_pos_x();
+        }
+        background_height() {
+            return "100%";
+        }
+        background_width() {
+            return this.title_pos_x();
+        }
+    }
+    $.$mol_plot_ruler_vert = $mol_plot_ruler_vert;
+})($ || ($ = {}));
+//mol/plot/ruler/vert/-view.tree/vert.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_ruler_vert extends $.$mol_plot_ruler_vert {
+            dimensions_axis() {
+                return this.dimensions_pane().y;
+            }
+            viewport_axis() {
+                return new this.$.$mol_vector_range(0, this.size_real().y);
+            }
+            scale_axis() {
+                return this.scale()[1];
+            }
+            scale_step() {
+                return -this.scale()[1];
+            }
+            shift_axis() {
+                return this.shift()[1];
+            }
+            curve() {
+                const [, shift] = this.shift();
+                const [, scale] = this.scale();
+                return this.axis_points().map(point => {
+                    let scaled = Math.round(point * scale + shift);
+                    scaled = Math.max(Number.MIN_SAFE_INTEGER, Math.min(scaled, Number.MAX_SAFE_INTEGER));
+                    return `M 0 ${scaled} H 2000`;
+                }).join(' ');
+            }
+            title_pos_x() {
+                return String(this.gap().x.min);
+            }
+            label_pos_y(index) {
+                return (this.axis_points()[index] * this.scale()[1] + this.shift()[1]).toFixed(3);
+            }
+        }
+        $$.$mol_plot_ruler_vert = $mol_plot_ruler_vert;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/ruler/vert/vert.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/ruler/vert/vert.view.css", "[mol_plot_ruler_vert_label] {\n\ttransform: translateY( 4px );\n}\n");
+})($ || ($ = {}));
+//mol/plot/ruler/vert/-css/vert.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_ruler_hor extends $mol_plot_ruler {
+        title_align() {
+            return "start";
+        }
+        label_align() {
+            return "middle";
+        }
+        title_pos_x() {
+            return "0";
+        }
+        title_pos_y() {
+            return "100%";
+        }
+        label_pos_y(id) {
+            return this.title_pos_y();
+        }
+        background_width() {
+            return "100%";
+        }
+    }
+    $.$mol_plot_ruler_hor = $mol_plot_ruler_hor;
+})($ || ($ = {}));
+//mol/plot/ruler/hor/-view.tree/hor.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_ruler_hor extends $.$mol_plot_ruler_hor {
+            dimensions_axis() {
+                return this.dimensions_pane().x;
+            }
+            viewport_axis() {
+                return new this.$.$mol_vector_range(0, this.size_real().x);
+            }
+            scale_axis() {
+                return this.scale()[0];
+            }
+            scale_step() {
+                return this.scale()[0];
+            }
+            shift_axis() {
+                return this.shift()[0];
+            }
+            curve() {
+                const [shift] = this.shift();
+                const [scale] = this.scale();
+                return this.axis_points().map(point => {
+                    let scaled = Math.round(point * scale + shift);
+                    scaled = Math.max(Number.MIN_SAFE_INTEGER, Math.min(scaled, Number.MAX_SAFE_INTEGER));
+                    return `M ${scaled} 1000 V 0`;
+                }).join(' ');
+            }
+            label_pos_x(index) {
+                return (this.axis_points()[index] * this.scale()[0] + this.shift()[0]).toFixed(3);
+            }
+            background_y() {
+                return String(this.size_real()[1] - this.font_size());
+            }
+            title_pos_y() {
+                return String(this.size_real()[1]);
+            }
+            background_height() {
+                return String(this.font_size());
+            }
+        }
+        $$.$mol_plot_ruler_hor = $mol_plot_ruler_hor;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/ruler/hor/hor.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/ruler/hor/hor.view.css", "[mol_plot_ruler_hor_label] {\n\ttransform: translateY( -4px );\n}\n\n[mol_plot_ruler_hor_title] {\n\ttransform: translateY( -4px );\n}\n");
+})($ || ($ = {}));
+//mol/plot/ruler/hor/-css/hor.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_mark_hor extends $mol_plot_ruler_hor {
+        labels() {
+            return [];
+        }
+    }
+    $.$mol_plot_mark_hor = $mol_plot_mark_hor;
+})($ || ($ = {}));
+//mol/plot/mark/hor/-view.tree/hor.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_mark_hor extends $.$mol_plot_mark_hor {
+            series_x() {
+                return this.labels().map((val, index) => index);
+            }
+            labels() {
+                return this.series_x().map(val => String(val));
+            }
+            visible_indexes() {
+                const series_x = this.series_x();
+                const labels = this.labels();
+                const [shift_x,] = this.shift();
+                const [scale_x,] = this.scale();
+                let step = this.step() * scale_x;
+                const [[viewport_left, viewport_right]] = this.viewport();
+                const size_x = viewport_right - viewport_left;
+                const font_size = this.font_size();
+                let indexes;
+                let labels_width;
+                do {
+                    indexes = [];
+                    labels_width = 0;
+                    let last = 0;
+                    let current = 0;
+                    for (let i = 0; i < series_x.length; i++) {
+                        const point_x = series_x[i];
+                        const scaled_x = (shift_x + point_x * scale_x);
+                        if (scaled_x < viewport_left)
+                            continue;
+                        if (scaled_x > viewport_right)
+                            continue;
+                        if (current === 0)
+                            current = scaled_x;
+                        if (scaled_x < current) {
+                            last = i;
+                            continue;
+                        }
+                        indexes.push(i);
+                        current += step;
+                        last = 0;
+                        labels_width += font_size * (labels[i].length + 1);
+                        if (labels_width > size_x)
+                            break;
+                    }
+                    if (last !== 0) {
+                        indexes.push(last);
+                        labels_width += font_size * (labels[last].length + 1);
+                    }
+                    step *= 1.5;
+                } while (labels_width > size_x && indexes.length > 2);
+                return indexes;
+            }
+            curve() {
+                const [shift] = this.shift();
+                const [scale] = this.scale();
+                const series_x = this.series_x();
+                return this.visible_indexes().map(index => {
+                    const scaled = series_x[index] * scale + shift;
+                    return `M ${scaled.toFixed(3)} 1000 V 0`;
+                }).join(' ');
+            }
+            label_text(index) {
+                return this.labels()[index];
+            }
+            labels_formatted() {
+                return this.visible_indexes().map(index => this.Label(index));
+            }
+            label_pos_x(index) {
+                return (this.series_x()[index] * this.scale()[0] + this.shift()[0]).toFixed(3);
+            }
+            label_pos_y(index) {
+                return this.title_pos_y();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_mark_hor.prototype, "series_x", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_mark_hor.prototype, "labels", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_mark_hor.prototype, "visible_indexes", null);
+        $$.$mol_plot_mark_hor = $mol_plot_mark_hor;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/mark/hor/hor.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/mark/hor/hor.view.css", "[mol_plot_mark_hor_curve] {\n\tcolor: var(--mol_theme_line);\n\tstroke-width: .1%;\n\tstroke: currentColor;\n\tpointer-events: none;\n}\n\n[mol_plot_mark_hor_label] {\n\tcolor: var(--mol_theme_text);\n\ttransform: translateY( -4px );\n}\n\n[mol_plot_mark_hor_title] {\n\tcolor: var(--mol_theme_shade);\n\ttransform: translateY( -4px );\n}\n");
+})($ || ($ = {}));
+//mol/plot/mark/hor/-css/hor.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_mark_cross extends $mol_plot_graph {
+        labels() {
+            return [];
+        }
+        title_x_gap() {
+            return 4;
+        }
+        threshold() {
+            return 16;
+        }
+        graphs() {
+            return [];
+        }
+        dimensions() {
+            const obj = new this.$.$mol_vector_2d(this.dimensions_x(), this.dimensions_y());
+            return obj;
+        }
+        sub() {
+            return [
+                this.Curve(),
+                this.Label_x(),
+                this.Label_y()
+            ];
+        }
+        dimensions_x() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        dimensions_y() {
+            const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+            return obj;
+        }
+        curve() {
+            return "";
+        }
+        Curve() {
+            const obj = new this.$.$mol_svg_path();
+            obj.geometry = () => this.curve();
+            return obj;
+        }
+        title_x_pos_x() {
+            return "0";
+        }
+        title_x_pos_y() {
+            return "100%";
+        }
+        title_x() {
+            return "";
+        }
+        Label_x() {
+            const obj = new this.$.$mol_svg_text_box();
+            obj.pos_x = () => this.title_x_pos_x();
+            obj.pos_y = () => this.title_x_pos_y();
+            obj.text = () => this.title_x();
+            return obj;
+        }
+        title_y_pos_x() {
+            return "0";
+        }
+        title_y_pos_y() {
+            return "0";
+        }
+        title_y() {
+            return "";
+        }
+        Label_y() {
+            const obj = new this.$.$mol_svg_text_box();
+            obj.pos_x = () => this.title_y_pos_x();
+            obj.pos_y = () => this.title_y_pos_y();
+            obj.text = () => this.title_y();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_mark_cross.prototype, "dimensions", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_mark_cross.prototype, "dimensions_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_mark_cross.prototype, "dimensions_y", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_mark_cross.prototype, "Curve", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_mark_cross.prototype, "Label_x", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_mark_cross.prototype, "Label_y", null);
+    $.$mol_plot_mark_cross = $mol_plot_mark_cross;
+})($ || ($ = {}));
+//mol/plot/mark/cross/-view.tree/cross.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_mark_cross extends $.$mol_plot_mark_cross {
+            nearest() {
+                let delta = this.threshold() ** 2;
+                const [cursor_x, cursor_y] = this.cursor_position();
+                if (Number.isNaN(cursor_x) || Number.isNaN(cursor_y))
+                    return null;
+                const graphs = this.graphs();
+                let index = 0;
+                let graph = null;
+                const [shift_x, shift_y] = this.shift();
+                const [scale_x, scale_y] = this.scale();
+                for (let current of graphs) {
+                    const indexes = current.indexes();
+                    const series_x = current.series_x();
+                    const series_y = current.series_y();
+                    for (let i of indexes) {
+                        const point_x = shift_x + series_x[i] * scale_x;
+                        const point_y = shift_y + series_y[i] * scale_y;
+                        const diff = (point_x - cursor_x) ** 2 + (point_y - cursor_y) ** 2;
+                        if (diff < delta) {
+                            delta = diff;
+                            index = i;
+                            graph = current;
+                        }
+                    }
+                }
+                if (!graph)
+                    return null;
+                const value = new $mol_vector_2d(graph.series_x()[index], graph.series_y()[index]);
+                const scaled = new $mol_vector_2d(shift_x + value.x * scale_x, shift_y + value.y * scale_y);
+                return { value, scaled, index };
+            }
+            curve() {
+                const nearest = this.nearest();
+                if (!nearest)
+                    return '';
+                return `M ${nearest.scaled.x.toFixed(3)} 1000 V 0 M 0 ${nearest.scaled.y.toFixed(3)} H 2000`;
+            }
+            title_x() {
+                const nearest = this.nearest();
+                if (!nearest)
+                    return '';
+                const labels = this.labels();
+                if (labels.length > nearest.index)
+                    return labels[nearest.index];
+                return String(nearest.value.x);
+            }
+            title_x_pos_x() {
+                const nearest = this.nearest();
+                if (!nearest)
+                    return '0';
+                const width = this.Label_x().width();
+                return (nearest.scaled.x - width / 2).toFixed(3);
+            }
+            title_x_pos_y() {
+                const nearest = this.nearest();
+                if (!nearest)
+                    return '0';
+                const pos = this.size_real().y - this.title_x_gap();
+                return pos.toFixed(3);
+            }
+            title_y() {
+                const nearest = this.nearest();
+                if (!nearest)
+                    return '';
+                return String(nearest.value.y);
+            }
+            title_y_pos_y() {
+                const nearest = this.nearest();
+                if (!nearest)
+                    return '0';
+                return nearest.scaled.y.toFixed(3);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_mark_cross.prototype, "nearest", null);
+        $$.$mol_plot_mark_cross = $mol_plot_mark_cross;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/mark/cross/cross.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/mark/cross/cross.view.css", "[mol_plot_mark_cross_curve] {\n\tcolor: var(--mol_theme_focus);\n\tstroke-width: 1px;\n\tstroke: currentColor;\n\tpointer-events: none;\n}\n\n[mol_plot_mark_cross_label_x], [mol_plot_mark_cross_label_y] {\n\tcolor: var(--mol_theme_focus);\n\tfont-weight: bold;\n\tpointer-events: none;\n}\n\n[mol_plot_mark_cross_label_y] {\n\ttransform: translateY( 4px );\n}\n");
+})($ || ($ = {}));
+//mol/plot/mark/cross/-css/cross.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_chart_demo_simple extends $mol_example_large {
+        title() {
+            return "Simple chart with hadcoded series";
+        }
+        sub() {
+            return [
+                this.Chart()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_plot",
+                "chart",
+                "plot",
+                "visualization",
+                "dashboard"
+            ];
+        }
+        plan_title() {
+            return "Plan";
+        }
+        plan() {
+            return [
+                10,
+                20,
+                30,
+                40
+            ];
+        }
+        Plan() {
+            const obj = new this.$.$mol_plot_bar();
+            obj.title = () => this.plan_title();
+            obj.series_y = () => this.plan();
+            return obj;
+        }
+        fact_title() {
+            return "Fact";
+        }
+        facts() {
+            return [
+                5,
+                10,
+                30
+            ];
+        }
+        Fact_line() {
+            const obj = new this.$.$mol_plot_line();
+            return obj;
+        }
+        Fact_dots() {
+            const obj = new this.$.$mol_plot_dot();
+            return obj;
+        }
+        Fact() {
+            const obj = new this.$.$mol_plot_group();
+            obj.title = () => this.fact_title();
+            obj.series_y = () => this.facts();
+            obj.graphs = () => [
+                this.Fact_line(),
+                this.Fact_dots()
+            ];
+            return obj;
+        }
+        vert_title() {
+            return "pcs";
+        }
+        Vert_ruler() {
+            const obj = new this.$.$mol_plot_ruler_vert();
+            obj.title = () => this.vert_title();
+            return obj;
+        }
+        marker_hor_title() {
+            return "Months";
+        }
+        months() {
+            return [
+                "January",
+                "February",
+                "March",
+                "April"
+            ];
+        }
+        Marker_hor() {
+            const obj = new this.$.$mol_plot_mark_hor();
+            obj.title = () => this.marker_hor_title();
+            obj.labels = () => this.months();
+            return obj;
+        }
+        Marker_cross() {
+            const obj = new this.$.$mol_plot_mark_cross();
+            obj.labels = () => this.months();
+            obj.graphs = () => [
+                this.Plan(),
+                this.Fact_dots()
+            ];
+            return obj;
+        }
+        Chart() {
+            const obj = new this.$.$mol_chart();
+            obj.graphs = () => [
+                this.Plan(),
+                this.Fact(),
+                this.Vert_ruler(),
+                this.Marker_hor(),
+                this.Marker_cross()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_simple.prototype, "Plan", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_simple.prototype, "Fact_line", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_simple.prototype, "Fact_dots", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_simple.prototype, "Fact", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_simple.prototype, "Vert_ruler", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_simple.prototype, "Marker_hor", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_simple.prototype, "Marker_cross", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_simple.prototype, "Chart", null);
+    $.$mol_chart_demo_simple = $mol_chart_demo_simple;
+})($ || ($ = {}));
+//mol/chart/demo/simple/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_fill extends $mol_plot_line {
+        threshold() {
+            return 4;
+        }
+    }
+    $.$mol_plot_fill = $mol_plot_fill;
+})($ || ($ = {}));
+//mol/plot/fill/-view.tree/fill.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_fill extends $.$mol_plot_fill {
+            curve() {
+                const points = this.points();
+                if (points.length === 0)
+                    return '';
+                const [, shift_y] = this.shift();
+                const main = points.map(point => `L ${point.join(' ')}`).join(' ');
+                return `M ${points[0].join(' ')} ${main} V ${shift_y} H ${points[0][0]}`;
+            }
+            front() {
+                return [];
+            }
+            back() {
+                return [this];
+            }
+        }
+        $$.$mol_plot_fill = $mol_plot_fill;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/fill/fill.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/fill/fill.view.css", "[mol_plot_fill] {\n\tstroke: none;\n\tstroke-width: 0;\n\topacity: .1;\n\tfill: currentColor;\n\tpointer-events: none;\n}\n\n[mol_plot_fill_sample] {\n\topacity: .1;\n\tbackground: currentColor;\n\tposition: absolute;\n\tbottom: 0;\n\ttop: .75em;\n\tleft: 0;\n\tright: 0;\n}\n");
+})($ || ($ = {}));
+//mol/plot/fill/-css/fill.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_chart_demo_styles extends $mol_example_large {
+        title() {
+            return "Chart with various styles of graphs.";
+        }
+        samples_count() {
+            return 15;
+        }
+        sub() {
+            return [
+                this.Chart()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_plot",
+                "chart",
+                "plot",
+                "visualization",
+                "dashboard"
+            ];
+        }
+        receipts_title() {
+            return "Receipts";
+        }
+        series_x() {
+            return [];
+        }
+        series_2_y() {
+            return [];
+        }
+        Receipts() {
+            const obj = new this.$.$mol_plot_bar();
+            obj.title = () => this.receipts_title();
+            obj.series_x = () => this.series_x();
+            obj.series_y = () => this.series_2_y();
+            return obj;
+        }
+        receipts_confirmed_title() {
+            return "Confirmed receipts";
+        }
+        series_3_y() {
+            return [];
+        }
+        Receipts_confirmed() {
+            const obj = new this.$.$mol_plot_bar();
+            obj.title = () => this.receipts_confirmed_title();
+            obj.series_x = () => this.series_x();
+            obj.series_y = () => this.series_3_y();
+            return obj;
+        }
+        maximum_title() {
+            return "Maximum";
+        }
+        series_1_y() {
+            return [];
+        }
+        Maximum() {
+            const obj = new this.$.$mol_plot_dot();
+            obj.title = () => this.maximum_title();
+            obj.series_x = () => this.series_x();
+            obj.series_y = () => this.series_1_y();
+            return obj;
+        }
+        waste_title() {
+            return "Waste";
+        }
+        series_4_y() {
+            return [];
+        }
+        Waste() {
+            const obj = new this.$.$mol_plot_line();
+            obj.type = () => "dashed";
+            obj.title = () => this.waste_title();
+            obj.series_x = () => this.series_x();
+            obj.series_y = () => this.series_4_y();
+            return obj;
+        }
+        purchases_title() {
+            return "Purchases";
+        }
+        series_5_y() {
+            return [];
+        }
+        Purchases_fill() {
+            const obj = new this.$.$mol_plot_fill();
+            return obj;
+        }
+        Purchases_line() {
+            const obj = new this.$.$mol_plot_line();
+            return obj;
+        }
+        Purchases_dots() {
+            const obj = new this.$.$mol_plot_dot();
+            return obj;
+        }
+        Purchases() {
+            const obj = new this.$.$mol_plot_group();
+            obj.title = () => this.purchases_title();
+            obj.series_x = () => this.series_x();
+            obj.series_y = () => this.series_5_y();
+            obj.graphs = () => [
+                this.Purchases_fill(),
+                this.Purchases_line(),
+                this.Purchases_dots()
+            ];
+            return obj;
+        }
+        taxes_title() {
+            return "Taxes";
+        }
+        series_6_y() {
+            return [];
+        }
+        Taxes_fill() {
+            const obj = new this.$.$mol_plot_fill();
+            return obj;
+        }
+        Taxes_line() {
+            const obj = new this.$.$mol_plot_line();
+            obj.type = () => "dashed";
+            return obj;
+        }
+        Taxes_dots() {
+            const obj = new this.$.$mol_plot_dot();
+            return obj;
+        }
+        Taxes() {
+            const obj = new this.$.$mol_plot_group();
+            obj.title = () => this.taxes_title();
+            obj.series_x = () => this.series_x();
+            obj.series_y = () => this.series_6_y();
+            obj.graphs = () => [
+                this.Taxes_fill(),
+                this.Taxes_line(),
+                this.Taxes_dots()
+            ];
+            return obj;
+        }
+        energy_title() {
+            return "kJ";
+        }
+        Energy() {
+            const obj = new this.$.$mol_plot_ruler_vert();
+            obj.title = () => this.energy_title();
+            return obj;
+        }
+        day_title() {
+            return "Day";
+        }
+        Day() {
+            const obj = new this.$.$mol_plot_mark_hor();
+            obj.title = () => this.day_title();
+            obj.series_x = () => this.series_x();
+            return obj;
+        }
+        graphs() {
+            return [
+                this.Receipts(),
+                this.Receipts_confirmed(),
+                this.Maximum(),
+                this.Waste(),
+                this.Purchases(),
+                this.Taxes(),
+                this.Energy(),
+                this.Day()
+            ];
+        }
+        Chart() {
+            const obj = new this.$.$mol_chart();
+            obj.graphs = () => this.graphs();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Receipts", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Receipts_confirmed", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Maximum", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Waste", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Purchases_fill", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Purchases_line", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Purchases_dots", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Purchases", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Taxes_fill", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Taxes_line", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Taxes_dots", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Taxes", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Energy", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Day", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_styles.prototype, "Chart", null);
+    $.$mol_chart_demo_styles = $mol_chart_demo_styles;
+})($ || ($ = {}));
+//mol/chart/demo/styles/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_chart_demo_styles extends $.$mol_chart_demo_styles {
+            limit() {
+                const shift = 10;
+                return [shift, shift + this.samples_count()];
+            }
+            series_x() {
+                const next = [];
+                const [shift, limit] = this.limit();
+                for (let i = shift; i < limit; i++)
+                    next.push(i);
+                return next;
+            }
+            series_y() {
+                const [, limit] = this.limit();
+                return this.series_x().map(i => Number((6.5 + Math.sin(8 * i / limit)).toFixed(3)));
+            }
+            series_1_y() {
+                return this.series_y().map(val => (val - 1).toFixed(3)).map(Number);
+            }
+            series_2_y() {
+                return this.series_y().map(val => (val - 2).toFixed(3)).map(Number);
+            }
+            series_3_y() {
+                return this.series_y().map(val => (val - 3).toFixed(3)).map(Number);
+            }
+            series_4_y() {
+                return this.series_y().map(val => (val - 4).toFixed(3)).map(Number);
+            }
+            series_5_y() {
+                return this.series_y().map(val => (val - 5).toFixed(3)).map(Number);
+            }
+            series_6_y() {
+                return this.series_y().map(val => (val - 6).toFixed(3)).map(Number);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_styles.prototype, "series_x", null);
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_styles.prototype, "series_y", null);
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_styles.prototype, "series_1_y", null);
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_styles.prototype, "series_2_y", null);
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_styles.prototype, "series_3_y", null);
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_styles.prototype, "series_4_y", null);
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_styles.prototype, "series_5_y", null);
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_styles.prototype, "series_6_y", null);
+        $$.$mol_chart_demo_styles = $mol_chart_demo_styles;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/chart/demo/styles/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_chart_demo_forces extends $mol_example_large {
+        title() {
+            return "Fake wheel forces";
+        }
+        samples_count() {
+            return 5000;
+        }
+        points_max() {
+            return 2500;
+        }
+        sub() {
+            return [
+                this.Chart()
+            ];
+        }
+        tags() {
+            return [
+                "chart",
+                "plot",
+                "visualization",
+                "dashboard"
+            ];
+        }
+        forces_left_title() {
+            return "Left wheel";
+        }
+        forces_left_x() {
+            return [];
+        }
+        forces_left_y() {
+            return [];
+        }
+        Forces_left() {
+            const obj = new this.$.$mol_plot_dot();
+            obj.title = () => this.forces_left_title();
+            obj.series_x = () => this.forces_left_x();
+            obj.series_y = () => this.forces_left_y();
+            obj.points_max = () => this.points_max();
+            return obj;
+        }
+        forces_right_title() {
+            return "Right wheel";
+        }
+        forces_right_x() {
+            return [];
+        }
+        forces_right_y() {
+            return [];
+        }
+        Forces_right() {
+            const obj = new this.$.$mol_plot_dot();
+            obj.title = () => this.forces_right_title();
+            obj.series_x = () => this.forces_right_x();
+            obj.series_y = () => this.forces_right_y();
+            obj.points_max = () => this.points_max();
+            return obj;
+        }
+        vert_title() {
+            return "kN";
+        }
+        Vert_ruler() {
+            const obj = new this.$.$mol_plot_ruler_vert();
+            obj.title = () => this.vert_title();
+            return obj;
+        }
+        hor_title() {
+            return "cm";
+        }
+        Hor_ruler() {
+            const obj = new this.$.$mol_plot_ruler_hor();
+            obj.title = () => this.hor_title();
+            obj.series_x = () => this.forces_left_x();
+            return obj;
+        }
+        Cross() {
+            const obj = new this.$.$mol_plot_mark_cross();
+            obj.graphs = () => [
+                this.Forces_left(),
+                this.Forces_right()
+            ];
+            return obj;
+        }
+        Chart() {
+            const obj = new this.$.$mol_chart();
+            obj.graphs = () => [
+                this.Forces_left(),
+                this.Forces_right(),
+                this.Vert_ruler(),
+                this.Hor_ruler(),
+                this.Cross()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_forces.prototype, "Forces_left", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_forces.prototype, "Forces_right", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_forces.prototype, "Vert_ruler", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_forces.prototype, "Hor_ruler", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_forces.prototype, "Cross", null);
+    __decorate([
+        $mol_mem
+    ], $mol_chart_demo_forces.prototype, "Chart", null);
+    $.$mol_chart_demo_forces = $mol_chart_demo_forces;
+})($ || ($ = {}));
+//mol/chart/demo/forces/-view.tree/forces.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_chart_demo_forces extends $.$mol_chart_demo_forces {
+            generate_forces() {
+                const samples_count = this.samples_count();
+                const max_x = 600;
+                const base_y = 80;
+                const amplitude = 5;
+                const freq = 50;
+                const series_x = [];
+                const series_y = [];
+                const ratio = max_x / samples_count;
+                for (let i = 0; i < samples_count; i++) {
+                    const deviation = Math.random() > 0.6 ? (Math.random() * 3) : Math.random();
+                    const value = Number((base_y + Math.sin((freq / samples_count) * i) * amplitude * deviation).toFixed(3));
+                    series_x.push(Number(Number(i * ratio).toFixed(3)));
+                    series_y.push(value);
+                }
+                return [series_x, series_y];
+            }
+            forces_left() {
+                return this.generate_forces();
+            }
+            forces_right() {
+                return this.generate_forces();
+            }
+            forces_left_x() {
+                return this.forces_left()[0];
+            }
+            forces_left_y() {
+                return this.forces_left()[1];
+            }
+            forces_right_x() {
+                return this.forces_right()[0];
+            }
+            forces_right_y() {
+                return this.forces_right()[1];
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_forces.prototype, "forces_left", null);
+        __decorate([
+            $mol_mem
+        ], $mol_chart_demo_forces.prototype, "forces_right", null);
+        $$.$mol_chart_demo_forces = $mol_chart_demo_forces;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/chart/demo/forces/forces.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_chat_demo extends $mol_example_small {
+        title() {
+            return "Feed of comments for this page";
+        }
+        sub() {
+            return [
+                this.Chat()
+            ];
+        }
+        tags() {
+            return [
+                "chat",
+                "communication"
+            ];
+        }
+        chat_pages() {
+            return this.Chat().pages();
+        }
+        Chat() {
+            const obj = new this.$.$mol_chat();
+            obj.seed = () => "mol_chat_demo";
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_chat_demo.prototype, "Chat", null);
+    $.$mol_chat_demo = $mol_chat_demo;
+})($ || ($ = {}));
+//mol/chat/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/chat/demo/demo.view.css", "[mol_chat_demo_pages] {\n\tflex: 1 1 auto;\n}\n");
+})($ || ($ = {}));
+//mol/chat/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_check_box_demo extends $mol_example_small {
+        title() {
+            return "Checkboxes in various states";
+        }
+        sub() {
+            return [
+                this.Demo_items()
+            ];
+        }
+        tags() {
+            return [
+                "checkbox",
+                "switch"
+            ];
+        }
+        base_checked(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        c1Label() {
+            return "Base";
+        }
+        Labeled_base() {
+            const obj = new this.$.$mol_check_box();
+            obj.checked = (val) => this.base_checked(val);
+            obj.title = () => this.c1Label();
+            return obj;
+        }
+        c2Label() {
+            return "Checked";
+        }
+        checked_checked(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Labeled_checked() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.c2Label();
+            obj.checked = (val) => this.checked_checked(val);
+            return obj;
+        }
+        c6Label() {
+            return "Disabled";
+        }
+        Labeled_disabled() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.c6Label();
+            obj.checked = () => true;
+            obj.enabled = () => false;
+            return obj;
+        }
+        Alone_base() {
+            const obj = new this.$.$mol_check_box();
+            obj.checked = (val) => this.base_checked(val);
+            return obj;
+        }
+        Alone_checked() {
+            const obj = new this.$.$mol_check_box();
+            obj.checked = (val) => this.checked_checked(val);
+            return obj;
+        }
+        Alone_disabled() {
+            const obj = new this.$.$mol_check_box();
+            obj.checked = () => true;
+            obj.enabled = () => false;
+            return obj;
+        }
+        Demo_items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Labeled_base(),
+                this.Labeled_checked(),
+                this.Labeled_disabled(),
+                this.Alone_base(),
+                this.Alone_checked(),
+                this.Alone_disabled()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "base_checked", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "Labeled_base", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "checked_checked", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "Labeled_checked", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "Labeled_disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "Alone_base", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "Alone_checked", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "Alone_disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_box_demo.prototype, "Demo_items", null);
+    $.$mol_check_box_demo = $mol_check_box_demo;
+})($ || ($ = {}));
+//mol/check/box/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_check_list_demo extends $mol_example_small {
+        title() {
+            return "Set of toggles";
+        }
+        sub() {
+            return [
+                this.Rights()
+            ];
+        }
+        tags() {
+            return [
+                "checkbox",
+                "option",
+                "toggle"
+            ];
+        }
+        right(id, val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Rights() {
+            const obj = new this.$.$mol_check_list();
+            obj.option_checked = (id, val) => this.right(id, val);
+            obj.options = () => ({
+                read: "Allow Read",
+                write: "Allow Write",
+                rights: "Allow Change Rights",
+                backup: "Allow BackUp",
+                restart: "Allow Restart",
+                ping: "Allow Ping",
+                api: "Allow API Access",
+                docs: "Allow Read Documentation"
+            });
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_check_list_demo.prototype, "right", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_list_demo.prototype, "Rights", null);
+    $.$mol_check_list_demo = $mol_check_list_demo;
+})($ || ($ = {}));
+//mol/check/list/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_check_expand_demo extends $mol_example_small {
+        title() {
+            return "Checkbox-expand in various states";
+        }
+        sub() {
+            return [
+                this.Demo_items()
+            ];
+        }
+        tags() {
+            return [
+                "expand",
+                "fold"
+            ];
+        }
+        base_expanded(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        c1Label() {
+            return "Base";
+        }
+        Labeled_base() {
+            const obj = new this.$.$mol_check_expand();
+            obj.checked = (val) => this.base_expanded(val);
+            obj.title = () => this.c1Label();
+            return obj;
+        }
+        c2Label() {
+            return "Expanded";
+        }
+        expanded_expanded(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Labeled_expanded() {
+            const obj = new this.$.$mol_check_expand();
+            obj.title = () => this.c2Label();
+            obj.checked = (val) => this.expanded_expanded(val);
+            return obj;
+        }
+        c5Label() {
+            return "Non expandable";
+        }
+        Disabled() {
+            const obj = new this.$.$mol_check_expand();
+            obj.title = () => this.c5Label();
+            obj.disabled = () => true;
+            return obj;
+        }
+        Empty_base() {
+            const obj = new this.$.$mol_check_expand();
+            obj.checked = (val) => this.base_expanded(val);
+            return obj;
+        }
+        Empty_expanded() {
+            const obj = new this.$.$mol_check_expand();
+            obj.checked = (val) => this.expanded_expanded(val);
+            return obj;
+        }
+        Demo_items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Labeled_base(),
+                this.Labeled_expanded(),
+                this.Disabled(),
+                this.Empty_base(),
+                this.Empty_expanded()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_check_expand_demo.prototype, "base_expanded", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_expand_demo.prototype, "Labeled_base", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_expand_demo.prototype, "expanded_expanded", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_expand_demo.prototype, "Labeled_expanded", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_expand_demo.prototype, "Disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_expand_demo.prototype, "Empty_base", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_expand_demo.prototype, "Empty_expanded", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_expand_demo.prototype, "Demo_items", null);
+    $.$mol_check_expand_demo = $mol_check_expand_demo;
+})($ || ($ = {}));
+//mol/check/expand/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_check_group_demo extends $mol_example_small {
+        title() {
+            return "Group of checkboxes";
+        }
+        sub() {
+            return [
+                this.Demo_items()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_check_box",
+                "checkbox",
+                "multi",
+                "group"
+            ];
+        }
+        All() {
+            const obj = new this.$.$mol_check_group();
+            obj.title = () => "SPECIAL";
+            obj.checks = () => [
+                this.Strength(),
+                this.Perception(),
+                this.Endurance(),
+                this.Charisma(),
+                this.Intelligence(),
+                this.Agility(),
+                this.Luck()
+            ];
+            return obj;
+        }
+        strength_title() {
+            return "Strength";
+        }
+        strength(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Strength() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.strength_title();
+            obj.checked = (val) => this.strength(val);
+            return obj;
+        }
+        perception_title() {
+            return "Perception";
+        }
+        perception(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Perception() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.perception_title();
+            obj.checked = (val) => this.perception(val);
+            return obj;
+        }
+        endurance_title() {
+            return "Endurance";
+        }
+        endurance(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Endurance() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.endurance_title();
+            obj.checked = (val) => this.endurance(val);
+            return obj;
+        }
+        charisma_title() {
+            return "Charisma";
+        }
+        charisma(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Charisma() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.charisma_title();
+            obj.checked = (val) => this.charisma(val);
+            return obj;
+        }
+        intelligence_title() {
+            return "Intelligence";
+        }
+        intelligence(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Intelligence() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.intelligence_title();
+            obj.checked = (val) => this.intelligence(val);
+            return obj;
+        }
+        agility_title() {
+            return "Agility";
+        }
+        agility(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Agility() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.agility_title();
+            obj.checked = (val) => this.agility(val);
+            return obj;
+        }
+        luck_title() {
+            return "Luck";
+        }
+        luck(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Luck() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.luck_title();
+            obj.checked = (val) => this.luck(val);
+            return obj;
+        }
+        Partial() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Strength(),
+                this.Perception(),
+                this.Endurance(),
+                this.Charisma(),
+                this.Intelligence(),
+                this.Agility(),
+                this.Luck()
+            ];
+            return obj;
+        }
+        Demo_items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.All(),
+                this.Partial()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "All", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "strength", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Strength", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "perception", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Perception", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "endurance", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Endurance", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "charisma", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Charisma", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "intelligence", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Intelligence", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "agility", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Agility", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "luck", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Luck", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Partial", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_group_demo.prototype, "Demo_items", null);
+    $.$mol_check_group_demo = $mol_check_group_demo;
+})($ || ($ = {}));
+//mol/check/group/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/check/group/demo/demo.view.css", "[mol_check_group_demo] {\n\talign-items: flex-start;\n}\n\n[mol_check_group_demo_all] {\n\tbox-shadow: 0 1px 0 0px var(--mol_theme_line);\n}\n");
+})($ || ($ = {}));
+//mol/check/group/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_check_icon_demo extends $mol_example_small {
+        title() {
+            return "Iconic checkboxes in various states";
+        }
+        sub() {
+            return [
+                this.Base(),
+                this.Checked(),
+                this.Disabled()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_icon",
+                "checkbox",
+                "switch",
+                "button",
+                "icon"
+            ];
+        }
+        Base_icon() {
+            const obj = new this.$.$mol_icon_microphone();
+            return obj;
+        }
+        base_checked(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Base() {
+            const obj = new this.$.$mol_check_icon();
+            obj.Icon = () => this.Base_icon();
+            obj.checked = (val) => this.base_checked(val);
+            return obj;
+        }
+        Checked_icon() {
+            const obj = new this.$.$mol_icon_microphone();
+            return obj;
+        }
+        checked_checked(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Checked() {
+            const obj = new this.$.$mol_check_icon();
+            obj.Icon = () => this.Checked_icon();
+            obj.checked = (val) => this.checked_checked(val);
+            return obj;
+        }
+        Disabled_icon() {
+            const obj = new this.$.$mol_icon_microphone();
+            return obj;
+        }
+        Disabled() {
+            const obj = new this.$.$mol_check_box();
+            obj.Icon = () => this.Disabled_icon();
+            obj.checked = () => true;
+            obj.enabled = () => false;
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_check_icon_demo.prototype, "Base_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_icon_demo.prototype, "base_checked", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_icon_demo.prototype, "Base", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_icon_demo.prototype, "Checked_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_icon_demo.prototype, "checked_checked", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_icon_demo.prototype, "Checked", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_icon_demo.prototype, "Disabled_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_check_icon_demo.prototype, "Disabled", null);
+    $.$mol_check_icon_demo = $mol_check_icon_demo;
+})($ || ($ = {}));
+//mol/check/icon/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_code extends $mol_view {
+        sub() {
+            return [
+                this.Manual(),
+                this.Scan()
+            ];
+        }
+        value(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        format() {
+            return "";
+        }
+        hint() {
+            return this.format();
+        }
+        Manual() {
+            const obj = new this.$.$mol_search();
+            obj.query = (val) => this.value(val);
+            obj.hint = () => this.hint();
+            return obj;
+        }
+        event_scan(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        scan_label() {
+            return this.$.$mol_locale.text('$mol_code_scan_label');
+        }
+        Scan() {
+            const obj = new this.$.$mol_button();
+            obj.event_click = (val) => this.event_scan(val);
+            obj.sub = () => [
+                this.scan_label()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_code.prototype, "value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code.prototype, "Manual", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code.prototype, "event_scan", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code.prototype, "Scan", null);
+    $.$mol_code = $mol_code;
+})($ || ($ = {}));
+//mol/code/-view.tree/code.view.tree.ts
+;
+"use strict";
+var cordova;
+var $;
+(function ($) {
+    $.$mol_cordova = cordova || {
+        plugins: {
+            barcodeScanner: null
+        }
+    };
+    function $mol_cordova_camera() {
+        return navigator['camera'];
+    }
+    $.$mol_cordova_camera = $mol_cordova_camera;
+})($ || ($ = {}));
+//mol/cordova/cordova.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_code extends $.$mol_code {
+            scan_support() {
+                return Boolean($mol_cordova.plugins.barcodeScanner);
+            }
+            sub() {
+                return [
+                    this.Manual(),
+                    ...this.scan_support() ? [this.Scan()] : [],
+                ];
+            }
+            event_scan() {
+                $mol_cordova.plugins.barcodeScanner.scan((result) => {
+                    if (result.cancelled)
+                        return;
+                    this.value(result.text);
+                }, (error) => {
+                    alert("Scanning failed: " + error);
+                });
+            }
+        }
+        $$.$mol_code = $mol_code;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/code/code.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/code/code.view.css", "[mol_code] {\n\tdisplay: inline-flex;\n\tflex: 1 1 8rem;\n}\n\n[mol_code_manual] {\n\tflex: 1 1 auto;\n}\n");
+})($ || ($ = {}));
+//mol/code/-css/code.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_code_demo extends $mol_example_small {
+        title() {
+            return "Barcode scanner with various formats support";
+        }
+        sub() {
+            return [
+                this.Qr(),
+                this.Matrix(),
+                this.Upc_e(),
+                this.Upc_a(),
+                this.Ean_8(),
+                this.Ean_13(),
+                this.Code_128(),
+                this.Code_39(),
+                this.Itf()
+            ];
+        }
+        tags() {
+            return [
+                "code",
+                "qrcode",
+                "barcode",
+                "scanner",
+                "scan",
+                "cordova"
+            ];
+        }
+        Qr() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "QR_CODE";
+            return obj;
+        }
+        Matrix() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "DATA_MATRIX";
+            return obj;
+        }
+        Upc_e() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "UPC_E";
+            return obj;
+        }
+        Upc_a() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "UPC_A";
+            return obj;
+        }
+        Ean_8() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "EAN_8";
+            return obj;
+        }
+        Ean_13() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "EAN_13";
+            return obj;
+        }
+        Code_128() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "CODE_128";
+            return obj;
+        }
+        Code_39() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "CODE_39";
+            return obj;
+        }
+        Itf() {
+            const obj = new this.$.$mol_code();
+            obj.format = () => "ITF";
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Qr", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Matrix", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Upc_e", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Upc_a", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Ean_8", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Ean_13", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Code_128", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Code_39", null);
+    __decorate([
+        $mol_mem
+    ], $mol_code_demo.prototype, "Itf", null);
+    $.$mol_code_demo = $mol_code_demo;
+})($ || ($ = {}));
+//mol/code/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_calendar extends $mol_icon {
+        path() {
+            return "M19,19H5V8H19M16,1V3H8V1H6V3H5C3.89,3 3,3.89 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V5C21,3.89 20.1,3 19,3H18V1M17,12H12V17H17V12Z";
+        }
+    }
+    $.$mol_icon_calendar = $mol_icon_calendar;
+})($ || ($ = {}));
+//mol/icon/calendar/-view.tree/calendar.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_format extends $mol_string {
+        allow() {
+            return "0123456789";
+        }
+        hint() {
+            return this.mask("0");
+        }
+        keyboard() {
+            return "numeric";
+        }
+        mask(id) {
+            return "";
+        }
+    }
+    $.$mol_format = $mol_format;
+})($ || ($ = {}));
+//mol/format/-view.tree/format.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_format extends $.$mol_format {
+            selection([from, to] = [0, 0]) {
+                const prev = $mol_wire_probe(() => this.selection());
+                if (!prev)
+                    return [0, 100];
+                if (from !== to)
+                    return [from, to];
+                const allow = this.allow();
+                const value = this.value_changed();
+                const filtered = [...value].filter(letter => allow.includes(letter)).join('');
+                const mask = this.mask(filtered);
+                if ((prev?.[0] ?? 0) >= from)
+                    return [from, to];
+                const lastAllow = (value.length - [...value].reverse().findIndex(letter => allow.includes(letter))) % (value.length + 1);
+                if (lastAllow < from) {
+                    from = to = lastAllow;
+                }
+                while (mask[from] && mask[from] !== '_') {
+                    ++from;
+                    ++to;
+                }
+                return [from, to];
+            }
+            value_changed(next) {
+                const allow = this.allow();
+                const normalize = (val) => {
+                    val = [...val].filter(letter => allow.includes(letter)).join('');
+                    const letters = [...val].reverse();
+                    return this.mask(val).replace(/_/gu, () => letters.pop() ?? '_') + letters.reverse().join('');
+                };
+                if (next !== undefined) {
+                    next = normalize(next);
+                    if ([...next].filter(letter => allow.includes(letter)).join('')) {
+                        if (next.includes('_'))
+                            return next;
+                    }
+                    else {
+                        next = '';
+                    }
+                }
+                return normalize(this.value(next));
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_format.prototype, "selection", null);
+        __decorate([
+            $mol_mem
+        ], $mol_format.prototype, "value_changed", null);
+        $$.$mol_format = $mol_format;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/format/format.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/format/format.view.css", "[mol_format] {\n\tfont-family: monospace;\n}\n");
+})($ || ($ = {}));
+//mol/format/-css/format.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_date extends $mol_pick {
+        Icon() {
+            const obj = new this.$.$mol_icon_calendar();
+            return obj;
+        }
+        bubble_content() {
+            return [
+                this.Input(),
+                this.Calendar()
+            ];
+        }
+        value_number(val) {
+            if (val !== undefined)
+                return val;
+            return +NaN;
+        }
+        value_moment(val) {
+            if (val !== undefined)
+                return val;
+            const obj = new this.$.$mol_time_moment();
+            return obj;
+        }
+        value(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        input_mask(id) {
+            return "";
+        }
+        enabled() {
+            return true;
+        }
+        Input() {
+            const obj = new this.$.$mol_format();
+            obj.value = (val) => this.value(val);
+            obj.mask = (id) => this.input_mask(id);
+            obj.enabled = () => this.enabled();
+            return obj;
+        }
+        month_moment() {
+            return this.value_moment();
+        }
+        day_selected(id) {
+            return false;
+        }
+        day_click(id, event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        prev_hint() {
+            return this.$.$mol_locale.text('$mol_date_prev_hint');
+        }
+        prev(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        Prev_icon() {
+            const obj = new this.$.$mol_icon_chevron_left();
+            return obj;
+        }
+        Prev() {
+            const obj = new this.$.$mol_button_minor();
+            obj.hint = () => this.prev_hint();
+            obj.click = (event) => this.prev(event);
+            obj.sub = () => [
+                this.Prev_icon()
+            ];
+            return obj;
+        }
+        next_hint() {
+            return this.$.$mol_locale.text('$mol_date_next_hint');
+        }
+        next(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        Next_icon() {
+            const obj = new this.$.$mol_icon_chevron_right();
+            return obj;
+        }
+        Next() {
+            const obj = new this.$.$mol_button_minor();
+            obj.hint = () => this.next_hint();
+            obj.click = (event) => this.next(event);
+            obj.sub = () => [
+                this.Next_icon()
+            ];
+            return obj;
+        }
+        Calendar_tools() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Prev(),
+                this.Calendar_title(),
+                this.Next()
+            ];
+            return obj;
+        }
+        Calendar_title() {
+            return this.Calendar().Title();
+        }
+        Calendar() {
+            const obj = new this.$.$mol_date_calendar();
+            obj.month_moment = () => this.month_moment();
+            obj.day_selected = (id) => this.day_selected(id);
+            obj.day_click = (id, event) => this.day_click(id, event);
+            obj.head = () => [
+                this.Calendar_tools()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "Icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "value_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "value_moment", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "Input", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_date.prototype, "day_click", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "prev", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "Prev_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "Prev", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "next", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "Next_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "Next", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "Calendar_tools", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date.prototype, "Calendar", null);
+    $.$mol_date = $mol_date;
+    class $mol_date_calendar extends $mol_calendar {
+        day_content(id) {
+            return [
+                this.Day_button(id)
+            ];
+        }
+        day_click(id, event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        Day_button(id) {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.day_text(id);
+            obj.event_click = (event) => this.day_click(id, event);
+            obj.minimal_height = () => 24;
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_date_calendar.prototype, "day_click", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_date_calendar.prototype, "Day_button", null);
+    $.$mol_date_calendar = $mol_date_calendar;
+})($ || ($ = {}));
+//mol/date/-view.tree/date.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_date extends $.$mol_date {
+            trigger_content() {
+                return [this.value_moment()?.toString('YYYY-MM-DD hh:mm') ?? this.Icon()];
+            }
+            input_mask(val) {
+                return val.length > 8 ? '____-__-__ __:__' : '____-__-__ ';
+            }
+            value(val) {
+                const moment = this.value_moment();
+                if (val === undefined)
+                    return moment?.toString('YYYY-MM-DD hh:mm') ?? '';
+                const moment2 = $mol_try(() => val && new $mol_time_moment(val)) || null;
+                if (moment2 instanceof Error)
+                    return val;
+                this.value_moment(moment2);
+                return val;
+            }
+            value_moment(val) {
+                const stamp = this.value_number(val && val.valueOf());
+                return isNaN(stamp) ? null : new $mol_time_moment(stamp);
+            }
+            month_moment(next) {
+                if (next)
+                    return next;
+                let moment = $mol_try(() => new $mol_time_moment(this.value()));
+                if (moment instanceof Error || !moment.year)
+                    return new $mol_time_moment;
+                if (moment.month === undefined) {
+                    moment = moment.merge({ month: 0 });
+                }
+                return moment;
+            }
+            day_selected(day) {
+                return this.value_moment()?.toString('YYYY-MM-DD') === day;
+            }
+            day_click(day) {
+                const moment = new $mol_time_moment(day);
+                this.value_moment(this.value_moment()?.merge(moment) ?? moment);
+                this.showed(false);
+            }
+            prev() {
+                this.month_moment(this.month_moment().shift({ month: -1 }));
+            }
+            next() {
+                this.month_moment(this.month_moment().shift({ month: +1 }));
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_date.prototype, "value", null);
+        __decorate([
+            $mol_mem
+        ], $mol_date.prototype, "value_moment", null);
+        __decorate([
+            $mol_mem
+        ], $mol_date.prototype, "month_moment", null);
+        $$.$mol_date = $mol_date;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/date/date.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/date/date.view.css", "[mol_date_bubble] {\n\tpadding: .5rem;\n}\n\n[mol_date_input] {\n\tflex-shrink: 0;\n}\n\n[mol_date_prev] ,\n[mol_date_next] {\n\tflex-grow: 1;\n}\n[mol_date_prev] {\n\tjustify-content: flex-end;\n}\n\n[mol_date_calendar_title] {\n\tpadding: var(--mol_gap_text);\n}\n\n[mol_date_calendar_day] {\n\tpadding: 0;\n}\n\n[mol_date_calendar_day_button] {\n\twidth: 100%;\n\tpadding: .25rem .5rem;\n\tjustify-content: center;\n\tcursor: pointer;\n\tcolor: inherit;\n}\n");
+})($ || ($ = {}));
+//mol/date/-css/date.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_date_demo extends $mol_example_small {
+        sub() {
+            return [
+                this.Date(),
+                this.Formatted()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_time_moment",
+                "date",
+                "datepicker",
+                "format"
+            ];
+        }
+        date(val) {
+            if (val !== undefined)
+                return val;
+            const obj = new this.$.$mol_time_moment();
+            return obj;
+        }
+        Date() {
+            const obj = new this.$.$mol_date();
+            obj.value_moment = (val) => this.date(val);
+            return obj;
+        }
+        formatted() {
+            return "";
+        }
+        Formatted() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.formatted()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_date_demo.prototype, "date", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date_demo.prototype, "Date", null);
+    __decorate([
+        $mol_mem
+    ], $mol_date_demo.prototype, "Formatted", null);
+    $.$mol_date_demo = $mol_date_demo;
+})($ || ($ = {}));
+//mol/date/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_date_demo extends $.$mol_date_demo {
+            formatted() {
+                return this.date()?.toString('DD Month YYYY hh:mm');
+            }
+        }
+        $$.$mol_date_demo = $mol_date_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/date/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/date/demo/demo.view.css", "[mol_date_demo_formatted] {\n\tpadding: var(--mol_gap_text);\n}\n");
+})($ || ($ = {}));
+//mol/date/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_deck_demo extends $mol_example_small {
+        title() {
+            return "Simple deck with tabbar";
+        }
+        sub() {
+            return [
+                this.Deck()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_card",
+                "deck",
+                "card",
+                "tabs",
+                "container"
+            ];
+        }
+        greet_message() {
+            return "Hello, world!";
+        }
+        Greeter() {
+            const obj = new this.$.$mol_card();
+            obj.title = () => "Greeting";
+            obj.content = () => [
+                this.greet_message()
+            ];
+            return obj;
+        }
+        quest_message() {
+            return "How are you?";
+        }
+        Quester() {
+            const obj = new this.$.$mol_card();
+            obj.title = () => "Question";
+            obj.content = () => [
+                this.quest_message()
+            ];
+            return obj;
+        }
+        command_message() {
+            return "Let us do it right!";
+        }
+        Commander() {
+            const obj = new this.$.$mol_card();
+            obj.title = () => "Command";
+            obj.content = () => [
+                this.command_message()
+            ];
+            return obj;
+        }
+        Deck() {
+            const obj = new this.$.$mol_deck();
+            obj.items = () => [
+                this.Greeter(),
+                this.Quester(),
+                this.Commander()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_deck_demo.prototype, "Greeter", null);
+    __decorate([
+        $mol_mem
+    ], $mol_deck_demo.prototype, "Quester", null);
+    __decorate([
+        $mol_mem
+    ], $mol_deck_demo.prototype, "Commander", null);
+    __decorate([
+        $mol_mem
+    ], $mol_deck_demo.prototype, "Deck", null);
+    $.$mol_deck_demo = $mol_deck_demo;
+})($ || ($ = {}));
+//mol/deck/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_dimmer_demo extends $mol_example_small {
+        title() {
+            return "Text with highlighted found substring";
+        }
+        sub() {
+            return [
+                this.Cases()
+            ];
+        }
+        tags() {
+            return [
+                "dimmer",
+                "search",
+                "highlight"
+            ];
+        }
+        One() {
+            const obj = new this.$.$mol_dimmer();
+            obj.haystack = () => "Don't put all your eggs in one basket";
+            obj.needle = () => "eggs";
+            return obj;
+        }
+        Two() {
+            const obj = new this.$.$mol_dimmer();
+            obj.haystack = () => "Don't look a gift horse in the mouth.";
+            obj.needle = () => "oo";
+            return obj;
+        }
+        Three() {
+            const obj = new this.$.$mol_dimmer();
+            obj.haystack = () => "There is no word you are looking for";
+            obj.needle = () => "luck";
+            return obj;
+        }
+        Four() {
+            const obj = new this.$.$mol_dimmer();
+            obj.haystack = () => "ooAAooAAoo";
+            obj.needle = () => "oo";
+            return obj;
+        }
+        Five() {
+            const obj = new this.$.$mol_dimmer();
+            obj.haystack = () => "Let's search this string";
+            obj.needle = () => "Let's search this string";
+            return obj;
+        }
+        Six() {
+            const obj = new this.$.$mol_dimmer();
+            obj.haystack = () => "Let's search nothing";
+            obj.needle = () => "";
+            return obj;
+        }
+        Cases() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.One(),
+                this.Two(),
+                this.Three(),
+                this.Four(),
+                this.Five(),
+                this.Six()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_dimmer_demo.prototype, "One", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dimmer_demo.prototype, "Two", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dimmer_demo.prototype, "Three", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dimmer_demo.prototype, "Four", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dimmer_demo.prototype, "Five", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dimmer_demo.prototype, "Six", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dimmer_demo.prototype, "Cases", null);
+    $.$mol_dimmer_demo = $mol_dimmer_demo;
+})($ || ($ = {}));
+//mol/dimmer/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/dimmer/demo/demo.view.css", "[mol_dimmer_demo_cases] > * {\n\tpadding: var(--mol_gap_text);\n}\n");
+})($ || ($ = {}));
+//mol/dimmer/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_drag extends $mol_ghost {
+        event() {
+            return {
+                dragstart: (event) => this.drag_start(event),
+                drag: (event) => this.drag_move(event),
+                dragend: (event) => this.drag_end(event)
+            };
+        }
+        attr() {
+            return {
+                draggable: true,
+                mol_drag_status: this.status()
+            };
+        }
+        transfer() {
+            return {
+                "text/plain": "",
+                "text/html": "",
+                "text/uri-list": ""
+            };
+        }
+        allow_copy() {
+            return true;
+        }
+        allow_link() {
+            return true;
+        }
+        allow_move() {
+            return true;
+        }
+        image() {
+            return this.dom_node();
+        }
+        start(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        drag_start(event) {
+            return this.start(event);
+        }
+        move(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        drag_move(event) {
+            return this.move(event);
+        }
+        end(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        drag_end(event) {
+            return this.end(event);
+        }
+        status(val) {
+            if (val !== undefined)
+                return val;
+            return "ready";
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_drag.prototype, "start", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag.prototype, "move", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag.prototype, "end", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag.prototype, "status", null);
+    $.$mol_drag = $mol_drag;
+})($ || ($ = {}));
+//mol/drag/-view.tree/drag.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_drag extends $.$mol_drag {
+            status(next = 'ready') { return next; }
+            drag_start(event) {
+                setTimeout(() => this.status('drag'));
+                const transfer = this.transfer();
+                for (let type in transfer) {
+                    event.dataTransfer.setData(type, transfer[type]);
+                }
+                event.dataTransfer.setDragImage(this.image(), 0, -32);
+                const effects = [];
+                if (this.allow_copy())
+                    effects.push('Copy');
+                if (this.allow_link())
+                    effects.push('Link');
+                if (this.allow_move())
+                    effects.push('Move');
+                let effectAllowed = effects[0].toLowerCase() + effects.slice(1).join('');
+                if (effectAllowed === 'copyLinkMove')
+                    effectAllowed = 'all';
+                event.dataTransfer.effectAllowed = effectAllowed;
+                this.start(event);
+            }
+            drag_end(event) {
+                setTimeout(() => this.status('ready'));
+                this.end(event);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_drag.prototype, "status", null);
+        $$.$mol_drag = $mol_drag;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/drag/drag.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_drop extends $mol_ghost {
+        enabled(next) {
+            if (next !== undefined)
+                return next;
+            return true;
+        }
+        event() {
+            return {
+                dragenter: (event) => this.enter(event),
+                dragover: (event) => this.move(event),
+                dragleave: (event) => this.leave(event),
+                drop: (event) => this.drop(event)
+            };
+        }
+        attr() {
+            return {
+                mol_drop_status: this.status()
+            };
+        }
+        adopt(transfer) {
+            if (transfer !== undefined)
+                return transfer;
+            return {};
+        }
+        receive(transfer) {
+            if (transfer !== undefined)
+                return transfer;
+            return null;
+        }
+        allow() {
+            return [
+                "link",
+                "copy",
+                "move"
+            ];
+        }
+        enter(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        move(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        leave(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        drop(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        status(val) {
+            if (val !== undefined)
+                return val;
+            return "ready";
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_drop.prototype, "enabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drop.prototype, "adopt", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drop.prototype, "receive", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drop.prototype, "enter", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drop.prototype, "move", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drop.prototype, "leave", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drop.prototype, "drop", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drop.prototype, "status", null);
+    $.$mol_drop = $mol_drop;
+})($ || ($ = {}));
+//mol/drop/-view.tree/drop.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_drop extends $.$mol_drop {
+            status(next = 'ready') { return next; }
+            _target = null;
+            enter(event) {
+                if (event.defaultPrevented)
+                    return;
+                if (!this.enabled())
+                    return;
+                const action = this.decide_action(event);
+                event.dataTransfer.dropEffect = action;
+                if (action !== 'none')
+                    this.status('drag');
+                this._target = event.target;
+                event.preventDefault();
+            }
+            move(event) {
+                if (event.defaultPrevented)
+                    return;
+                if (!this.enabled())
+                    return;
+                event.dataTransfer.dropEffect = this.decide_action(event);
+                event.preventDefault();
+            }
+            decide_action(event) {
+                const allow = this.allow();
+                if (allow.includes('move') && event.shiftKey)
+                    return 'move';
+                else if (allow.includes('copy') && event.ctrlKey)
+                    return 'copy';
+                else if (allow.includes('link') && event.altKey)
+                    return 'link';
+                else
+                    return allow[0];
+            }
+            leave(event) {
+                if (this._target === event.target) {
+                    this.status('ready');
+                }
+            }
+            receive(transfer) {
+                return transfer;
+            }
+            drop(event) {
+                if (event.defaultPrevented)
+                    return;
+                event.preventDefault();
+                setTimeout(() => this.status('ready'));
+                const obj = this.adopt(event.dataTransfer);
+                if (!obj)
+                    return;
+                this.receive(obj);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_drop.prototype, "status", null);
+        $$.$mol_drop = $mol_drop;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/drop/drop.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_trash_can extends $mol_icon {
+        path() {
+            return "M9,3V4H4V6H5V19C5,20.1 5.9,21 7,21H17C18.1,21 19,20.1 19,19V6H20V4H15V3H9M9,8H11V17H9V8M13,8H15V17H13V8Z";
+        }
+    }
+    $.$mol_icon_trash_can = $mol_icon_trash_can;
+})($ || ($ = {}));
+//mol/icon/trash/can/-view.tree/can.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_trash_can_outline extends $mol_icon {
+        path() {
+            return "M9,3V4H4V6H5V19C5,20.1 5.9,21 7,21H17C18.1,21 19,20.1 19,19V6H20V4H15V3H9M7,6H17V19H7V6M9,8V17H11V8H9M13,8V17H15V8H13Z";
+        }
+    }
+    $.$mol_icon_trash_can_outline = $mol_icon_trash_can_outline;
+})($ || ($ = {}));
+//mol/icon/trash/can/outline/-view.tree/outline.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_drag_demo extends $mol_example_large {
+        task_count() {
+            return 100;
+        }
+        sub() {
+            return [
+                this.List_drop()
+            ];
+        }
+        Task_row(id) {
+            const obj = new this.$.$mol_drag();
+            obj.transfer = () => ({
+                "text/plain": this.task_title(id),
+                "text/html": this.task_html(id),
+                "text/uri-list": this.task_uri(id)
+            });
+            obj.Sub = () => this.Task_drop(id);
+            return obj;
+        }
+        tags() {
+            return [
+                "$mol_drop",
+                "$mol_float",
+                "$mol_link",
+                "$mol_icon",
+                "$mol_scroll",
+                "drag",
+                "dragndrop",
+                "list",
+                "transfer"
+            ];
+        }
+        transfer_adopt(transfer) {
+            if (transfer !== undefined)
+                return transfer;
+            return null;
+        }
+        receive(obj) {
+            if (obj !== undefined)
+                return obj;
+            return null;
+        }
+        receive_trash(obj) {
+            if (obj !== undefined)
+                return obj;
+            return null;
+        }
+        Trash_icon() {
+            const obj = new this.$.$mol_icon_trash_can_outline();
+            return obj;
+        }
+        Trash() {
+            const obj = new this.$.$mol_float();
+            obj.sub = () => [
+                this.Trash_icon(),
+                " Trash"
+            ];
+            return obj;
+        }
+        Trash_drop() {
+            const obj = new this.$.$mol_drop();
+            obj.adopt = (transfer) => this.transfer_adopt(transfer);
+            obj.receive = (obj) => this.receive_trash(obj);
+            obj.Sub = () => this.Trash();
+            return obj;
+        }
+        task_rows() {
+            return [];
+        }
+        List() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.task_rows();
+            return obj;
+        }
+        Scroll() {
+            const obj = new this.$.$mol_scroll();
+            obj.sub = () => [
+                this.Trash_drop(),
+                this.List()
+            ];
+            return obj;
+        }
+        List_drop() {
+            const obj = new this.$.$mol_drop();
+            obj.adopt = (transfer) => this.transfer_adopt(transfer);
+            obj.receive = (obj) => this.receive(obj);
+            obj.Sub = () => this.Scroll();
+            return obj;
+        }
+        task_title(id) {
+            return "";
+        }
+        task_html(id) {
+            return "";
+        }
+        task_uri(id) {
+            return "";
+        }
+        receive_before(id, obj) {
+            if (obj !== undefined)
+                return obj;
+            return null;
+        }
+        Task_link(id) {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => this.task_uri(id);
+            obj.sub = () => [
+                this.task_title(id)
+            ];
+            return obj;
+        }
+        Task_drop(id) {
+            const obj = new this.$.$mol_drop();
+            obj.adopt = (transfer) => this.transfer_adopt(transfer);
+            obj.receive = (obj) => this.receive_before(id, obj);
+            obj.Sub = () => this.Task_link(id);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_drag_demo.prototype, "Task_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "transfer_adopt", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "receive", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "receive_trash", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "Trash_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "Trash", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "Trash_drop", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "List", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "Scroll", null);
+    __decorate([
+        $mol_mem
+    ], $mol_drag_demo.prototype, "List_drop", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_drag_demo.prototype, "receive_before", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_drag_demo.prototype, "Task_link", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_drag_demo.prototype, "Task_drop", null);
+    $.$mol_drag_demo = $mol_drag_demo;
+})($ || ($ = {}));
+//mol/drag/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_drag_demo extends $.$mol_drag_demo {
+            task_list(next) {
+                return next ?? [...$mol_range2(index => this.Task(String(index + 1)), () => this.task_count())];
+            }
+            Task(id) {
+                return {
+                    id: id,
+                    title: `Task #${id}`,
+                    toJSON: () => id,
+                };
+            }
+            task_rows() {
+                return this.task_list().map(task => this.Task_row(task));
+            }
+            task_title(task) {
+                return task.title;
+            }
+            task_uri(task) {
+                return this.$.$mol_state_arg.make_link({
+                    ...this.$.$mol_state_arg.dict(),
+                    'product': task.id,
+                });
+            }
+            transfer_adopt(transfer) {
+                const uri = transfer.getData("text/uri-list");
+                if (!uri)
+                    return;
+                return this.task_list().find(task => this.task_uri(task) === uri);
+            }
+            receive_before(anchor, task) {
+                if (anchor === task)
+                    return;
+                const tasks = this.task_list().filter(p => p !== task);
+                const index = tasks.indexOf(anchor);
+                tasks.splice(index, 0, task);
+                this.task_list(tasks);
+            }
+            receive(task) {
+                const tasks = this.task_list().filter(p => p !== task);
+                tasks.push(task);
+                this.task_list(tasks);
+            }
+            receive_trash(task) {
+                this.task_list(this.task_list().filter(p => p !== task));
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_drag_demo.prototype, "task_list", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_drag_demo.prototype, "Task", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_drag_demo.prototype, "task_uri", null);
+        $$.$mol_drag_demo = $mol_drag_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/drag/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem, px } = $mol_style_unit;
+        $mol_style_define($mol_drag_demo, {
+            Task_drop: {
+                '@': {
+                    mol_drop_status: {
+                        drag: {
+                            boxShadow: `0 -1px 0 0px ${$mol_theme.focus}`,
+                        },
+                    },
+                },
+            },
+            List_drop: {
+                '@': {
+                    mol_drop_status: {
+                        drag: {
+                            '>': {
+                                $mol_view: {
+                                    ':last-child': {
+                                        boxShadow: `0 1px 0 0px ${$mol_theme.focus}`,
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            Trash: {
+                padding: $mol_gap.block,
+                display: 'block',
+            },
+            Trash_drop: {
+                '@': {
+                    mol_drop_status: {
+                        drag: {
+                            background: {
+                                color: $mol_theme.hover,
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/drag/demo/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_dump_demo extends $mol_example_small {
+        title() {
+            return "Attach files an show them";
+        }
+        sub() {
+            return [
+                this.Dump_short(),
+                this.Dump_long()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_list",
+                "dump",
+                "javascript",
+                "debug"
+            ];
+        }
+        value() {
+            return null;
+        }
+        Dump_short() {
+            const obj = new this.$.$mol_dump_value();
+            obj.value = () => this.value();
+            return obj;
+        }
+        Dump_long() {
+            const obj = new this.$.$mol_dump_value();
+            obj.value = () => this.value();
+            obj.prototypes = () => true;
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_dump_demo.prototype, "Dump_short", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dump_demo.prototype, "Dump_long", null);
+    $.$mol_dump_demo = $mol_dump_demo;
+})($ || ($ = {}));
+//mol/dump/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_dump_demo extends $.$mol_dump_demo {
+            value() {
+                return {
+                    undefined: undefined,
+                    null: null,
+                    boolean: true,
+                    number: 12.34,
+                    string: 'Hello world!',
+                    regexp: /hello (world)/,
+                    date: new Date,
+                    set: new Set([1234, 'string']),
+                    map: new Map([
+                        ['string', 'string'],
+                        [{ foo: 1e50 }, { bar: 1e-50 }],
+                    ]),
+                    array: [1, 2, 3],
+                    buffer: new Uint8Array([1, 2, 3]),
+                };
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_dump_demo.prototype, "value", null);
+        $$.$mol_dump_demo = $mol_dump_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/dump/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_expander_demo extends $mol_example_small {
+        title() {
+            return "Simple spoiler";
+        }
+        sub() {
+            return [
+                this.Expander()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_filler",
+                "expander",
+                "accordion",
+                "expand",
+                "container",
+                "fold"
+            ];
+        }
+        Content() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Expander() {
+            const obj = new this.$.$mol_expander();
+            obj.title = () => "Lorem Ipsum";
+            obj.content = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_expander_demo.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_expander_demo.prototype, "Expander", null);
+    $.$mol_expander_demo = $mol_expander_demo;
+})($ || ($ = {}));
+//mol/expander/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_float_demo extends $mol_example_large {
+        title() {
+            return "Floating header example";
+        }
+        sub() {
+            return [
+                this.Scroll()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_scroll",
+                "$mol_filler",
+                "scroll",
+                "container"
+            ];
+        }
+        Head_content() {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => "Float header";
+            return obj;
+        }
+        Head_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Head_content()
+            ];
+            return obj;
+        }
+        Head() {
+            const obj = new this.$.$mol_float();
+            obj.sub = () => [
+                this.Head_row()
+            ];
+            return obj;
+        }
+        Filler1() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler2() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Filler1(),
+                this.Filler2()
+            ];
+            return obj;
+        }
+        Scroll() {
+            const obj = new this.$.$mol_scroll();
+            obj.sub = () => [
+                this.Head(),
+                this.Content()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_float_demo.prototype, "Head_content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_float_demo.prototype, "Head_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_float_demo.prototype, "Head", null);
+    __decorate([
+        $mol_mem
+    ], $mol_float_demo.prototype, "Filler1", null);
+    __decorate([
+        $mol_mem
+    ], $mol_float_demo.prototype, "Filler2", null);
+    __decorate([
+        $mol_mem
+    ], $mol_float_demo.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_float_demo.prototype, "Scroll", null);
+    $.$mol_float_demo = $mol_float_demo;
+})($ || ($ = {}));
+//mol/float/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_form_field extends $mol_labeler {
+        bids() {
+            return [];
+        }
+        label() {
+            return [
+                this.name(),
+                this.Bid()
+            ];
+        }
+        content() {
+            return [
+                this.control()
+            ];
+        }
+        name() {
+            return "";
+        }
+        bid() {
+            return "";
+        }
+        Bid() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.bid()
+            ];
+            return obj;
+        }
+        control() {
+            return null;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_form_field.prototype, "Bid", null);
+    $.$mol_form_field = $mol_form_field;
+})($ || ($ = {}));
+//mol/form/field/-view.tree/field.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_form_field extends $.$mol_form_field {
+            bid() {
+                return this.bids().filter(Boolean)[0] ?? '';
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_form_field.prototype, "bid", null);
+        $$.$mol_form_field = $mol_form_field;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/form/field/field.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/form/field/field.view.css", "[mol_form_field] {\n\talign-items: stretch;\n}\n\n[mol_form_field_bid] {\n\tcolor: var(--mol_theme_focus);\n\tdisplay: inline-block;\n\ttext-shadow: 0 0;\n}\n\n[mol_form_field_content] {\n\tborder-radius: var(--mol_gap_round);\n}\n");
+})($ || ($ = {}));
+//mol/form/field/-css/field.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_form extends $mol_list {
+        submit_allowed() {
+            return true;
+        }
+        submit_blocked() {
+            return false;
+        }
+        event() {
+            return {
+                ...super.event(),
+                keydown: (event) => this.keydown(event)
+            };
+        }
+        submit(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        rows() {
+            return [
+                this.Body(),
+                this.Foot()
+            ];
+        }
+        keydown(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        form_fields() {
+            return [];
+        }
+        body() {
+            return this.form_fields();
+        }
+        Body() {
+            const obj = new this.$.$mol_list();
+            obj.sub = () => this.body();
+            return obj;
+        }
+        buttons() {
+            return [];
+        }
+        foot() {
+            return this.buttons();
+        }
+        Foot() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => this.foot();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_form.prototype, "submit", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form.prototype, "keydown", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form.prototype, "Body", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form.prototype, "Foot", null);
+    $.$mol_form = $mol_form;
+})($ || ($ = {}));
+//mol/form/-view.tree/form.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_form extends $.$mol_form {
+            form_fields() {
+                return [...this.view_find(view => view instanceof $mol_form_field)]
+                    .map(path => path[path.length - 1]);
+            }
+            submit_allowed() {
+                return this.form_fields().every(field => !field.bid());
+            }
+            submit_blocked() {
+                return !this.submit_allowed();
+            }
+            keydown(next) {
+                if (next.ctrlKey && next.keyCode === $mol_keyboard_code.enter && !this.submit_blocked())
+                    this.submit(event);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_form.prototype, "form_fields", null);
+        __decorate([
+            $mol_mem
+        ], $mol_form.prototype, "submit_allowed", null);
+        $$.$mol_form = $mol_form;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/form/form.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/form/form.view.css", "[mol_form] {\r\n\tgap: var(--mol_gap_block);\r\n}\r\n\r\n[mol_form_body] {\r\n\tgap: var(--mol_gap_block);\r\n}");
+})($ || ($ = {}));
+//mol/form/-css/form.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_form_group extends $mol_view {
+    }
+    $.$mol_form_group = $mol_form_group;
+})($ || ($ = {}));
+//mol/form/group/-view.tree/group.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/form/group/group.view.css", "[mol_form_group] {\n\tflex-wrap: wrap;\n\tgap: var(--mol_gap_block);\n}\n\n[mol_form_group] > * {\n\tflex: 1 1 18rem;\n}\n");
+})($ || ($ = {}));
+//mol/form/group/-css/group.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_form_demo extends $mol_example {
+        title() {
+            return "Sign Up form demo";
+        }
+        message() {
+            return {
+                required: "Required",
+                adult: "18+ only",
+                no_spaces: "No spaces!",
+                need_more_letters: "{count} or more letters",
+                need_at: "@ is required",
+                only_one_at: "At most one @",
+                no_tld: "At least 2 level domain",
+                dots_inside: "Dots can't be at edge",
+                no_space_domain: "No space in domain name",
+                need_username: "Username required"
+            };
+        }
+        sub() {
+            return [
+                this.Form()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_form_field",
+                "$mol_button",
+                "$mol_row",
+                "$mol_string",
+                "form",
+                "bids",
+                "validation",
+                "field"
+            ];
+        }
+        avatars_bid() {
+            return "";
+        }
+        avatars(val) {
+            if (val !== undefined)
+                return val;
+            return [];
+        }
+        Avatars_control() {
+            const obj = new this.$.$mol_attach();
+            obj.items = (val) => this.avatars(val);
+            return obj;
+        }
+        Avatars_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Avatars";
+            obj.bid = () => this.avatars_bid();
+            obj.Content = () => this.Avatars_control();
+            return obj;
+        }
+        name_first_bid() {
+            return "";
+        }
+        name_first(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Name_first_control() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => "Jack";
+            obj.value = (val) => this.name_first(val);
+            return obj;
+        }
+        Name_first_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "First Name";
+            obj.bid = () => this.name_first_bid();
+            obj.Content = () => this.Name_first_control();
+            return obj;
+        }
+        name_nick_bid() {
+            return "";
+        }
+        name_nick(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Name_nick_control() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => "Capitan";
+            obj.value = (val) => this.name_nick(val);
+            return obj;
+        }
+        Name_nick_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Nick Name";
+            obj.bid = () => this.name_nick_bid();
+            obj.Content = () => this.Name_nick_control();
+            return obj;
+        }
+        name_second_bid() {
+            return "";
+        }
+        name_second(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Name_second_control() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => "Sparrow";
+            obj.value = (val) => this.name_second(val);
+            return obj;
+        }
+        Name_second_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Second Name";
+            obj.bid = () => this.name_second_bid();
+            obj.Content = () => this.Name_second_control();
+            return obj;
+        }
+        Names() {
+            const obj = new this.$.$mol_form_group();
+            obj.sub = () => [
+                this.Name_first_field(),
+                this.Name_nick_field(),
+                this.Name_second_field()
+            ];
+            return obj;
+        }
+        age_bid() {
+            return "";
+        }
+        age(val) {
+            if (val !== undefined)
+                return val;
+            return 0;
+        }
+        Age_control() {
+            const obj = new this.$.$mol_number();
+            obj.value = (val) => this.age(val);
+            return obj;
+        }
+        Age_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Age";
+            obj.bid = () => this.age_bid();
+            obj.Content = () => this.Age_control();
+            return obj;
+        }
+        sex_label() {
+            return "Sex";
+        }
+        sex_bid() {
+            return "";
+        }
+        sex(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        sex_options() {
+            return {
+                male: "Male",
+                intersex: "Intersex",
+                female: "Female"
+            };
+        }
+        Sex_control() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (val) => this.sex(val);
+            obj.options = () => this.sex_options();
+            return obj;
+        }
+        Sex_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => this.sex_label();
+            obj.bid = () => this.sex_bid();
+            obj.Content = () => this.Sex_control();
+            return obj;
+        }
+        color_bid() {
+            return "";
+        }
+        color(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Color_control() {
+            const obj = new this.$.$mol_select();
+            obj.value = (val) => this.color(val);
+            obj.dictionary = () => ({
+                "": "❔",
+                white: "⬜ White",
+                yellow: "🟨 Yellow",
+                brown: "🟫 Brown",
+                red: "🟥 Red"
+            });
+            return obj;
+        }
+        Color_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Skin color";
+            obj.bid = () => this.color_bid();
+            obj.Content = () => this.Color_control();
+            return obj;
+        }
+        Parameters() {
+            const obj = new this.$.$mol_form_group();
+            obj.sub = () => [
+                this.Age_field(),
+                this.Sex_field(),
+                this.Color_field()
+            ];
+            return obj;
+        }
+        mail_bid() {
+            return "";
+        }
+        mail(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Mail_control() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => "name@domain.com";
+            obj.value = (val) => this.mail(val);
+            return obj;
+        }
+        Mail_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "E-mail";
+            obj.bid = () => this.mail_bid();
+            obj.Content = () => this.Mail_control();
+            return obj;
+        }
+        signup(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        Signup() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => "Sign Up";
+            obj.click = (val) => this.signup(val);
+            obj.enabled = () => this.signup_allowed();
+            return obj;
+        }
+        result(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Result() {
+            const obj = new this.$.$mol_status();
+            obj.message = () => this.result();
+            return obj;
+        }
+        signup_allowed() {
+            return this.Form().submit_allowed();
+        }
+        Form() {
+            const obj = new this.$.$mol_form();
+            obj.body = () => [
+                this.Avatars_field(),
+                this.Names(),
+                this.Parameters(),
+                this.Mail_field()
+            ];
+            obj.submit = (val) => this.signup(val);
+            obj.buttons = () => [
+                this.Signup(),
+                this.Result()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "avatars", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Avatars_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Avatars_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "name_first", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Name_first_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Name_first_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "name_nick", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Name_nick_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Name_nick_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "name_second", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Name_second_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Name_second_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Names", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "age", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Age_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Age_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "sex", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Sex_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Sex_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "color", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Color_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Color_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Parameters", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "mail", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Mail_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Mail_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "signup", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Signup", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "result", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Result", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_demo.prototype, "Form", null);
+    $.$mol_form_demo = $mol_form_demo;
+})($ || ($ = {}));
+//mol/form/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_form_demo extends $.$mol_form_demo {
+            name_first(next) {
+                return $mol_state_local.value(this.state_key('name_first'), next) || '';
+            }
+            name_first_bid() {
+                const value = this.name_first();
+                if (!value)
+                    return this.message().required;
+                if (value.indexOf(' ') !== -1)
+                    return this.message().no_spaces;
+                return '';
+            }
+            name_nick(next) {
+                return $mol_state_local.value(this.state_key('name_nick'), next) || '';
+            }
+            name_second(next) {
+                return $mol_state_local.value(this.state_key('name_second'), next) || '';
+            }
+            name_second_bid() {
+                const value = this.name_second();
+                if (!value)
+                    return this.message().required;
+                if (value.indexOf(' ') !== -1)
+                    return this.message().no_spaces;
+                if (value.length < 3)
+                    return this.message().need_more_letters.replace('{count}', '3');
+                return '';
+            }
+            mail(next) {
+                return $mol_state_local.value(this.state_key('mail'), next) || '';
+            }
+            mail_bid() {
+                const value = this.mail().trim();
+                if (!value)
+                    return this.message().required;
+                const parts = value.split('@');
+                if (parts.length < 2)
+                    return this.message().need_at;
+                if (parts.length > 2)
+                    return this.message().only_one_at;
+                if (!parts[0])
+                    return this.message().need_username;
+                if (parts[1].indexOf(' ') !== -1)
+                    return this.message().no_space_domain;
+                const domains = parts[1].split('.');
+                if (domains.length < 2)
+                    return this.message().no_tld;
+                if (!domains.every(Boolean))
+                    return this.message().dots_inside;
+                return '';
+            }
+            color(next) {
+                return $mol_state_local.value(this.state_key('color'), next) || '';
+            }
+            sex(next) {
+                return $mol_state_local.value(this.state_key('sex'), next) || '';
+            }
+            sex_bid() {
+                if (!this.sex())
+                    return this.message().required;
+                return '';
+            }
+            age(next) {
+                return $mol_state_local.value(this.state_key('age'), next) || 0;
+            }
+            age_bid() {
+                if (this.age() < 18)
+                    return this.message().adult;
+                return '';
+            }
+            signup(next) {
+                this.result(`Hello, ${this.sex()} ${this.name_first()} (${this.name_nick()}) ${this.name_second()} from  ${this.mail()}!`);
+            }
+        }
+        $$.$mol_form_demo = $mol_form_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/form/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/form/demo/demo.view.css", "[mol_form_demo] {\n\twidth: 80rem;\n\tflex-direction: column;\n}\n");
+})($ || ($ = {}));
+//mol/form/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_form_draft extends $mol_form {
+        model() {
+            const obj = new this.$.$mol_object2();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft.prototype, "model", null);
+    $.$mol_form_draft = $mol_form_draft;
+})($ || ($ = {}));
+//mol/form/draft/-view.tree/draft.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_form_draft extends $.$mol_form_draft {
+            value_str(field, next) {
+                return String(this.value(field, next) ?? '');
+            }
+            value_numb(field, next) {
+                return Number(this.value(field, next) ?? 0);
+            }
+            value_bool(field, next) {
+                return Boolean(this.value(field, next) ?? false);
+            }
+            value(field, next) {
+                return this.state(next?.valueOf && { ...this.state(), [field]: next })[field]
+                    ?? this.model()[field]();
+            }
+            state(next) {
+                return $mol_state_local.value(`${this}.state()`, next) ?? {};
+            }
+            changed() {
+                return Object.keys(this.state()).length > 0;
+            }
+            submit_allowed() {
+                return this.changed() && super.submit_allowed();
+            }
+            submit(next) {
+                const model = this.model();
+                for (let [field, next] of Object.entries(this.state())) {
+                    const prev = model[field]();
+                    switch (typeof prev) {
+                        case 'boolean':
+                            next = String(next) === 'true';
+                            break;
+                        case 'number':
+                            next = Number(next);
+                            break;
+                        case 'string':
+                            next = String(next);
+                            break;
+                    }
+                    model[field](next);
+                }
+                this.state(null);
+            }
+        }
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft.prototype, "value_str", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft.prototype, "value_numb", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft.prototype, "value_bool", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft.prototype, "value", null);
+        __decorate([
+            $mol_mem
+        ], $mol_form_draft.prototype, "state", null);
+        __decorate([
+            $mol_mem
+        ], $mol_form_draft.prototype, "changed", null);
+        __decorate([
+            $mol_action
+        ], $mol_form_draft.prototype, "submit", null);
+        $$.$mol_form_draft = $mol_form_draft;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/form/draft/draft.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/form/draft/draft.view.css", "[mol_form_draft] {\n\twidth: 100%;\n}\n");
+})($ || ($ = {}));
+//mol/form/draft/-css/draft.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_form_draft_demo_article extends $mol_object2 {
+        title(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        type(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        adult(next) {
+            if (next !== undefined)
+                return next;
+            return false;
+        }
+        content(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo_article.prototype, "title", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo_article.prototype, "type", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo_article.prototype, "adult", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo_article.prototype, "content", null);
+    $.$mol_form_draft_demo_article = $mol_form_draft_demo_article;
+    class $mol_form_draft_demo extends $mol_example {
+        title() {
+            return "Article draft form demo";
+        }
+        message_done() {
+            return "Done";
+        }
+        bid_required(id) {
+            return "Required";
+        }
+        bid_swearing(id) {
+            return "No swearing";
+        }
+        bid_short(id) {
+            return "> 5 letters";
+        }
+        bid_long(id) {
+            return "> 100 letters";
+        }
+        sub() {
+            return [
+                this.Form()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_form_field",
+                "$mol_button",
+                "$mol_string",
+                "$mol_switch",
+                "form",
+                "bids",
+                "validation",
+                "field"
+            ];
+        }
+        model() {
+            const obj = new this.$.$mol_form_draft_demo_article();
+            return obj;
+        }
+        Title() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => "How I spent the summer..";
+            obj.value = (next) => this.value_str("title", next);
+            return obj;
+        }
+        Title_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Title";
+            obj.bids = () => [
+                this.bid_swearing("title"),
+                this.bid_short("title")
+            ];
+            obj.Content = () => this.Title();
+            return obj;
+        }
+        Type() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (next) => this.value_str("type", next);
+            obj.options = () => ({
+                article: "Article",
+                news: "News",
+                question: "Question"
+            });
+            return obj;
+        }
+        Type_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Type";
+            obj.bids = () => [
+                this.bid_required("type")
+            ];
+            obj.Content = () => this.Type();
+            return obj;
+        }
+        Adult() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (next) => this.value_str("adult", next);
+            obj.options = () => ({
+                false: "No",
+                true: "Yes"
+            });
+            return obj;
+        }
+        Adult_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Adult only";
+            obj.Content = () => this.Adult();
+            return obj;
+        }
+        Content() {
+            const obj = new this.$.$mol_textarea();
+            obj.hint = () => "Long long story..";
+            obj.value = (next) => this.value_str("content", next);
+            return obj;
+        }
+        Content_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Content";
+            obj.bids = () => [
+                this.bid_swearing("content"),
+                this.bid_long("content")
+            ];
+            obj.Content = () => this.Content();
+            return obj;
+        }
+        Config() {
+            const obj = new this.$.$mol_form_group();
+            obj.sub = () => [
+                this.Adult_field(),
+                this.Type_field()
+            ];
+            return obj;
+        }
+        form_body() {
+            return [
+                this.Title_field(),
+                this.Config(),
+                this.Content_field()
+            ];
+        }
+        Publish() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => "Publish";
+            obj.click = (next) => this.publish(next);
+            obj.enabled = () => this.publish_allowed();
+            return obj;
+        }
+        result(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Result() {
+            const obj = new this.$.$mol_status();
+            obj.message = () => this.result();
+            return obj;
+        }
+        publish(next) {
+            return this.Form().submit(next);
+        }
+        publish_allowed() {
+            return this.Form().submit_allowed();
+        }
+        value_str(id, next) {
+            return this.Form().value_str(id, next);
+        }
+        changed() {
+            return this.Form().changed();
+        }
+        Form() {
+            const obj = new this.$.$mol_form_draft();
+            obj.model = () => this.model();
+            obj.form_fields = () => [
+                this.Title_field(),
+                this.Type_field(),
+                this.Adult_field(),
+                this.Content_field()
+            ];
+            obj.body = () => this.form_body();
+            obj.buttons = () => [
+                this.Publish(),
+                this.Result()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "model", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Title", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Title_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Type", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Type_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Adult", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Adult_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Content_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Config", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Publish", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "result", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Result", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Form", null);
+    $.$mol_form_draft_demo = $mol_form_draft_demo;
+})($ || ($ = {}));
+//mol/form/draft/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_form_draft_demo extends $.$mol_form_draft_demo {
+            form_body() {
+                return [
+                    this.Title_field(),
+                    this.Config(),
+                    ...this.value_str('type') ? [this.Content_field()] : [],
+                ];
+            }
+            bid_required(field) {
+                return this.value_str(field) ? '' : super.bid_required(field);
+            }
+            bid_short(field) {
+                return this.value_str(field).length > 5 ? '' : super.bid_short(field);
+            }
+            bid_long(field) {
+                return this.value_str(field).length > 100 ? '' : super.bid_long(field);
+            }
+            bid_swearing(field) {
+                return /\bfuck/.test(this.value_str(field)) ? super.bid_swearing(field) : '';
+            }
+            result(next = '') {
+                this.changed();
+                return next;
+            }
+            publish() {
+                super.publish();
+                this.result(this.message_done());
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_form_draft_demo.prototype, "form_body", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft_demo.prototype, "bid_required", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft_demo.prototype, "bid_short", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft_demo.prototype, "bid_long", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft_demo.prototype, "bid_swearing", null);
+        __decorate([
+            $mol_mem
+        ], $mol_form_draft_demo.prototype, "result", null);
+        __decorate([
+            $mol_action
+        ], $mol_form_draft_demo.prototype, "publish", null);
+        $$.$mol_form_draft_demo = $mol_form_draft_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/form/draft/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_phone extends $mol_format {
+        mask(id) {
+            return "+___ (___) ___-__-__";
+        }
+        keyboard() {
+            return "tel";
+        }
+    }
+    $.$mol_phone = $mol_phone;
+})($ || ($ = {}));
+//mol/phone/-view.tree/phone.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        $$.$mol_phone_formats = {
+            '': '+___________',
+            '1': '+_ (___) ___-__-__',
+            '27': '+__ (__) ___-__-__',
+            '212': '+___ (___) __-__-__',
+            '253': '+___ (__) __-__-__',
+            '254': '+___ (___) __-__-__',
+            '30': '+__ (___) ___-__-__',
+            '31': '+__ (__) ____ ____',
+            '32': '+__ (___) __-__-__',
+            '33': '+__ _ __-__-__-__',
+            '34': '+__ ___-___-___',
+            '36': '+__ __ ___ ___',
+            '351': '+___ ___ ___ ___',
+            '353': '+___ _____',
+            '354': '+___ ___ __ __',
+            '358': '+___ (___) _ ___-___',
+            '380': '+___ (__) ___ __ __',
+            '39': '+__ (___) ___-__-__',
+            '40': '+__-___-___-___',
+            '41': '+__ (__) ___-__-__',
+            '44': '+__ (___) ____ ____',
+            '45': '+__ __-__-__-__',
+            '46': '+__ ___-___ __ __',
+            '47': '+__ __-__-__-__',
+            '48': '+__ (____) __-__-__',
+            '49': '+__ (__) ___-__-__',
+            '52': '+__ ___ ___ ____',
+            '60': '+__ (__) ____-____',
+            '61': '+__ (___) ___-___',
+            '63': '+__ (___) ___-__-__',
+            '64': '+__ (__) ___-__-__',
+            '65': '+__ ____-____',
+            '66': '+__ ____-____',
+            '7': '+_ (___) ___-__-__',
+            '81': '+__ (__) ___-__-__',
+            '82': '+__ (___) ___-__-__',
+            '86': '+__ (___) ____-____',
+            '90': '+__ (___) ___-__-__',
+            '91': '+__ ____-____',
+            '92': '+__ (__) ____-____',
+            '94': '+__ (___) ___-___',
+            '98': '+__ (___) ___-__-__',
+        };
+        class $mol_phone extends $.$mol_phone {
+            mask(val) {
+                return $$.$mol_phone_formats[val.slice(0, 3)]
+                    || $$.$mol_phone_formats[val.slice(0, 2)]
+                    || $$.$mol_phone_formats[val.slice(0, 1)]
+                    || $$.$mol_phone_formats[''];
+            }
+        }
+        $$.$mol_phone = $mol_phone;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/phone/phone.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_format_demo extends $mol_example_small {
+        title() {
+            return "Formatted string input/output";
+        }
+        sub() {
+            return [
+                this.Ip_card(),
+                this.Phone_card(),
+                this.Card_card(),
+                this.Moment_card()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_format",
+                "$mol_string",
+                "$mol_phone",
+                "input"
+            ];
+        }
+        ip(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Ip() {
+            const obj = new this.$.$mol_format();
+            obj.mask = () => "___.___.___.___";
+            obj.value = (next) => this.ip(next);
+            return obj;
+        }
+        Ip_card() {
+            const obj = new this.$.$mol_card();
+            obj.status = () => this.ip();
+            obj.Content = () => this.Ip();
+            return obj;
+        }
+        phone(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Phone() {
+            const obj = new this.$.$mol_phone();
+            obj.value = (next) => this.phone(next);
+            return obj;
+        }
+        Phone_card() {
+            const obj = new this.$.$mol_card();
+            obj.status = () => this.phone();
+            obj.Content = () => this.Phone();
+            return obj;
+        }
+        card(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Card() {
+            const obj = new this.$.$mol_format();
+            obj.mask = () => "____ ____ ____ ____";
+            obj.value = (next) => this.card(next);
+            return obj;
+        }
+        Card_card() {
+            const obj = new this.$.$mol_card();
+            obj.status = () => this.card();
+            obj.Content = () => this.Card();
+            return obj;
+        }
+        moment(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Moment() {
+            const obj = new this.$.$mol_format();
+            obj.mask = () => "__.__.____ __:__";
+            obj.value = (next) => this.moment(next);
+            return obj;
+        }
+        Moment_card() {
+            const obj = new this.$.$mol_card();
+            obj.status = () => this.moment();
+            obj.Content = () => this.Moment();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "ip", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "Ip", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "Ip_card", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "phone", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "Phone", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "Phone_card", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "card", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "Card", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "Card_card", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "moment", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "Moment", null);
+    __decorate([
+        $mol_mem
+    ], $mol_format_demo.prototype, "Moment_card", null);
+    $.$mol_format_demo = $mol_format_demo;
+})($ || ($ = {}));
+//mol/format/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_frame_demo extends $mol_example_large {
+        sub() {
+            return [
+                this.Frame()
+            ];
+        }
+        tags() {
+            return [
+                "frame",
+                "iframe",
+                "container"
+            ];
+        }
+        Frame() {
+            const obj = new this.$.$mol_frame();
+            obj.title = () => "Another page inside that";
+            obj.uri = () => "https://mol.hyoo.ru/";
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_frame_demo.prototype, "Frame", null);
+    $.$mol_frame_demo = $mol_frame_demo;
+})($ || ($ = {}));
+//mol/frame/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_gallery extends $mol_view {
+        sub() {
+            return this.items();
+        }
+        Side(id) {
+            const obj = new this.$.$mol_gallery();
+            obj.style = () => ({
+                flexGrow: this.side_size(id)
+            });
+            obj.items = () => this.side_items(id);
+            return obj;
+        }
+        items() {
+            return [];
+        }
+        side_size(id) {
+            return "1";
+        }
+        side_items(id) {
+            return [];
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_gallery.prototype, "Side", null);
+    $.$mol_gallery = $mol_gallery;
+})($ || ($ = {}));
+//mol/gallery/-view.tree/gallery.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_gallery extends $.$mol_gallery {
+            sub() {
+                const items = this.items();
+                if (items.length <= 3)
+                    return items;
+                return [
+                    this.Side(0),
+                    this.Side(1),
+                ];
+            }
+            side_items(id) {
+                const items = this.items();
+                const middle = items.length % 2
+                    ? Math.ceil(items.length / 3)
+                    : items.length / 2;
+                return id
+                    ? items.slice(middle)
+                    : items.slice(0, middle);
+            }
+            side_size(id) {
+                return String(this.side_items(id).length);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_gallery.prototype, "sub", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_gallery.prototype, "side_items", null);
+        $$.$mol_gallery = $mol_gallery;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/gallery/gallery.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/gallery/gallery.view.css", "[mol_gallery] {\n\tflex-wrap: wrap;\n\tflex: 1 1 auto;\n\talign-items: flex-start;\n    align-content: flex-start;\n}\n");
+})($ || ($ = {}));
+//mol/gallery/-css/gallery.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_gallery_demo extends $mol_example {
+        title() {
+            return "Gallery of cards";
+        }
+        count() {
+            return 101;
+        }
+        sub() {
+            return [
+                this.App()
+            ];
+        }
+        Item(id) {
+            const obj = new this.$.$mol_link();
+            obj.minimal_width = () => 100;
+            obj.uri = () => "https://thiscatdoesnotexist.com/";
+            obj.style = () => ({
+                backgroundImage: "url('https://thiscatdoesnotexist.com/')"
+            });
+            obj.sub = () => [
+                this.Item_title(id)
+            ];
+            return obj;
+        }
+        tags() {
+            return [
+                "$mol_link",
+                "$mol_paragraph",
+                "gallery",
+                "image",
+                "adaptive",
+                "masonry"
+            ];
+        }
+        items() {
+            return [];
+        }
+        App() {
+            const obj = new this.$.$mol_gallery();
+            obj.items = () => this.items();
+            return obj;
+        }
+        item_title(id) {
+            return "";
+        }
+        Item_title(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => this.item_title(id);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_gallery_demo.prototype, "Item", null);
+    __decorate([
+        $mol_mem
+    ], $mol_gallery_demo.prototype, "App", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_gallery_demo.prototype, "Item_title", null);
+    $.$mol_gallery_demo = $mol_gallery_demo;
+})($ || ($ = {}));
+//mol/gallery/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_array_lottery(list) {
+        return list[Math.floor(Math.random() * list.length)];
+    }
+    $.$mol_array_lottery = $mol_array_lottery;
+})($ || ($ = {}));
+//mol/array/lottery/lottery.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_unit extends $mol_object {
+        'valueOf()';
+        constructor(value) {
+            super();
+            if (value !== undefined)
+                this['valueOf()'] = value;
+        }
+        prefix() {
+            return '';
+        }
+        postfix() {
+            return '';
+        }
+        [Symbol.toPrimitive](hint) {
+            switch (hint) {
+                case 'number': return this.valueOf();
+                case 'string': return this.toString();
+                default: return this.toString();
+            }
+        }
+        valueOf() {
+            return this['valueOf()'];
+        }
+        delimiter() {
+            return ' ';
+        }
+        value_view() {
+            return this.valueOf().toLocaleString();
+        }
+        toString() {
+            return this.prefix() + this.value_view() + this.postfix();
+        }
+        static summ(a, b) {
+            var Class = a.constructor;
+            if (Class !== b.constructor)
+                throw new Error(`Not same measure: ${Class} , ${b.constructor}`);
+            return new Class(a.valueOf() + b.valueOf());
+        }
+        mult(m) {
+            var Class = this.constructor;
+            return new Class(this.valueOf() * m);
+        }
+    }
+    $.$mol_unit = $mol_unit;
+})($ || ($ = {}));
+//mol/unit/unit.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_unit_money extends $mol_unit {
+    }
+    $.$mol_unit_money = $mol_unit_money;
+    class $mol_unit_money_usd extends $mol_unit_money {
+        prefix() {
+            return '$';
+        }
+    }
+    $.$mol_unit_money_usd = $mol_unit_money_usd;
+    class $mol_unit_money_rur extends $mol_unit_money {
+        postfix() {
+            return ' ₽';
+        }
+    }
+    $.$mol_unit_money_rur = $mol_unit_money_rur;
+})($ || ($ = {}));
+//mol/unit/money/money.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_stub_strings(prefix = '', count = 10, length = 10) {
+        if (prefix.length >= length)
+            return [];
+        let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz".split('');
+        let strings = [];
+        for (let i = 0; i < count; i++) {
+            let text = prefix;
+            for (let j = prefix.length; j < length; j++) {
+                text += $mol_array_lottery(possible);
+            }
+            strings.push(text);
+        }
+        return strings;
+    }
+    $.$mol_stub_strings = $mol_stub_strings;
+    function $mol_stub_code(length = 8) {
+        var max = Math.pow(16, length);
+        var min = Math.pow(16, length - 1);
+        var value = min + Math.floor(Math.random() * (max - min));
+        return value.toString(16).toUpperCase();
+    }
+    $.$mol_stub_code = $mol_stub_code;
+    function $mol_stub_price(max = 1000) {
+        var min = Math.floor(max / 16 / 16);
+        var value = min + Math.floor(Math.random() * (max - min));
+        return new $mol_unit_money_usd(value);
+    }
+    $.$mol_stub_price = $mol_stub_price;
+    function $mol_stub_product_name() {
+        var name = $mol_array_lottery([
+            'Monitor 15"',
+            'Monitor 17"',
+            'Monitor 19"',
+            'Graphics card',
+            'Frame grabber card'
+        ]);
+        var port = $mol_array_lottery(['D-SUB', 'DVI', 'HDMI']);
+        var resolution = $mol_array_lottery(['VGA', 'Full HD', '4K']);
+        return [name, port, resolution].join(', ');
+    }
+    $.$mol_stub_product_name = $mol_stub_product_name;
+    function $mol_stub_company_name_big() {
+        var product = $mol_array_lottery(['Everything', 'Something', 'Anything', 'Nothing']);
+        var type = $mol_array_lottery(['Company', 'Corporation', 'Holding']);
+        return `A ${type} that makes ${product}`;
+    }
+    $.$mol_stub_company_name_big = $mol_stub_company_name_big;
+    function $mol_stub_company_name_small() {
+        return $mol_array_lottery(['ACME inc.', 'Dream Company', 'Just Company']);
+    }
+    $.$mol_stub_company_name_small = $mol_stub_company_name_small;
+    function $mol_stub_company_name() {
+        return $mol_array_lottery([$mol_stub_company_name_small, $mol_stub_company_name_big])();
+    }
+    $.$mol_stub_company_name = $mol_stub_company_name;
+    function $mol_stub_person_name() {
+        var first = $mol_array_lottery(['Ivan', 'Petr', 'Sidor', 'John', 'Sam']);
+        var last = $mol_array_lottery(['Ivanov', 'Petrov', 'Sidorov', 'Johnson', 'Smith']);
+        return `${first} ${last}`;
+    }
+    $.$mol_stub_person_name = $mol_stub_person_name;
+    function $mol_stub_person_avatar(size = 80) {
+        const id = Math.random().toString(16).slice(2);
+        return `https://gravatar.com/avatar/${id}?d=robohash&s=${size}`;
+    }
+    $.$mol_stub_person_avatar = $mol_stub_person_avatar;
+    function $mol_stub_city() {
+        return $mol_array_lottery(['Moscow', 'London', 'Washington', 'Buenos Aires']);
+    }
+    $.$mol_stub_city = $mol_stub_city;
+    function $mol_stub_time(maxShift = 60 * 24 * 365) {
+        return new $mol_time_moment().shift({ minute: Math.round(Math.random() * maxShift) });
+    }
+    $.$mol_stub_time = $mol_stub_time;
+    function $mol_stub_message(max_length) {
+        const text = ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam lectus. Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies a non tortor. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.';
+        return text.substring(0, Math.ceil(Math.random() * max_length - 5) + 5);
+    }
+    $.$mol_stub_message = $mol_stub_message;
+})($ || ($ = {}));
+//mol/stub/stub.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_gallery_demo extends $.$mol_gallery_demo {
+            items() {
+                return Array.from({ length: this.count() }, (_, id) => this.Item(id));
+            }
+            item_title(id) {
+                return $mol_stub_person_name();
+            }
+            item_uri(id) {
+                return $mol_stub_person_avatar(80);
+            }
+        }
+        __decorate([
+            $mol_mem_key
+        ], $mol_gallery_demo.prototype, "item_title", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_gallery_demo.prototype, "item_uri", null);
+        $$.$mol_gallery_demo = $mol_gallery_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/gallery/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/gallery/demo/demo.view.css", "[mol_gallery_demo_item] {\n\tmargin: var(--mol_gap_block);\n\tflex: 1 1 auto;\n\tflex-direction: column;\n\tposition: relative;\n\taspect-ratio: 1;\n\tbackground-size: cover;\n\tborder-radius: var(--mol_gap_round);\n\toverflow: hidden;\n}\n\n[mol_gallery_demo_item]:hover {\n\topacity: .9;\n}\n\n[mol_gallery_demo_item_title] {\n\ttext-align: center;\n\tdisplay: block;\n\tposition: absolute;\n\tbottom: 0;\n\tleft: 0;\n\twidth: 100%;\n\tbackground: hsla( 0, 0%, 100%, .25 );\n\tcolor: black;\n}\n");
+})($ || ($ = {}));
+//mol/gallery/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_html_view extends $mol_list {
+        html() {
+            return "";
+        }
+        dom() {
+            return null;
+        }
+        safe_link(id) {
+            return "";
+        }
+        xss_uri() {
+            return "https://en.wikipedia.org/wiki/XSS#";
+        }
+        Heading(id) {
+            const obj = new this.$.$mol_html_view_heading();
+            obj.level = () => this.heading_level(id);
+            obj.sub = () => this.content(id);
+            return obj;
+        }
+        Paragraph(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => this.content(id);
+            return obj;
+        }
+        List(id) {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.content(id);
+            return obj;
+        }
+        Quote(id) {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.content(id);
+            return obj;
+        }
+        Strong(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => this.content(id);
+            return obj;
+        }
+        Emphasis(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => this.content(id);
+            return obj;
+        }
+        Deleted(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => this.content(id);
+            return obj;
+        }
+        Inserted(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => this.content(id);
+            return obj;
+        }
+        Code(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => this.content(id);
+            return obj;
+        }
+        Link(id) {
+            const obj = new this.$.$mol_link_iconed();
+            obj.uri = () => this.link_uri(id);
+            obj.content = () => this.content(id);
+            return obj;
+        }
+        Image(id) {
+            const obj = new this.$.$mol_image();
+            obj.uri = () => this.image_uri(id);
+            return obj;
+        }
+        Break(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => [];
+            return obj;
+        }
+        Text(id) {
+            const obj = new this.$.$mol_dimmer();
+            obj.needle = () => this.highlight();
+            obj.haystack = () => this.text(id);
+            return obj;
+        }
+        heading_level(id) {
+            return 1;
+        }
+        content(id) {
+            return [];
+        }
+        link_uri(id) {
+            return "";
+        }
+        image_uri(id) {
+            return "";
+        }
+        highlight() {
+            return "";
+        }
+        text(id) {
+            return "";
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Heading", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Paragraph", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "List", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Quote", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Strong", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Emphasis", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Deleted", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Inserted", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Code", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Link", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Image", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Break", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_html_view.prototype, "Text", null);
+    $.$mol_html_view = $mol_html_view;
+    class $mol_html_view_heading extends $mol_paragraph {
+        attr() {
+            return {
+                ...super.attr(),
+                mol_html_view_heading: this.level()
+            };
+        }
+        level() {
+            return 1;
+        }
+    }
+    $.$mol_html_view_heading = $mol_html_view_heading;
+})($ || ($ = {}));
+//mol/html/view/-view.tree/view.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const { rem } = $mol_style_unit;
+    $mol_style_define($mol_html_view, {
+        Heading: {
+            padding: $mol_gap.text,
+            textShadow: '0 0',
+            '@': {
+                'mol_html_view_heading': {
+                    '1': {
+                        font: {
+                            size: rem(1.5),
+                        },
+                    },
+                    '2': {
+                        font: {
+                            size: rem(1.5),
+                            style: 'italic',
+                        },
+                    },
+                    '3': {
+                        font: {
+                            size: rem(1.25),
+                        },
+                    },
+                    '4': {
+                        font: {
+                            size: rem(1.25),
+                            style: 'italic',
+                        },
+                    },
+                    '5': {
+                        font: {
+                            size: rem(1),
+                        },
+                    },
+                    '6': {
+                        font: {
+                            size: rem(1),
+                            style: 'italic',
+                        },
+                    },
+                },
+            },
+        },
+        Paragraph: {
+            display: 'block',
+            flex: {
+                wrap: 'wrap',
+            },
+            padding: $mol_gap.text,
+        },
+        List: {
+            display: 'block',
+            flex: {
+                wrap: 'wrap',
+            },
+            padding: $mol_gap.block,
+        },
+        Quote: {
+            display: 'block',
+            flex: {
+                'wrap': 'wrap',
+            },
+            padding: $mol_gap.block,
+            margin: {
+                left: rem(.75),
+            },
+            box: {
+                shadow: [{
+                        inset: true,
+                        x: rem(.25),
+                        y: 0,
+                        blur: 0,
+                        spread: 0,
+                        color: $mol_theme.line,
+                    }],
+            },
+        },
+        Strong: {
+            display: 'inline',
+            textShadow: '0 0',
+        },
+        Emphasis: {
+            display: 'inline',
+            font: {
+                style: 'italic',
+            },
+        },
+        Deleted: {
+            display: 'inline',
+            color: $mol_theme.shade,
+        },
+        Inserted: {
+            display: 'inline',
+            color: $mol_theme.special,
+        },
+        Link: {
+            margin: rem(-.5),
+        },
+        Code: {
+            display: 'inline',
+            font: {
+                family: 'monospace',
+            },
+            whiteSpace: 'pre-wrap',
+        },
+        Image: {
+            display: 'inline-block',
+        },
+        Break: {
+            display: 'block',
+            height: $mol_gap.block,
+        },
+        Text: {
+            display: 'inline',
+        },
+    });
+})($ || ($ = {}));
+//mol/html/view/view.view.tree.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const warned = new Set();
+        class $mol_html_view extends $.$mol_html_view {
+            dom() {
+                return this.$.$mol_dom_parse(this.html(), 'text/html').body;
+            }
+            sub() {
+                return this.content(this.dom());
+            }
+            content(node) {
+                const res = [];
+                for (const child of node.childNodes) {
+                    res.push(...this.views(child));
+                }
+                return res;
+            }
+            views(node) {
+                switch (node.nodeName) {
+                    case '#comment':
+                        return [];
+                    case '#text':
+                    case '#cdata-section':
+                        if (!node.textContent.trim())
+                            return [];
+                        return [this.Text(node)];
+                    case 'H1':
+                    case 'H2':
+                    case 'H3':
+                    case 'H4':
+                    case 'H5':
+                    case 'H6':
+                        return [this.Heading(node)];
+                    case 'P':
+                    case 'LI':
+                    case 'PRE':
+                    case 'DIV':
+                        return [this.Paragraph(node)];
+                    case 'UL':
+                    case 'OL':
+                        return [this.List(node)];
+                    case 'BLOCKQUOTE':
+                        return [this.Quote(node)];
+                    case 'STRONG':
+                    case 'B':
+                        return [this.Strong(node)];
+                    case 'EM':
+                    case 'I':
+                        return [this.Emphasis(node)];
+                    case 'DEL':
+                    case 'S':
+                        return [this.Deleted(node)];
+                    case 'INS':
+                    case 'U':
+                        return [this.Inserted(node)];
+                    case 'A':
+                        return [this.Link(node)];
+                    case 'PRE':
+                    case 'CODE':
+                        return [this.Code(node)];
+                    case 'IMG':
+                        return [this.Image(node)];
+                    case 'BR':
+                        return [this.Break(node)];
+                    default:
+                        if (!warned.has(node.nodeName)) {
+                            this.$.$mol_log3_warn({
+                                place: `${this}.views()`,
+                                message: 'Unsupported tag',
+                                tag: node.nodeName,
+                                hint: 'Add support to $mol_html_view',
+                            });
+                            warned.add(node.nodeName);
+                        }
+                        return this.content(node);
+                }
+            }
+            text(node) {
+                return node.textContent ?? '???';
+            }
+            safe_link(uri) {
+                const base = $mol_dom_context.location.href;
+                const url = new $mol_dom_context.URL(uri, base);
+                if (/^\w*script:/i.test(url.protocol)) {
+                    return this.xss_uri() + uri;
+                }
+                return uri;
+            }
+            link_uri(node) {
+                return this.safe_link(node.href);
+            }
+            image_uri(node) {
+                return this.safe_link(node.src);
+            }
+            heading_level(node) {
+                return Number(node.nodeName.substring(1));
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_html_view.prototype, "dom", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_html_view.prototype, "content", null);
+        $$.$mol_html_view = $mol_html_view;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/html/view/view.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_html_view_demo extends $mol_example {
+        title() {
+            return "View raw HTML";
+        }
+        sub() {
+            return [
+                this.Html()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_scroll",
+                "html",
+                "render"
+            ];
+        }
+        Html() {
+            const obj = new this.$.$mol_html_view();
+            obj.html = () => " <h1>HTML Example</h1>\n <h2>Headings</h2>\n \t<h3>Level 3</h3>\n \t<h4>Level 4</h4>\n \t<h5>Level 5</h5>\n \t<h6>Level 6</h6>\n <h2>Inline elements</h2>\n <p>\n \t<strong>strong</strong>,\n \t<em>emphasis</em>,\n \t<ins>inserted</ins>,\n \t<del>deleted</del>,\n \t<br />\n \t<b>bold</b>,\n \t<i>italic</i>,\n \t<u>underlined</u>,\n \t<s>strikethrough</s>,\n \t<br />\n \t<code>code</code>,\n \t<a href=\"#\">safe link</a>,\n \t<a href=\"javascript:alert(1)\">unsafe link</a>,\n \tnormal text.\n </p>\n <h2>Media elements</h2>\n <p>\n \t<img src=\"https://mol.hyoo.ru/mol/logo/logo.svg\" />\n </p>\n <h2>Block elements</h2>\n <blockquote><p>Block quotation</p></blockquote>\n <pre><code>Block code</code></pre>";
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_html_view_demo.prototype, "Html", null);
+    $.$mol_html_view_demo = $mol_html_view_demo;
+})($ || ($ = {}));
+//mol/html/view/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_infinite extends $mol_list {
+        before(id) {
+            return [];
+        }
+        after(id) {
+            return [];
+        }
+        row_ids(next) {
+            if (next !== undefined)
+                return next;
+            return [];
+        }
+        render_over() {
+            return 1;
+        }
+        Row(id) {
+            const obj = new this.$.$mol_view();
+            return obj;
+        }
+        Before(id) {
+            const obj = new this.$.$mol_view();
+            obj.minimal_width = () => 0;
+            obj.minimal_height = () => 0;
+            obj.auto = () => this.before_load(id);
+            return obj;
+        }
+        After(id) {
+            const obj = new this.$.$mol_view();
+            obj.minimal_width = () => 0;
+            obj.minimal_height = () => 0;
+            obj.auto = () => this.after_load(id);
+            return obj;
+        }
+        before_load(id) {
+            return null;
+        }
+        after_load(id) {
+            return null;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_infinite.prototype, "row_ids", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_infinite.prototype, "Row", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_infinite.prototype, "Before", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_infinite.prototype, "After", null);
+    $.$mol_infinite = $mol_infinite;
+})($ || ($ = {}));
+//mol/infinite/-view.tree/infinite.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_infinite extends $.$mol_infinite {
+            before_load(anchor) {
+                const more = this.before(anchor);
+                new $mol_after_tick(() => {
+                    let ids = this.row_ids();
+                    const index = Math.max(0, ids.indexOf(anchor));
+                    const unique = new Set([
+                        ...ids.slice(0, index),
+                        ...more,
+                        ...ids.slice(index),
+                    ]);
+                    this.row_ids([...unique]);
+                });
+            }
+            after_load(anchor) {
+                const more = this.after(anchor);
+                new $mol_after_tick(() => {
+                    let ids = this.row_ids();
+                    const index = (ids.indexOf(anchor) + 1) || ids.length;
+                    const unique = new Set([
+                        ...ids.slice(0, index),
+                        ...more,
+                        ...ids.slice(index),
+                    ]);
+                    this.row_ids([...unique]);
+                });
+            }
+            rows() {
+                const ids = this.row_ids();
+                return [
+                    this.Before(ids.at(0)),
+                    ...ids.map(id => this.Row(id)),
+                    this.After(ids.at(-1)),
+                ];
+            }
+        }
+        __decorate([
+            $mol_mem_key
+        ], $mol_infinite.prototype, "before_load", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_infinite.prototype, "after_load", null);
+        __decorate([
+            $mol_mem
+        ], $mol_infinite.prototype, "rows", null);
+        $$.$mol_infinite = $mol_infinite;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/infinite/infinite.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/infinite/infinite.view.css", "[mol_infinite_before],\n[mol_infinite_after] {\n\toverflow-anchor: none;\n}\n\n[mol_infinite_after][mol_view_error=\"Promise\"] {\n\theight: 100vh;\n}\n");
+})($ || ($ = {}));
+//mol/infinite/-css/infinite.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_infinite_demo extends $mol_example_large {
+        title() {
+            return "Infinite list demo";
+        }
+        chunk_size() {
+            return 20;
+        }
+        sub() {
+            return [
+                this.Scroll()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_filler",
+                "$mol_list",
+                "$mol_avatar",
+                "infinite",
+                "scroll",
+                "virtual",
+                "container"
+            ];
+        }
+        before(id) {
+            return [];
+        }
+        after(id) {
+            return [];
+        }
+        id(id) {
+            return "";
+        }
+        Photo(id) {
+            const obj = new this.$.$mol_avatar();
+            obj.id = () => this.id(id);
+            return obj;
+        }
+        name(id) {
+            return "";
+        }
+        Name(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => this.name(id);
+            return obj;
+        }
+        city(id) {
+            return "";
+        }
+        City(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => this.city(id);
+            return obj;
+        }
+        Info(id) {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Name(id),
+                this.City(id)
+            ];
+            return obj;
+        }
+        Item(id) {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Photo(id),
+                this.Info(id)
+            ];
+            return obj;
+        }
+        List() {
+            const obj = new this.$.$mol_infinite();
+            obj.before = (id) => this.before(id);
+            obj.after = (id) => this.after(id);
+            obj.Row = (id) => this.Item(id);
+            return obj;
+        }
+        Scroll() {
+            const obj = new this.$.$mol_scroll();
+            obj.sub = () => [
+                this.List()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_infinite_demo.prototype, "Photo", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_infinite_demo.prototype, "Name", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_infinite_demo.prototype, "City", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_infinite_demo.prototype, "Info", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_infinite_demo.prototype, "Item", null);
+    __decorate([
+        $mol_mem
+    ], $mol_infinite_demo.prototype, "List", null);
+    __decorate([
+        $mol_mem
+    ], $mol_infinite_demo.prototype, "Scroll", null);
+    $.$mol_infinite_demo = $mol_infinite_demo;
+})($ || ($ = {}));
+//mol/infinite/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_infinite_demo extends $.$mol_infinite_demo {
+            after(anchor_id) {
+                this.$.$mol_wait_timeout(1000);
+                return Array.from({ length: this.chunk_size() }, (_, index) => (anchor_id ?? 0) + index + 1);
+            }
+            id(index) {
+                return String(index);
+            }
+            name(index) {
+                $mol_wire_solid();
+                return $mol_stub_person_name();
+            }
+            city(index) {
+                $mol_wire_solid();
+                return $mol_stub_city();
+            }
+        }
+        __decorate([
+            $mol_mem_key
+        ], $mol_infinite_demo.prototype, "after", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_infinite_demo.prototype, "name", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_infinite_demo.prototype, "city", null);
+        $$.$mol_infinite_demo = $mol_infinite_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/infinite/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/infinite/demo/demo.view.css", "[mol_infinite_demo_list] {\n\tflex: 1 0 auto;\n}\n\n[mol_infinite_demo_photo] {\n\twidth: 3rem;\n\theight: 3rem;\n\tbackground: var(--mol_theme_card);\n}\n\n[mol_infinite_demo_city] {\n\tcolor: var(--mol_theme_shade);\n}\n");
+})($ || ($ = {}));
+//mol/infinite/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_labeler_demo extends $mol_example_small {
+        title() {
+            return "Labeled content of some types";
+        }
+        sub() {
+            return [
+                this.Provider(),
+                this.Name()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_string",
+                "label",
+                "form",
+                "field",
+                "caption"
+            ];
+        }
+        Provider() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Provider";
+            obj.content = () => [
+                "ACME Provider Inc."
+            ];
+            return obj;
+        }
+        user_name(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Name_control() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => "Jack Sparrow";
+            obj.value = (val) => this.user_name(val);
+            return obj;
+        }
+        Name() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "User name";
+            obj.Content = () => this.Name_control();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_labeler_demo.prototype, "Provider", null);
+    __decorate([
+        $mol_mem
+    ], $mol_labeler_demo.prototype, "user_name", null);
+    __decorate([
+        $mol_mem
+    ], $mol_labeler_demo.prototype, "Name_control", null);
+    __decorate([
+        $mol_mem
+    ], $mol_labeler_demo.prototype, "Name", null);
+    $.$mol_labeler_demo = $mol_labeler_demo;
+})($ || ($ = {}));
+//mol/labeler/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    let $mol_layout_break;
+    (function ($mol_layout_break) {
+        $mol_layout_break["taboo"] = "taboo";
+        $mol_layout_break["allow"] = "allow";
+        $mol_layout_break["force"] = "force";
+    })($mol_layout_break = $.$mol_layout_break || ($.$mol_layout_break = {}));
+})($ || ($ = {}));
+//mol/layout/break/break.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_layout extends $mol_object {
+        ortho = null;
+        pos = 0;
+        size = 0;
+        min = 0;
+        max = 0;
+        base = 0;
+        break_before() { return $mol_layout_break.allow; }
+        break_after() { return $mol_layout_break.allow; }
+        before() { return 0; }
+        after() { return 0; }
+        padding() { return this.before() + this.after(); }
+        limit() { return this.size - this.padding(); }
+        grow() { return Math.max(0, this.max - this.min); }
+        shrink() { return this.min || 1; }
+        up() { }
+        down() { }
+        fresh() {
+            this.up();
+            this.down();
+            this.ortho?.fresh();
+        }
+    }
+    $.$mol_layout = $mol_layout;
+})($ || ($ = {}));
+//mol/layout/layout.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_canvas extends $mol_view {
+        dom_name() {
+            return "canvas";
+        }
+        context() {
+            const obj = new this.$.CanvasRenderingContext2D();
+            return obj;
+        }
+        field() {
+            return {
+                ...super.field(),
+                width: this.width(),
+                height: this.height()
+            };
+        }
+        paint() {
+            return null;
+        }
+        width() {
+            return 0;
+        }
+        height() {
+            return 0;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_canvas.prototype, "context", null);
+    $.$mol_canvas = $mol_canvas;
+})($ || ($ = {}));
+//mol/canvas/-view.tree/canvas.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_canvas extends $.$mol_canvas {
+            context() {
+                return this.dom_node().getContext('2d');
+            }
+            width() {
+                return Math.ceil((this.view_rect()?.width ?? 0) * this.$.$mol_dom_context.devicePixelRatio);
+            }
+            height() {
+                return Math.ceil((this.view_rect()?.height ?? 0) * this.$.$mol_dom_context.devicePixelRatio);
+            }
+            render() {
+                super.render();
+                this.paint();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_canvas.prototype, "context", null);
+        __decorate([
+            $mol_mem
+        ], $mol_canvas.prototype, "width", null);
+        __decorate([
+            $mol_mem
+        ], $mol_canvas.prototype, "height", null);
+        $$.$mol_canvas = $mol_canvas;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/canvas/canvas.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        $mol_style_define($mol_canvas, {
+            alignSelf: 'stretch',
+            justifySelf: 'stretch',
+            flex: {
+                grow: 1,
+                shrink: 1,
+            },
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/canvas/canvas.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_layout_demo extends $mol_example_large {
+        title() {
+            return "Custom flex layout engine";
+        }
+        sub() {
+            return [
+                this.Sample()
+            ];
+        }
+        tags() {
+            return [
+                "layout"
+            ];
+        }
+        paint() {
+            return null;
+        }
+        context() {
+            return this.Sample().context();
+        }
+        width() {
+            return this.Sample().width();
+        }
+        height() {
+            return this.Sample().height();
+        }
+        Sample() {
+            const obj = new this.$.$mol_canvas();
+            obj.paint = () => this.paint();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_layout_demo.prototype, "Sample", null);
+    $.$mol_layout_demo = $mol_layout_demo;
+})($ || ($ = {}));
+//mol/layout/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_layout_tree extends $mol_layout {
+        kids = [];
+        ortho = null;
+    }
+    $.$mol_layout_tree = $mol_layout_tree;
+})($ || ($ = {}));
+//mol/layout/tree/tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_layout_stack extends $mol_layout_tree {
+        up() {
+            let base = 0;
+            for (const kid of this.kids) {
+                kid.up();
+                base = Math.max(base, kid.base);
+            }
+            this.base = base + this.before();
+            let min = 0;
+            let max = 0;
+            for (const kid of this.kids) {
+                const shift = base - kid.base;
+                min = Math.max(min, kid.min + shift);
+                max = Math.max(max, kid.max + shift);
+            }
+            const padding = this.padding();
+            this.min = min + padding;
+            this.max = max + padding;
+        }
+        down() {
+            const pos = this.pos + this.before();
+            const base = this.base - this.before();
+            const limit = this.limit();
+            for (const kid of this.kids) {
+                const shift = base - kid.base;
+                kid.pos = pos + shift;
+                kid.size = kid.grow() ? limit : Math.min(kid.max, limit);
+                kid.down();
+            }
+        }
+    }
+    $.$mol_layout_stack = $mol_layout_stack;
+})($ || ($ = {}));
+//mol/layout/stack/stack.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_layout_flex extends $mol_layout_tree {
+        up() {
+            let min = this.padding();
+            let max = min;
+            for (const kid of this.kids) {
+                kid.up();
+                min += kid.min;
+                max += kid.max;
+            }
+            this.min = min;
+            this.max = max;
+            this.base = this.before() + (this.kids[0]?.base ?? 0);
+        }
+        down() {
+            const limit = this.limit();
+            const min = this.min - this.padding();
+            const diff = limit - min;
+            let pos = this.pos + this.before();
+            if (diff < 0)
+                shrink: {
+                    let mult = diff / min;
+                    if (!Number.isFinite(mult))
+                        mult = 0;
+                    for (const kid of this.kids) {
+                        kid.pos = pos;
+                        pos += kid.size = Math.min(limit, kid.min + Math.floor(kid.shrink() * mult));
+                        kid.down();
+                    }
+                }
+            else if (diff > 0)
+                grow: {
+                    let mult = diff / this.grow();
+                    if (!Number.isFinite(mult))
+                        mult = 0;
+                    for (const kid of this.kids) {
+                        kid.pos = pos;
+                        pos += kid.size = kid.min + Math.floor(kid.grow() * mult);
+                        kid.down();
+                    }
+                }
+            else
+                fit: {
+                    for (const kid of this.kids) {
+                        kid.pos = pos;
+                        pos += kid.size = kid.min;
+                        kid.down();
+                    }
+                }
+        }
+    }
+    $.$mol_layout_flex = $mol_layout_flex;
+})($ || ($ = {}));
+//mol/layout/flex/flex.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_layout_col extends $mol_layout_stack {
+        ortho = $mol_layout_flex.make({});
+        down() {
+            super.down();
+            this.ortho.kids = this.kids.map(kid => kid.ortho);
+        }
+    }
+    $.$mol_layout_col = $mol_layout_col;
+})($ || ($ = {}));
+//mol/layout/col/col.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_layout_row extends $mol_layout_flex {
+        ortho = $mol_layout_stack.make({});
+        down() {
+            super.down();
+            this.ortho.kids = this.kids.map(kid => kid.ortho);
+        }
+    }
+    $.$mol_layout_row = $mol_layout_row;
+})($ || ($ = {}));
+//mol/layout/row/row.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_layout_wrap extends $mol_layout_flex {
+        ortho = $mol_layout_flex.make({});
+        down() {
+            const limit = this.limit();
+            this.ortho.kids = [];
+            let index = 0;
+            all: while (index < this.kids.length) {
+                const group = $mol_layout_flex.make({
+                    pos: this.pos,
+                    size: this.size,
+                    before: () => this.before(),
+                    after: () => this.after(),
+                    ortho: $mol_layout_stack.make({})
+                });
+                group: while (index < this.kids.length) {
+                    const line = [];
+                    let frag;
+                    let ind = index;
+                    let line_min = 0;
+                    let line_max = 0;
+                    let break_after;
+                    let break_before;
+                    line: while (true) {
+                        frag = this.kids[ind];
+                        line.push(frag);
+                        line_min = Math.max(line_min, frag.min);
+                        line_max += frag.max;
+                        ++ind;
+                        const next = this.kids[ind];
+                        if (!next)
+                            break;
+                        break_after = frag.break_after();
+                        break_before = next.break_before();
+                        if (break_after === $mol_layout_break.force)
+                            break line;
+                        if (break_before === $mol_layout_break.force)
+                            break line;
+                        if (break_after === $mol_layout_break.taboo)
+                            continue line;
+                        if (break_before === $mol_layout_break.taboo)
+                            continue line;
+                        break line;
+                    }
+                    group.max += line_max;
+                    if (group.kids.length > 0) {
+                        if (group.max > limit)
+                            break group;
+                    }
+                    group.min = Math.max(group.min, line_min);
+                    group.kids.push(...line);
+                    group.ortho.kids.push(...line.map(frag => frag.ortho));
+                    index += line.length;
+                    if (break_after === $mol_layout_break.force)
+                        break group;
+                    if (break_before === $mol_layout_break.force)
+                        break group;
+                }
+                group.down();
+                this.ortho.kids.push(group.ortho);
+            }
+        }
+    }
+    $.$mol_layout_wrap = $mol_layout_wrap;
+})($ || ($ = {}));
+//mol/layout/wrap/wrap.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_layout_demo extends $.$mol_layout_demo {
+            font() {
+                return `${16 * this.$.$mol_dom_context.devicePixelRatio}px sans-serif`;
+            }
+            widgets_left() {
+                return Array.from({ length: 10 }, (_, i) => {
+                    const text = (i || 'canvas ') + ' ';
+                    const font = this.font();
+                    const width = Math.ceil($mol_font_measure(font, text));
+                    const layout = $mol_layout.make({
+                        min: width,
+                        max: width,
+                        ortho: $mol_layout.make({
+                            min: 24,
+                            max: 24,
+                            base: 16,
+                        })
+                    });
+                    return { layout, text, font };
+                });
+            }
+            widgets_right() {
+                return Array.from({ length: 20 }, (_, i) => {
+                    const text = (i || 'render ') + ' ';
+                    const font = this.font();
+                    const width = Math.ceil($mol_font_measure(font, text));
+                    const layout = $mol_layout.make({
+                        min: width,
+                        max: width,
+                        ortho: $mol_layout.make({
+                            min: 24,
+                            max: 24,
+                            base: 16,
+                        }),
+                    });
+                    return { layout, text, font };
+                });
+            }
+            layout() {
+                return $mol_layout_col.make({
+                    before: () => 12,
+                    after: () => 12,
+                    ortho: $mol_layout_flex.make({
+                        before: () => 12,
+                        after: () => 12,
+                    }),
+                    kids: [
+                        $mol_layout.make({ ortho: $mol_layout.make({ max: 1 }), }),
+                        $mol_layout_row.make({
+                            before: () => 12,
+                            after: () => 12,
+                            ortho: $mol_layout_stack.make({
+                                before: () => 12,
+                                after: () => 12,
+                            }),
+                            kids: [
+                                $mol_layout.make({ max: 1, ortho: $mol_layout.make({}), }),
+                                $mol_layout_wrap.make({
+                                    before: () => 12,
+                                    after: () => 12,
+                                    ortho: $mol_layout_flex.make({
+                                        before: () => 8,
+                                        after: () => 8,
+                                    }),
+                                    kids: this.widgets_left().map(w => w.layout),
+                                }),
+                                $mol_layout.make({ max: 1, ortho: $mol_layout.make({}), }),
+                                $mol_layout_wrap.make({
+                                    before: () => 12,
+                                    after: () => 12,
+                                    ortho: $mol_layout_flex.make({
+                                        before: () => 8,
+                                        after: () => 8,
+                                    }),
+                                    kids: this.widgets_right().map(w => w.layout),
+                                }),
+                                $mol_layout.make({ max: 1, ortho: $mol_layout.make({}), }),
+                            ],
+                        }),
+                        $mol_layout.make({ ortho: $mol_layout.make({ max: 1 }), }),
+                    ]
+                });
+            }
+            paint() {
+                this.$.$mol_lights();
+                const layout = this.layout();
+                layout.size = this.width() + 1;
+                layout.ortho.size = this.height() + 1;
+                layout.fresh();
+                const context = this.context();
+                context.strokeStyle = this.$.$mol_dom_context.getComputedStyle(this.dom_node()).getPropertyValue('--mol_theme_line');
+                context.fillStyle = this.$.$mol_dom_context.getComputedStyle(this.dom_node()).getPropertyValue('--mol_theme_text');
+                function rects(x) {
+                    const y = x.ortho;
+                    context.strokeRect(x.pos - .5, y.pos - .5, x.size - 1, y.size - 1);
+                    for (const kid of x?.kids ?? [])
+                        rects(kid);
+                }
+                rects(layout);
+                for (const widget of this.widgets_left()) {
+                    const x = widget.layout;
+                    const y = x.ortho;
+                    context.font = widget.font;
+                    context.fillText(widget.text, x.pos, y.pos + y.base, x.size);
+                }
+                for (const widget of this.widgets_right()) {
+                    const x = widget.layout;
+                    const y = x.ortho;
+                    context.font = widget.font;
+                    context.fillText(widget.text, x.pos, y.pos + y.base, x.size);
+                }
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_layout_demo.prototype, "font", null);
+        __decorate([
+            $mol_mem
+        ], $mol_layout_demo.prototype, "widgets_left", null);
+        __decorate([
+            $mol_mem
+        ], $mol_layout_demo.prototype, "widgets_right", null);
+        __decorate([
+            $mol_mem
+        ], $mol_layout_demo.prototype, "layout", null);
+        __decorate([
+            $mol_mem
+        ], $mol_layout_demo.prototype, "paint", null);
+        $$.$mol_layout_demo = $mol_layout_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/layout/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_download extends $mol_icon {
+        path() {
+            return "M5,20H19V18H5M19,9H15V3H9V9H5L12,16L19,9Z";
+        }
+    }
+    $.$mol_icon_download = $mol_icon_download;
+})($ || ($ = {}));
+//mol/icon/download/-view.tree/download.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_link_demo extends $mol_example_small {
+        title() {
+            return "Some hyperlinks";
+        }
+        sub() {
+            return [
+                this.Demo_items()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_icon",
+                "file",
+                "download",
+                "link",
+                "icon",
+                "navigation",
+                "router",
+                "url"
+            ];
+        }
+        this_label() {
+            return "This page";
+        }
+        This() {
+            const obj = new this.$.$mol_link();
+            obj.sub = () => [
+                this.this_label()
+            ];
+            return obj;
+        }
+        red_label() {
+            return "Red";
+        }
+        Red() {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => ({
+                color: "red"
+            });
+            obj.sub = () => [
+                this.red_label()
+            ];
+            return obj;
+        }
+        green_label() {
+            return "Green";
+        }
+        Green() {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => ({
+                color: "green"
+            });
+            obj.sub = () => [
+                this.green_label()
+            ];
+            return obj;
+        }
+        blue_label() {
+            return "Blue";
+        }
+        Blue() {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => ({
+                color: "blue"
+            });
+            obj.sub = () => [
+                this.blue_label()
+            ];
+            return obj;
+        }
+        external_hint() {
+            return "external link";
+        }
+        External() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "http://example.org";
+            obj.title = () => "example.org";
+            obj.hint = () => this.external_hint();
+            return obj;
+        }
+        object_uri() {
+            return "";
+        }
+        Download_icon() {
+            const obj = new this.$.$mol_icon_download();
+            return obj;
+        }
+        download_label() {
+            return "Download";
+        }
+        Download() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => this.object_uri();
+            obj.file_name = () => "file.csv";
+            obj.sub = () => [
+                this.Download_icon(),
+                this.download_label()
+            ];
+            return obj;
+        }
+        Demo_items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.This(),
+                this.Red(),
+                this.Green(),
+                this.Blue(),
+                this.External(),
+                this.Download()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_link_demo.prototype, "This", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_demo.prototype, "Red", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_demo.prototype, "Green", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_demo.prototype, "Blue", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_demo.prototype, "External", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_demo.prototype, "Download_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_demo.prototype, "Download", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_demo.prototype, "Demo_items", null);
+    $.$mol_link_demo = $mol_link_demo;
+})($ || ($ = {}));
+//mol/link/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_link_demo extends $.$mol_link_demo {
+            object_uri() {
+                const blob = new Blob(['hello;world\nhello1;world2'], { type: 'text/csv' });
+                return $mol_dom_context.URL.createObjectURL(blob);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_link_demo.prototype, "object_uri", null);
+        $$.$mol_link_demo = $mol_link_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/link/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_link_iconed_demo extends $mol_example_small {
+        title() {
+            return "Link with icon";
+        }
+        sub() {
+            return [
+                this.Blocks()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_link",
+                "$mol_icon",
+                "$mol_string",
+                "link",
+                "icon",
+                "url"
+            ];
+        }
+        uri(val) {
+            if (val !== undefined)
+                return val;
+            return "https://www.google.com/search?q=%24mol";
+        }
+        Input() {
+            const obj = new this.$.$mol_string();
+            obj.value = (val) => this.uri(val);
+            return obj;
+        }
+        Output() {
+            const obj = new this.$.$mol_link_iconed();
+            obj.uri = () => this.uri();
+            return obj;
+        }
+        Blocks() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Input(),
+                this.Output()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_link_iconed_demo.prototype, "uri", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_iconed_demo.prototype, "Input", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_iconed_demo.prototype, "Output", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_iconed_demo.prototype, "Blocks", null);
+    $.$mol_link_iconed_demo = $mol_link_iconed_demo;
+})($ || ($ = {}));
+//mol/link/iconed/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/link/iconed/demo/demo.view.css", "[mol_link_iconed_demo_blocks] {\n\tflex: 1;\n}\n");
+})($ || ($ = {}));
+//mol/link/iconed/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_link_lazy extends $mol_link {
+        uri(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        uri_generated() {
+            return "";
+        }
+        current() {
+            return false;
+        }
+        event() {
+            return {
+                ...super.event(),
+                mousedown: (event) => this.generate(event)
+            };
+        }
+        generate(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_link_lazy.prototype, "uri", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_lazy.prototype, "generate", null);
+    $.$mol_link_lazy = $mol_link_lazy;
+})($ || ($ = {}));
+//mol/link/lazy/-view.tree/lazy.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_link_lazy extends $.$mol_link_lazy {
+            generate(event) {
+                this.uri(this.uri_generated());
+            }
+        }
+        $$.$mol_link_lazy = $mol_link_lazy;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/link/lazy/lazy.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_link_lazy_demo extends $mol_example_small {
+        title() {
+            return "Lazy generated link";
+        }
+        sub() {
+            return [
+                this.Download()
+            ];
+        }
+        tags() {
+            return [
+                "icon",
+                "link",
+                "lazy",
+                "download"
+            ];
+        }
+        uri_generated() {
+            return "";
+        }
+        download_file() {
+            return "generated.csv";
+        }
+        Download_icon() {
+            const obj = new this.$.$mol_icon_download();
+            return obj;
+        }
+        download_label() {
+            return "Download";
+        }
+        Download() {
+            const obj = new this.$.$mol_link_lazy();
+            obj.hint = () => this.title();
+            obj.uri_generated = () => this.uri_generated();
+            obj.file_name = () => this.download_file();
+            obj.sub = () => [
+                this.Download_icon(),
+                this.download_label()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_link_lazy_demo.prototype, "Download_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_link_lazy_demo.prototype, "Download", null);
+    $.$mol_link_lazy_demo = $mol_link_lazy_demo;
+})($ || ($ = {}));
+//mol/link/lazy/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_link_lazy_demo extends $.$mol_link_lazy_demo {
+            uri_generated() {
+                const blob = new Blob(['hello;world\nhello1;world2'], { type: 'text/csv' });
+                return $mol_dom_context.URL.createObjectURL(blob);
+            }
+        }
+        $$.$mol_link_lazy_demo = $mol_link_lazy_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/link/lazy/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_list_demo extends $mol_example_small {
+        sub() {
+            return [
+                this.Items_count_label(),
+                this.Items()
+            ];
+        }
+        tags() {
+            return [
+                "list",
+                "rows",
+                "stack"
+            ];
+        }
+        items_сount(next) {
+            if (next !== undefined)
+                return next;
+            return 50;
+        }
+        Items_count() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.items_сount(next);
+            obj.value_min = () => 0;
+            obj.value_max = () => 100000;
+            return obj;
+        }
+        Items_count_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Items count";
+            obj.content = () => [
+                this.Items_count()
+            ];
+            return obj;
+        }
+        item_title(id) {
+            return "";
+        }
+        Item(id) {
+            const obj = new this.$.$mol_link();
+            obj.title = () => this.item_title(id);
+            return obj;
+        }
+        list_items() {
+            return [
+                this.Item("0")
+            ];
+        }
+        List_empty() {
+            const obj = new this.$.$mol_paragraph();
+            obj.title = () => "No items in this list";
+            return obj;
+        }
+        Items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.list_items();
+            obj.Empty = () => this.List_empty();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "items_\u0441ount", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "Items_count", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "Items_count_label", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo.prototype, "Item", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "List_empty", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo.prototype, "Items", null);
+    $.$mol_list_demo = $mol_list_demo;
+})($ || ($ = {}));
+//mol/list/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_list_demo extends $.$mol_list_demo {
+            item_title(id) {
+                return `Item #${id + 1}`;
+            }
+            list_items() {
+                const rows = [];
+                for (let key = 0; key < this.items_сount(); key++) {
+                    rows.push(this.Item(key));
+                }
+                return rows;
+            }
+        }
+        $$.$mol_list_demo = $mol_list_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/list/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_list_demo_table extends $mol_example {
+        title() {
+            return "Large list of rows with dynamic content";
+        }
+        count() {
+            return 9999;
+        }
+        sub() {
+            return [
+                this.Head(),
+                this.Rows()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_row",
+                "$mol_check",
+                "$mol_switch",
+                "$mol_time",
+                "$mol_link",
+                "list",
+                "table",
+                "scroll",
+                "divider",
+                "grid"
+            ];
+        }
+        check_list() {
+            return [];
+        }
+        Check() {
+            const obj = new this.$.$mol_check_group();
+            obj.checks = () => this.check_list();
+            obj.title = () => "Good Goods";
+            return obj;
+        }
+        Head() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Check()
+            ];
+            return obj;
+        }
+        row_id(id, next) {
+            if (next !== undefined)
+                return next;
+            return "0000";
+        }
+        row_checked(id, next) {
+            if (next !== undefined)
+                return next;
+            return false;
+        }
+        Id(id) {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.row_id(id);
+            obj.checked = (next) => this.row_checked(id, next);
+            return obj;
+        }
+        Id_labeler(id) {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "ID";
+            obj.Content = () => this.Id(id);
+            return obj;
+        }
+        row_uri(id) {
+            return "";
+        }
+        row_title(id) {
+            return "";
+        }
+        Title(id) {
+            const obj = new this.$.$mol_link_iconed();
+            obj.uri = () => this.row_uri(id);
+            obj.title = () => this.row_title(id);
+            return obj;
+        }
+        Title_labeler(id) {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Product Name";
+            obj.Content = () => this.Title(id);
+            return obj;
+        }
+        row_color(id, next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        colors() {
+            return [];
+        }
+        Color(id) {
+            const obj = new this.$.$mol_select();
+            obj.value = (next) => this.row_color(id, next);
+            obj.options = () => this.colors();
+            return obj;
+        }
+        Color_labeler(id) {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Color";
+            obj.Content = () => this.Color(id);
+            return obj;
+        }
+        row_status(id, next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        status_options() {
+            return {
+                minor: "Store",
+                major: "Sale",
+                critical: "Support"
+            };
+        }
+        Status(id) {
+            const obj = new this.$.$mol_switch();
+            obj.value = (next) => this.row_status(id, next);
+            obj.options = () => this.status_options();
+            return obj;
+        }
+        Status_labeler(id) {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Status";
+            obj.Content = () => this.Status(id);
+            return obj;
+        }
+        row_quantity(id, next) {
+            if (next !== undefined)
+                return next;
+            return 0;
+        }
+        Quantity(id) {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.row_quantity(id, next);
+            return obj;
+        }
+        Quantity_labeler(id) {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Quantity";
+            obj.Content = () => this.Quantity(id);
+            return obj;
+        }
+        row_moment(id, val) {
+            if (val !== undefined)
+                return val;
+            const obj = new this.$.$mol_time_moment();
+            return obj;
+        }
+        Date(id) {
+            const obj = new this.$.$mol_date();
+            obj.value_moment = (val) => this.row_moment(id, val);
+            return obj;
+        }
+        Date_labeler(id) {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Supply Time";
+            obj.Content = () => this.Date(id);
+            return obj;
+        }
+        row_content(id) {
+            return [
+                this.Id_labeler(id),
+                this.Title_labeler(id),
+                this.Color_labeler(id),
+                this.Status_labeler(id),
+                this.Quantity_labeler(id),
+                this.Date_labeler(id)
+            ];
+        }
+        Row(id) {
+            const obj = new this.$.$mol_row();
+            obj.minimal_height = () => 100;
+            obj.minimal_width = () => 200;
+            obj.sub = () => this.row_content(id);
+            return obj;
+        }
+        rows() {
+            return [
+                this.Row("0")
+            ];
+        }
+        Rows() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.rows();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo_table.prototype, "Check", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo_table.prototype, "Head", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "row_id", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "row_checked", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Id", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Id_labeler", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Title", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Title_labeler", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "row_color", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Color", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Color_labeler", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "row_status", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Status", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Status_labeler", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "row_quantity", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Quantity", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Quantity_labeler", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "row_moment", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Date", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Date_labeler", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_table.prototype, "Row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo_table.prototype, "Rows", null);
+    $.$mol_list_demo_table = $mol_list_demo_table;
+})($ || ($ = {}));
+//mol/list/demo/table/-view.tree/table.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_colors = {
+        aliceblue: "#f0f8ff",
+        antiquewhite: "#faebd7",
+        aqua: "#00ffff",
+        aquamarine: "#7fffd4",
+        azure: "#f0ffff",
+        beige: "#f5f5dc",
+        bisque: "#ffe4c4",
+        black: "#000000",
+        blanchedalmond: "#ffebcd",
+        blue: "#0000ff",
+        blueviolet: "#8a2be2",
+        brown: "#a52a2a",
+        burlywood: "#deb887",
+        cadetblue: "#5f9ea0",
+        chartreuse: "#7fff00",
+        chocolate: "#d2691e",
+        coral: "#ff7f50",
+        cornflowerblue: "#6495ed",
+        cornsilk: "#fff8dc",
+        crimson: "#dc143c",
+        cyan: "#00ffff",
+        darkblue: "#00008b",
+        darkcyan: "#008b8b",
+        darkgoldenrod: "#b8860b",
+        darkgray: "#a9a9a9",
+        darkgreen: "#006400",
+        darkgrey: "#a9a9a9",
+        darkkhaki: "#bdb76b",
+        darkmagenta: "#8b008b",
+        darkolivegreen: "#556b2f",
+        darkorange: "#ff8c00",
+        darkorchid: "#9932cc",
+        darkred: "#8b0000",
+        darksalmon: "#e9967a",
+        darkseagreen: "#8fbc8f",
+        darkslateblue: "#483d8b",
+        darkslategrey: "#2f4f4f",
+        darkturquoise: "#00ced1",
+        darkviolet: "#9400d3",
+        deeppink: "#ff1493",
+        deepskyblue: "#00bfff",
+        dimgray: "#696969",
+        dimgrey: "#696969",
+        dodgerblue: "#1e90ff",
+        firebrick: "#b22222",
+        floralwhite: "#fffaf0",
+        forestgreen: "#228b22",
+        fuchsia: "#ff00ff",
+        gainsboro: "#dcdcdc",
+        ghostwhite: "#f8f8ff",
+        gold: "#ffd700",
+        goldenrod: "#daa520",
+        gray: "#808080",
+        green: "#008000",
+        greenyellow: "#adff2f",
+        grey: "#808080",
+        honeydew: "#f0fff0",
+        hotpink: "#ff69b4",
+        indianred: "#cd5c5c",
+        indigo: "#4b0082",
+        ivory: "#fffff0",
+        khaki: "#f0e68c",
+        lavender: "#e6e6fa",
+        lavenderblush: "#fff0f5",
+        lawngreen: "#7cfc00",
+        lemonchiffon: "#fffacd",
+        lightblue: "#add8e6",
+        lightcoral: "#f08080",
+        lightcyan: "#e0ffff",
+        lightgoldenrodyellow: "#fafad2",
+        lightgray: "#d3d3d3",
+        lightgreen: "#90ee90",
+        lightgrey: "#d3d3d3",
+        lightpink: "#ffb6c1",
+        lightsalmon: "#ffa07a",
+        lightseagreen: "#20b2aa",
+        lightskyblue: "#87cefa",
+        lightslategray: "#778899",
+        lightslategrey: "#778899",
+        lightsteelblue: "#b0c4de",
+        lightyellow: "#ffffe0",
+        lime: "#00ff00",
+        limegreen: "#32cd32",
+        linen: "#faf0e6",
+        magenta: "#ff00ff",
+        maroon: "#800000",
+        mediumaquamarine: "#66cdaa",
+        mediumblue: "#0000cd",
+        mediumorchid: "#ba55d3",
+        mediumpurple: "#9370db",
+        mediumseagreen: "#3cb371",
+        mediumslateblue: "#7b68ee",
+        mediumspringgreen: "#00fa9a",
+        mediumturquoise: "#48d1cc",
+        mediumvioletred: "#c71585",
+        midnightblue: "#191970",
+        mintcream: "#f5fffa",
+        mistyrose: "#ffe4e1",
+        moccasin: "#ffe4b5",
+        navajowhite: "#ffdead",
+        navy: "#000080",
+        oldlace: "#fdf5e6",
+        olive: "#808000",
+        olivedrab: "#6b8e23",
+        orange: "#ffa500",
+        orangered: "#ff4500",
+        orchid: "#da70d6",
+        palegoldenrod: "#eee8aa",
+        palegreen: "#98fb98",
+        paleturquoise: "#afeeee",
+        palevioletred: "#db7093",
+        papayawhip: "#ffefd5",
+        peachpuff: "#ffdab9",
+        peru: "#cd853f",
+        pink: "#ffc0cb",
+        plum: "#dda0dd",
+        powderblue: "#b0e0e6",
+        purple: "#800080",
+        rebeccapurple: "#663399",
+        red: "#ff0000",
+        rosybrown: "#bc8f8f",
+        royalblue: "#4169e1",
+        saddlebrown: "#8b4513",
+        salmon: "#fa8072",
+        sandybrown: "#f4a460",
+        seagreen: "#2e8b57",
+        seashell: "#fff5ee",
+        sienna: "#a0522d",
+        silver: "#c0c0c0",
+        skyblue: "#87ceeb",
+        slateblue: "#6a5acd",
+        slategray: "#708090",
+        slategrey: "#708090",
+        snow: "#fffafa",
+        springgreen: "#00ff7f",
+        steelblue: "#4682b4",
+        tan: "#d2b48c",
+        teal: "#008080",
+        thistle: "#d8bfd8",
+        tomato: "#ff6347",
+        turquoise: "#40e0d0",
+        violet: "#ee82ee",
+        wheat: "#f5deb3",
+        white: "#ffffff",
+        whitesmoke: "#f5f5f5",
+        yellow: "#ffff00",
+        yellowgreen: "#9acd32",
+    };
+})($ || ($ = {}));
+//mol/colors/colors.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_list_demo_table extends $.$mol_list_demo_table {
+            rows() {
+                return Array.from({ length: this.count() }, (_, i) => this.Row(i));
+            }
+            check_list() {
+                return Array.from({ length: this.count() }, (_, i) => this.Id(i));
+            }
+            row_id(id) {
+                return String(id).padStart(4, '0');
+            }
+            row_title(id) {
+                return $mol_stub_product_name();
+            }
+            row_quantity(id, next = Math.floor(Math.random() * 100)) {
+                return next;
+            }
+            row_status(id, next = $mol_array_lottery(Object.keys(this.status_options()))) {
+                return next;
+            }
+            row_uri(id) {
+                return `http://xkcd.com/${this.row_id(id)}`;
+            }
+            row_moment(id, next = new $mol_time_moment().shift({
+                day: Math.floor(Math.random() * 100)
+            })) {
+                return next;
+            }
+            colors() {
+                return Object.keys($mol_colors);
+            }
+            row_color(id, next) {
+                $mol_wire_solid();
+                return next ?? $mol_array_lottery(this.colors());
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_list_demo_table.prototype, "rows", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list_demo_table.prototype, "check_list", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_table.prototype, "row_title", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_table.prototype, "row_quantity", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_table.prototype, "row_status", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_table.prototype, "row_uri", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_table.prototype, "row_moment", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list_demo_table.prototype, "colors", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_table.prototype, "row_color", null);
+        $$.$mol_list_demo_table = $mol_list_demo_table;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/list/demo/table/table.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem } = $mol_style_unit;
+        $mol_style_define($mol_list_demo_table, {
+            flex: {
+                direction: 'column',
+            },
+            Rows: {
+                flex: {
+                    grow: 1,
+                },
+            },
+            Row: {
+                boxShadow: `0 -1px 0 0 ${$mol_theme.line}`,
+            },
+            Title_labeler: {
+                flex: {
+                    basis: rem(15),
+                },
+            },
+            Color_labeler: {
+                flex: {
+                    basis: rem(10),
+                },
+            },
+            Id_labeler: {
+                flex: {
+                    basis: rem(5),
+                },
+                Label: {
+                    padding: {
+                        left: rem(2),
+                    },
+                },
+            },
+            Id: {
+                padding: $mol_gap.text,
+            },
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/list/demo/table/table.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_list_demo_tree extends $mol_example_large {
+        title() {
+            return "Large list of rows with dynamic content";
+        }
+        sub() {
+            return [
+                this.Content()
+            ];
+        }
+        Row(id) {
+            const obj = new this.$.$mol_expander();
+            obj.label = () => [
+                this.Row_title(id)
+            ];
+            obj.expanded = (val) => this.row_expanded(id, val);
+            obj.Content = () => this.Row_content(id);
+            return obj;
+        }
+        tags() {
+            return [
+                "$mol_expander",
+                "$mol_list",
+                "$mol_paragraph",
+                "list",
+                "tree",
+                "hierarchy",
+                "container",
+                "nested"
+            ];
+        }
+        root_rows() {
+            return [];
+        }
+        Content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.root_rows();
+            return obj;
+        }
+        row_title(id) {
+            return "";
+        }
+        Row_title(id) {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => [
+                this.row_title(id)
+            ];
+            return obj;
+        }
+        row_expanded(id, val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        row_content(id) {
+            return [];
+        }
+        Row_content(id) {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.row_content(id);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_tree.prototype, "Row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_list_demo_tree.prototype, "Content", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_tree.prototype, "Row_title", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_tree.prototype, "row_expanded", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_list_demo_tree.prototype, "Row_content", null);
+    $.$mol_list_demo_tree = $mol_list_demo_tree;
+})($ || ($ = {}));
+//mol/list/demo/tree/-view.tree/tree.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_list_demo_tree extends $.$mol_list_demo_tree {
+            root_rows() {
+                return this.row_content([]);
+            }
+            #titles = new Map();
+            row_title(id) {
+                $mol_wire_solid();
+                return `Node ${id.join('.')}: ${$mol_stub_message(512)} `;
+            }
+            row_content(id) {
+                $mol_wire_solid();
+                return [...$mol_range2(index => this.Row([...id, index]), () => Math.floor(Math.random() * 10 + 5))];
+            }
+            row_expanded(id, next = id.length < 4) {
+                return next;
+            }
+        }
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_tree.prototype, "row_title", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_tree.prototype, "row_content", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_list_demo_tree.prototype, "row_expanded", null);
+        $$.$mol_list_demo_tree = $mol_list_demo_tree;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/list/demo/tree/tree.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/list/demo/tree/tree.view.css", "[mol_list_demo_tree_row_content] {\n\tpadding-left: 2.25rem;\n\tdisplay: block;\n}\n\n[mol_list_demo_tree_row] [mol_list_demo_tree_row] {\n\tbox-shadow: 0 0 0 1px var(--mol_theme_line);\n\tbackground: hsla( 0deg , 0% , 50% , .05 );\n}\n\n[mol_list_demo_tree_row_title] {\n\tflex-shrink: 1;\n}");
+})($ || ($ = {}));
+//mol/list/demo/tree/-css/tree.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_map_yandex_mark extends $mol_object {
+        pos() {
+            const obj = new this.$.$mol_vector_2d(0, 0);
+            return obj;
+        }
+        box() {
+            const obj = new this.$.$mol_vector_2d(this.box_lat(), this.box_lon());
+            return obj;
+        }
+        hint() {
+            return "";
+        }
+        title() {
+            return this.address();
+        }
+        content() {
+            return "";
+        }
+        object() {
+            return null;
+        }
+        box_lat() {
+            const obj = new this.$.$mol_vector_range(0, 0);
+            return obj;
+        }
+        box_lon() {
+            const obj = new this.$.$mol_vector_range(0, 0);
+            return obj;
+        }
+        address() {
+            return "";
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_map_yandex_mark.prototype, "pos", null);
+    __decorate([
+        $mol_mem
+    ], $mol_map_yandex_mark.prototype, "box", null);
+    __decorate([
+        $mol_mem
+    ], $mol_map_yandex_mark.prototype, "box_lat", null);
+    __decorate([
+        $mol_mem
+    ], $mol_map_yandex_mark.prototype, "box_lon", null);
+    $.$mol_map_yandex_mark = $mol_map_yandex_mark;
+})($ || ($ = {}));
+//mol/map/yandex/mark/-view.tree/mark.view.tree.ts
+;
+"use strict";
+//mol/type/unary/unary.ts
+;
+"use strict";
+//mol/type/param/param.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_data_pipe(...funcs) {
+        return $mol_data_setup(function (input) {
+            let value = input;
+            for (const func of funcs)
+                value = $mol_func_is_class(func) ? new func(value) : func.call(this, value);
+            return value;
+        }, { funcs });
+    }
+    $.$mol_data_pipe = $mol_data_pipe;
+})($ || ($ = {}));
+//mol/data/pipe/pipe.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_data_string = (val) => {
+        if (typeof val === 'string')
+            return val;
+        return $mol_fail(new $mol_data_error(`${val} is not a string`));
+    };
+})($ || ($ = {}));
+//mol/data/string/string.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_data_array(sub) {
+        return $mol_data_setup((val) => {
+            if (!Array.isArray(val))
+                return $mol_fail(new $mol_data_error(`${val} is not an array`));
+            return val.map((item, index) => {
+                try {
+                    return sub(item);
+                }
+                catch (error) {
+                    if (error instanceof Promise)
+                        return $mol_fail_hidden(error);
+                    error.message = `[${index}] ${error.message}`;
+                    return $mol_fail(error);
+                }
+            });
+        }, sub);
+    }
+    $.$mol_data_array = $mol_data_array;
+})($ || ($ = {}));
+//mol/data/array/array.ts
+;
+"use strict";
+//mol/type/partial/undefined/undefined.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_data_record(sub) {
+        return $mol_data_setup((val) => {
+            let res = {};
+            for (const field in sub) {
+                try {
+                    res[field] = sub[field](val[field]);
+                }
+                catch (error) {
+                    if (error instanceof Promise)
+                        return $mol_fail_hidden(error);
+                    error.message = `[${JSON.stringify(field)}] ${error.message}`;
+                    return $mol_fail(error);
+                }
+            }
+            return res;
+        }, sub);
+    }
+    $.$mol_data_record = $mol_data_record;
+})($ || ($ = {}));
+//mol/data/record/record.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const Numb = $mol_data_pipe($mol_data_string, parseFloat);
+    const Response = $mol_data_array($mol_data_record({
+        boundingbox: $mol_data_array(Numb),
+        lat: Numb,
+        lon: Numb,
+    }));
+    $.$mol_geo_search_attribution = 'https://osm.org/copyright';
+    function $mol_geo_search({ query, count = 1 }) {
+        const url = new URL('https://nominatim.openstreetmap.org/search');
+        url.searchParams.set('q', query);
+        url.searchParams.set('limit', count.toString());
+        url.searchParams.set('format', 'jsonv2');
+        const json = $mol_fetch.json(url.toString());
+        return Response(json).map(({ lon, lat, boundingbox: box }) => {
+            return {
+                coord: new $mol_vector_2d(lon, lat),
+                box: new $mol_vector_2d(new $mol_vector_range(box[2], box[3]), new $mol_vector_range(box[0], box[1])),
+            };
+        });
+    }
+    $.$mol_geo_search = $mol_geo_search;
+})($ || ($ = {}));
+//mol/geo/search/search.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_map_yandex_mark extends $.$mol_map_yandex_mark {
+            object() {
+                const ymaps = $mol_map_yandex.api();
+                return new ymaps.Placemark(this.pos(), {
+                    hintContent: this.hint(),
+                    iconContent: this.title(),
+                    balloonContent: this.content(),
+                }, {
+                    preset: "islands#redStretchyIcon",
+                });
+            }
+            found() {
+                return $mol_geo_search({ query: this.address() })[0] ?? null;
+            }
+            pos() {
+                return this.found()?.coord ?? super.pos();
+            }
+            box() {
+                return this.found()?.box ?? super.pos();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_map_yandex_mark.prototype, "object", null);
+        __decorate([
+            $mol_mem
+        ], $mol_map_yandex_mark.prototype, "found", null);
+        __decorate([
+            $mol_mem
+        ], $mol_map_yandex_mark.prototype, "box", null);
+        $$.$mol_map_yandex_mark = $mol_map_yandex_mark;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/map/yandex/mark/mark.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_map_yandex extends $mol_view {
+        zoom(val) {
+            if (val !== undefined)
+                return val;
+            return 2;
+        }
+        center(val) {
+            if (val !== undefined)
+                return val;
+            return [
+                0,
+                0
+            ];
+        }
+        objects() {
+            return [];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_map_yandex.prototype, "zoom", null);
+    __decorate([
+        $mol_mem
+    ], $mol_map_yandex.prototype, "center", null);
+    $.$mol_map_yandex = $mol_map_yandex;
+})($ || ($ = {}));
+//mol/map/yandex/-view.tree/yandex.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_map_yandex extends $.$mol_map_yandex {
+            static api() {
+                return $mol_import.script(`https://api-maps.yandex.ru/2.1/?lang=${$mol_locale.lang()}`).ymaps;
+            }
+            wait_ready(ymaps) {
+                return new Promise(done => ymaps.ready(done));
+            }
+            api(next, force) {
+                const ymaps = $mol_map_yandex.api();
+                $mol_wire_sync(this).wait_ready(ymaps);
+                const api = new ymaps.Map(this.dom_node(), {
+                    center: [0, 0],
+                    zoom: 0,
+                });
+                api.copyrights.add($mol_geo_search_attribution);
+                api.controls.remove('fullscreenControl');
+                api.controls.remove('typeSelector');
+                api.events.add(['actionend'], (event) => {
+                    new $mol_after_tick($mol_fiber_root(() => {
+                        this.update(event);
+                    }));
+                });
+                return api;
+            }
+            update(event) {
+                this.zoom(this.api().getZoom());
+                this.center(this.api().getCenter());
+            }
+            bounds_updated() {
+                const box = this.objects()[0]?.box();
+                if (box) {
+                    this.api().setBounds([
+                        [box.x.min, box.y.min],
+                        [box.x.max, box.y.max],
+                    ]);
+                }
+                return true;
+            }
+            center(next, force) {
+                if (next !== undefined)
+                    return next;
+                const pos = this.objects()[0]?.pos();
+                if (pos)
+                    return pos;
+                return [0, 0];
+            }
+            render() {
+                const api = this.api();
+                api.setCenter(this.center(), this.zoom());
+                api.geoObjects.removeAll();
+                for (let obj of this.objects()) {
+                    api.geoObjects.add(obj.object());
+                }
+                this.dom_node_actual();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_map_yandex.prototype, "api", null);
+        __decorate([
+            $mol_mem
+        ], $mol_map_yandex.prototype, "bounds_updated", null);
+        __decorate([
+            $mol_mem
+        ], $mol_map_yandex.prototype, "center", null);
+        $$.$mol_map_yandex = $mol_map_yandex;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/map/yandex/yandex.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/map/yandex/yandex.view.css", "[mol_map_yandex] {\n\tflex: auto;\n\talign-self: stretch;\n\tfilter: var(--mol_theme_image);\n}\n");
+})($ || ($ = {}));
+//mol/map/yandex/-css/yandex.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_map_yandex_demo extends $mol_example_large {
+        title() {
+            return "Simple Yandex Maps wrapper";
+        }
+        sub() {
+            return [
+                this.Map()
+            ];
+        }
+        tags() {
+            return [
+                "map"
+            ];
+        }
+        place_title() {
+            return "";
+        }
+        place_addres() {
+            return "Saint-Petersburg";
+        }
+        place_content() {
+            return "It is Russia's second-largest city after Moscow";
+        }
+        Place() {
+            const obj = new this.$.$mol_map_yandex_mark();
+            obj.title = () => this.place_title();
+            obj.address = () => this.place_addres();
+            obj.content = () => this.place_content();
+            return obj;
+        }
+        Map() {
+            const obj = new this.$.$mol_map_yandex();
+            obj.objects = () => [
+                this.Place()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_map_yandex_demo.prototype, "Place", null);
+    __decorate([
+        $mol_mem
+    ], $mol_map_yandex_demo.prototype, "Map", null);
+    $.$mol_map_yandex_demo = $mol_map_yandex_demo;
+})($ || ($ = {}));
+//mol/map/yandex/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_marked_app extends $mol_book2 {
+        plugins() {
+            return [
+                this.Theme()
+            ];
+        }
+        pages() {
+            return [
+                this.Marked(),
+                this.Html(),
+                this.View()
+            ];
+        }
+        Preview_close() {
+            const obj = new this.$.$mol_link();
+            obj.sub = () => [
+                this.Preview_close_icon()
+            ];
+            obj.arg = () => ({
+                preview: null
+            });
+            return obj;
+        }
+        Theme() {
+            const obj = new this.$.$mol_theme_auto();
+            return obj;
+        }
+        Lights() {
+            const obj = new this.$.$mol_lights_toggle();
+            return obj;
+        }
+        Source() {
+            const obj = new this.$.$mol_link_source();
+            obj.uri = () => "https://github.com/hyoo-ru/marked.hyoo.ru/";
+            return obj;
+        }
+        preview(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Preview() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (next) => this.preview(next);
+            obj.options = () => ({
+                html: "HTML",
+                view: "View"
+            });
+            return obj;
+        }
+        marked(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Marked_text() {
+            const obj = new this.$.$mol_textarea();
+            obj.value = (val) => this.marked(val);
+            return obj;
+        }
+        Marked() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "MarkedText";
+            obj.tools = () => [
+                this.Lights(),
+                this.Source(),
+                this.Preview()
+            ];
+            obj.body = () => [
+                this.Marked_text()
+            ];
+            return obj;
+        }
+        html() {
+            return "";
+        }
+        Html_text() {
+            const obj = new this.$.$mol_text_code();
+            obj.text = () => this.html();
+            return obj;
+        }
+        Html() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "HTML";
+            obj.tools = () => [
+                this.Preview_close()
+            ];
+            obj.body = () => [
+                this.Html_text()
+            ];
+            return obj;
+        }
+        View_text() {
+            const obj = new this.$.$mol_text();
+            obj.text = () => this.marked();
+            return obj;
+        }
+        View() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "View";
+            obj.tools = () => [
+                this.Preview_close()
+            ];
+            obj.body = () => [
+                this.View_text()
+            ];
+            return obj;
+        }
+        Preview_close_icon() {
+            const obj = new this.$.$mol_icon_cross();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Preview_close", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Theme", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Lights", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "preview", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Preview", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "marked", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Marked_text", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Marked", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Html_text", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Html", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "View_text", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "View", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_app.prototype, "Preview_close_icon", null);
+    $.$hyoo_marked_app = $hyoo_marked_app;
+})($ || ($ = {}));
+//hyoo/marked/app/-view.tree/app.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_marked_cut = $mol_regexp.from([
+        '--',
+        $mol_regexp.line_end,
+    ]);
+})($ || ($ = {}));
+//hyoo/marked/cut/cut.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_marked_header = $mol_regexp.from([
+        { marker: $mol_regexp.repeat_greedy('=', 1, 6) },
+        ' ',
+        { content: $hyoo_marked_line_content },
+        $mol_regexp.line_end,
+    ]);
+})($ || ($ = {}));
+//hyoo/marked/header/header.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_marked_list_line = $mol_regexp.from([
+        { indent: $mol_regexp.repeat('  ') },
+        { marker: ['-', $mol_regexp.or, '+'] },
+        ' ',
+        { content: $hyoo_marked_line_content },
+        $mol_regexp.line_end,
+    ]);
+    $.$hyoo_marked_list_item = $mol_regexp.from([
+        $.$hyoo_marked_list_line,
+        { kids: $mol_regexp.repeat_greedy([
+                '  ',
+                $hyoo_marked_line_content,
+                $mol_regexp.line_end,
+            ]) },
+    ]);
+    $.$hyoo_marked_list = $mol_regexp.repeat_greedy($.$hyoo_marked_list_item, 1);
+})($ || ($ = {}));
+//hyoo/marked/list/list.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_marked_quote_line = $mol_regexp.from([
+        { marker: '"' },
+        ' ',
+        { content: $hyoo_marked_line_content },
+        $mol_regexp.line_end,
+    ]);
+    $.$hyoo_marked_quote = $mol_regexp.repeat_greedy($.$hyoo_marked_quote_line, 1);
+})($ || ($ = {}));
+//hyoo/marked/quote/quote.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_marked_table_line = $mol_regexp.from([
+        { indent: $mol_regexp.repeat('  ') },
+        { marker: '!' },
+        ' ',
+        { content: $hyoo_marked_line_content },
+        $mol_regexp.line_end,
+    ]);
+    $.$hyoo_marked_table_row = $mol_regexp.from({ content: [
+            $.$hyoo_marked_table_line,
+            $mol_regexp.repeat_greedy([
+                '  ',
+                $hyoo_marked_line_content,
+                $mol_regexp.line_end,
+            ]),
+        ] });
+    $.$hyoo_marked_table = $mol_regexp.repeat_greedy($.$hyoo_marked_table_line, 1);
+})($ || ($ = {}));
+//hyoo/marked/table/table.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const { or } = $mol_regexp;
+    $.$hyoo_marked_script_line = $mol_regexp.from([
+        '  ',
+        { marker: ['  ', or, '++', or, '--', or, '**'] },
+        { content: $hyoo_marked_line_content },
+        $mol_regexp.line_end,
+    ]);
+    $.$hyoo_marked_script = $mol_regexp.repeat_greedy($.$hyoo_marked_script_line, 1);
+})($ || ($ = {}));
+//hyoo/marked/script/script.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_marked_paragraph = $mol_regexp.from([
+        { content: $mol_regexp.repeat($mol_regexp.char_any) },
+        $mol_regexp.line_end,
+    ]);
+})($ || ($ = {}));
+//hyoo/marked/paragraph/paragraph.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_marked_flow = $mol_regexp.from([
+        $mol_regexp.begin,
+        {
+            cut: $hyoo_marked_cut,
+            header: $hyoo_marked_header,
+            list: $hyoo_marked_list,
+            quote: $hyoo_marked_quote,
+            table: $hyoo_marked_table,
+            script: $hyoo_marked_script,
+            paragraph: $hyoo_marked_paragraph,
+        },
+    ], { multiline: true });
+})($ || ($ = {}));
+//hyoo/marked/flow/flow.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const NL = '\n';
+    function flow(marked) {
+        return [...marked.matchAll($hyoo_marked_flow)].map(found => {
+            const token = found.groups;
+            if (!token)
+                return found[0];
+            if (token.cut) {
+                return $mol_jsx("hr", null);
+            }
+            if (token.header) {
+                const level = token.marker.length;
+                const Tag = `h${level}`;
+                return $mol_jsx(Tag, null,
+                    NL,
+                    line(token.content),
+                    NL);
+            }
+            if (token.list) {
+                const Tag = token.list[0] === '+' ? 'ol' : 'ul';
+                return $mol_jsx(Tag, null,
+                    NL,
+                    list_items(token.list),
+                    NL);
+            }
+            if (token.table) {
+                return $mol_jsx("table", null,
+                    NL,
+                    table_rows(token.table),
+                    NL);
+            }
+            if (token.script) {
+                return $mol_jsx("pre", null,
+                    NL,
+                    script_lines(token.script),
+                    NL);
+            }
+            if (token.quote) {
+                return $mol_jsx("blockquote", null,
+                    NL,
+                    flow(token.quote.replace(/^" /gm, '')),
+                    NL);
+            }
+            if (token.paragraph) {
+                if (!token.content)
+                    return '';
+                const content = line(token.content);
+                if (content.length !== 1)
+                    return $mol_jsx("p", null,
+                        NL,
+                        content,
+                        NL);
+                if (typeof content[0] === 'string')
+                    return $mol_jsx("p", null,
+                        NL,
+                        content,
+                        NL);
+                switch (content[0].localName) {
+                    case 'object': return content[0];
+                    default: return $mol_jsx("p", null,
+                        NL,
+                        content,
+                        NL);
+                }
+            }
+            return $mol_fail(new SyntaxError(`Unknown token`));
+        }).filter(Boolean);
+    }
+    function table_cells(marked) {
+        const tokens = [...marked.matchAll($hyoo_marked_table_line)];
+        const cols = [];
+        for (const token of tokens) {
+            const index = Math.ceil(token.groups.indent.length / 2);
+            const col = cols[index] || (cols[index] = []);
+            col.push(token);
+        }
+        return cols.map(col => {
+            const lines = col.map(line => line.groups.content);
+            return $mol_jsx("td", null,
+                NL,
+                flow(lines.join('\n') + '\n'),
+                NL);
+        });
+    }
+    function table_rows(marked) {
+        return [...marked.matchAll($hyoo_marked_table_row)].map(token => {
+            return $mol_jsx("tr", null,
+                NL,
+                table_cells(token.groups.content),
+                NL);
+        }).filter(Boolean);
+    }
+    function list_items(marked) {
+        return [...marked.matchAll($hyoo_marked_list_item)].map(token => {
+            const kids = token.groups.kids.replace(/^  /gm, '');
+            return $mol_jsx("li", null,
+                NL,
+                flow(token.groups.content.replace(/^  /gm, '') + '\n'),
+                flow(kids),
+                NL);
+        }).filter(Boolean);
+    }
+    function script_lines(marked) {
+        return [...marked.matchAll($hyoo_marked_script_line)].map(token => {
+            if (token.groups.marker === '++')
+                return $mol_jsx("ins", null,
+                    "$",
+                    token.groups.content,
+                    NL);
+            if (token.groups.marker === '--')
+                return $mol_jsx("del", null,
+                    "$",
+                    token.groups.content,
+                    NL);
+            if (token.groups.marker === '**')
+                return $mol_jsx("strong", null,
+                    "$",
+                    token.groups.content,
+                    NL);
+            return $mol_jsx("span", null,
+                token.groups.content,
+                NL);
+        }).filter(Boolean);
+    }
+    function line(marked) {
+        return [...marked.matchAll($hyoo_marked_line)].map(found => {
+            const token = found.groups;
+            if (!token)
+                return $mol_jsx("span", null, found[0]);
+            if (token.strong) {
+                return $mol_jsx("strong", null, line(token.content));
+            }
+            if (token.emphasis) {
+                return $mol_jsx("em", null, line(token.content));
+            }
+            if (token.insertion) {
+                return $mol_jsx("ins", null, line(token.content));
+            }
+            if (token.deletion) {
+                return $mol_jsx("del", null, line(token.content));
+            }
+            if (token.code) {
+                return $mol_jsx("code", null, token.content);
+            }
+            if (token.link) {
+                return $mol_jsx("a", { href: token.uri }, line(token.content || token.uri));
+            }
+            if (token.embed) {
+                if (/\.(png|jpg|jpeg|webp|gif)$/.test(token.uri)) {
+                    return $mol_jsx("img", { src: token.uri, alt: token.content });
+                }
+                return ($mol_jsx("object", { data: token.uri },
+                    NL,
+                    $mol_jsx("iframe", { src: token.uri }, token.uri),
+                    NL));
+            }
+            return token[0];
+        }).filter(Boolean);
+    }
+    function $hyoo_marked_to_dom(marked) {
+        return $mol_jsx("body", null, flow(marked + '\n'));
+    }
+    $.$hyoo_marked_to_dom = $hyoo_marked_to_dom;
+})($ || ($ = {}));
+//hyoo/marked/to/dom/dom.tsx
+;
+"use strict";
+var $;
+(function ($) {
+    function $hyoo_marked_to_html(marked) {
+        return this.$hyoo_marked_to_dom(marked).innerHTML;
+    }
+    $.$hyoo_marked_to_html = $hyoo_marked_to_html;
+})($ || ($ = {}));
+//hyoo/marked/to/html/html.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_marked_app extends $.$hyoo_marked_app {
+            preview(next) {
+                return this.$.$mol_state_arg.value('preview', next) ?? '';
+            }
+            pages() {
+                return [
+                    this.Marked(),
+                    ...this.preview() === 'html' ? [this.Html()] : [],
+                    ...this.preview() === 'view' ? [this.View()] : [],
+                ];
+            }
+            html() {
+                return this.$.$hyoo_marked_to_html(this.marked());
+            }
+            marked(next) {
+                return this.$.$mol_state_arg.value('marked', next)
+                    ?? this.$.$mol_fetch.text('hyoo/marked/readme.md')
+                        .replace(/```\n*/g, '');
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_marked_app.prototype, "html", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_marked_app.prototype, "marked", null);
+        $$.$hyoo_marked_app = $hyoo_marked_app;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//hyoo/marked/app/app.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("hyoo/marked/app/app.view.css", "[hyoo_marked_app_marked] {\n\tflex: 1000 0 40rem;\n}\n\n[hyoo_marked_app_preview] {\n\tflex-grow: 0;\n}\n\n[hyoo_marked_app_html] {\n\tflex: 1000 0 40rem;\n}\n\n[hyoo_marked_app_view] {\n\tflex: 1000 0 40rem;\n}\n");
+})($ || ($ = {}));
+//hyoo/marked/app/-css/app.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_marked_demo extends $mol_example_large {
+        title() {
+            return "CROWD Text Merge";
+        }
+        sub() {
+            return [
+                this.Sandbox()
+            ];
+        }
+        tags() {
+            return [
+                "MarkedText",
+                "MarkDown",
+                "HTML"
+            ];
+        }
+        Sandbox() {
+            const obj = new this.$.$hyoo_marked_app();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_marked_demo.prototype, "Sandbox", null);
+    $.$hyoo_marked_demo = $hyoo_marked_demo;
+})($ || ($ = {}));
+//hyoo/marked/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_harp_app extends $mol_page {
+        title() {
+            return "HARP - Humane API REST Protocol";
+        }
+        plugins() {
+            return [
+                this.Theme()
+            ];
+        }
+        tools() {
+            return [
+                this.Source(),
+                this.Lights()
+            ];
+        }
+        body() {
+            return [
+                this.Content()
+            ];
+        }
+        Theme() {
+            const obj = new this.$.$mol_theme_auto();
+            return obj;
+        }
+        Source() {
+            const obj = new this.$.$mol_link_source();
+            obj.uri = () => "https://github.com/hyoo-ru/harp.hyoo.ru";
+            return obj;
+        }
+        Lights() {
+            const obj = new this.$.$mol_lights_toggle();
+            return obj;
+        }
+        rate() {
+            return 0;
+        }
+        Rate() {
+            const obj = new this.$.$mol_speck();
+            obj.value = () => this.rate();
+            return obj;
+        }
+        uri(next) {
+            if (next !== undefined)
+                return next;
+            return "pullRequest[state=closed,merged;+repository[name;private;owner[name];_len[issue]];-updateTime;author[name];_num=20@30]";
+        }
+        Uri() {
+            const obj = new this.$.$mol_textarea();
+            obj.hint = () => "harp;query";
+            obj.value = (next) => this.uri(next);
+            return obj;
+        }
+        json(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Json() {
+            const obj = new this.$.$mol_dump_value();
+            obj.value = () => this.json();
+            return obj;
+        }
+        Content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Rate(),
+                this.Uri(),
+                this.Json()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "Theme", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "Source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "Lights", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "Rate", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "uri", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "Uri", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "json", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "Json", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_app.prototype, "Content", null);
+    $.$hyoo_harp_app = $hyoo_harp_app;
+})($ || ($ = {}));
+//hyoo/harp/app/-view.tree/app.view.tree.ts
+;
+"use strict";
+//hyoo/harp/query/query.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const syntax = new $mol_syntax2({
+        'filter': /!?=/,
+        'list_separator': /,/,
+        'range_separator': /@/,
+        'fetch_open': /\[/,
+        'fetch_separator': /[;&\/?#]/,
+        'fetch_close': /\]/,
+    });
+    function $hyoo_harp_from_string(uri) {
+        let parent = {};
+        let prev = null;
+        let stack = [parent];
+        let range = null;
+        let values = null;
+        function fail_at(offset) {
+            const uri_marked = uri.substring(0, offset) + '\u035C' + uri.substring(offset);
+            $mol_fail(new Error(`Unexpected token at ${offset} of "${uri_marked}"`));
+        }
+        syntax.parse(uri, {
+            '': (text, chunks, offset) => {
+                if (values) {
+                    text = decodeURIComponent(text);
+                    range = (range && range.length > 1)
+                        ? [range[0], range[1] + text]
+                        : [(range?.[0] ?? '') + text];
+                }
+                else {
+                    let [, order, name] = /^([+-]?)(.*)$/.exec(text);
+                    prev = parent[decodeURIComponent(name)] = {};
+                    if (order)
+                        prev['+'] = order === '+';
+                    stack.push(parent);
+                }
+            },
+            'filter': (filter, chinks, offset) => {
+                if (values) {
+                    if (range) {
+                        range.push(range.pop() + filter);
+                    }
+                    else {
+                        range = [filter];
+                    }
+                }
+                else if (prev) {
+                    values = prev[filter] = [];
+                }
+                else {
+                    values = [];
+                    parent[''] = values;
+                }
+            },
+            'list_separator': (found, chunks, offset) => {
+                if (!range)
+                    fail_at(offset);
+                values.push(range);
+                range = null;
+            },
+            'range_separator': (found, chunks, offset) => {
+                if (!values)
+                    fail_at(offset);
+                range = [range?.[0] ?? '', ''];
+            },
+            'fetch_open': (found, chunks, offset) => {
+                if (range) {
+                    values.push(range);
+                    range = null;
+                }
+                if (!prev)
+                    fail_at(offset);
+                parent = prev;
+                values = null;
+                prev = null;
+            },
+            'fetch_separator': (found, chunks, offset) => {
+                if (range) {
+                    values.push(range);
+                    range = null;
+                }
+                parent = stack.pop();
+                values = null;
+                prev = null;
+            },
+            'fetch_close': () => {
+                if (range) {
+                    values.push(range);
+                    range = null;
+                }
+                parent = stack.pop();
+                values = null;
+                prev = null;
+            },
+        });
+        if (range)
+            values.push(range);
+        return stack[0];
+    }
+    $.$hyoo_harp_from_string = $hyoo_harp_from_string;
+})($ || ($ = {}));
+//hyoo/harp/from/string/string.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function count(query) {
+        return;
+    }
+    function $hyoo_harp_rate(query) {
+        let rate = 1;
+        for (const field of Object.keys(query)) {
+            switch (field) {
+                case '=': break;
+                case '+': break;
+                case '!=': break;
+                case '_num': break;
+                default:
+                    const kid = query[field];
+                    const mult = $hyoo_harp_rate(kid);
+                    if (mult === 1)
+                        rate += (kid['=']?.length ?? kid['!=']?.length ?? 1 / 10) * 10;
+                    else
+                        rate += mult;
+            }
+        }
+        return rate;
+    }
+    $.$hyoo_harp_rate = $hyoo_harp_rate;
+})($ || ($ = {}));
+//hyoo/harp/rate/rate.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_harp_app extends $.$hyoo_harp_app {
+            uri(next) {
+                return this.$.$mol_state_arg.value('query', next) ?? super.uri();
+            }
+            json() {
+                return $hyoo_harp_from_string(this.uri());
+            }
+            rate() {
+                return $hyoo_harp_rate(this.json());
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_harp_app.prototype, "uri", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_harp_app.prototype, "json", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_harp_app.prototype, "rate", null);
+        $$.$hyoo_harp_app = $hyoo_harp_app;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//hyoo/harp/app/app.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("hyoo/harp/app/app.view.css", "[hyoo_harp_app_content] {\n\tpadding: var(--mol_gap_block);\n}\n");
+})($ || ($ = {}));
+//hyoo/harp/app/-css/app.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_harp_demo extends $mol_example_large {
+        sub() {
+            return [
+                this.Sandbox()
+            ];
+        }
+        tags() {
+            return [
+                "API",
+                "Query",
+                "REST"
+            ];
+        }
+        title() {
+            return this.Sandbox().title();
+        }
+        Sandbox() {
+            const obj = new this.$.$hyoo_harp_app();
+            obj.Lights = () => null;
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_harp_demo.prototype, "Sandbox", null);
+    $.$hyoo_harp_demo = $hyoo_harp_demo;
+})($ || ($ = {}));
+//hyoo/harp/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_nav_demo extends $mol_example {
+        title() {
+            return "Number input control with various configuration";
+        }
+        plugins() {
+            return [
+                this.Nav()
+            ];
+        }
+        sub() {
+            return [
+                this.Demo_items()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_card",
+                "$mol_switch",
+                "navigation",
+                "keyboard"
+            ];
+        }
+        Nav() {
+            const obj = new this.$.$mol_nav();
+            obj.keys_x = () => this.tab_list();
+            obj.current_x = (val) => this.tab_current(val);
+            obj.keys_y = () => this.row_list();
+            obj.current_y = (val) => this.row_current(val);
+            return obj;
+        }
+        tab_current(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        tab_list() {
+            return this.Tab_list().keys();
+        }
+        Tab_list() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (val) => this.tab_current(val);
+            obj.options = () => ({
+                first: "First",
+                second: "Second",
+                third: "Third"
+            });
+            return obj;
+        }
+        row_current(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        row_list() {
+            return this.Row_list().keys();
+        }
+        Row_list() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (val) => this.row_current(val);
+            obj.options = () => ({
+                first: "First",
+                second: "Second",
+                third: "Third"
+            });
+            return obj;
+        }
+        Demo_items() {
+            const obj = new this.$.$mol_card();
+            obj.content = () => [
+                this.Tab_list(),
+                this.Row_list()
+            ];
+            obj.status = () => "Select option and use keys to switch";
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_nav_demo.prototype, "Nav", null);
+    __decorate([
+        $mol_mem
+    ], $mol_nav_demo.prototype, "tab_current", null);
+    __decorate([
+        $mol_mem
+    ], $mol_nav_demo.prototype, "Tab_list", null);
+    __decorate([
+        $mol_mem
+    ], $mol_nav_demo.prototype, "row_current", null);
+    __decorate([
+        $mol_mem
+    ], $mol_nav_demo.prototype, "Row_list", null);
+    __decorate([
+        $mol_mem
+    ], $mol_nav_demo.prototype, "Demo_items", null);
+    $.$mol_nav_demo = $mol_nav_demo;
+})($ || ($ = {}));
+//mol/nav/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_define($mol_nav_demo, {
+        display: 'flex',
+        flexDirection: 'column',
+        Row_list: {
+            display: 'flex',
+            flexDirection: 'column',
+        },
+    });
+})($ || ($ = {}));
+//mol/nav/demo/demo.view.tree.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_number_demo extends $mol_example_small {
+        title() {
+            return "Number input control with various configuration";
+        }
+        value(next) {
+            if (next !== undefined)
+                return next;
+            return +NaN;
+        }
+        sub() {
+            return [
+                this.Rows()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_labeler",
+                "$mol_number",
+                "$mol_section",
+                "number",
+                "field",
+                "label",
+                "section"
+            ];
+        }
+        value_string() {
+            return "";
+        }
+        Value_string() {
+            const obj = new this.$.$mol_string();
+            obj.value = () => this.value_string();
+            obj.disabled = () => true;
+            return obj;
+        }
+        reset_enabled() {
+            return true;
+        }
+        reset_value(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Reset() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => "Reset";
+            obj.enabled = (next) => this.reset_enabled();
+            obj.click = (next) => this.reset_value(next);
+            return obj;
+        }
+        Section_value_bar() {
+            const obj = new this.$.$mol_bar();
+            obj.sub = () => [
+                this.Value_string(),
+                this.Reset()
+            ];
+            return obj;
+        }
+        Section_value_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Section_value_bar()
+            ];
+            return obj;
+        }
+        Section_value() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Stringified number value";
+            obj.content = () => [
+                this.Section_value_row()
+            ];
+            return obj;
+        }
+        Initial_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            return obj;
+        }
+        Initial_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Initial";
+            obj.content = () => [
+                this.Initial_number()
+            ];
+            return obj;
+        }
+        Hint_number() {
+            const obj = new this.$.$mol_number();
+            obj.hint = () => "Any number";
+            obj.value = (next) => this.value(next);
+            return obj;
+        }
+        Hint_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Hint showed (if empty value)";
+            obj.content = () => [
+                this.Hint_number()
+            ];
+            return obj;
+        }
+        Section_initial_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Initial_number_label(),
+                this.Hint_number_label()
+            ];
+            return obj;
+        }
+        Section_initial() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Simple";
+            obj.content = () => [
+                this.Section_initial_row()
+            ];
+            return obj;
+        }
+        Value_field_disabled_number() {
+            const obj = new this.$.$mol_number();
+            obj.hint = () => "This hint not showed while string_enabled is false";
+            obj.value = (next) => this.value(next);
+            obj.string_enabled = () => false;
+            return obj;
+        }
+        Value_field_disabled_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Value field disabled";
+            obj.content = () => [
+                this.Value_field_disabled_number()
+            ];
+            return obj;
+        }
+        Disabled_number() {
+            const obj = new this.$.$mol_number();
+            obj.hint = () => "This hint not showed while enabled is false";
+            obj.value = (next) => this.value();
+            obj.enabled = () => false;
+            return obj;
+        }
+        Disabled_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Disabled";
+            obj.content = () => [
+                this.Disabled_number()
+            ];
+            return obj;
+        }
+        Dec_disabled_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.dec_enabled = () => false;
+            return obj;
+        }
+        Dec_disabled_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Decrement disabled";
+            obj.content = () => [
+                this.Dec_disabled_number()
+            ];
+            return obj;
+        }
+        Inc_disabled_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.inc_enabled = () => false;
+            return obj;
+        }
+        Inc_disabled_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Increment disabled";
+            obj.content = () => [
+                this.Inc_disabled_number()
+            ];
+            return obj;
+        }
+        Section_disabled_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Value_field_disabled_number_label(),
+                this.Disabled_number_label(),
+                this.Dec_disabled_number_label(),
+                this.Inc_disabled_number_label()
+            ];
+            return obj;
+        }
+        Section_disabled() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Disabled";
+            obj.content = () => [
+                this.Section_disabled_row()
+            ];
+            return obj;
+        }
+        Precision_change_10_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision_change = () => 10;
+            return obj;
+        }
+        Precision_change_10_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision change 10";
+            obj.content = () => [
+                this.Precision_change_10_number()
+            ];
+            return obj;
+        }
+        Precision_change_01_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision_change = () => 0.1;
+            return obj;
+        }
+        Precision_change_01_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "⚠️ Precision change 0.1";
+            obj.content = () => [
+                this.Precision_change_01_number()
+            ];
+            return obj;
+        }
+        Precision_100_number_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision = () => 100;
+            return obj;
+        }
+        Precision_100_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision 100";
+            obj.content = () => [
+                this.Precision_100_number_number()
+            ];
+            return obj;
+        }
+        Precision_5_number_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision = () => 5;
+            return obj;
+        }
+        Precision_5_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision 5";
+            obj.content = () => [
+                this.Precision_5_number_number()
+            ];
+            return obj;
+        }
+        Precision_01_number_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision = () => 0.1;
+            return obj;
+        }
+        Precision_01_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision 0.1";
+            obj.content = () => [
+                this.Precision_01_number_number()
+            ];
+            return obj;
+        }
+        Precision_005_number_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision = () => 0.05;
+            return obj;
+        }
+        Precision_005_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision 0.05";
+            obj.content = () => [
+                this.Precision_005_number_number()
+            ];
+            return obj;
+        }
+        Precision_view_001_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision_view = () => 0.001;
+            return obj;
+        }
+        Precision_view_001_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Precision view 0.001";
+            obj.content = () => [
+                this.Precision_view_001_number()
+            ];
+            return obj;
+        }
+        Precision_view_10_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value(next);
+            obj.precision_view = () => 10;
+            return obj;
+        }
+        Precision_view_10_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "⚠️ Precision view 10";
+            obj.content = () => [
+                this.Precision_view_10_number()
+            ];
+            return obj;
+        }
+        Section_precision_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Precision_change_10_number_label(),
+                this.Precision_change_01_number_label(),
+                this.Precision_100_number_label(),
+                this.Precision_5_number_label(),
+                this.Precision_01_number_label(),
+                this.Precision_005_number_label(),
+                this.Precision_view_001_number_label(),
+                this.Precision_view_10_number_label()
+            ];
+            return obj;
+        }
+        Section_precision() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Precision";
+            obj.content = () => [
+                this.Section_precision_row()
+            ];
+            return obj;
+        }
+        value_min_0(next) {
+            if (next !== undefined)
+                return next;
+            return +NaN;
+        }
+        Min_0_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_min_0(next);
+            obj.value_min = () => 0;
+            return obj;
+        }
+        Min_0_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Min value 0";
+            obj.content = () => [
+                this.Min_0_number()
+            ];
+            return obj;
+        }
+        value_max_100(next) {
+            if (next !== undefined)
+                return next;
+            return 100;
+        }
+        Max_100_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_max_100(next);
+            obj.value_max = () => 100;
+            obj.precision_change = () => 10;
+            return obj;
+        }
+        Max_100_number_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Max value 100";
+            obj.content = () => [
+                this.Max_100_number()
+            ];
+            return obj;
+        }
+        value_case1_range(next) {
+            if (next !== undefined)
+                return next;
+            return 0;
+        }
+        Range_case1_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_case1_range(next);
+            obj.value_min = () => -5;
+            obj.value_max = () => 5;
+            return obj;
+        }
+        Range_number_case1_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Value from -5 to 5";
+            obj.content = () => [
+                this.Range_case1_number()
+            ];
+            return obj;
+        }
+        value_case2_range(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Range_case2_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_case2_range(next);
+            obj.value_min = () => 5;
+            obj.value_max = () => 10;
+            return obj;
+        }
+        Range_number_case2_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Value from 5 to 10";
+            obj.content = () => [
+                this.Range_case2_number()
+            ];
+            return obj;
+        }
+        value_case3_range(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
+        Range_case3_number() {
+            const obj = new this.$.$mol_number();
+            obj.value = (next) => this.value_case3_range(next);
+            obj.value_min = () => -10;
+            obj.value_max = () => -5;
+            return obj;
+        }
+        Range_number_case3_label() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Value from -10 to -5";
+            obj.content = () => [
+                this.Range_case3_number()
+            ];
+            return obj;
+        }
+        Section_range_row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Min_0_number_label(),
+                this.Max_100_number_label(),
+                this.Range_number_case1_label(),
+                this.Range_number_case2_label(),
+                this.Range_number_case3_label()
+            ];
+            return obj;
+        }
+        Section_range() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Range";
+            obj.content = () => [
+                this.Section_range_row()
+            ];
+            return obj;
+        }
+        Rows() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Section_value(),
+                this.Section_initial(),
+                this.Section_disabled(),
+                this.Section_precision(),
+                this.Section_range()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Value_string", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "reset_value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Reset", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_value_bar", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_value_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Initial_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Initial_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Hint_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Hint_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_initial_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_initial", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Value_field_disabled_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Value_field_disabled_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Disabled_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Disabled_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Dec_disabled_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Dec_disabled_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Inc_disabled_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Inc_disabled_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_disabled_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_change_10_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_change_10_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_change_01_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_change_01_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_100_number_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_100_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_5_number_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_5_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_01_number_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_01_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_005_number_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_005_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_view_001_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_view_001_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_view_10_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Precision_view_10_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_precision_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_precision", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_min_0", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Min_0_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Min_0_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_max_100", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Max_100_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Max_100_number_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_case1_range", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_case1_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_number_case1_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_case2_range", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_case2_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_number_case2_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "value_case3_range", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_case3_number", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Range_number_case3_label", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_range_row", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Section_range", null);
+    __decorate([
+        $mol_mem
+    ], $mol_number_demo.prototype, "Rows", null);
+    $.$mol_number_demo = $mol_number_demo;
+})($ || ($ = {}));
+//mol/number/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_number_demo extends $.$mol_number_demo {
+            value_string() {
+                return String(this.value());
+            }
+            reset_value() {
+                this.value(null);
+            }
+            reset_enabled() {
+                return !(Number.isNaN(this.value()) || this.value() === null);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_number_demo.prototype, "value_string", null);
+        __decorate([
+            $mol_mem
+        ], $mol_number_demo.prototype, "reset_enabled", null);
+        $$.$mol_number_demo = $mol_number_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/number/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_page_demo extends $mol_example_large {
+        title() {
+            return "Page with header, body and footer";
+        }
+        sub() {
+            return [
+                this.Page()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_filler",
+                "$mol_row",
+                "$mol_button",
+                "page",
+                "container",
+                "header",
+                "footer",
+                "toolbar",
+                "app",
+                "bar",
+                "bottom",
+                "navigator"
+            ];
+        }
+        Button_tools() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => "Toolbar Button";
+            return obj;
+        }
+        Text() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Button_foot() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => "Footer Button";
+            return obj;
+        }
+        Page() {
+            const obj = new this.$.$mol_page();
+            obj.tools = () => [
+                this.Button_tools()
+            ];
+            obj.body = () => [
+                this.Text()
+            ];
+            obj.foot = () => [
+                this.Button_foot()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_page_demo.prototype, "Button_tools", null);
+    __decorate([
+        $mol_mem
+    ], $mol_page_demo.prototype, "Text", null);
+    __decorate([
+        $mol_mem
+    ], $mol_page_demo.prototype, "Button_foot", null);
+    __decorate([
+        $mol_mem
+    ], $mol_page_demo.prototype, "Page", null);
+    $.$mol_page_demo = $mol_page_demo;
+})($ || ($ = {}));
+//mol/page/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_paginator_demo extends $mol_example_small {
+        title() {
+            return "Page switcher";
+        }
+        sub() {
+            return [
+                this.Pages()
+            ];
+        }
+        tags() {
+            return [
+                "paginator",
+                "navigation"
+            ];
+        }
+        page(val) {
+            if (val !== undefined)
+                return val;
+            return 0;
+        }
+        Pages() {
+            const obj = new this.$.$mol_paginator();
+            obj.value = (val) => this.page(val);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_paginator_demo.prototype, "page", null);
+    __decorate([
+        $mol_mem
+    ], $mol_paginator_demo.prototype, "Pages", null);
+    $.$mol_paginator_demo = $mol_paginator_demo;
+})($ || ($ = {}));
+//mol/paginator/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_demo extends $mol_example_large {
+        title() {
+            return "Dynamic lightweight graphs";
+        }
+        count(val) {
+            if (val !== undefined)
+                return val;
+            return 20;
+        }
+        frequency() {
+            return 8;
+        }
+        sub() {
+            return [
+                this.Plot()
+            ];
+        }
+        tags() {
+            return [
+                "visualization",
+                "chart",
+                "graph",
+                "dashboard"
+            ];
+        }
+        saturation_series() {
+            return [];
+        }
+        Saturation_fill() {
+            const obj = new this.$.$mol_plot_fill();
+            return obj;
+        }
+        Saturation_line() {
+            const obj = new this.$.$mol_plot_line();
+            obj.type = () => "dashed";
+            return obj;
+        }
+        Saturation() {
+            const obj = new this.$.$mol_plot_group();
+            obj.series_y = () => this.saturation_series();
+            obj.graphs = () => [
+                this.Saturation_fill(),
+                this.Saturation_line()
+            ];
+            return obj;
+        }
+        input_series() {
+            return [];
+        }
+        Input_line() {
+            const obj = new this.$.$mol_plot_line();
+            return obj;
+        }
+        Input_dots() {
+            const obj = new this.$.$mol_plot_dot();
+            return obj;
+        }
+        Input() {
+            const obj = new this.$.$mol_plot_group();
+            obj.series_y = () => this.input_series();
+            obj.graphs = () => [
+                this.Input_line(),
+                this.Input_dots()
+            ];
+            return obj;
+        }
+        output_series() {
+            return [];
+        }
+        Output() {
+            const obj = new this.$.$mol_plot_bar();
+            obj.series_y = () => this.output_series();
+            return obj;
+        }
+        Voltage_title() {
+            return "V";
+        }
+        Voltage() {
+            const obj = new this.$.$mol_plot_ruler_vert();
+            obj.title = () => this.Voltage_title();
+            return obj;
+        }
+        Time_title() {
+            return "ms";
+        }
+        Time() {
+            const obj = new this.$.$mol_plot_ruler_hor();
+            obj.title = () => this.Time_title();
+            return obj;
+        }
+        Plot() {
+            const obj = new this.$.$mol_plot_pane();
+            obj.graphs = () => [
+                this.Saturation(),
+                this.Input(),
+                this.Output(),
+                this.Voltage(),
+                this.Time()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "count", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Saturation_fill", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Saturation_line", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Saturation", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Input_line", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Input_dots", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Input", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Output", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Voltage", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Time", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_demo.prototype, "Plot", null);
+    $.$mol_plot_demo = $mol_plot_demo;
+})($ || ($ = {}));
+//mol/plot/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_demo extends $.$mol_plot_demo {
+            series_x() {
+                const next = [];
+                for (let i = 0, count = this.count(); i < count; i++)
+                    next.push(i);
+                return next;
+            }
+            input_series() {
+                const x = this.series_x();
+                return x.map(i => Math.sin(i * 9 / x.length) * 2);
+            }
+            output_series() {
+                $mol_state_time.now(Math.floor(1000 / this.frequency()));
+                return this.input_series().map(input => input * Math.random());
+            }
+            saturation_series() {
+                const input = this.output_series();
+                const prev = $mol_mem_cached(() => this.saturation_series()) ?? [];
+                return input.map((val, i) => {
+                    const next = (val + 9 * (prev[i] || 0)) / 10;
+                    return (Math.abs(next) > Math.abs(val)) ? next : val;
+                });
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_demo.prototype, "series_x", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_demo.prototype, "input_series", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_demo.prototype, "output_series", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_demo.prototype, "saturation_series", null);
+        $$.$mol_plot_demo = $mol_plot_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/demo/demo.view.css", "[mol_plot_demo_saturation] {\n\tstroke-dasharray: .5% .5%;\n}\n");
+})($ || ($ = {}));
+//mol/plot/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_map_heat extends $mol_plot_group {
+        series_z() {
+            return [];
+        }
+        graphs() {
+            return this.level_graphs();
+        }
+        Level(id) {
+            const obj = new this.$.$mol_plot_map_heat_level();
+            obj.hint = () => this.level_hint(id);
+            obj.points = () => this.level_points(id);
+            obj.opacity = () => this.level_opacity(id);
+            obj.diameter = () => this.level_diameter();
+            obj.aspect = () => this.level_aspect();
+            return obj;
+        }
+        Sample() {
+            const obj = new this.$.$mol_plot_graph_sample();
+            obj.color = () => this.color();
+            return obj;
+        }
+        level_graphs() {
+            return [];
+        }
+        level_hint(id) {
+            return "";
+        }
+        level_points(id) {
+            return [];
+        }
+        level_opacity(id) {
+            return "1";
+        }
+        level_diameter() {
+            return 10;
+        }
+        level_aspect() {
+            return 1;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_plot_map_heat.prototype, "Level", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_map_heat.prototype, "Sample", null);
+    $.$mol_plot_map_heat = $mol_plot_map_heat;
+    class $mol_plot_map_heat_level extends $mol_plot_dot {
+        style() {
+            return {
+                ...super.style(),
+                opacity: this.opacity()
+            };
+        }
+        opacity() {
+            return "1";
+        }
+    }
+    $.$mol_plot_map_heat_level = $mol_plot_map_heat_level;
+})($ || ($ = {}));
+//mol/plot/map/heat/-view.tree/heat.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_map_heat extends $.$mol_plot_map_heat {
+            levels() {
+                return [...new Set(this.series_z())].sort((a, b) => a - b);
+            }
+            level_graphs() {
+                return this.levels().map((_, i) => this.Level(i));
+            }
+            level_points(level) {
+                const value = this.levels()[level];
+                const series_z = this.series_z();
+                const res = [];
+                for (const [index, point] of this.points().entries()) {
+                    if (series_z[index] !== value)
+                        continue;
+                    res.push(point);
+                }
+                return res;
+            }
+            level_opacity(level) {
+                return String(level / this.levels().length);
+            }
+            level_diameter() {
+                return Math.min(...this.scale().map(Math.abs));
+            }
+            level_aspect() {
+                const scale = this.scale().map(Math.abs);
+                return scale[1] / scale[0];
+            }
+            level_hint(index) {
+                return this.levels()[index].toLocaleString();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_map_heat.prototype, "levels", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_map_heat.prototype, "level_graphs", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_plot_map_heat.prototype, "level_points", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_plot_map_heat.prototype, "level_opacity", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_map_heat.prototype, "level_diameter", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_map_heat.prototype, "level_aspect", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_plot_map_heat.prototype, "level_hint", null);
+        $$.$mol_plot_map_heat = $mol_plot_map_heat;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/map/heat/heat.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/plot/map/heat/heat.view.css", "[mol_plot_map_heat_level_curve] {\n\tstroke-linecap: square;\n\tfill: none;\n}\n");
+})($ || ($ = {}));
+//mol/plot/map/heat/-css/heat.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_plot_map_heat_demo extends $mol_example_large {
+        title() {
+            return "Dynamic Heat Map Graphs";
+        }
+        count_x() {
+            return 20;
+        }
+        count_y() {
+            return 200;
+        }
+        count_z() {
+            return 20;
+        }
+        sub() {
+            return [
+                this.Plot()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_plot_pane",
+                "visualization",
+                "heatmap",
+                "graph",
+                "dashboard"
+            ];
+        }
+        terrain_x() {
+            return [];
+        }
+        terrain_y() {
+            return [];
+        }
+        terrain_z() {
+            return [];
+        }
+        Terrain() {
+            const obj = new this.$.$mol_plot_map_heat();
+            obj.series_x = () => this.terrain_x();
+            obj.series_y = () => this.terrain_y();
+            obj.series_z = () => this.terrain_z();
+            return obj;
+        }
+        zoom(val) {
+            return this.Plot().scale_y(val);
+        }
+        Plot() {
+            const obj = new this.$.$mol_plot_pane();
+            obj.zoom = (val) => this.zoom(val);
+            obj.graphs = () => [
+                this.Terrain()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_plot_map_heat_demo.prototype, "Terrain", null);
+    __decorate([
+        $mol_mem
+    ], $mol_plot_map_heat_demo.prototype, "Plot", null);
+    $.$mol_plot_map_heat_demo = $mol_plot_map_heat_demo;
+})($ || ($ = {}));
+//mol/plot/map/heat/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_plot_map_heat_demo extends $.$mol_plot_map_heat_demo {
+            terrain_x() {
+                const count_x = this.count_x();
+                const count_y = this.count_y();
+                return Array.from({ length: count_x * count_y }, (_, i) => i % count_x);
+            }
+            terrain_y() {
+                const count_x = this.count_x();
+                const count_y = this.count_y();
+                return Array.from({ length: count_x * count_y }, (_, i) => Math.floor(i / count_x));
+            }
+            terrain_z() {
+                const count_x = this.count_x();
+                const count_y = this.count_y();
+                const count_z = this.count_z();
+                return Array.from({ length: count_x * count_y }, () => Math.floor(Math.random() * count_z) * 1000);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_plot_map_heat_demo.prototype, "terrain_x", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_map_heat_demo.prototype, "terrain_y", null);
+        __decorate([
+            $mol_mem
+        ], $mol_plot_map_heat_demo.prototype, "terrain_z", null);
+        $$.$mol_plot_map_heat_demo = $mol_plot_map_heat_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/plot/map/heat/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_anchor extends $mol_icon {
+        path() {
+            return "M12,2C10.34,2 9,3.34 9,5C9,6.27 9.8,7.4 11,7.83V10H8V12H11V18.92C9.16,18.63 7.53,17.57 6.53,16H8V14H3V19H5V17.3C6.58,19.61 9.2,21 12,21C14.8,21 17.42,19.61 19,17.31V19H21V14H16V16H17.46C16.46,17.56 14.83,18.63 13,18.92V12H16V10H13V7.82C14.2,7.4 15,6.27 15,5C15,3.34 13.66,2 12,2M12,4C12.55,4 13,4.45 13,5C13,5.55 12.55,6 12,6C11.45,6 11,5.55 11,5C11,4.45 11.45,4 12,4Z";
+        }
+    }
+    $.$mol_icon_anchor = $mol_icon_anchor;
+})($ || ($ = {}));
+//mol/icon/anchor/-view.tree/anchor.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_pop_demo extends $mol_example {
+        title() {
+            return "Pop up block with various alignment";
+        }
+        sub() {
+            return [
+                this.Manage(),
+                this.Pop_area()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_row",
+                "$mol_button",
+                "$mol_labeler",
+                "popup",
+                "menu",
+                "align",
+                "container",
+                "modal"
+            ];
+        }
+        show_title() {
+            return "Showed";
+        }
+        pop_showed_check_hint() {
+            return "$mol_pop showed";
+        }
+        pop_showed(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Show_check() {
+            const obj = new this.$.$mol_check_box();
+            obj.hint = () => this.pop_showed_check_hint();
+            obj.checked = (val) => this.pop_showed(val);
+            return obj;
+        }
+        Showed() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => this.show_title();
+            obj.content = () => [
+                this.Show_check()
+            ];
+            return obj;
+        }
+        align_title() {
+            return "Align";
+        }
+        pop_align(val) {
+            if (val !== undefined)
+                return val;
+            return "bottom_right";
+        }
+        aligins() {
+            return {
+                left_top: "left_top",
+                left_center: "left_center",
+                left_bottom: "left_bottom",
+                right_top: "right_top",
+                right_center: "right_center",
+                right_bottom: "right_bottom",
+                center: "center",
+                top_left: "top_left",
+                top_center: "top_center",
+                top_right: "top_right",
+                bottom_left: "bottom_left",
+                bottom_center: "bottom_center",
+                bottom_right: "bottom_right"
+            };
+        }
+        Align_select() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (val) => this.pop_align(val);
+            obj.options = () => this.aligins();
+            return obj;
+        }
+        Align() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => this.align_title();
+            obj.content = () => [
+                this.Align_select()
+            ];
+            return obj;
+        }
+        Manage() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Showed(),
+                this.Align()
+            ];
+            return obj;
+        }
+        anchor_button_icon() {
+            const obj = new this.$.$mol_icon_anchor();
+            return obj;
+        }
+        anchor_button_title() {
+            return "Anchor";
+        }
+        Pop_anchor() {
+            const obj = new this.$.$mol_button_major();
+            obj.sub = () => [
+                this.anchor_button_icon(),
+                this.anchor_button_title()
+            ];
+            return obj;
+        }
+        bubble_hint() {
+            return "This is\nbubble_content";
+        }
+        Content() {
+            const obj = new this.$.$mol_row();
+            obj.minimal_width = () => 150;
+            obj.sub = () => [
+                this.bubble_hint()
+            ];
+            return obj;
+        }
+        Pop() {
+            const obj = new this.$.$mol_pop();
+            obj.Anchor = () => this.Pop_anchor();
+            obj.showed = () => this.pop_showed();
+            obj.align = () => this.pop_align();
+            obj.bubble_content = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+        Pop_area() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Pop()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "pop_showed", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Show_check", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Showed", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "pop_align", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Align_select", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Align", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Manage", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "anchor_button_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Pop_anchor", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Pop", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_demo.prototype, "Pop_area", null);
+    $.$mol_pop_demo = $mol_pop_demo;
+})($ || ($ = {}));
+//mol/pop/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem } = $mol_style_unit;
+        const { calc } = $mol_style_func;
+        $mol_style_define($mol_pop_demo, {
+            flex: {
+                direction: 'column'
+            },
+            alignItems: 'flex-start',
+            Pop_area: {
+                display: 'flex',
+                padding: rem(10),
+                boxShadow: `0 0 0 1px ${$mol_theme.line}`,
+                border: {
+                    radius: $mol_gap.round
+                }
+            }
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/pop/demo/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_pop_over extends $mol_pop {
+        showed() {
+            return this.hovered();
+        }
+        attr() {
+            return {
+                ...super.attr(),
+                tabindex: 0
+            };
+        }
+        event() {
+            return {
+                ...super.event(),
+                mouseenter: (event) => this.event_show(event),
+                mouseleave: (event) => this.event_hide(event)
+            };
+        }
+        hovered(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        event_show(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        event_hide(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over.prototype, "hovered", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over.prototype, "event_show", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over.prototype, "event_hide", null);
+    $.$mol_pop_over = $mol_pop_over;
+})($ || ($ = {}));
+//mol/pop/over/-view.tree/over.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_pop_over extends $.$mol_pop_over {
+            event_show(event) {
+                this.hovered(true);
+            }
+            event_hide(event) {
+                this.hovered(false);
+            }
+            showed() {
+                return this.focused() || this.hovered();
+            }
+        }
+        $$.$mol_pop_over = $mol_pop_over;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/pop/over/over.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/pop/over/over.view.css", "[mol_pop_over]:focus {\r\n\toutline: none;\r\n}");
+})($ || ($ = {}));
+//mol/pop/over/-css/over.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_pop_over_demo extends $mol_example_small {
+        title() {
+            return "Menu that opens on mouse over";
+        }
+        sub() {
+            return [
+                this.Menu()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_button",
+                "popover",
+                "pop",
+                "menu",
+                "hover",
+                "tooltip"
+            ];
+        }
+        file_title() {
+            return "File";
+        }
+        open_title() {
+            return "Open";
+        }
+        Open() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.open_title();
+            return obj;
+        }
+        export_title() {
+            return "Export";
+        }
+        Export() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.export_title();
+            return obj;
+        }
+        save_title() {
+            return "Save";
+        }
+        Save() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.save_title();
+            return obj;
+        }
+        File_menu() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Open(),
+                this.Export(),
+                this.Save()
+            ];
+            return obj;
+        }
+        File() {
+            const obj = new this.$.$mol_pop_over();
+            obj.align = () => "bottom_right";
+            obj.Anchor = () => this.file_title();
+            obj.bubble_content = () => [
+                this.File_menu()
+            ];
+            return obj;
+        }
+        help_title() {
+            return "About";
+        }
+        updates_title() {
+            return "Updates";
+        }
+        Updates() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.updates_title();
+            return obj;
+        }
+        about_title() {
+            return "About";
+        }
+        About() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.about_title();
+            return obj;
+        }
+        Help_menu() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Updates(),
+                this.About()
+            ];
+            return obj;
+        }
+        Help() {
+            const obj = new this.$.$mol_pop_over();
+            obj.align = () => "bottom_right";
+            obj.Anchor = () => this.help_title();
+            obj.bubble_content = () => [
+                this.Help_menu()
+            ];
+            return obj;
+        }
+        Menu() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.File(),
+                this.Help()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "Open", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "Export", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "Save", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "File_menu", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "File", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "Updates", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "About", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "Help_menu", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "Help", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pop_over_demo.prototype, "Menu", null);
+    $.$mol_pop_over_demo = $mol_pop_over_demo;
+})($ || ($ = {}));
+//mol/pop/over/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/pop/over/demo/over.view.css", "[mol_pop_over_demo_file_menu] ,\n[mol_pop_over_demo_help_menu] {\n\talign-items: stretch;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n");
+})($ || ($ = {}));
+//mol/pop/over/demo/-css/over.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_portion_demo extends $mol_example_small {
+        title() {
+            return "Progress bar in various states";
+        }
+        sub() {
+            return [
+                this.Empty(),
+                this.Partial(),
+                this.Full()
+            ];
+        }
+        tags() {
+            return [
+                "dashboard",
+                "progress",
+                "slider"
+            ];
+        }
+        fist() {
+            return 0;
+        }
+        Empty() {
+            const obj = new this.$.$mol_portion();
+            obj.portion = () => this.fist();
+            return obj;
+        }
+        second() {
+            return 0.5;
+        }
+        Partial() {
+            const obj = new this.$.$mol_portion();
+            obj.portion = () => this.second();
+            return obj;
+        }
+        third() {
+            return 1;
+        }
+        Full() {
+            const obj = new this.$.$mol_portion();
+            obj.portion = () => this.third();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_portion_demo.prototype, "Empty", null);
+    __decorate([
+        $mol_mem
+    ], $mol_portion_demo.prototype, "Partial", null);
+    __decorate([
+        $mol_mem
+    ], $mol_portion_demo.prototype, "Full", null);
+    $.$mol_portion_demo = $mol_portion_demo;
+})($ || ($ = {}));
+//mol/portion/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_content_copy extends $mol_icon {
+        path() {
+            return "M19,21H8V7H19M19,5H8C6.9,5 6,5.9 6,7V21C6,22.1 6.9,23 8,23H19C20.1,23 21,22.1 21,21V7C21,5.9 20.1,5 19,5M16,1H4C2.9,1 2,1.9 2,3V17H4V3H16V1Z";
+        }
+    }
+    $.$mol_icon_content_copy = $mol_icon_content_copy;
+})($ || ($ = {}));
+//mol/icon/content/copy/-view.tree/copy.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_blob = ($node.buffer?.Blob ?? $mol_dom_context.Blob);
+})($ || ($ = {}));
+//mol/blob/blob.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_button_download extends $mol_button_minor {
+        blob() {
+            return null;
+        }
+        uri() {
+            return "";
+        }
+        file_name() {
+            return "blob.bin";
+        }
+        sub() {
+            return [
+                this.Icon(),
+                this.title()
+            ];
+        }
+        Icon() {
+            const obj = new this.$.$mol_icon_download();
+            return obj;
+        }
+        title() {
+            return "";
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_button_download.prototype, "Icon", null);
+    $.$mol_button_download = $mol_button_download;
+})($ || ($ = {}));
+//mol/button/download/-view.tree/download.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_button_download extends $.$mol_button_download {
+            uri() {
+                return URL.createObjectURL(this.blob());
+            }
+            click() {
+                const a = $mol_jsx("a", { href: this.uri(), download: this.file_name() });
+                a.click();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_button_download.prototype, "uri", null);
+        $$.$mol_button_download = $mol_button_download;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/button/download/download.view.tsx
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_pick_demo extends $mol_example_small {
+        title() {
+            return "Simple and complex popups";
+        }
+        confirmation_popup_content() {
+            return {
+                delete: this.Delete_confirm_content()
+            };
+        }
+        showed_confirmation() {
+            return null;
+        }
+        sub() {
+            return [
+                this.Demo_caption(),
+                this.Simple_pop(),
+                this.Info_pop(),
+                this.Options_pop()
+            ];
+        }
+        Options_content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Menu_item_copy(),
+                this.Menu_item_download(),
+                this.Menu_item_delete()
+            ];
+            return obj;
+        }
+        Delete_confirm_content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Delete_message(),
+                this.Delete_buttons()
+            ];
+            return obj;
+        }
+        tags() {
+            return [
+                "$mol_link_lazy",
+                "$mol_icon",
+                "$mol_text",
+                "$mol_check",
+                "pick",
+                "popup",
+                "info",
+                "menu",
+                "download",
+                "icon",
+                "container",
+                "confirm",
+                "markdown",
+                "modal"
+            ];
+        }
+        Demo_caption() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.title()
+            ];
+            return obj;
+        }
+        pick_trigger() {
+            return "?";
+        }
+        pick_content() {
+            return "This is popup content";
+        }
+        Simple_pop() {
+            const obj = new this.$.$mol_pick();
+            obj.hint = () => "Click to show simple popup";
+            obj.trigger_content = () => [
+                this.pick_trigger()
+            ];
+            obj.bubble_content = () => [
+                this.pick_content()
+            ];
+            return obj;
+        }
+        info_trigger() {
+            const obj = new this.$.$mol_icon_help_circle_outline();
+            return obj;
+        }
+        info_content_text() {
+            return "## Info Pop-up\n**This is Markdown text content**\nMore complex info Pop-up example";
+        }
+        info_content() {
+            const obj = new this.$.$mol_text();
+            obj.minimal_width = () => 200;
+            obj.text = () => this.info_content_text();
+            return obj;
+        }
+        Info_pop() {
+            const obj = new this.$.$mol_pick();
+            obj.hint = () => "Click to show info popup";
+            obj.trigger_content = () => [
+                this.info_trigger()
+            ];
+            obj.bubble_content = () => [
+                this.info_content()
+            ];
+            return obj;
+        }
+        options_trigger() {
+            const obj = new this.$.$mol_icon_dots_vertical();
+            return obj;
+        }
+        options_trigger_content() {
+            return [
+                this.options_trigger()
+            ];
+        }
+        options_bubble_content() {
+            return [
+                this.Options_content()
+            ];
+        }
+        Options_pop() {
+            const obj = new this.$.$mol_pick();
+            obj.hint = () => "Click to show options menu";
+            obj.trigger_content = () => this.options_trigger_content();
+            obj.bubble_content = () => this.options_bubble_content();
+            return obj;
+        }
+        menu_item_copy_click(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        menu_item_copy_icon() {
+            const obj = new this.$.$mol_icon_content_copy();
+            return obj;
+        }
+        menu_item_copy_label() {
+            return "Copy";
+        }
+        Menu_item_copy() {
+            const obj = new this.$.$mol_button_minor();
+            obj.event_click = (val) => this.menu_item_copy_click(val);
+            obj.sub = () => [
+                this.menu_item_copy_icon(),
+                this.menu_item_copy_label()
+            ];
+            return obj;
+        }
+        menu_item_download_label() {
+            return "Download";
+        }
+        menu_item_download_hint() {
+            return "Download some json";
+        }
+        menu_item_download_blob() {
+            const obj = new this.$.$mol_blob();
+            return obj;
+        }
+        Menu_item_download() {
+            const obj = new this.$.$mol_button_download();
+            obj.title = () => this.menu_item_download_label();
+            obj.hint = () => this.menu_item_download_hint();
+            obj.blob = () => this.menu_item_download_blob();
+            obj.file_name = () => "demo.json";
+            return obj;
+        }
+        menu_item_delete_click(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        menu_item_delete_icon() {
+            const obj = new this.$.$mol_icon_trash_can_outline();
+            return obj;
+        }
+        menu_item_delete_label() {
+            return "Delete";
+        }
+        Menu_item_delete() {
+            const obj = new this.$.$mol_button_minor();
+            obj.style = () => ({
+                color: "red"
+            });
+            obj.event_click = (val) => this.menu_item_delete_click(val);
+            obj.sub = () => [
+                this.menu_item_delete_icon(),
+                this.menu_item_delete_label()
+            ];
+            return obj;
+        }
+        delete_message() {
+            return "Something will be deleted. This can't be undone.";
+        }
+        Delete_message_text() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.delete_message()
+            ];
+            return obj;
+        }
+        Delete_message() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Delete_message_text()
+            ];
+            return obj;
+        }
+        delete_confirm_title() {
+            return "Delete";
+        }
+        delete_confirm_click(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        Delete_confirm() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => this.delete_confirm_title();
+            obj.event_click = (val) => this.delete_confirm_click(val);
+            return obj;
+        }
+        delete_cancel_title() {
+            return "Cancel";
+        }
+        delete_cancel_click(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        Delete_cancel() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.delete_cancel_title();
+            obj.event_click = (val) => this.delete_cancel_click(val);
+            return obj;
+        }
+        Delete_buttons() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Delete_confirm(),
+                this.Delete_cancel()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Options_content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Delete_confirm_content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Demo_caption", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Simple_pop", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "info_trigger", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "info_content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Info_pop", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "options_trigger", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Options_pop", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "menu_item_copy_click", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "menu_item_copy_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Menu_item_copy", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "menu_item_download_blob", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Menu_item_download", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "menu_item_delete_click", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "menu_item_delete_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Menu_item_delete", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Delete_message_text", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Delete_message", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "delete_confirm_click", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Delete_confirm", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "delete_cancel_click", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Delete_cancel", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick_demo.prototype, "Delete_buttons", null);
+    $.$mol_pick_demo = $mol_pick_demo;
+})($ || ($ = {}));
+//mol/pick/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_pick_demo extends $.$mol_pick_demo {
+            menu_item_download_blob() {
+                const data = {
+                    foo: 'bar',
+                    arr: [1, 2, 3]
+                };
+                const text = JSON.stringify(data, null, '\t');
+                return new $mol_blob([text], { type: 'text/json' });
+            }
+            hide_options_menu() {
+                this.Options_pop().focused(false);
+            }
+            show_confirmation(confirmation) {
+                this.showed_confirmation(confirmation);
+                this.Options_pop().focused(true);
+            }
+            showed_confirmation(next) {
+                this.Options_pop().showed();
+                return next !== undefined ? next : null;
+            }
+            options_bubble_content() {
+                const showed_confirmation = this.showed_confirmation();
+                if (showed_confirmation !== null) {
+                    return [this.confirmation_popup_content()[showed_confirmation]];
+                }
+                else {
+                    return super.options_bubble_content();
+                }
+            }
+            menu_item_copy_click(event) {
+                this.hide_options_menu();
+                event?.preventDefault();
+            }
+            menu_item_delete_click(event) {
+                this.show_confirmation('delete');
+                event?.preventDefault();
+            }
+            delete_confirm_click(event) {
+                this.hide_options_menu();
+                event?.preventDefault();
+            }
+            delete_cancel_click(event) {
+                this.hide_options_menu();
+                event?.preventDefault();
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_pick_demo.prototype, "showed_confirmation", null);
+        __decorate([
+            $mol_mem
+        ], $mol_pick_demo.prototype, "options_bubble_content", null);
+        $$.$mol_pick_demo = $mol_pick_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/pick/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem } = $mol_style_unit;
+        $mol_style_define($mol_pick_demo, {
+            Demo_caption: {
+                padding: $mol_gap.text
+            },
+            Simple_pop: {
+                Trigger: {
+                    justifyContent: 'center'
+                },
+                Bubble: {
+                    padding: rem(0.5)
+                }
+            },
+            Delete_buttons: {
+                flex: {
+                    wrap: 'nowrap'
+                }
+            }
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/pick/demo/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_row_demo_form extends $mol_example {
+        title() {
+            return "Some controls in one row with equal paddings and wrapping support";
+        }
+        sub() {
+            return [
+                this.Row()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_search",
+                "$mol_number",
+                "$mol_portion",
+                "$mol_check",
+                "$mol_button",
+                "row",
+                "container",
+                "flex",
+                "identation",
+                "space"
+            ];
+        }
+        name_hint() {
+            return "Jack Sparrow";
+        }
+        name(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        suggest1() {
+            return "Jack Sparrow";
+        }
+        suggest2() {
+            return "Bruce Wayne";
+        }
+        Name() {
+            const obj = new this.$.$mol_search();
+            obj.hint = () => this.name_hint();
+            obj.query = (val) => this.name(val);
+            obj.suggests = () => [
+                this.suggest1(),
+                this.suggest2()
+            ];
+            return obj;
+        }
+        count_hint() {
+            return "Count";
+        }
+        count(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        Count() {
+            const obj = new this.$.$mol_number();
+            obj.hint = () => this.count_hint();
+            obj.value = (val) => this.count(val);
+            return obj;
+        }
+        progress() {
+            return 0.33;
+        }
+        Progress() {
+            const obj = new this.$.$mol_portion();
+            obj.portion = () => this.progress();
+            return obj;
+        }
+        publish_label() {
+            return "Shared";
+        }
+        publish(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Publish() {
+            const obj = new this.$.$mol_check_box();
+            obj.title = () => this.publish_label();
+            obj.checked = (val) => this.publish(val);
+            return obj;
+        }
+        drop_title() {
+            return "Drop";
+        }
+        Drop() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.drop_title();
+            return obj;
+        }
+        Row() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Name(),
+                this.Count(),
+                this.Progress(),
+                this.Publish(),
+                this.Drop()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "name", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "Name", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "count", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "Count", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "Progress", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "publish", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "Publish", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "Drop", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_form.prototype, "Row", null);
+    $.$mol_row_demo_form = $mol_row_demo_form;
+})($ || ($ = {}));
+//mol/row/demo/form/-view.tree/form.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_row_demo_products extends $mol_example {
+        title() {
+            return "Product catalog";
+        }
+        count() {
+            return 100;
+        }
+        Product(id) {
+            const obj = new this.$.$mol_card();
+            obj.minimal_width = () => 110;
+            obj.minimal_height = () => 100;
+            obj.title = () => this.product_title(id);
+            return obj;
+        }
+        sub() {
+            return [
+                this.Products()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_card",
+                "products",
+                "grid",
+                "scroll"
+            ];
+        }
+        product_title(id) {
+            return "";
+        }
+        products() {
+            return [];
+        }
+        Products() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => this.products();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $mol_row_demo_products.prototype, "Product", null);
+    __decorate([
+        $mol_mem
+    ], $mol_row_demo_products.prototype, "Products", null);
+    $.$mol_row_demo_products = $mol_row_demo_products;
+})($ || ($ = {}));
+//mol/row/demo/products/-view.tree/products.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_row_demo_products extends $.$mol_row_demo_products {
+            products() {
+                return $mol_range2(id => this.Product(id), () => this.count());
+            }
+            product_title(id) {
+                return $mol_stub_product_name();
+            }
+        }
+        __decorate([
+            $mol_mem_key
+        ], $mol_row_demo_products.prototype, "product_title", null);
+        $$.$mol_row_demo_products = $mol_row_demo_products;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/row/demo/products/products.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/row/demo/products/products.view.css", "\n[mol_row_demo_products_products] {\n\tdisplay: grid;\n\tgrid-template-columns: repeat( auto-fit, minmax( 8rem, 1fr ) );\n}\n\n[mol_row_demo_products_product] {\n\talign-self: stretch;\n}\n");
+})($ || ($ = {}));
+//mol/row/demo/products/-css/products.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_scroll_demo extends $mol_example_large {
+        title() {
+            return "Simple scroll pane";
+        }
+        sub() {
+            return [
+                this.Scroll()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_filler",
+                "scroll",
+                "container"
+            ];
+        }
+        Filler0() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler1() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler2() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler3() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler4() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler5() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler6() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler7() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler8() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Filler9() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Filler0(),
+                this.Filler1(),
+                this.Filler2(),
+                this.Filler3(),
+                this.Filler4(),
+                this.Filler5(),
+                this.Filler6(),
+                this.Filler7(),
+                this.Filler8(),
+                this.Filler9()
+            ];
+            return obj;
+        }
+        Scroll() {
+            const obj = new this.$.$mol_scroll();
+            obj.sub = () => [
+                this.Content()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler0", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler1", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler2", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler3", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler4", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler5", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler6", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler7", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler8", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Filler9", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_scroll_demo.prototype, "Scroll", null);
+    $.$mol_scroll_demo = $mol_scroll_demo;
+})($ || ($ = {}));
+//mol/scroll/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_search_demo extends $mol_example_small {
+        title() {
+            return "Search field with suggest ";
+        }
+        sub() {
+            return [
+                this.Search()
+            ];
+        }
+        tags() {
+            return [
+                "search",
+                "suggest",
+                "autocomplete",
+                "string",
+                "fulltext",
+                "filter"
+            ];
+        }
+        suggests() {
+            return [];
+        }
+        query() {
+            return this.Search().query();
+        }
+        Search() {
+            const obj = new this.$.$mol_search();
+            obj.suggests = () => this.suggests();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_search_demo.prototype, "Search", null);
+    $.$mol_search_demo = $mol_search_demo;
+})($ || ($ = {}));
+//mol/search/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_search_demo extends $.$mol_search_demo {
+            suggests() {
+                const query = this.query();
+                if (!query.length)
+                    return ['foo ', 'bar '];
+                this.$.$mol_wait_timeout(200);
+                const length = (Math.floor(query.length / 10) + 1) * 10;
+                return $mol_stub_strings(query, 30, length).map(v => v + ' ');
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_search_demo.prototype, "suggests", null);
+        $$.$mol_search_demo = $mol_search_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/search/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_section_demo extends $mol_example_small {
+        title() {
+            return "Section with header";
+        }
+        sub() {
+            return [
+                this.Section()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_filler",
+                "section",
+                "container",
+                "header"
+            ];
+        }
+        Section_content() {
+            const obj = new this.$.$mol_filler();
+            return obj;
+        }
+        Section() {
+            const obj = new this.$.$mol_section();
+            obj.title = () => "Section header";
+            obj.content = () => [
+                this.Section_content()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_section_demo.prototype, "Section_content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_section_demo.prototype, "Section", null);
+    $.$mol_section_demo = $mol_section_demo;
+})($ || ($ = {}));
+//mol/section/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_select_demo_colors extends $mol_example_small {
+        title() {
+            return "Color picker with filter and custom rows";
+        }
+        sub() {
+            return [
+                this.Color()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_dimmer",
+                "$mol_list",
+                "select",
+                "color",
+                "colorpicker",
+                "filter"
+            ];
+        }
+        color(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        colors() {
+            return {};
+        }
+        color_name(id) {
+            return "";
+        }
+        option_color(id) {
+            return "";
+        }
+        Color_preview(id) {
+            const obj = new this.$.$mol_select_colors_color_preview();
+            obj.color = () => this.option_color(id);
+            return obj;
+        }
+        Color_name(id) {
+            const obj = new this.$.$mol_dimmer();
+            obj.haystack = () => this.color_name(id);
+            obj.needle = () => this.color_filter();
+            return obj;
+        }
+        Color_option(id) {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Color_preview(id),
+                this.Color_name(id)
+            ];
+            obj.minimal_height = () => 40;
+            return obj;
+        }
+        option_content(id) {
+            return [
+                this.Color_option(id)
+            ];
+        }
+        color_filter() {
+            return this.Color().filter_pattern();
+        }
+        Color() {
+            const obj = new this.$.$mol_select();
+            obj.value = (val) => this.color(val);
+            obj.dictionary = () => this.colors();
+            obj.option_label = (id) => this.color_name(id);
+            obj.option_content = (id) => this.option_content(id);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_select_demo_colors.prototype, "color", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_select_demo_colors.prototype, "Color_preview", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_select_demo_colors.prototype, "Color_name", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_select_demo_colors.prototype, "Color_option", null);
+    __decorate([
+        $mol_mem
+    ], $mol_select_demo_colors.prototype, "Color", null);
+    $.$mol_select_demo_colors = $mol_select_demo_colors;
+    class $mol_select_colors_color_preview extends $mol_view {
+        style() {
+            return {
+                ...super.style(),
+                background: this.color()
+            };
+        }
+        color() {
+            return "";
+        }
+    }
+    $.$mol_select_colors_color_preview = $mol_select_colors_color_preview;
+})($ || ($ = {}));
+//mol/select/demo/colors/-view.tree/colors.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_select_demo_colors extends $.$mol_select_demo_colors {
+            color_name(id) {
+                return id || this.colors()[id];
+            }
+            option_color(id) {
+                return this.colors()[id];
+            }
+            colors() {
+                return { '': 'transparent', ...$mol_colors };
+            }
+        }
+        $$.$mol_select_demo_colors = $mol_select_demo_colors;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/select/demo/colors/colors.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/select/demo/colors/colors.view.css", "[mol_select_demo_colors_color_option] {\n\tflex-wrap: nowrap;\n\tjustify-content: flex-start;\n\talign-items: center;\n}\n\n[mol_select_demo_colors_color_option] {\n\tpadding: .5rem;\n}\n\n[mol_select_demo_colors_color_option] > * {\n\tmargin: 0 .25rem;\n}\n\n[mol_select_demo_colors_color_preview] {\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n\ttext-align: start;\n\tpadding: .5rem;\n}\n");
+})($ || ($ = {}));
+//mol/select/demo/colors/-css/colors.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_select_demo_month extends $mol_example_small {
+        title() {
+            return "Month picker with filter";
+        }
+        sub() {
+            return [
+                this.Month()
+            ];
+        }
+        tags() {
+            return [
+                "select"
+            ];
+        }
+        month(val) {
+            if (val !== undefined)
+                return val;
+            return "jan";
+        }
+        months() {
+            return {
+                jan: "January",
+                feb: "February",
+                mar: "March",
+                apr: "April",
+                may: "May",
+                jun: "June",
+                jul: "July",
+                aug: "August",
+                sep: "September",
+                oct: "October",
+                nov: "November",
+                dec: "December"
+            };
+        }
+        Month() {
+            const obj = new this.$.$mol_select();
+            obj.no_options_message = () => "Not found";
+            obj.value = (val) => this.month(val);
+            obj.dictionary = () => this.months();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_select_demo_month.prototype, "month", null);
+    __decorate([
+        $mol_mem
+    ], $mol_select_demo_month.prototype, "Month", null);
+    $.$mol_select_demo_month = $mol_select_demo_month;
+})($ || ($ = {}));
+//mol/select/demo/month/-view.tree/month.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_select_demo_priority extends $mol_example_small {
+        title() {
+            return "Priority picker";
+        }
+        sub() {
+            return [
+                this.Priority()
+            ];
+        }
+        tags() {
+            return [
+                "select"
+            ];
+        }
+        priority(val) {
+            if (val !== undefined)
+                return val;
+            return "Lowest";
+        }
+        Priority() {
+            const obj = new this.$.$mol_select();
+            obj.Filter = () => null;
+            obj.value = (val) => this.priority(val);
+            obj.options = () => [
+                "Highest ",
+                "High",
+                "Medium",
+                "Low",
+                "Lowest"
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_select_demo_priority.prototype, "priority", null);
+    __decorate([
+        $mol_mem
+    ], $mol_select_demo_priority.prototype, "Priority", null);
+    $.$mol_select_demo_priority = $mol_select_demo_priority;
+})($ || ($ = {}));
+//mol/select/demo/priority/-view.tree/priority.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_select_list_demo extends $mol_example_small {
+        title() {
+            return "Friends picker";
+        }
+        sub() {
+            return [
+                this.Demo_items()
+            ];
+        }
+        tags() {
+            return [
+                "select",
+                "tags",
+                "multiselect"
+            ];
+        }
+        friends(val) {
+            if (val !== undefined)
+                return val;
+            return [];
+        }
+        suggestions() {
+            return {
+                jocker: "Jocker",
+                harley: "Harley Quinn",
+                penguin: "Penguin",
+                riddler: "Riddler",
+                bane: "Bane",
+                freeze: "Mister Freeze",
+                clay: "Clayface",
+                mask: "Black Mask"
+            };
+        }
+        Friends() {
+            const obj = new this.$.$mol_select_list();
+            obj.value = (val) => this.friends(val);
+            obj.dictionary = () => this.suggestions();
+            return obj;
+        }
+        Friends_disabled() {
+            const obj = new this.$.$mol_select_list();
+            obj.value = (val) => this.friends(val);
+            obj.dictionary = () => this.suggestions();
+            obj.enabled = () => false;
+            return obj;
+        }
+        Demo_items() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Friends(),
+                this.Friends_disabled()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_select_list_demo.prototype, "friends", null);
+    __decorate([
+        $mol_mem
+    ], $mol_select_list_demo.prototype, "Friends", null);
+    __decorate([
+        $mol_mem
+    ], $mol_select_list_demo.prototype, "Friends_disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_select_list_demo.prototype, "Demo_items", null);
+    $.$mol_select_list_demo = $mol_select_list_demo;
+})($ || ($ = {}));
+//mol/select/list/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_menu extends $mol_icon {
+        path() {
+            return "M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z";
+        }
+    }
+    $.$mol_icon_menu = $mol_icon_menu;
+})($ || ($ = {}));
+//mol/icon/menu/-view.tree/menu.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_speck_demo extends $mol_example_small {
+        sub() {
+            return [
+                this.Link(),
+                this.String(),
+                this.Button(),
+                this.Message()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_link",
+                "$mol_icon",
+                "$mol_paragraph",
+                "$mol_button",
+                "speck",
+                "highlight",
+                "badge"
+            ];
+        }
+        Link_speck() {
+            const obj = new this.$.$mol_speck();
+            obj.value = () => "β";
+            return obj;
+        }
+        Link_icon() {
+            const obj = new this.$.$mol_icon_settings();
+            return obj;
+        }
+        Link() {
+            const obj = new this.$.$mol_link();
+            obj.sub = () => [
+                this.Link_speck(),
+                this.Link_icon()
+            ];
+            return obj;
+        }
+        string_speck() {
+            return "New";
+        }
+        String_speck() {
+            const obj = new this.$.$mol_speck();
+            obj.value = () => this.string_speck();
+            return obj;
+        }
+        String_field() {
+            const obj = new this.$.$mol_string();
+            return obj;
+        }
+        String() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.String_speck(),
+                this.String_field()
+            ];
+            return obj;
+        }
+        notification_count() {
+            return 8;
+        }
+        Button_speck() {
+            const obj = new this.$.$mol_speck();
+            obj.value = () => this.notification_count();
+            return obj;
+        }
+        Button_icon() {
+            const obj = new this.$.$mol_icon_menu();
+            return obj;
+        }
+        Button() {
+            const obj = new this.$.$mol_button_minor();
+            obj.sub = () => [
+                this.Button_speck(),
+                this.Button_icon()
+            ];
+            return obj;
+        }
+        Message_speck() {
+            const obj = new this.$.$mol_speck();
+            return obj;
+        }
+        message_text() {
+            return "Created";
+        }
+        Message() {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => [
+                this.Message_speck(),
+                this.message_text()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "Link_speck", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "Link_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "Link", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "String_speck", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "String_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "String", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "Button_speck", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "Button_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "Button", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "Message_speck", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speck_demo.prototype, "Message", null);
+    $.$mol_speck_demo = $mol_speck_demo;
+})($ || ($ = {}));
+//mol/speck/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_speech_demo extends $mol_example_small {
+        sub() {
+            return [
+                this.Toggle(),
+                this.Message(),
+                this.Speak()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_icon",
+                "$mol_row",
+                "$mol_button",
+                "speech",
+                "voice",
+                "recognition",
+                "dictation"
+            ];
+        }
+        Toggle_icon() {
+            const obj = new this.$.$mol_icon_microphone();
+            return obj;
+        }
+        hearing(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Toggle() {
+            const obj = new this.$.$mol_check_icon();
+            obj.Icon = () => this.Toggle_icon();
+            obj.checked = (val) => this.hearing(val);
+            return obj;
+        }
+        message() {
+            return "";
+        }
+        Message() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.message()
+            ];
+            return obj;
+        }
+        speak(val) {
+            if (val !== undefined)
+                return val;
+            return null;
+        }
+        Speak() {
+            const obj = new this.$.$mol_button_major();
+            obj.click = (val) => this.speak(val);
+            obj.sub = () => [
+                "Speak"
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_speech_demo.prototype, "Toggle_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speech_demo.prototype, "hearing", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speech_demo.prototype, "Toggle", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speech_demo.prototype, "Message", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speech_demo.prototype, "speak", null);
+    __decorate([
+        $mol_mem
+    ], $mol_speech_demo.prototype, "Speak", null);
+    $.$mol_speech_demo = $mol_speech_demo;
+})($ || ($ = {}));
+//mol/speech/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_speech_demo extends $.$mol_speech_demo {
+            hearing(next) {
+                return $mol_speech.hearing(next);
+            }
+            message() {
+                let text = $mol_speech.text()
+                    .replace(/ё/g, 'е')
+                    .replace(/^.*? сотри все (пожалуйста|приз|please)\s*/, '')
+                    .replace(/\s*точка/g, '.')
+                    .replace(/\s*запятая/g, ',')
+                    .replace(/\s*восклицательный знак/g, '!')
+                    .replace(/\s*вопросительный знак/g, '?')
+                    .replace(/\s*точка с запятой/g, ';')
+                    .replace(/\s*двоеточие/g, ':')
+                    .replace(/\s*тире/g, ' -')
+                    .replace(/\s*новая строка/g, ' \n');
+                while (true) {
+                    let text2 = text
+                        .replace(/\s+?\S+ сотри слово (пожалуйста|плиз|please)/i, '')
+                        .replace(/^(.*?) сотри (\d+) (слово|слова|слов) (пожалуйста|плиз|please)/i, (str, text, count) => text.replace(new RegExp(`(\\s\\S+){${count}}$`), ''));
+                    if (text === text2)
+                        break;
+                    text = text2;
+                }
+                return text
+                    .replace(/цитата (.*?) конец цитаты/g, ' "$1"')
+                    .replace(/(?:^|[.!?]\s)\S/g, str => str.toUpperCase());
+            }
+            speak() {
+                $mol_speech.say(this.message());
+            }
+        }
+        $$.$mol_speech_demo = $mol_speech_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/speech/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_spell_morphs extends Set {
+        max = 0;
+        constructor(items = []) {
+            super(items);
+            for (const item of items) {
+                if (item.length <= this.max)
+                    continue;
+                this.max = item.length;
+            }
+        }
+    }
+    $.$mol_spell_morphs = $mol_spell_morphs;
+    class $mol_spell extends Object {
+        static head = new $mol_spell_morphs;
+        static prefix = new $mol_spell_morphs;
+        static root = new $mol_spell_morphs;
+        static postfix = new $mol_spell_morphs;
+        static foot = new $mol_spell_morphs;
+        static test(word) {
+            const head_max = Math.min(this.head.max, word.length - 2);
+            for (let i = head_max; i > 0; --i) {
+                const head = word.slice(0, i);
+                if (!this.head.has(head))
+                    continue;
+                if (this.test_tail(word.slice(i)))
+                    return true;
+            }
+            return this.test_tail(word);
+        }
+        static test_tail(word) {
+            const foot_max = Math.min(this.foot.max, word.length - 2);
+            for (let i = foot_max; i > 0; --i) {
+                const foot = word.slice(-i);
+                if (!this.foot.has(foot))
+                    continue;
+                if (this.test_body(word.slice(0, -i)))
+                    return true;
+            }
+            return this.test_body(word);
+        }
+        static test_body(word) {
+            if (!word)
+                return true;
+            const prefix_max = Math.min(this.prefix.max, word.length - 2);
+            for (let i = prefix_max; i > 0; --i) {
+                const prefix = word.slice(0, i);
+                if (!this.prefix.has(prefix))
+                    continue;
+                if (this.test_body(word.slice(i)))
+                    return true;
+            }
+            const postfix_max = Math.min(this.postfix.max, word.length - 2);
+            for (let i = postfix_max; i > 0; --i) {
+                const postfix = word.slice(-i);
+                if (!this.postfix.has(postfix))
+                    continue;
+                if (this.test_body(word.slice(0, -i)))
+                    return true;
+            }
+            const root_max = Math.min(this.root.max, word.length);
+            for (let i = root_max; i > 0; --i) {
+                const root = word.slice(0, i);
+                if (!this.root.has(root))
+                    continue;
+                if (this.test_body(word.slice(i)))
+                    return true;
+            }
+            return false;
+        }
+    }
+    $.$mol_spell = $mol_spell;
+})($ || ($ = {}));
+//mol/spell/spell.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_spell_demo extends $mol_example_small {
+        sub() {
+            return [
+                this.List()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_spell_check",
+                "$mol_textarea",
+                "spellcheck"
+            ];
+        }
+        article(next) {
+            if (next !== undefined)
+                return next;
+            return "Я весьма сегдян недоперепила, вттак.";
+        }
+        Article() {
+            const obj = new this.$.$mol_textarea();
+            obj.value = (next) => this.article(next);
+            return obj;
+        }
+        report() {
+            return "";
+        }
+        Report() {
+            const obj = new this.$.$mol_text_code();
+            obj.text = () => this.report();
+            return obj;
+        }
+        List() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Article(),
+                this.Report()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_spell_demo.prototype, "article", null);
+    __decorate([
+        $mol_mem
+    ], $mol_spell_demo.prototype, "Article", null);
+    __decorate([
+        $mol_mem
+    ], $mol_spell_demo.prototype, "Report", null);
+    __decorate([
+        $mol_mem
+    ], $mol_spell_demo.prototype, "List", null);
+    $.$mol_spell_demo = $mol_spell_demo;
+})($ || ($ = {}));
+//mol/spell/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_spell_ru extends $mol_spell {
+        static prefix = new $mol_spell_morphs(['а', 'анти', 'архи', 'без', 'в', 'вдоль', 'вз', 'взо', 'вице', 'вне', 'внутри', 'во', 'воз', 'возо', 'вы', 'гипер', 'де', 'дез', 'дис', 'до', 'за', 'из', 'изо', 'им', 'интер', 'up', 'испод', 'к', 'кое', 'кой', 'контр', 'меж', 'между', 'на', 'над', 'надо', 'наи', 'не', 'небез', 'недо', 'ни', 'низ', 'низо', 'о', 'об', 'обез', 'обер', 'обо', 'около', 'от', 'ото', 'па', 'пере', 'перед', 'по', 'под', 'подо', 'поза', 'после', 'пост', 'пра', 'пре', 'пред', 'преди', 'предо', 'при', 'про', 'противо', 'прото', 'раз', 'разо', 'ре', 'с', 'сверх', 'со', 'среди', 'су', 'суб', 'супер', 'сыз', 'транс', 'у', 'ультра', 'через', 'чрез', 'экс', 'экстра']);
+        static root = new $mol_spell_morphs(["абажур", "держ", "абаз", "абазин", "абак", "аббат", "аббреви", "я", "аб", "вер", "абдик", "абдомен", "абдомин", "ый", "абзац", "абиетин", "био", "ген", "ез", "абиссальн", "абиссин", "абитури", "аблакт", "ир", "аблатив", "аблятив", "аблаут", "абляут", "абляци", "аболици", "абон", "аборд", "абориген", "аборт", "абразив", "абрази", "абракадабр", "абреже", "абрек", "абрикос", "абрикот", "абрис", "абруцц", "абсент", "абсолют", "сорб", "метр", "абстраг", "абстракт", "абстрак", "абсурд", "абсцесс", "абсцисс", "абхаз", "абцуг", "абшид", "абштрих", "аваль", "аван", "гард", "зал", "камер", "лож", "порт", "рейд", "аванс", "да", "сцен", "авантаж", "титул", "авантюр", "авар", "аварий", "авари", "авгур", "август", "авдот", "авеню", "авест", "авиа", "баз", "бензин", "билет", "бомб", "горизонт", "двиг", "тел", "строи", "десант", "диспетчер", "завод", "катастроф", "компани", "конверт", "конструк", "лайнер", "лес", "хран", "лини", "маяк", "мете", "служ", "станци", "модел", "модель", "мотор", "стро", "навиг", "нос", "прыск", "отряд", "парк", "пассажир", "патруль", "корм", "почт", "прибор", "промышл", "вед", "ракет", "вязь", "секстант", "спорт", "техн", "ави", "транспорт", "трасс", "хим", "косм", "часть", "школ", "авиз", "авизо", "витамин", "фаун", "авокадо", "авось", "аврал", "авраль", "аврор", "австрали", "австралий", "австрал", "питек", "австри", "австрий", "яч", "австр", "ази", "автарк", "автарки", "авто", "аннот", "граф", "графи", "блок", "оч", "брон", "танк", "автобус", "бус", "вес", "влад", "вод", "вокзал", "гам", "генер", "гидр", "подъём", "гравюр", "грейдер", "груз", "гуж", "дел", "дорог", "дорож", "дрезин", "дром", "заправ", "инспект", "инспекц", "кар", "катализ", "ауто", "кино", "движ", "клуб", "колеб", "колонн", "комбинат", "коммент", "коррекц", "косметик", "кран", "крат", "кружок", "авт", "лавк", "лиз", "лит", "люб", "магистраль", "масс", "ёр", "автомат", "чиц", "машин", "мета", "морф", "механ", "мобил", "кид", "ыва", "трактор", "мобиль", "мото", "лотере", "секци", "мотрис", "автоном", "автономи", "опер", "павильон", "пансион", "пилот", "пласт", "плуг", "строй", "поезд", "кры", "портрет", "образова", "бег", "кат", "клад", "автор", "радио", "грамм", "рад", "ли", "ралли", "регул", "ятор", "резин", "ремонт", "рессор", "реферат", "рефрижератор", "авторитарн", "авторитет", "роллер", "рот", "рул", "ручк", "салон", "сам", "вал", "бор", "сервис", "слесарь", "старт", "стоп", "сто", "янк", "страд", "цеп", "терм", "цистерн", "тех", "тип", "том", "тормоз", "трансформ", "трен", "троп", "тяг", "фаз", "фил", "фургон", "характер", "хозяй", "хром", "хрон", "автохтон", "цемент", "час", "шарж", "штурман", "щеп", "щётк", "электр", "авуар", "ага", "агав", "агам", "агами", "гон", "агар", "ян", "агат", "глютин", "ющ", "граваци", "агент", "агио", "лог", "агит", "бригад", "вагон", "кампани", "коллектив", "плакат", "ход", "проп", "пункт", "фильм", "агломер", "агло", "пор", "фабрик", "агнец", "агнози", "агностик", "агностиц", "агностич", "агон", "агони", "аграмант", "аграр", "агрегат", "агрег", "агреман", "агресс", "агресси", "агро", "цен", "ботан", "город", "зоо", "климат", "культур", "мелиор", "максим", "метеор", "миним", "ном", "почв", "производ", "пром", "пропаганд", "район", "сеть", "участок", "физ", "фит", "лабор", "атори", "цех", "эко", "эконом", "систем", "агу", "агул", "агуль", "адажио", "адалин", "адамант", "адамит", "адамси", "адапт", "адат", "адвент", "адверби", "адвокат", "адденд", "адекватн", "аден", "вирус", "карцин", "адепт", "структ", "аджар", "аджик", "адиабат", "адидас", "динам", "администр", "адмирал", "адмиралтей", "адмираль", "адм", "персон", "адонис", "адопт", "адор", "адренал", "адрес", "адуляр", "адъектив", "адъюнкт", "адъютант", "адыге", "адыгей", "адыгеец", "адыг", "ажгон", "ажио", "ажиот", "ажур", "ажюст", "аз", "азали", "азарин", "азарт", "азат", "азбук", "азбуч", "азербайджан", "азеф", "азимут", "азо", "бенз", "азов", "групп", "крас", "зон", "един", "сочет", "азот", "добы", "ва", "кис", "бактер", "содерж", "сва", "фикс", "азу", "азям", "аи", "аил", "аир", "аист", "ёнок", "образ", "айв", "айда", "айлант", "аймак", "аймач", "айран", "айрол", "айсберг", "айсинг", "айсор", "академ", "академи", "акажу", "акант", "акар", "акафист", "акаци", "аквадаг", "акваланг", "аквамарин", "аква", "навт", "план", "поли", "акварел", "акварель", "аквариум", "акватори", "форте", "форт", "акведук", "аккомод", "ный", "аккомпан", "аккомпани", "аккорд", "аккордеон", "аккредит", "аккредитив", "аккузатив", "аккумул", "ят", "яци", "аккурат", "аккуратн", "еньк", "акме", "акр", "акридин", "акробат", "акрополь", "акро", "стих", "аксакал", "аксамит", "акселер", "аксельбант", "аксессуар", "аксиом", "ичный", "аксио", "аксон", "акт", "актёр", "актив", "актин", "актиниди", "актини", "бацилл", "ёз", "мик", "миц", "терап", "актр", "актуал", "актуальн", "акул", "акупунктур", "акуст", "акут", "акуш", "акцент", "акцепт", "акцепц", "акцесси", "акцесс", "акцидент", "акциденц", "акциз", "акци", "акын", "ала", "тау", "алатырь", "албан", "алгебр", "алгоритм", "алебард", "алебастр", "алевр", "лейк", "алейрон", "александр", "алексин", "алеут", "алжир", "али", "алиби", "алиготе", "алидад", "ализарин", "алимент", "щиц", "алит", "алкал", "алк", "алкил", "алкогол", "алкоголь", "алкоран", "аллах", "аллегор", "аллегори", "аллегр", "етто", "аллегри", "аллегро", "аллей", "аллел", "аллель", "аллерг", "аллерги", "алле", "аллигатор", "аллилуй", "аллитер", "алло", "аллонж", "аллопат", "аллюви", "аллювий", "аллюзи", "аллюр", "алма", "алмаз", "алой", "алоэ", "вид", "алта", "алтай", "алтар", "алтарь", "алтей", "алтын", "алудур", "алунит", "алфавит", "хими", "алч", "алыч", "альбатрос", "альбедо", "альбед", "альбин", "альбинос", "альбит", "альбом", "альбумин", "альвеол", "ярн", "алькальд", "альманах", "альманаш", "альпака", "альпари", "альп", "шток", "альсекко", "альт", "альтер", "альтерн", "альтру", "альф", "альфа", "трон", "альфонс", "альфреско", "альянс", "алюмин", "орган", "алюм", "аммон", "кал", "медь", "силикат", "аляповат", "аляск", "аляфуршет", "амазон", "амальгам", "аманат", "амарант", "амариллис", "аматёр", "амба", "амбар", "амбици", "амбр", "амбразур", "амбре", "амбрози", "амбулатори", "амбулатор", "амбушюр", "амвон", "амёб", "иаз", "цит", "америк", "америц", "аметист", "амиант", "амид", "пирин", "амикошон", "амил", "ацет", "нитр", "пект", "амин", "спирт", "аминь", "амистад", "амми", "аммиак", "аммиач", "фосфат", "аммо", "ифик", "амм", "тол", "фос", "амнист", "амнисти", "морал", "мораль", "аморт", "ампел", "ия", "ампель", "ампер", "вольт", "ватт", "ампир", "амплитуд", "ампл", "амплуа", "ампул", "ампут", "аму", "дарь", "амулет", "амуници", "амунич", "амур", "амфи", "бий", "би", "бол", "брахий", "брах", "театр", "амфор", "амхара", "амхар", "ана", "биоз", "биот", "анабол", "галактич", "анаконд", "анакреонт", "анализ", "аналит", "аналог", "аналоги", "аналой", "анальг", "анальги", "анамнез", "анамнест", "ананас", "анапест", "анарх", "анархи", "анатом", "ичк", "анатоми", "анафем", "анафилакси", "анафилакт", "анафор", "анахорет", "анаш", "ангаж", "ангар", "гармон", "ангел", "ек", "ангель", "ид", "ангин", "анги", "невр", "спазм", "англ", "англий", "англик", "англиц", "англи", "сак", "сакс", "филь", "фоб", "ангор", "ангстрем", "андалуз", "андант", "ино", "андез", "анди", "андий", "андр", "гин", "анекдот", "анем", "анеми", "клин", "скоп", "хор", "анер", "анестез", "анестези", "анестет", "анилин", "анил", "анимал", "анимальн", "аним", "анис", "анкер", "анкет", "анклав", "аннал", "аннекси", "аннекс", "нигил", "аннон", "аннул", "анод", "аномали", "аномаль", "оним", "анонс", "норм", "ансамбл", "ансамбль", "антагон", "арктич", "антенн", "антен", "бактери", "стой", "больш", "бюрократ", "веществ", "вибр", "воен", "герой", "гигиен", "государств", "гуман", "дактиль", "дарвин", "демократ", "депресс", "детон", "диалект", "пот", "империал", "истор", "антик", "катод", "антикв", "антиквар", "клерикал", "клерикаль", "коагул", "янт", "колони", "коммун", "коррозий", "коррози", "крепостн", "культ", "логарифм", "антилоп", "магнит", "маркс", "матери", "микро", "милитар", "мир", "моль", "монарх", "антимон", "наркот", "народ", "наци", "нейтр", "никот", "номи", "лед", "общ", "партий", "пат", "патриот", "педагог", "еч", "перистальтик", "прав", "прот", "рабоч", "рас", "твор", "религи", "санитар", "вёрт", "сейсм", "сел", "семит", "септ", "сион", "склер", "совет", "спаст", "сталин", "стар", "стат", "стресс", "строф", "тез", "токс", "утопи", "фаш", "феод", "фермент", "фон", "фриз", "хлор", "христ", "худож", "циклон", "антицип", "част", "антич", "ядр", "антолог", "антологи", "антон", "антракт", "антрац", "антрекот", "антрепренёр", "антреприз", "антресол", "антресоль", "антроп", "ос", "соф", "сфер", "фаг", "фаги", "центр", "антураж", "анфас", "анфилад", "анчар", "анчоус", "аншеф", "аншлаг", "аншлюс", "аорист", "аорт", "апартамент", "апартеид", "апат", "апач", "апаш", "апекс", "апелл", "апеллятив", "апельсин", "период", "аплод", "исмент", "апломб", "апноэ", "апо", "гей", "апокалипсис", "апокалипс", "апокалипт", "апокрин", "апокриф", "полит", "аполог", "апологи", "апоплекс", "апоплекси", "апоплект", "апорт", "апостериори", "апостериор", "апостол", "апостоль", "апостроф", "апофегм", "апофем", "апофеоз", "аппарат", "аппарель", "аппассионато", "аппендикс", "аппендиц", "апперкот", "апперцепт", "апперцепци", "апперцип", "аппетит", "апплик", "аппозици", "аппрет", "апрель", "априори", "априор", "апроб", "апсид", "аптек", "аптеч", "апчхи", "ара", "араб", "арабеск", "арабесоч", "арав", "арак", "аракчеев", "арали", "араме", "арамей", "аранж", "арап", "арат", "арахид", "арахис", "арб", "арбалет", "арбитр", "арбуз", "аргал", "аргали", "аргамак", "аргентин", "аргент", "арго", "аргон", "аргумент", "аргус", "ареал", "ареа", "ареаль", "арен", "аренд", "арео", "ареол", "ареопаг", "арест", "арзамас", "ари", "етт", "арил", "озо", "аристократ", "ритм", "арифмет", "арифм", "арк", "аркан", "арканзас", "аркебуз", "секанс", "синус", "тангенс", "арлекин", "армад", "арм", "арме", "армей", "армен", "арми", "камен", "армюр", "армяк", "армяч", "арнаут", "аромат", "образу", "арон", "ароч", "арпеджио", "арпеджо", "аррет", "арсенал", "арсеналь", "арсен", "пир", "арсин", "артач", "арт", "дивизи", "артезиан", "артель", "артери", "вен", "артефакт", "артикль", "артикул", "артиллерий", "артиллер", "артиллери", "артист", "артишок", "канонад", "лёт", "стрел", "огонь", "артос", "готов", "полк", "артр", "арф", "арха", "архалук", "арх", "архар", "архаров", "меринос", "архе", "архей", "зой", "птерикс", "орнис", "спор", "бести", "архив", "важн", "дьякон", "диакон", "епископ", "иерей", "архимандрит", "миллион", "паст", "ыр", "архипелаг", "плут", "реакци", "серьёз", "сложн", "врем", "архитектоник", "архитектонич", "архитект", "архитрав", "завр", "арч", "арчин", "аршин", "арык", "арыч", "арьер", "асбест", "бетон", "битум", "богат", "тепл", "изол", "фанер", "асб", "волокн", "пластик", "сталь", "шифер", "шлак", "секс", "симметр", "симметри", "асимптот", "аскер", "аскет", "аскол", "аскорбин", "соци", "аспект", "аспид", "аспирант", "аспир", "аспирин", "асс", "ассамбле", "ассам", "ассен", "ассигн", "ассимил", "ассири", "ассирий", "ассист", "сон", "ассорти", "ассортимент", "ассоци", "стигм", "астм", "астр", "астрахан", "гео", "колори", "ориент", "спектр", "фото", "теле", "асфальт", "глин", "подоб", "мес", "ась", "атав", "атак", "атаман", "атанде", "ателье", "атер", "тромб", "атлант", "атлантич", "атлас", "атлет", "атмо", "атолл", "атом", "тон", "атрибут", "атрибуц", "атроф", "атрофи", "атташе", "аттест", "аттик", "аттиц", "аттич", "аттракцион", "ату", "аугмент", "аудиенци", "ауди", "визуальн", "аудитор", "аудитори", "ау", "ауксан", "ауксин", "аукцион", "аул", "ауль", "аур", "аут", "бридинг", "аутент", "вакцин", "гем", "аутодафе", "иммун", "аутсайдер", "афган", "афер", "афин", "афиш", "афон", "афор", "африк", "афронт", "аффект", "аффикс", "аффин", "ахалтек", "ань", "ахвах", "ахей", "ахине", "опс", "ахтер", "люк", "пик", "штевень", "ахти", "кислород", "салицил", "целлюл", "иль", "ацид", "цикл", "ацтек", "ашуг", "аппозит", "аэр", "аэробик", "биос", "визу", "гамм", "метод", "съём", "съ", "ём", "грави", "золь", "ион", "лоци", "мост", "пон", "профилакт", "ради", "нивел", "сан", "се", "синоптик", "синоптич", "сним", "солярий", "аэро", "таксис", "тенк", "фильтр", "флот", "грам", "топ", "цист", "аятолл", "баб", "бабах", "бабб", "ёнк", "бабочк", "бабоч", "бабув", "бабуин", "бабуш", "бабь", "ё", "бавар", "багаж", "багги", "багг", "багдад", "багер", "багет", "багов", "багор", "багр", "багульник", "бадан", "баде", "бадей", "бадминтон", "бадь", "базальт", "базамент", "базар", "базаров", "базед", "базид", "базилик", "базук", "ба", "иньк", "бай", "байбак", "байбач", "байдар", "байкал", "байпас", "байрам", "байрон", "байт", "байхов", "байц", "ева", "бак", "бакалавр", "бакалей", "бакале", "бакан", "бакен", "бакаут", "бард", "баккара", "баклаг", "баклажан", "баклаж", "баклан", "баклуш", "бактерий", "статич", "лов", "филл", "цин", "цид", "бакун", "бакшиш", "бал", "балабан", "балабол", "балабош", "балаган", "балагур", "балака", "балалаеч", "балалайк", "баламут", "баланд", "баланс", "мер", "балахон", "балбес", "балд", "балдахин", "балерин", "балет", "балк", "балкан", "балкар", "балкон", "балл", "баллад", "балласт", "баллист", "карди", "баллон", "баллот", "балль", "балобан", "балова", "балов", "балоч", "балти", "балтий", "балхаш", "балык", "балыч", "бальзам", "бальзамин", "бальне", "гряз", "леч", "процедур", "физи", "баль", "балюстрад", "баляс", "бамбино", "бамбук", "бампер", "банальн", "банан", "ед", "банд", "бандаж", "бандерильеро", "бандер", "бандероль", "банджо", "бандур", "бан", "банк", "банкаброш", "банкет", "банкнот", "мёт", "банкрот", "баноч", "бант", "банту", "банч", "бань", "баньян", "баобаб", "бапт", "ерий", "бар", "барабан", "барабошк", "барабульк", "барак", "баран", "баранк", "бараноч", "барахл", "барахол", "барахоль", "барахта", "барач", "бараш", "барбарис", "барбос", "барбот", "барвинк", "барвинок", "барвиноч", "баргузин", "бардак", "бареж", "рельеф", "баретк", "бареттер", "барж", "барион", "бари", "баритон", "барк", "баркан", "баркарол", "баркас", "баркентин", "барокко", "барон", "травм", "бароч", "барраж", "баррель", "баррикад", "барристер", "барс", "барсук", "барсуч", "бархан", "бархат", "бархот", "барыг", "ын", "барыш", "ыш", "барьер", "бас", "басен", "баск", "баскак", "баскет", "боль", "басм", "басмач", "басн", "пис", "слов", "басон", "басоч", "бассейн", "бассей", "баста", "бастард", "бастион", "бастова", "бастурм", "басту", "басурман", "батал", "батали", "баталь", "батальон", "батан", "батаре", "батарей", "батат", "бат", "батиаль", "бати", "батик", "скаф", "батист", "батман", "батог", "батож", "батожь", "батон", "батрак", "батрац", "батрач", "баттерфля", "баттерфляй", "батуд", "батут", "батун", "батыр", "батырь", "бать", "юшк", "батюшки", "баул", "бауль", "бах", "бахвал", "бахваль", "бахил", "бахром", "крут", "бахч", "бац", "бацби", "бацбий", "бач", "башен", "башибузук", "башк", "башкир", "башлык", "башлыч", "башмак", "башмач", "башн", "баштан", "баю", "баядер", "баян", "бд", "бебе", "беби", "бебут", "бегемот", "бегони", "унь", "бед", "бедекер", "бедлам", "бедн", "яг", "яж", "яц", "бедокур", "бедолаг", "бедр", "бедуин", "беж", "еват", "безалаберн", "безалабер", "апелляци", "бож", "зн", "бород", "бо", "брач", "бреж", "бров", "буквар", "бур", "вахт", "ведр", "веретён", "верх", "верш", "вест", "ветр", "виз", "вин", "вкус", "власт", "водь", "бра", "врат", "воздуш", "возмезд", "вол", "волос", "воль", "вред", "выгод", "езд", "лаз", "гараж", "глав", "глаголь", "глаз", "глас", "гнев", "гнёзд", "голов", "голос", "грамот", "гранич", "гран", "граноч", "грех", "греш", "гроз", "дар", "дей", "дель", "денеж", "денежь", "дет", "дефект", "дефицит", "бездн", "дождь", "доказ", "доль", "дом", "дон", "дорожь", "дот", "доход", "дрен", "дум", "думь", "дух", "душ", "дым", "дых", "безе", "жал", "ост", "желез", "желт", "жи", "забот", "беззаветн", "закон", "запрет", "застенчив", "защит", "звёзд", "звуч", "земель", "зл", "зуб", "лафет", "лёгоч", "лепест", "лесь", "лик", "линз", "лист", "лич", "лопаст", "лошад", "лун", "люд", "людь", "мат", "безмен", "мозг", "молв", "молоч", "мороз", "муж", "мятеж", "надёж", "надзор", "наказ", "налич", "нача", "ча", "никотин", "ног", "нравственн", "жиг", "обид", "облач", "обман", "молот", "оборот", "безобраз", "оброч", "гляд", "говор", "окон", "опас", "пил", "опор", "опыт", "оруж", "кол", "основ", "останов", "валь", "ответ", "ответственн", "вяз", "отказ", "лаг", "луч", "относительн", "рыв", "отц", "безотчётн", "ошиб", "работ", "рам", "свет", "суд", "чёт", "результат", "рельс", "рог", "род", "ропот", "рук", "руль", "рыб", "рыбь", "быт", "гар", "углерод", "угомон", "удар", "уём", "узл", "кор", "молч", "упреч", "уроч", "рядиц", "сад", "услов", "успе", "уста", "теш", "участ", "безъ", "ядер", "язык", "языч", "якор", "ыгл", "ыголь", "ыгр", "ыде", "ыдей", "ызвестн", "ыз", "ыкр", "ыллюз", "янн", "ынвентар", "ындик", "ындук", "ынерци", "ынициатив", "ынтеграль", "ынтерес", "ыскаж", "ыскр", "ыскусн", "ыскусственн", "ыс", "ытог", "од", "эмоци", "бей", "бейк", "бейс", "бек", "бекар", "бекас", "бекеш", "бекон", "бел", "ёк", "белен", "белендряс", "ес", "ёс", "ёхоньк", "ёшеньк", "белиберд", "белк", "белладонн", "беллетрист", "бок", "боч", "брыс", "брюх", "войлоч", "гварде", "гвардей", "горяч", "груд", "гуз", "дерев", "зёрн", "казак", "копыт", "кочан", "кров", "крыл", "крыль", "кур", "лоб", "мор", "мрамор", "белорус", "руч", "снеж", "стволь", "финн", "фин", "хвост", "белоч", "шв", "шёрст", "щёк", "эмигр", "белуг", "белудж", "белуж", "белух", "белуш", "бель", "бельведер", "бельги", "бельгий", "бельканто", "рез", "бельтинг", "бельфлёр", "бельч", "этаж", "беляш", "бе", "бенгал", "бенгаль", "бенди", "бенедиктин", "бенефис", "бенефиц", "вакуум", "бензоин", "бензой", "колон", "сос", "нафт", "снабж", "суч", "указ", "бербер", "бергамот", "берданк", "бёрд", "бердыш", "бере", "берег", "креп", "берёг", "беред", "береж", "берёз", "берез", "берейтор", "берем", "берендей", "бересклет", "берест", "берёст", "берет", "беречь", "беречься", "берилл", "иев", "беркел", "беркл", "беркли", "беркут", "беркшир", "берлин", "берлог", "берлож", "берм", "бернард", "бернштейн", "берсальер", "бер", "берц", "бёрц", "бес", "бесед", "каналь", "капитель", "капсюль", "каркас", "касс", "кил", "кингстон", "клапан", "класс", "козырк", "козыр", "колёс", "компресс", "компромисс", "кондуктор", "конеч", "контакт", "контроль", "конфликт", "коров", "корыст", "кост", "котл", "ован", "край", "кризис", "культурь", "бесн", "палуб", "пал", "памят", "панцир", "пардонн", "парус", "паспорт", "пас", "патент", "патрон", "бой", "перспектив", "пёр", "печаль", "беспечн", "пись", "плам", "плат", "плацкарт", "плод", "плот", "подваль", "позвоноч", "иск", "поко", "покой", "полез", "полос", "пол", "помест", "мощ", "поп", "пород", "пороч", "порточ", "порядок", "порядоч", "пошлин", "щад", "предель", "предлож", "предмет", "прекослов", "пременн", "препятств", "преста", "прецедент", "бы", "зор", "лавоч", "пример", "принцип", "пристраст", "притяза", "причин", "приют", "проблем", "буд", "проволоч", "программ", "гуль", "игр", "сып", "процент", "пут", "путь", "саль", "бессараб", "сезонь", "семей", "сем", "бессемер", "сердеч", "сет", "сил", "силь", "симптом", "слав", "след", "слёз", "смерт", "смет", "мысл", "снежь", "событий", "совест", "созна", "сол", "солнеч", "сослов", "союз", "сребр", "сроч", "пуск", "точ", "страст", "страш", "струж", "структур", "струн", "ступен", "стыд", "стыж", "тык", "субъект", "счаст", "счёт", "сюжет", "такт", "талан", "талант", "тариф", "тар", "тен", "бестер", "тк", "товар", "товарь", "толк", "толочь", "траншей", "трепет", "бестселлер", "фабуль", "фамиль", "форм", "хитр", "хлеб", "хлебь", "хлопот", "хоз", "хребет", "цвет", "цель", "ценз", "церемон", "челноч", "человеч", "челюст", "череп", "череш", "чест", "честь", "числ", "член", "чу", "бесшабаш", "шаж", "шарнир", "шов", "шпон", "штанг", "шум", "щел", "бета", "лом", "меш", "бефстроганов", "бечев", "бечёв", "бешбармак", "беш", "бешмет", "бештау", "биатлон", "бибабо", "биб", "коллект", "библей", "библи", "таф", "тек", "теч", "бивак", "бивуак", "бивач", "бигуди", "биде", "бидон", "биеннале", "бьеннале", "бижутери", "бизань", "бизнес", "бизон", "квадр", "бикини", "бикс", "лаби", "билатеральн", "печат", "лингв", "линей", "билирубин", "биллион", "билль", "бильбоке", "бильд", "бильярд", "металл", "молекул", "нар", "биндюжник", "окл", "окль", "окул", "бинт", "генет", "доз", "индик", "инженер", "информ", "кибернет", "комплекс", "лок", "люминесц", "нт", "потенци", "препарат", "пс", "реакт", "синтез", "стимул", "страти", "ток", "топл", "правл", "фармац", "фармаци", "энерг", "бирж", "бирк", "бирм", "бирон", "бироч", "бирюз", "бирюк", "бирюлеч", "бирюльк", "бирюч", "бис", "бисер", "бисквит", "бисмут", "висмут", "биссектрис", "биссин", "бистр", "бистро", "сульф", "бит", "битенг", "битини", "битл", "битник", "битюг", "бифштекс", "бихевиор", "цепс", "цилл", "бич", "бишь", "благ", "вещ", "благовол", "вон", "воспит", "глуп", "благогов", "й", "благодар", "благодаря", "благодат", "благодать", "благоден", "благодуш", "жела", "благолеп", "ящ", "намер", "нрав", "благообраз", "благополуч", "обрет", "благопристой", "благоприятн", "благоприят", "располож", "клон", "благослов", "благословл", "благосостояни", "благотвор", "смотр", "стра", "благоуха", "благочест", "благочин", "блаженн", "блажен", "блаж", "блажь", "бланк", "бланманже", "бланоч", "бланш", "бласт", "дерм", "блат", "блева", "блев", "бледн", "блейвейс", "блёк", "блек", "блеск", "блес", "блест", "блёст", "блеф", "блещ", "бле", "ближ", "восточ", "близ", "близк", "леж", "близн", "раст", "сид", "блик", "блин", "блинд", "блинт", "блист", "блиц", "криг", "турнир", "блокнот", "жим", "рабат", "блондин", "блох", "блоч", "блош", "блуд", "блужд", "блуз", "блюд", "блюз", "блюм", "блюс", "блях", "бляш", "боа", "боб", "бобби", "бобёр", "бобин", "бобр", "сле", "слей", "бобыл", "бобыль", "бог", "богадел", "богадель", "богар", "богатыр", "богатырь", "богач", "богдыхан", "богем", "вдохнов", "маз", "ерь", "мерзк", "мил", "миль", "мол", "ненавист", "ступ", "против", "еб", "спас", "боготвор", "угод", "хуль", "человек", "бод", "бодр", "евит", "запас", "комплект", "пита", "способн", "боинг", "бойк", "бойкот", "бойлер", "бойскаут", "овый", "бойч", "бокаж", "бокал", "бокаль", "нерв", "плав", "шей", "бокс", "боксёр", "болван", "болваш", "болгар", "болеро", "утол", "боливар", "боливи", "боливий", "болон", "болонк", "болонь", "болот", "болт", "болюс", "ячк", "ард", "ёжк", "мет", "брас", "бомж", "бомонд", "бон", "бонапарт", "бонбоньерк", "бонбоньероч", "бонвиван", "бонд", "бонз", "бонмо", "бонн", "бонтон", "борат", "бордель", "бордеро", "бордо", "борд", "бордюр", "борей", "борец", "боржом", "борз", "бормот", "бормоч", "боров", "водород", "бородавк", "бородавоч", "бородавч", "борозд", "ментол", "борон", "боронь", "борт", "врач", "журнал", "борть", "борщ", "борь", "бос", "боскет", "нож", "босс", "бостон", "бот", "ботв", "инь", "дал", "ботинк", "ботиноч", "ботул", "ботфорт", "боцман", "бочаг", "бочаж", "бочеч", "бочк", "оноч", "з", "бояр", "боярыш", "брав", "иссим", "браг", "брад", "брей", "браж", "бразил", "бразиль", "брак", "браконьер", "брамсель", "брандахлыст", "бранд", "спойт", "бран", "брань", "браслет", "брасс", "брат", "убий", "бр", "браунинг", "брахи", "кефал", "цефал", "брахман", "брашпил", "брашпиль", "бревен", "бревеш", "бревёш", "бревн", "таск", "брёвн", "брегет", "бред", "брезг", "брезент", "брезж", "брейк", "брек", "ватер", "брелок", "брелоч", "брем", "бренди", "бренн", "бренч", "брень", "брес", "бретель", "бретёр", "бретон", "брёх", "брех", "бреш", "брешь", "бре", "бриг", "бригантин", "бридж", "бриз", "брикет", "бриллиант", "брильянт", "бристоль", "британ", "бритт", "брифинг", "бричк", "бровь", "брод", "брож", "бройлер", "брокер", "брокколи", "бром", "желатин", "серебр", "урал", "катер", "колпак", "локомотив", "бронз", "графит", "латун", "бронт", "бронх", "пневмон", "брос", "бросч", "брот", "брош", "брошь", "брошюр", "брр", "бруд", "брудер", "брудершафт", "брус", "брусн", "бруствер", "брутто", "бруцелл", "брыжееч", "брыжейк", "брыжей", "брызг", "брызж", "брыз", "брык", "брыл", "брынз", "брысь", "брюзг", "брюзж", "брюкв", "брюк", "брюмер", "брюнет", "брюссель", "брют", "горл", "реснич", "брюч", "брюш", "тиф", "бряк", "бряц", "бубен", "бублик", "бублич", "бубн", "бубон", "бугай", "бугель", "бугор", "бугр", "будар", "будд", "будённ", "будён", "будк", "будн", "будораж", "будоч", "будто", "будуар", "бу", "буер", "буерак", "буерач", "буж", "бужен", "буз", "тёр", "буй", "буйвол", "буйреп", "бук", "букан", "букаш", "букв", "букет", "буки", "букин", "букле", "буклет", "букл", "буковин", "буков", "буколик", "буколич", "букс", "буксир", "булав", "булавк", "булавоч", "булавч", "булан", "булат", "булгач", "булк", "булоч", "бултых", "булыж", "бульвар", "бульдог", "бульдож", "бульдозер", "буль", "бульон", "бум", "бумаг", "мар", "пряд", "честв", "ац", "бумаж", "бумазей", "бумазе", "бумеранг", "бун", "бунгало", "бунд", "канцлер", "рат", "таг", "бункер", "бунт", "щич", "бунчук", "бурав", "бурак", "буран", "бурач", "бурбон", "бургомистр", "бургон", "бургунд", "бурд", "бурдюк", "бурдюч", "буржуа", "буржуаз", "буржуй", "буриме", "бурк", "буркал", "бурлак", "бурлац", "бурлач", "бурл", "бурлеск", "бурмистр", "бурнус", "зём", "шнек", "бурре", "буррет", "бурс", "бурт", "бурун", "бурундук", "бурундуч", "бурхан", "бурч", "бурш", "бурьян", "бурят", "буссоль", "бустер", "бут", "бутадиен", "бутадион", "бутан", "бутафор", "бутерброд", "бутил", "каучук", "бутон", "бутоньерк", "бутс", "бутуз", "бутыл", "мо", "бутыль", "буфер", "буфет", "буфф", "буф", "бух", "буханк", "бухар", "бухгалтер", "бухт", "буцефал", "буч", "бушева", "бушель", "бушлат", "бушмен", "быдл", "бык", "былин", "быстр", "густ", "морож", "наш", "пар", "лет", "пад", "разви", "разъём", "реж", "сох", "тверд", "тий", "быч", "бычок", "бь", "бэр", "бэрч", "бювар", "бювет", "бюджет", "бюллетен", "бюллетень", "бюргер", "бюро", "бюст", "гальтер", "бяз", "бязь", "бяк", "бя", "вабик", "ваб", "вавилон", "вож", "вагран", "важ", "ваз", "вазелин", "вазисубани", "ваканси", "вакант", "вакаци", "вакс", "вакуол", "вакуоль", "вакх", "вакханал", "вакханаль", "валанда", "валансьен", "валах", "валаш", "еж", "валентн", "валёр", "валериан", "валерьян", "валет", "валидол", "валторн", "валуй", "валун", "валух", "вальдшнеп", "вальс", "вальтрап", "вальяжн", "вальян", "валют", "вампир", "ванад", "вандал", "вандаль", "ванил", "ваниль", "ванн", "ван", "вант", "вапор", "вар", "варан", "варвар", "варган", "варежк", "вари", "экран", "варнак", "варнач", "варшав", "варьете", "варь", "варяг", "варяж", "василёк", "василёч", "василиск", "васильк", "васисдас", "вассал", "вассаль", "ват", "ватаг", "ватаж", "жакет", "клозет", "ватерпас", "поло", "поль", "ватман", "ватрушеч", "ватрушк", "вафель", "вафл", "вахлак", "вахлац", "вахлач", "вахмистр", "вахмистер", "ваш", "вашгерд", "вая", "бир", "вез", "вёз", "век", "верг", "верж", "вёр", "вёрст", "верст", "верт", "верч", "вечер", "ви", "винт", "винч", "волак", "волок", "волоч", "волочь", "ю", "ворач", "ворот", "восьм", "высь", "гиб", "гладь", "глубь", "глух", "гнезд", "грыз", "дав", "давл", "далбл", "далек", "даль", "дви", "дв", "девят", "дёж", "дёрг", "дёрж", "дёр", "десят", "бав", "вдов", "доволь", "догад", "долб", "долбл", "доста", "сыть", "дох", "вдохновл", "дребезги", "вдруг", "дрызг", "ду", "вебер", "вевериц", "вегетари", "вегет", "ведёр", "веди", "ведомост", "ведомость", "ведомств", "вёдр", "ведь", "ведьм", "веер", "вежлив", "везде", "сущ", "везикул", "везир", "вей", "вейсман", "веч", "вексел", "вексель", "вектор", "векш", "веле", "леп", "мудр", "вел", "реч", "велик", "возраст", "держав", "княж", "великолеп", "муч", "росс", "россий", "рус", "велич", "коляск", "кросс", "рикш", "велосипед", "нк", "трек", "фигур", "эрг", "вельбот", "вельвет", "вельми", "вельмож", "велюр", "веляр", "венгер", "венгр", "венд", "венед", "венер", "венесуэл", "венесуэль", "венет", "венеци", "вензел", "вензель", "веник", "венич", "вентил", "вентиль", "вепрь", "вепс", "веранд", "верб", "вербальн", "вербен", "верблюд", "верблюж", "вербова", "вербов", "вердикт", "верёвк", "верёвоч", "веред", "верезж", "верениц", "вереск", "веретен", "верещ", "верже", "верзил", "вериг", "вермахт", "вермишел", "вермишель", "вермут", "верн", "вернисаж", "подданн", "верноподданный", "исповед", "веролом", "вероник", "терп", "вероят", "верс", "верси", "верстак", "верстач", "вертел", "вертель", "вертеп", "вертикал", "вертикаль", "вертлюг", "вертлюж", "вертопрах", "вертопраш", "верф", "верфь", "волж", "гортан", "лужиц", "мел", "нем", "овен", "ушеч", "весёл", "весел", "весель", "вёсель", "весен", "весл", "весн", "вс", "паш", "ушч", "вестибул", "вестибюль", "вестфаль", "весть", "весь", "весьма", "ветв", "ветвл", "вет", "ветвь", "ветер", "ветеран", "ветеринар", "ветл", "вето", "ветош", "ветошь", "персонал", "польз", "колес", "станов", "ый:", "экспертиз", "фельдшер", "ветх", "завет", "ветчин", "ветш", "вех", "вечёр", "ошн", "зелён", "мёрз", "вечор", "веш", "вешн", "мешок", "вещь", "ве", "жа", "жив", "живл", "зад", "заём", "взаимн", "взаим", "влия", "выруч", "довер", "полн", "завис", "мк", "индук", "исключ", "богащ", "условл", "отнош", "мощь", "поним", "превращ", "приемл", "уваж", "займ", "перт", "правд", "тяж", "хлёб", "хлёст", "бадр", "баламуч", "взбалмошн", "балт", "взбелен", "борожд", "взбутетен", "визг", "вихр", "взвод", "волн", "ворош", "гля", "гомоз", "гомон", "горб", "гор", "горь", "гре", "грем", "громожд", "громозд", "груст", "дё", "дир", "вздор", "драг", "дрем", "дрог", "дрюч", "дур", "дыб", "дыбл", "взима", "взир", "лам", "лез", "леле", "лохм", "луп", "лупл", "лупц", "лущ", "мал", "мах", "мач", "мащ", "мок", "морь", "мот", "моч", "мут", "мы", "мыл", "нес", "нёс", "узд", "ны", "др", "взор", "рв", "шед", "ращ", "рев", "ревн", "ро", "взросл", "рос", "гидравл", "защищ", "рыд", "ры", "рыхл", "ряб", "рябл", "взъ", "езж", "ерепен", "ерош", "ех", "зыв", "ыск", "взя", "получ", "виадук", "ато", "вибри", "гас", "пресс", "зонд", "инструмент", "площадк", "глощ", "груж", "сит", "вив", "виват", "виваче", "виверр", "виг", "вигон", "вигонь", "видать", "видео", "диск", "импульс", "искусств", "канал", "кассет", "кафе", "клип", "нов", "плёнк", "сигнал", "видимо", "визави", "византи", "византий", "визант", "визж", "визирь", "визит", "вик", "викар", "викинг", "горох", "виконт", "овс", "викторин", "виктори", "викунь", "вилайет", "вилк", "вилл", "вилок", "вил", "вилоч", "виль", "винегрет", "винил", "винкель", "винн", "виноград", "торг", "овл", "черп", "турбин", "винчестер", "виньетк", "виол", "виолончел", "виолончель", "вир", "вира", "вираж", "виртуальн", "виртуоз", "вирулентн", "вирш", "плёт", "вис", "виски", "вискоз", "висок", "височ", "виссон", "вист", "юльк", "витал", "вита", "вити", "витий", "витраж", "витрин", "витютень", "витязь", "вихл", "яв", "яй", "яст", "вихор", "коп", "вихрь", "виц", "мундир", "вишен", "вишень", "виши", "вишн", "ёв", "вишь", "кап", "карабк", "кач", "каш", "кле", "клей", "клёп", "клеп", "ключ", "кова", "ков", "когт", "колач", "колот", "колоч", "корен", "коротк", "кос", "кось", "кра", "крад", "крап", "крапл", "кратц", "крепл", "кривь", "кро", "крой", "круг", "круч", "вкупе", "вкуш", "влаг", "воздух", "заряд", "обеспеч", "талк", "глот", "владимир", "влаж", "влас", "власть", "влач", "лев", "влек", "влёк", "лепл", "влеч", "лечь", "влечь", "лип", "лоп", "любл", "ляп", "вмен", "мерз", "мёртв", "вместе", "мест", "вместо", "мещ", "миг", "мин", "монт", "нный", "мораж", "мурова", "муров", "наём", "найм", "атмосфер", "внедр", "европ", "внезапн", "зем", "клеточ", "конкурс", "корн", "внемл", "очеред", "парламент", "студий", "сустав", "улич", "устав", "школь", "политич", "торгов", "штат", "ярус", "вник", "вним", "чь", "новь", "внук", "нутр", "зёрен", "кварталь", "квартир", "комнат", "континент", "материк", "мышеч", "област", "плем", "скважин", "внутр", "текст", "утроб", "цилиндр", "нутрь", "внуч", "внуш", "нюх", "внятн", "вня", "вобл", "вовсе", "вовсю", "гн", "г", "вогул", "вогуль", "двор", "водевил", "водевиль", "водк", "лыж", "водн", "газ", "торф", "парафин", "каптаж", "кольц", "лей", "масл", "мой", "пресн", "свящ", "хлажд", "чист", "пла", "пой", "ниж", "приём", "проч", "пыл", "свят", "слой", "столб", "струй", "труб", "водоч", "водруж", "водруз", "воева", "воевод", "вое", "началь", "обяз", "плен", "спец", "юрист", "вождел", "вожд", "вождь", "вожж", "бужд", "вращ", "выс", "выш", "главл", "глаш", "горд", "воздвиг", "воздвиж", "возде", "гнет", "хлад", "распре", "лавл", "эквивалент", "воздыма", "жажд", "жёг", "жечь", "жж", "зв", "зр", "возле", "лег", "лёг", "ликова", "возмезди", "возмест", "мечт", "возмещ", "мог", "мож", "мочь", "мущ", "наград", "награжд", "негодова", "ненавид", "возник", "ове", "облад", "новл", "мн", "возоп", "возраж", "возраз", "рожд", "ропт", "ыме", "воин", "истин", "вои", "вой", "войлок", "войн", "войск", "вокабул", "ярий", "вокал", "вокаль", "вокатив", "вокзаль", "волан", "волапюк", "волг", "волдыр", "волдырь", "изъ", "явл", "волей", "волк", "лис", "волокит", "волокон", "волонтёр", "волост", "волость", "волочься", "волош", "волхв", "волчанк", "волч", "ягод", "волшеб", "волын", "волынк", "вольготн", "вольер", "вольно", "определ", "пущ", "практ", "слуш", "вольтер", "вольтерь", "вольтиж", "вольфрам", "волюм", "волюнтар", "волют", "мч", "вонз", "вонь", "юч", "воображ", "вообраз", "вообще", "воодушев", "воодушевл", "воочию", "воп", "вопл", "воплот", "воплощ", "вопль", "вопреки", "вопрос", "вопрош", "ворван", "ворвань", "ворк", "воробей", "вороб", "ушек", "воробьев", "воробь", "ворож", "ворон", "ёноч", "воронк", "вороноч", "воронь", "ворох", "вороч", "ворс", "ворч", "юг", "восвояси", "восем", "дцат", "градус", "восемь", "сот", "воск", "воскрес", "воскресень", "воскреш", "вос", "воспал", "пе", "помин", "препят", "прет", "прещ", "восприем", "восприим", "восприним", "восприня", "восприя", "произвед", "произвест", "воспря", "сед", "сес", "сия", "славл", "созда", "ста", "восстанавл", "восстанов", "восстановл", "сыл", "восток", "восторг", "восторж", "торжеств", "казах", "стан", "китай", "сибир", "славян", "требова", "востр", "хвал", "восхит", "восхищ", "хожд", "хот", "ведер", "вёдер", "копееч", "пят", "рубл", "дн", "месяч", "слож", "стиш", "уголь", "вот", "вотум", "вотч", "вотчин", "вотяк", "вотяц", "вотяч", "цар", "вош", "вошь", "вощ", "вою", "вояж", "пай", "палз", "парх", "пек", "перв", "перёд", "впер", "пер", "хват", "впёр", "впечатл", "печь", "пи", "впи", "пин", "пит", "пих", "плавл", "вь", "плёск", "плёс", "плес", "плет", "плотн", "плоть", "плы", "полз", "вполне", "половин", "щур", "прям", "пь", "слух", "сыт", "попад", "попых", "порожн", "впору", "порх", "последстви", "тай", "тьм", "впредь", "кус", "прыж", "скоч", "сяд", "тир", "трус", "тыч", "голодь", "желть", "зелень", "впрок", "резь", "синь", "сонь", "впрочем", "чернь", "прыг", "прыс", "пряг", "пряж", "прямь", "пряс", "прячь", "пуст", "пял", "пяч", "враг", "вражд", "враж", "дробь", "лад", "маш", "разн", "ряд", "умл", "вр", "врангел", "расплох", "ровень", "вроде", "рознь", "розь", "сыпь", "руб", "пашн", "вруч", "всад", "саж", "сас", "сач", "все", "всегда", "его", "звол", "знай", "зна", "вселенн", "вселен", "любезн", "милост", "минут", "непременн", "нощ", "объемл", "побежд", "погод", "жир", "покор", "одол", "прощ", "совершенн", "круш", "сторон", "украин", "цел", "яд", "скак", "кармл", "скачь", "кип", "клокот", "клокоч", "клоч", "скок", "колуп", "колых", "скольз", "скользь", "скор", "кормл", "крик", "крич", "круж", "сласть", "предлог", "следстви", "слеп", "сматр", "всмятку", "сова", "сов", "соч", "пах", "пен", "петуш", "плак", "плеск", "сплош", "сплошь", "поласк", "полох", "полош", "помн", "помя", "пря", "пуг", "пух", "пуч", "пуш", "вспыл", "вспыль", "вспых", "вспыш", "вспять", "став", "ставл", "старь", "тащ", "вста", "топорщ", "тормош", "тоск", "встр", "тревож", "трёп", "треп", "трепых", "встрет", "встреч", "трух", "тряс", "трях", "ступл", "всуе", "сух", "мят", "всуч", "хлип", "хож", "есть", "холмл", "храп", "всюду", "всяк", "всяч", "тапт", "тасова", "тасов", "тач", "тёк", "тём", "втемяш", "тер", "тес", "тесн", "течь", "тиск", "тис", "тих", "толкова", "толков", "толок", "топт", "втор", "торач", "вторг", "вторж", "год", "курс", "тороп", "ях", "разряд", "сорт", "степен", "тороч", "сырь", "трав", "травл", "трамбова", "трамбов", "треск", "тр", "дешев", "туг", "втулк", "втулоч", "втуне", "э", "тюр", "тя", "тяп", "вуал", "вуаль", "вулкан", "вульгар", "вундеркинд", "вурдалак", "хаж", "холод", "холост", "цепл", "вчера", "черн", "черт", "черч", "чет", "чит", "чуж", "шест", "ширь", "въ", "явь", "бри", "буравл", "ващ", "вывер", "вих", "вял", "гад", "гат", "гач", "глад", "глаж", "глод", "гни", "говар", "гораж", "выгор", "горож", "грав", "греб", "грес", "гул", "выда", "дерг", "выдержк", "дер", "дой", "выдр", "дра", "дресс", "дуб", "дубл", "дюж", "жар", "жд", "жег", "желч", "жереб", "жид", "жин", "выжл", "жр", "зван", "звезд", "вызвол", "звон", "здоравл", "здоров", "здоровл", "зелен", "зим", "зов", "зол", "золач", "золот", "золоч", "зре", "зубр", "зуд", "зуж", "зяб", "каз", "выкамар", "канюч", "капч", "кашл", "квас", "кваш", "клева", "клёв", "клейм", "клик", "клю", "клянч", "ковыр", "колаш", "колос", "копт", "копч", "корч", "кош", "крахмал", "краш", "крест", "крещ", "кристалл", "крош", "куп", "купл", "куш", "лака", "лащ", "лёж", "ловл", "ломл", "лощ", "луд", "луж", "мак", "малева", "малёв", "меч", "вым", "вымог", "молач", "молвл", "вымпел", "фал", "вымпель", "мурав", "муравл", "муштр", "мысел", "мышл", "ним", "нош", "нуд", "нужд", "ныр", "нян", "вынян", "остр", "пачк", "пая", "пендр", "пестова", "печ", "пив", "овоч", "плач", "плева", "плёв", "плю", "пляс", "полоск", "поражн", "потрош", "праст", "праш", "прос", "прост", "прош", "пруд", "прямл", "выпукл", "пыт", "выпь", "равн", "выраж", "выраз", "реш", "рис", "ровн", "рон", "рост", "руг", "ряж", "высад", "сват", "сверл", "свист", "свобод", "свобожд", "сек", "сеч", "сечь", "сиж", "син", "скабл", "сказ", "скальз", "скобл", "скреб", "скрёб", "скрес", "сл", "слеж", "слуг", "смал", "сме", "смол", "сморк", "высок", "идей", "интеллект", "интеллигент", "интенс", "калорий", "качеств", "квал", "ифиц", "концентр", "объём", "огн", "октан", "орбит", "превосход", "преподоб", "проб", "продукт", "прочн", "стабиль", "температур", "точн", "травь", "рож", "чт", "шир", "эффект", "солод", "солож", "высоч", "спар", "сп", "спе", "спраш", "выспренн", "спрос", "спрош", "стег", "стёг", "стел", "стл", "стил", "стир", "страг", "струг", "страч", "стриг", "стриж", "стричь", "строг", "строч", "студ", "стуж", "стук", "сты", "суж", "суш", "счит", "сых", "та", "танц", "тапл", "таращ", "тверж", "тереб", "теребл", "тёс", "тисн", "трал", "трезв", "трезвл", "труш", "уд", "уж", "утюж", "харк", "хвач", "хлест", "хлоп", "хлопат", "холаж", "холащ", "хол", "холож", "холощ", "выхухол", "выхухоль", "царап", "цвес", "цед", "цеж", "цыган", "чекан", "чёрк", "черк", "чес", "чёс", "чих", "чищ", "вычур", "шаг", "шар", "шарк", "швыр", "шелуш", "объявл", "показ", "шиб", "шибл", "шлифова", "шлифов", "шмыг", "шныр", "вышпар", "шпар", "штамп", "штукатур", "шут", "шуч", "щелач", "щелк", "щёлк", "щелоч", "щерб", "щербл", "щип", "щуп", "выяв", "выявл", "ясн", "вьетнам", "вьюг", "вьюж", "вьюк", "юн", "вьюрк", "юрк", "вьюрок", "юрок", "вьюч", "вьюшеч", "вьюшк", "вяж", "вязель", "вязч", "вя", "вят", "вятк", "вяхирь", "вящ", "га", "гааг", "габардин", "габарит", "габбро", "габион", "габитус", "гава", "гаван", "гавань", "гав", "гавот", "гаг", "гагар", "гагат", "гагауз", "ёныш", "гаер", "гаеч", "гаж", "газават", "газел", "газель", "газет", "дизель", "жидк", "ойль", "каротаж", "газон", "нефт", "оборудова", "турб", "гаит", "гаичк", "гайдамак", "гайдамат", "гайдамац", "гайдук", "гайдуц", "гайк", "гаймор", "гайтан", "гак", "гала", "галаган", "галазолин", "галактик", "галакт", "галалит", "галантерей", "галантере", "галантн", "галд", "гален", "галер", "галере", "галёр", "галет", "галеч", "галимать", "галифе", "галк", "галл", "галлон", "галль", "галлюцин", "гало", "гал", "галоп", "галоч", "галош", "калош", "галс", "галстук", "галстуч", "галтель", "галун", "галушк", "галч", "гальван", "кауст", "ика", "стеги", "стере", "гальк", "гальюн", "гамадрил", "гамак", "гамаш", "гамби", "гамбит", "гамбузи", "гамлет", "гангли", "ганглий", "гангрен", "гангстер", "ганд", "ган", "ганзей", "гантел", "гаолян", "гапл", "гапон", "гарант", "гаранти", "гардемарин", "гардени", "гардероб", "гардин", "гарем", "гарибальди", "гармонь", "гармош", "гарнизон", "гарнир", "гарнитур", "гарпи", "гарпун", "гарсон", "гарт", "гарус", "гарцева", "гаршнеп", "гарь", "гастер", "гастр", "алг", "гастрол", "гастроль", "гастроном", "энтер", "гать", "гаубиц", "гаубич", "гауптвахт", "гаусс", "гаучо", "гафель", "гаш", "гашетк", "гашиш", "гащ", "гвазд", "гвалт", "гварди", "гватемал", "гватемаль", "гвине", "гвиней", "гвозд", "гвоздь", "гебра", "гегель", "гегемон", "гедон", "геенн", "геен", "гезенк", "гейзер", "гейм", "гейш", "гекатомб", "гекза", "гекса", "эдр", "гектар", "гект", "литр", "пьез", "гелертер", "гел", "геликоптер", "гели", "юр", "гельминт", "агглютин", "миел", "геми", "парез", "гемм", "глобин", "рраг", "геморр", "геморрой", "генеалог", "генеалоги", "генез", "генерал", "иссимус", "генераль", "ация", "гени", "гений", "генитив", "фонд", "гену", "эз", "штаб", "ге", "криол", "ги", "магнет", "микр", "георги", "георгин", "тектоник", "тектонич", "гепард", "гепат", "холецист", "гепта", "хорд", "геральдик", "геральдич", "геран", "герань", "герб", "гербар", "геркулес", "герм", "герман", "афродит", "герменевт", "гермет", "шлем", "геро", "героин", "геронт", "псих", "герострат", "герпет", "герундив", "герундий", "герц", "герцог", "гестапо", "гестап", "гетер", "дин", "зигот", "троф", "гетман", "гетр", "геттер", "гетто", "гехса", "гешефт", "махер", "гиацинт", "гиббон", "гибрид", "гибч", "гигант", "гигр", "гид", "гидальго", "гиджак", "гиджр", "карбон", "кортиз", "костюм", "окс", "медуз", "модуль", "монитор", "муфт", "нефр", "кись", "плотин", "проект", "пульт", "режим", "сооруж", "торакс", "узел", "фиц", "хин", "экструз", "элеватор", "гиен", "гик", "гиле", "гильберт", "гильдей", "гильди", "гильз", "гильотин", "гимн", "гимназ", "гимнази", "гимнаст", "гимнастёрк", "гинекей", "гинек", "гинецей", "гине", "гипербол", "гиперборе", "гиперборей", "глик", "дактил", "звук", "кинез", "плаз", "сорбц", "функци", "эллипт", "гипноз", "гипн", "пед", "гипнот", "гипнотизм", "гипо", "гип", "кинет", "стаз", "тактич", "таламус", "гипотез", "тенз", "гипотенуз", "гипотет", "фосф", "функц", "гиппопотам", "гипс", "гипюр", "гир", "гирлянд", "гиро", "компас", "стабил", "тах", "гирь", "гисто", "пато", "гит", "гитан", "гитар", "гитлер", "гич", "главн", "команд", "глагол", "глаго", "ла", "гладиатор", "гладиолус", "гладк", "кож", "стекл", "глазет", "глазур", "глазурь", "гланд", "глаук", "гледичи", "глейк", "глёт", "глетчер", "солом", "щебён", "щебень", "глинт", "вейн", "гли", "глипт", "глиссандо", "глисс", "глист", "глицерин", "фосфор", "глицер", "глобальн", "глоб", "глобул", "глобус", "аю", "глосс", "глотт", "глох", "глубж", "глуб", "глубок", "выем", "эшелон", "глубоч", "глум", "глумл", "глухар", "глухарь", "земл", "мань", "глуш", "глушь", "глыб", "глюкоз", "глядь", "глянец", "глянц", "глясе", "гляци", "гм", "гнед", "гнейс", "гранит", "гнес", "гнёт", "гнид", "гном", "гносе", "гностик", "гностиц", "гностич", "гнот", "гну", "гнус", "гнусн", "гнусь", "гнуша", "го", "гобелен", "гобо", "гобой", "гове", "говяд", "говяж", "гогол", "гоголь", "гогот", "гогоч", "гой", "гокко", "гол", "голавл", "голавль", "голгоф", "голен", "голень", "голиаф", "голкипер", "голланд", "ешк", "головн", "грудь", "голо", "голод", "жабер", "лёд", "ледь", "пуз", "штан", "голуб", "голубц", "голубь", "ыть", "голь", "гольд", "теп", "гольф", "гоме", "гомер", "гоминьдан", "гомм", "гом", "гомункул", "гонг", "гондол", "гондоль", "гони", "гонобобель", "гоно", "кокк", "гонор", "гонорар", "гонорей", "гоноре", "гонош", "гонт", "гончар", "гонь", "гоп", "гопак", "гопля", "горазд", "гораздо", "горал", "гордон", "горе", "мык", "мыч", "енк", "ест", "горец", "горечавк", "горечь", "горжетк", "горилл", "горк", "атк", "пан", "гормон", "горн", "горнил", "горниц", "горнич", "руд", "горноста", "горностай", "няц", "городь", "гороскоп", "горош", "горст", "горсть", "гортань", "гортензи", "горч", "горш", "горшеч", "горшок", "горшоч", "горьк", "миндаль", "цинк", "гос", "границ", "департамент", "заказ", "издат", "комисси", "кредит", "лицензи", "госпитал", "госпиталь", "господар", "господарь", "господ", "господин", "господь", "госпож", "предпри", "секретарь", "сектор", "страх", "ст", "гост", "гостинец", "гостиниц", "гостинич", "гостинч", "гость", "государ", "государь", "учрежд", "экзамен", "готик", "готич", "готовальн", "гот", "готтентот", "гоф", "маршал", "маршаль", "гофр", "граб", "грабар", "грабарь", "грабаст", "грабл", "грабь", "граве", "гравер", "гравий", "гравилат", "гравит", "град", "градаци", "градиент", "граду", "гражд", "грай", "граммат", "пластин", "гранат", "гранд", "грандиозн", "гранул", "грань", "грасс", "графин", "графл", "граффити", "граффито", "граци", "грач", "гребён", "гребен", "гребень", "гребеш", "гребл", "гребн", "грёб", "грёз", "грез", "грейд", "грейпфрут", "грейфер", "грек", "грен", "гренадер", "гренк", "гренланд", "грец", "греч", "гриб", "грив", "гривен", "гривн", "гризли", "гриль", "грильяж", "грим", "гримас", "гринвич", "грипп", "гриф", "грифель", "грифон", "гроб", "грог", "грогги", "грозд", "гроздь", "грозн", "упор", "гром", "громад", "громк", "громч", "громых", "гросс", "гроссбух", "гросфатер", "грот", "гротеск", "грох", "грохот", "грохоч", "грош", "груббер", "груб", "дробл", "зерн", "мельч", "провок", "стебель", "сукон", "грузд", "груздь", "грузин", "грузн", "напряж", "отправ", "такси", "грум", "грунт", "лак", "материал", "груп", "орг", "фюрер", "грусть", "груш", "грыж", "гряд", "лечени", "грязь", "гря", "гряс", "гуанако", "гуан", "гуано", "гуашь", "губ", "губерн", "губерни", "шлёп", "гуверн", "гугенот", "гугн", "гуд", "гудрон", "гук", "гулливер", "гульден", "гуляш", "итар", "гумен", "гумён", "гум", "гумм", "гумми", "гут", "гумн", "гумус", "гундос", "гунн", "гунтер", "гуппи", "гурджаани", "гури", "гурий", "гурман", "гурт", "гуру", "гурьб", "гус", "гусар", "гусель", "гусениц", "гусенич", "гусит", "гусл", "сыщ", "гусь", "гуталин", "гутор", "гуттаперч", "гуцул", "гуцуль", "гущ", "гюйс", "гюрз", "гяур", "дабы", "даве", "давн", "дагестан", "дада", "даже", "дайджест", "дайн", "дакри", "зоид", "далёк", "далеч", "дали", "далли", "далмат", "дальтон", "дам", "дамас", "дамаст", "дамб", "дамк", "даммар", "дамн", "дамп", "дана", "данай", "дан", "дансинг", "дант", "дань", "даос", "даргин", "дарданелль", "дари", "дат", "дауэс", "дафни", "дацзыбао", "дач", "дашнак", "цутюн", "кило", "тысяч", "четыр", "дюйм", "перст", "двер", "дверь", "двин", "жен", "жён", "знам", "яшк", "дворец", "дворц", "выпук", "дыш", "дыщ", "жиль", "знач", "кон", "направл", "плеч", "полост", "руш", "слог", "состав", "ствол", "створч", "тавр", "угл", "уст", "валент", "диапазон", "заль", "звень", "иголь", "каскад", "колей", "колен", "компонент", "контур", "корпус", "кулач", "ламп", "лемеш", "мачт", "миллиард", "недель", "холм", "орудий", "палат", "полотен", "полюс", "пуд", "сажен", "свеч", "суточ", "уровн", "фунт", "элемент", "дебаркадер", "дебат", "дебел", "дебет", "дебил", "дебиль", "дебит", "дебош", "дебр", "дебют", "дев", "вальв", "деверь", "девиз", "ичь", "девон", "девяност", "девясил", "девять", "дёготь", "деград", "дёгт", "дегт", "дегуст", "дед", "дедвейт", "дедерон", "дедик", "драм", "дедукт", "дедукц", "дедуц", "дее", "причасти", "причаст", "деж", "дежур", "дезабилье", "дезаву", "дезертир", "интегр", "интоксик", "инфек", "инфиц", "одор", "урбан", "действительн", "дек", "декабр", "декабрь", "дека", "декад", "кальк", "кальц", "декан", "тонн", "деклам", "деклар", "код", "декольт", "компенс", "компресси", "декор", "декрет", "декрещендо", "декрешендо", "декстр", "лабиал", "делег", "деликатес", "деликатн", "лимит", "дельт", "планер", "дельфий", "дельфин", "делюви", "делювий", "демагог", "демарк", "демарш", "маск", "дем", "демикотон", "деми", "сезон", "демиург", "демон", "демонстр", "демос", "демпинг", "демпфер", "демпф", "мульти", "плик", "муниципал", "натур", "фик", "денди", "дендр", "ден", "ёч", "знак", "деникин", "номин", "денонс", "денотат", "дент", "день", "деньг", "деньж", "деонт", "палатал", "депеш", "пигмент", "депо", "деп", "депозит", "поляр", "депон", "депорт", "депресси", "депутат", "депутац", "дербенник", "дерби", "дерб", "дервиш", "дергач", "реал", "деревен", "деревень", "деревн", "дерез", "дёрен", "морд", "дерз", "дерив", "дёрн", "дерн", "деррик", "дерть", "дерьм", "юж", "деряб", "дёсен", "сенсибил", "десерт", "десигнат", "десик", "дескать", "дескрипт", "дескрипц", "десн", "десниц", "деспот", "деструкт", "деструкци", "деструкц", "десть", "деся", "евк", "десять", "детал", "деталь", "детектив", "детект", "детермин", "ать", "термин", "площад", "ясл", "дефек", "фибр", "дефиле", "дефил", "дефинит", "дефиниц", "дефис", "дефлегм", "фоли", "дехкан", "децемвир", "деци", "дец", "деч", "дешёв", "дешевл", "шифр", "эмульг", "эскал", "этим", "джаз", "джайн", "джамбул", "джейран", "джем", "джемпер", "джентльмен", "джентри", "джерси", "джерс", "джигит", "джин", "джинго", "джинн", "джинс", "джип", "джонатан", "джонк", "джоуль", "джугар", "джунгл", "джут", "дзе", "дзет", "дзинь", "дзюдо", "диабаз", "диабет", "диагноз", "диагност", "диагонал", "диагональ", "диаграмм", "диадем", "диаз", "диакритич", "диалог", "диа", "диамант", "диаметр", "ди", "позитив", "диаспор", "диатез", "диафрагм", "дибазол", "див", "диван", "енц", "диверс", "диверси", "дивертисмент", "дивиденд", "дивизион", "дидакт", "диез", "диен", "диет", "сестр", "столов", "дизажио", "дизайн", "диз", "дизел", "дизентерий", "дизентери", "дизъюнкт", "дизъюнкц", "дик", "дикобраз", "диксиленд", "дикт", "дикци", "дилат", "дилемм", "дилетант", "дилижанс", "димедрол", "диминуэндо", "динамит", "динамо", "динар", "динарий", "динас", "династ", "династи", "динго", "дино", "терий", "диоптр", "орам", "дип", "курьер", "дипл", "дипло", "диплом", "дипломат", "дипс", "директив", "дирек", "дирижабель", "дирижабл", "дирижабль", "дириж", "дирхем", "дискант", "диско", "комфорт", "дисконт", "фрез", "дискредит", "дискретн", "дискримин", "дискурс", "дискусси", "дискусс", "дискут", "дислок", "дислоц", "диспансер", "диспепс", "диспепси", "дисперси", "дисперс", "дисплей", "диспозит", "диспозици", "диспон", "пропорци", "диспут", "диссерт", "диссидент", "симил", "симул", "дистанци", "дистилл", "дистинкт", "дистинкц", "дистрибут", "дистрибуц", "дисциплин", "дит", "ятк", "диур", "дифирамб", "дифракци", "дифтер", "фтонг", "дифферент", "дифференци", "дифференц", "диффузи", "диффуз", "диффунд", "дих", "томи", "дич", "дичь", "длань", "длин", "рыл", "черешк", "дл", "днепр", "днестр", "бавл", "доберман", "доби", "доблест", "доблесть", "добр", "добродетель", "порядочн", "сосед", "довзыск", "довле", "довод", "довольн", "довольстви", "догм", "договор", "дож", "дожд", "жёва", "жева", "жёв", "дозор", "дойн", "док", "канч", "капитал", "докембрий", "доклад", "клёва", "ковыл", "коль", "докона", "конч", "красн", "доктор", "доктрин", "куда", "докук", "документ", "докуч", "дол", "долг", "долдон", "долж", "должен", "должн", "должност", "должность", "долин", "долих", "доллар", "долой", "доломан", "доломит", "долот", "дольмен", "домбр", "домен", "доместик", "домин", "доминик", "доминион", "домино", "домкрат", "домн", "домог", "монопол", "рощ", "хозя", "чад", "домр", "наг", "донбас", "донг", "нельзя", "донес", "жуан", "доним", "кихот", "донор", "донос", "носи", "ныне", "донь", "доня", "обед", "октябрь", "пёк", "петр", "допинг", "ийся", "подлинн", "поздн", "допраш", "прода", "допрос", "допрош", "пушкин", "революци", "дородн", "дород", "ф", "досад", "досажд", "сал", "сель", "доск", "доскональн", "сочин", "досоч", "доспех", "сплетн", "ссор", "достав", "доставл", "достиг", "достичь", "достиж", "достоверн", "достоин", "достойн", "дост", "достояни", "доступ", "стуч", "досуг", "досуж", "досье", "сюда", "досяг", "тем", "дотла", "тле", "толь", "дотошн", "траг", "тро", "туда", "тушёва", "тушева", "тушёв", "ить", "доцент", "доч", "дочь", "шал", "дошл", "дощ", "драгоман", "драгун", "драж", "драже", "дразн", "дракон", "драндулет", "драп", "драпри", "драхм", "дребедень", "дребезг", "дребезж", "древ", "древл", "древн", "верхн", "немец", "еврей", "индий", "перс", "тюрк", "церков", "южн", "сажд", "дредноут", "дрейф", "дрек", "дреколь", "дрель", "дрём", "дремл", "дресв", "дриад", "дриблинг", "дрифтер", "дроб", "тей", "дров", "пиль", "дрож", "дрожеч", "дрожж", "ёва", "дрожк", "дрожь", "дрозд", "дрозофил", "дрок", "дромадер", "дросс", "дроссел", "дроссель", "дротик", "дроф", "дрочён", "друг", "друж", "дружин", "друид", "дрыг", "дрых", "дрюк", "дряб", "дрягиль", "дрязг", "дрян", "дрянь", "дрях", "дуал", "дубас", "дубин", "икат", "дубль", "няч", "дубрав", "дубров", "дубь", "дуг", "дуд", "дудки", "дуж", "дукат", "дулеб", "дул", "дуль", "дульцине", "думпер", "думпкар", "дунай", "дунг", "дуо", "децим", "дупел", "пель", "плекс", "дуплет", "дупл", "анд", "ачь", "дурман", "еть", "дурр", "дуршлаг", "ынд", "дурь", "дуст", "дуумвир", "духан", "духовенств", "дуче", "душанб", "больн", "приказ", "душман", "душн", "дуэл", "дуэль", "дуэнь", "дуэт", "дщерь", "дылд", "дын", "дынь", "дыр", "дышл", "дьявол", "дьяволь", "дьяк", "дьяч", "дюбель", "дюжин", "дюн", "дюр", "дюшес", "дягиль", "дяд", "дядь", "дятел", "дятл", "евангели", "евангел", "евангель", "евгеник", "евгенич", "евнух", "евр", "азий", "егер", "егерь", "египет", "египт", "егоз", "едва", "наслед", "начал", "еже", "ежев", "ежели", "секунд", "ежов", "екатерин", "ектень", "еле", "елей", "елизавет", "елоз", "ендов", "енот", "епанч", "епархи", "епитимий", "епитимь", "епитрахиль", "ералаш", "ересь", "ерет", "ёрз", "ермолк", "ёрник", "ёрнич", "ерофеич", "ерунд", "ёрш", "ерш", "есаул", "есауль", "если", "мь", "ессей", "ессентук", "естеств", "испыт", "ефимок", "ефрейтор", "ехид", "ехидн", "ещё", "жаб", "жабо", "жабр", "жавел", "жавель", "жаворонок", "жад", "жадн", "жакан", "жаккард", "жако", "жакоб", "жалей", "жаль", "жалюзи", "жам", "жандарм", "жанр", "жантильн", "жаргон", "жарк", "жарч", "жасмин", "жах", "жбан", "жв", "жгут", "жг", "же", "жезл", "желвак", "желвач", "желе", "синерод", "желёз", "керам", "жёлоб", "желоб", "желонк", "желоноч", "желон", "жёлт", "корень", "лоз", "фиоль", "желуд", "желудок", "желудоч", "жёлудь", "жёлч", "желчь", "жёлчь", "жеман", "жеманн", "жемчуг", "жемчуж", "женев", "женьшень", "жерд", "жёрд", "жердь", "жерёб", "жеребь", "ёвк", "жерех", "жерлиц", "жерл", "жерминаль", "жёрнов", "жернов", "жертв", "жест", "икул", "жёстк", "жестк", "жесток", "серд", "жесточ", "жёстч", "жесть", "жетон", "жечься", "живете", "ёхонек", "кость", "живопис", "живопись", "живот", "трепещ", "жиж", "жиздр", "ощущ", "утвержд", "жил", "жилет", "коопер", "площадь", "жимолост", "жимолость", "жирандоль", "жираф", "жиро", "жиронд", "щепл", "жит", "жм", "жмуд", "жмудь", "жмур", "ых", "жн", "ивь", "итв", "жок", "жокей", "жолк", "жолнер", "жолнёр", "жом", "жонгл", "жор", "жох", "жребий", "жужелиц", "жужж", "жуир", "жук", "жул", "жуль", "жупан", "жупел", "журавель", "журавл", "журавль", "жур", "журналь", "журфикс", "журч", "журь", "жутк", "жутч", "жуть", "жух", "жуч", "жучк", "жюри", "забав", "забавл", "байкаль", "бастов", "забв", "беремен", "беспоко", "забияк", "заблаговременн", "заблагорассуд", "благоух", "болач", "болоч", "забор", "забо", "забрал", "забубённ", "забулдыг", "забулдыж", "овать", "ха", "забы", "зав", "важж", "завед", "завер", "завещ", "вея", "завзят", "рова", "завид", "завир", "завист", "зависть", "кадр", "кафедр", "лаб", "маг", "заводь", "воёва", "воёв", "вораж", "заворот", "редакц", "всегд", "склад", "завтра", "завтрак", "вяд", "загашник", "загвоздк", "глат", "глубл", "гов", "говл", "загогул", "загодя", "готавл", "контор", "готовл", "командир", "губл", "дабр", "зада", "давш", "заде", "дёшев", "нёб", "дор", "драй", "дымл", "ёрза", "зажи", "зажиточн", "зажор", "звен", "звяк", "здрав", "зев", "зеркаль", "зимь", "зазна", "зазноб", "зноб", "зазор", "зря", "зуммер", "извест", "заик", "заимк", "заим", "заимств", "инвентар", "интерес", "интриг", "заиск", "искр", "иссык", "куль", "зай", "займищ", "зайц", "зайч", "кабал", "кавказ", "закавык", "кавыч", "закавыч", "закадычн", "лива", "каляка", "камуфл", "каприз", "карпат", "картав", "ква", "кив", "кисл", "кич", "киш", "заклани", "клеенн", "заключ", "кля", "кляс", "заковыр", "колд", "закомар", "компост", "мерн", "конопат", "конопач", "положени", "совещ", "сообраз", "консерв", "конспект", "конспир", "контракт", "конфуз", "копёр", "копош", "короб", "закорюк", "закорюч", "косн", "зако", "кочен", "крепост", "крепощ", "крив", "кривл", "закром", "кругл", "кручин", "кря", "кряхт", "кудахт", "кукарек", "кулис", "купор", "курлы", "куролес", "курчав", "куст", "закут", "кут", "лав", "лап", "ласк", "лат", "лг", "лежь", "лен", "лепет", "залихватск", "лихорад", "залог", "залом", "лосн", "залп", "луб", "залуч", "лыс", "ляг", "лязг", "зам", "малёва", "малч", "марин", "марк", "марш", "ма", "маяч", "замби", "замбий", "медл", "мельк", "мельтеш", "мертв", "мерц", "замет", "заметь", "замеч", "замечательн", "меша", "мешка", "замк", "мле", "министр", "могиль", "замок", "молк", "моно", "морг", "морозь", "морос", "мороч", "замоч", "мурлы", "мур", "лы", "мусл", "мусол", "мусор", "замухрышк", "замш", "замшев", "мш", "мызг", "замысловат", "мытар", "мяу", "наваж", "занавес", "занавесь", "занавеш", "навож", "навоз", "наряд", "наряж", "занач", "зане", "невест", "недуж", "ненаст", "заним", "заноз", "ноч", "нумер", "заня", "одн", "озерь", "запад", "западн", "пазд", "пакова", "паков", "пакост", "пакощ", "паль", "запальчив", "панибрат", "паник", "запань", "парш", "паут", "пелён", "пелен", "пеленг", "перш", "пестр", "петл", "печал", "печатл", "пилика", "запир", "пичк", "пищ", "плёва", "плесн", "плечь", "пломб", "заплот", "плута", "пн", "заповед", "заповедь", "поган", "подазр", "подозр", "заподлицо", "позд", "полон", "полых", "запонк", "запор", "пораш", "запорож", "порош", "потчева", "почи", "заправл", "праздн", "запрещ", "примет", "примеч", "причит", "ж", "пропа", "пропас", "протест", "протокол", "пруж", "прят", "пудр", "пурж", "запуск", "запуст", "запущ", "зап", "запыха", "пыхт", "запяст", "запясть", "запят", "пятн", "зараж", "зараз", "ран", "рапорт", "рде", "зар", "резв", "резерв", "зарек", "рекоменд", "зарёк", "ретуш", "речь", "заречь", "решеч", "рж", "авл", "риф", "рифл", "рифм", "роб", "роз", "зарок", "рокот", "рубеж", "рубежь", "авь", "румян", "заруч", "рыбл", "рыс", "рыч", "заряж", "садн", "сар", "сахар", "свеж", "сверк", "свиде", "заседа", "сёдл", "седл", "секрет", "секреч", "сёк", "сер", "силос", "засим", "сип", "скандал", "сквоз", "скирд", "заскоруз", "скрежет", "скрип", "скул", "скуч", "сласт", "слащ", "слез", "слепл", "слон", "заслуж", "слыш", "слюн", "снова", "сня", "соль", "соп", "сор", "спа", "спес", "спеш", "спин", "срам", "срамл", "застав", "заста", "заставл", "стёж", "стен", "стиг", "стичь", "заст", "стог", "столбл", "столь", "стон", "стопор", "стращ", "застр", "стрекот", "застрель", "застрех", "струга", "стру", "застря", "заступ", "сует", "супон", "сусл", "сусол", "засуч", "сю", "зате", "затей", "затем", "терза", "тиран", "тиш", "тишь", "тм", "зато", "толп", "затон", "то", "топот", "торк", "тормаж", "тормож", "торц", "заточ", "тошн", "затрапез", "трапез", "трат", "трач", "тре", "трень", "ет(ся", "трещ", "трудн", "туж", "туман", "туп", "тупл", "турк", "тух", "туш", "затхл", "затылок", "затылоч", "затыль", "тюк", "тяв", "улыб", "умь", "уны", "упрям", "ураль", "урч", "зауряд", "заусенец", "заусениц", "утр", "фальш", "фантаз", "фарш", "флаж", "фонтан", "форс", "франт", "фрахт", "фыр", "хандр", "хап", "хваст", "хвор", "хил", "хир", "хи", "хлам", "хламл", "хлюп", "хмел", "хны", "захолуст", "захолусть", "хомут", "хоран", "хорон", "хо", "хрип", "хруст", "хрю", "худ", "хулиган", "цап", "целова", "цок", "цык", "чав", "чал", "чар", "зача", "чах", "зачем", "черв", "черств", "чертых", "чехл", "зачин", "чирик", "чирк", "чмок", "чок", "чумл", "чур", "шабаш", "шамк", "шарп", "шат", "шварт", "шевел", "шедш", "шелест", "шелудив", "шепеляв", "шепт", "шёпт", "шип", "шкал", "шнур", "шор", "шпаклёва", "шпаклева", "шпаклёв", "зашпандор", "шпиг", "шпил", "шпунт", "штемпел", "штил", "штоп", "штор", "штрих", "штукова", "штуков", "шурш", "шу", "щебет", "щегол", "щекот", "щем", "щемл", "щёч", "защища", "юл", "заяв", "заявл", "заядл", "заяц", "заяч", "звани", "звер", "зверобой", "ферм", "зверь", "звонч", "подража", "режисс", "сигналь", "сочета", "здани", "здань", "здесь", "здеш", "здорово", "здоровь", "здравствуй", "зебр", "зебу", "зейгер", "зек", "зеланд", "зело", "зель", "зельц", "караван", "рой", "удобр", "землян", "снаряд", "зензубель", "зенит", "зениц", "зенкер", "зенк", "зеркал", "комбайн", "плющ", "фураж", "зернь", "зеро", "зерцал", "зет", "зефир", "зиг", "зигзаг", "зиго", "зижд", "зимогор", "зимородок", "зипун", "зия", "злак", "злат", "кудр", "рун", "злач", "козн", "пыха", "злот", "потреб", "потребл", "ыдень", "ыдн", "зме", "питом", "ящер", "змей", "змий", "знаком", "черед", "знаменатель", "знаменательн", "знамени", "знаменит", "знамен", "знат", "знать", "знах", "зной", "зоб", "зодиак", "зодч", "зозул", "зоил", "золовк", "золотник", "монет", "платин", "погон", "золотух", "золотуш", "зонг", "зонт", "кумарин", "латр", "магазин", "объ", "планктон", "ангий", "зорилл", "зорк", "зорч", "зорь", "зраз", "зрачк", "зрачок", "зуав", "зубатов", "зубил", "зубиль", "протез", "скал", "скаль", "клюв", "зуёк", "зулу", "зулус", "зумпф", "зурн", "зыб", "зыбк", "зыбл", "зыбь", "зык", "зыр", "зыч", "зюз", "зюйд", "зябл", "зяблик", "зябь", "зят", "зять", "ибер", "ибикон", "ибис", "ибо", "ивас", "иваси", "ивишень", "иволга", "иврит", "игл", "шерст", "иглу", "игни", "игнор", "иг", "игол", "игор", "ючи", "игрек", "игрен", "игрений", "игуан", "игумен", "игумень", "идальго", "иде", "идент", "идилл", "идилли", "идио", "идиом", "плазм", "синкраз", "идиот", "идиш", "идо", "идол", "идоль", "иегов", "иезуит", "иен", "иерарх", "иерат", "иерихон", "иероглиф", "иеро", "монах", "монаш", "иждив", "иже", "ижиц", "изабелл", "изафет", "изб", "избав", "избавл", "избег", "избеж", "избы", "избыток", "избыточ", "извед", "изверг", "изверж", "извес", "извёст", "известн", "известь", "извод", "чич", "извол", "изврат", "извращ", "изгой", "головь", "изда", "издев", "издёв", "издерж", "изжог", "излаг", "лаж", "лиш", "ловч", "излож", "лук", "измен", "изможд", "морось", "мочал", "измыва", "изнанк", "изнаноч", "неж", "ничтож", "ножь", "изнур", "изобар", "изобат", "обиж", "обил", "обиль", "облич", "изображ", "изобраз", "изобрес", "изобрет", "изогон", "лент", "ляци", "силлаб", "студи", "изощр", "изразец", "изразц", "израиль", "ред", "редк", "рек", "рёк", "решет", "ри", "рыг", "рыск", "изрядн", "изувер", "увеч", "изум", "изумл", "изумруд", "урод", "устн", "изъяв", "изъявл", "язв", "язвл", "изъян", "изъя", "изым", "изюбр", "изюбрь", "изюм", "изящ", "икари", "икарий", "икебан", "икон", "стас", "икор", "икр", "икс", "или", "иллюзи", "иллюз", "иллюмин", "иллюстр", "илон", "илот", "ильк", "ильм", "ильмен", "ильмень", "имажин", "имам", "имбир", "имбирь", "имени", "именно", "имен", "имень", "имеретин", "име", "имидж", "имит", "имманентн", "иммельман", "иммерси", "мигр", "патолог", "профилактик", "профилактич", "императив", "импер", "атр", "импери", "перфект", "импетиго", "импичмент", "плант", "имплик", "импозантн", "импон", "импотент", "импотенц", "импресарио", "импресси", "импров", "имуществ", "инак", "инаугураци", "иначе", "инвалид", "инвентарь", "инверси", "инверс", "инверт", "инвест", "ингал", "ингиб", "ингредиент", "ингуш", "инда", "частица", "индау", "инде", "индееч", "индейк", "индей", "индекс", "инди", "индивид", "индиго", "индиг", "кармин", "фер", "инд", "индикатив", "индифферент", "иран", "индонези", "индонезий", "индосс", "инду", "индукт", "индукц", "индульгенци", "индус", "индустри", "индуц", "индюк", "индюш", "иней", "инертн", "инерци", "инженю", "инжир", "инициал", "инициаль", "иници", "капсул", "инкасс", "инкассо", "инквартат", "инквиз", "инклин", "клюзив", "инкогнито", "инкорпор", "инкримин", "инкруст", "инкуб", "иногда", "земк", "инок", "планет", "стран", "ходь", "иноч", "инсину", "инспектр", "инспир", "инсталл", "инстанци", "инстинкт", "институт", "инструкт", "инструкц", "инсулин", "инсульт", "интеллигенц", "интендант", "тенс", "интенци", "интервал", "интервент", "интервенц", "интервью", "интерлюди", "интермеди", "интермеццо", "интерн", "интернат", "интерпелл", "интерпрет", "фейс", "интерфер", "интерьер", "терьер", "интим", "токсик", "интра", "интриж", "интро", "интродукци", "интр", "спект", "спекц", "интрумент", "интуит", "интуиц", "инфантер", "инфантил", "инфантиль", "инфаркт", "инфекци", "инфинитив", "инфл", "сом", "инфра", "инфузори", "инфузор", "инцидент", "инъек", "инъец", "инъюнктив", "коллеги", "иол", "форез", "ипо", "ипоме", "ипостась", "ипотек", "ипотеч", "ипохондр", "ипохондри", "иппо", "ирак", "ирбис", "ирид", "ирис", "ирланд", "ирод", "ирокез", "ирон", "ирони", "рацион", "реальн", "ирриг", "искаж", "исказ", "калеч", "искариот", "исключительн", "коверк", "колеш", "комк", "искони", "искон", "корёж", "искорен", "искор", "коробл", "искренн", "кромс", "искус", "искусн", "искусственн", "искуш", "ислам", "исланд", "испан", "пепел", "испещр", "исповедь", "исподволь", "подл", "лобь", "исполин", "порч", "похаб", "похабл", "пошл", "исправ", "испражн", "исследова", "исследу", "иссоп", "исступл", "иссяк", "истеблишмент", "терз", "истер", "истери", "истир", "истов", "толч", "томл", "тонч", "исторг", "исторж", "историй", "истори", "источ", "источник", "истошн", "тощ", "истреб", "истребл", "истукан", "истяз", "исход", "исчади", "исчез", "исчёрк", "итак", "италий", "италь", "ительмен", "итератив", "итог", "итого", "итож", "иуд", "ихти", "ичиг", "ишак", "ишач", "ишиас", "ишиат", "июль", "июнь", "йемен", "йог", "йогурт", "йод", "йоркшир", "йот", "йошкар", "кабак", "каббал", "кабальеро", "кабаль", "кабан", "кабарг", "кабардин", "кабаре", "кабат", "кабац", "кабач", "кабачок", "кабел", "кабель", "кабельтов", "каберне", "кабестан", "кабин", "кабинет", "кабл", "каблук", "каблуч", "каботаж", "кабошон", "кабриолет", "кабр", "кабуки", "кабуль", "кабы", "кавалер", "кавалери", "кавальер", "кавалькад", "кавардак", "кавасаки", "каватин", "каверз", "каверн", "кавун", "вэ", "эн", "кагал", "каган", "кагат", "кагор", "каданс", "кадастр", "каденц", "каденци", "кадет", "кади", "кад", "кадк", "кадм", "кадоч", "кадриль", "кадык", "каём", "кажд", "каж", "казан", "казарк", "казарм", "казат", "казац", "казач", "казаш", "казеин", "каземат", "казён", "кошт", "казимир", "казинет", "казино", "казн", "казнь", "казуар", "казу", "казус", "каик", "кайен", "кайзер", "кайл", "кайм", "каймак", "кайман", "кайно", "кайр", "кайф", "кейф", "какавелл", "какаду", "какао", "кака", "како", "как", "какофон", "кактус", "каламбур", "каламянк", "калан", "каландр", "каланхоэ", "каланч", "калач", "калган", "калёва", "калева", "калёв", "калейдоскоп", "калек", "календар", "календарь", "календул", "календ", "кали", "калибр", "калик", "каликант", "калин", "калит", "калитк", "калифорн", "каллиграф", "каллимико", "каллус", "каллюс", "калмык", "калмыц", "калмыч", "калор", "калори", "калуг", "калуфер", "кануфер", "калым", "кальвин", "калькул", "калькутт", "кальмар", "кальсон", "екс", "кальян", "каляк", "кам", "камамбер", "камариль", "камарин", "камбал", "камби", "камбий", "камбио", "камб", "камбодж", "камбуз", "камвольн", "камед", "камедь", "камелёк", "камели", "камень", "камергер", "камердинер", "камеристк", "камерн", "камертон", "камеш", "каме", "камзол", "камзоль", "камикадзе", "камин", "камк", "камлот", "камн", "камор", "каморр", "кампаней", "кампанелл", "кампеш", "камс", "хамс", "камфар", "камфор", "камчадал", "камчадаль", "камч", "камчат", "камыш", "канав", "канад", "канапе", "канарееч", "канарейк", "канат", "канв", "кандал", "кандаль", "канделябр", "кандидат", "кандиль", "кандым", "каникул", "канистр", "канител", "канитель", "канифас", "канифол", "канифоль", "канкан", "каннибал", "каннибаль", "кано", "канон", "канонер", "канонир", "канотье", "каноэ", "кант", "кантабиле", "кантат", "кантеле", "кантилен", "кантон", "кантор", "канун", "канцеляр", "канцеляри", "канцер", "канцон", "канц", "каньон", "канюк", "канюл", "каолин", "капл", "капел", "купел", "капелл", "капель", "капельдинер", "капилляр", "ограф", "капитальн", "капитан", "капитон", "капитул", "капищ", "капкан", "каплун", "капот", "капрал", "капраль", "каприс", "каприччио", "каприччо", "капрон", "капсуль", "капт", "каптал", "каптенармус", "каптёр", "капуст", "капут", "капуцин", "капюшон", "карабах", "карабин", "каравай", "каравелл", "карагач", "караим", "каракал", "каракалпак", "каракалпач", "каракатиц", "караков", "каракул", "каракуль", "каракурт", "карамболин", "карамболь", "карамел", "карамель", "карамор", "карандаш", "карантин", "карапуз", "карас", "карась", "карат", "карате", "караул", "карауль", "карачаев", "карачун", "карб", "карбас", "карбованец", "карбол", "карбонад", "карбонарий", "карборунд", "ункул", "ёзн", "карбюр", "карг", "карго", "кард", "кардамон", "кардан", "кардинал", "кардиналь", "ревм", "хирург", "каре", "карел", "карель", "карет", "кариес", "карикатур", "кари", "карл", "карм", "кармазин", "карман", "карманьол", "кармаш", "карнавал", "карнаваль", "карниз", "каронад", "каротель", "каротин", "карп", "карст", "карт", "картвел", "картвель", "картёж", "картез", "картел", "картель", "картер", "картеч", "картечь", "картин", "картинг", "картон", "схем", "тет", "картофел", "овощ", "картофель", "карточк", "карточ", "картош", "картуз", "картуш", "карусель", "карфаген", "карцер", "карч", "еподъём", "каршуни", "карьер", "кас", "касат", "касатик", "касид", "каск", "каско", "каспий", "кассандр", "каст", "кастаньет", "кастелянш", "кастет", "кастор", "кастр", "кастрюль", "кастрюл", "катабол", "катаваси", "катакл", "катакомб", "каталажк", "каталит", "каталог", "каталож", "каталон", "катамаран", "ката", "катапульт", "катар", "катаракт", "катафалк", "фронт", "катахрез", "категори", "категор", "катен", "катерн", "катет", "катетер", "катехиз", "катеху", "католик", "католикос", "католиц", "католич", "катоптрик", "катоптрич", "каторг", "каторж", "катран", "катрен", "катюш", "каудильо", "каузальн", "каузатив", "каупер", "каур", "каутск", "кафель", "шантан", "кафр", "кафтан", "кахетин", "кацавейк", "кацап", "качуч", "кашалот", "кашель", "кашемир", "кашмир", "кашмири", "кашне", "кашпо", "каштан", "кашуб", "каюк", "каюр", "кают", "каяк", "квадриг", "иллион", "ильон", "квазар", "квази", "квазимодо", "объектив", "специал", "упруг", "кв", "квакер", "ша", "квант", "квантитативн", "кварк", "кварт", "квартал", "квартирь", "кварц", "квасц", "кватроченто", "квебрахо", "квёл", "квиет", "квинт", "секст", "эссенци", "квипрокво", "квислинг", "квит", "квитанци", "кворум", "квот", "квохт", "квохч", "кеб", "кегель", "кегль", "кегл", "кедр", "кед", "кейс", "кекс", "кекуок", "кекур", "келар", "келарь", "келей", "кельнер", "кельт", "кель", "кембридж", "кемпинг", "кенар", "кенарь", "кенаф", "кенгур", "кенгуру", "кени", "кений", "кено", "кентавр", "кепи", "кеп", "керамз", "керат", "керен", "кержак", "кержац", "керн", "керо", "керосин", "керч", "кесар", "кесарь", "кессон", "кет", "кетмен", "кетмень", "кетон", "кетч", "кетчуп", "кефаль", "кефир", "кечуа", "кешью", "кибитк", "кибиточ", "кивер", "киви", "киевл", "кизер", "кизил", "кизиль", "кизяк", "кизяч", "кий", "кик", "кикимор", "кикс", "килеч", "килим", "киль", "кильк", "киммер", "кимо", "кимоно", "киндзмараули", "киндяк", "кинем", "кине", "кинестези", "кинестет", "кинжал", "кинжаль", "кинз", "киновар", "киноварь", "еди", "концерт", "крит", "лект", "ленин", "недел", "опт", "очерк", "панорам", "плёноч", "проекц", "прожектор", "публиц", "реклам", "репорт", "сеанс", "визи", "фестиваль", "форум", "хроник", "киоск", "киот", "кипарис", "кипрей", "кипр", "кипсей", "кипу", "кирасир", "киргиз", "кирз", "кирилл", "кирк", "мотыг", "кирпич", "кисей", "кисел", "кисель", "кисет", "кисе", "ятин", "кист", "кистень", "кисть", "кит", "кита", "китель", "китч", "кичк", "кишеч", "сосуд", "кишк", "кишлак", "кишлач", "кишмиш", "клавесин", "клави", "клавикорд", "клавир", "клавиш", "кладбищ", "кладезь", "кладь", "клаксон", "клан", "кларнет", "клас", "клаузул", "клевер", "клевет", "клевещ", "клев", "клеврет", "клеймл", "стер", "клёкот", "клекот", "клекоч", "клемм", "клён", "клен", "клепл", "клепт", "клерк", "клерова", "клеров", "клёст", "клест", "клетк", "клет", "клетч", "клеть", "клёцк", "клёш", "клешн", "клещ", "евин", "кливаж", "кливер", "клиент", "клизм", "клико", "климакс", "климакт", "клиник", "клиниц", "клинич", "клинок", "ремён", "клипс", "клир", "клирик", "клиринг", "клирос", "клирош", "клистир", "клич", "клиш", "клоак", "клоач", "клобук", "клобуч", "клок", "клоп", "клоун", "клохт", "клохч", "клубен", "клубень", "клубн", "клумб", "клун", "клуш", "клык", "клыч", "клюк", "клюкв", "клюков", "ключиц", "ключич", "клюшк", "клякс", "кляп", "кляссер", "клят", "преступл", "преступ", "кляуз", "кляч", "наруж", "кнел", "кнессет", "кнехт", "книг", "чей", "книж", "кнопк", "кнопоч", "кнут", "княг", "княжен", "княз", "князь", "коал", "коала", "коалици", "кобальт", "кобел", "кобель", "кобен", "кобз", "кобольд", "кобр", "кобур", "кобчик", "кобыл", "вариант", "ковар", "ковбой", "ковёр", "коверкот", "ковриг", "ковриж", "ковр", "ковчег", "ковчеж", "ковш", "ковыль", "когда", "когерентн", "когнат", "когорт", "когот", "коготь", "кодак", "кодекс", "коеч", "кожух", "кожуш", "коз", "козетк", "е:", "козул", "козырёк", "козырь", "козюль", "козюл", "козявк", "койк", "койне", "кок", "кокард", "кокетк", "кокет", "кокиль", "коклюш", "кокни", "кокон", "кокор", "кокос", "кокотк", "кокоточ", "кокош", "кокс", "коктейль", "колб", "колбас", "колгот", "колдоб", "колебл", "коле", "коленкор", "колер", "колеч", "коли", "колибри", "колит", "количеств", "коллаборацион", "коллег", "колледж", "коллеж", "коллектор", "коллекци", "колли", "коллизи", "коллим", "коллодий", "коллоди", "коллоид", "коллоквиум", "коло", "колоб", "колоброд", "коловорот", "коловрат", "колод", "колодез", "колодезь", "колодец", "колокол", "колоколь", "коломен", "колонк", "колонок", "колоноч", "цифр", "колорад", "колоратур", "колор", "колорит", "колосник", "колосс", "колош", "колошмат", "колпач", "колумб", "колчак", "колчан", "колчедан", "колч", "колыбель", "колымаг", "колымаж", "колыш", "колье", "кольмат", "кольраби", "кольт", "кольч", "кольчуг", "кольчуж", "коляд", "колясоч", "команч", "комар", "комарь", "комби", "комбин", "комбинезон", "едий", "комел", "комель", "коменд", "комет", "коми", "комикс", "комильфо", "комингс", "комиссар", "комисс", "комитет", "комл", "комм", "коммандос", "коммерс", "коммерц", "коммерч", "комми", "коммуник", "коммут", "коммюнике", "комов", "комод", "комол", "компакт", "компаней", "компаний", "компань", "компаратив", "парти", "компендий", "компенди", "компетент", "компетенц", "компил", "комплекци", "комплемент", "комплимент", "композит", "композици", "компон", "компот", "компрадор", "компромет", "компьютер", "сод", "комс", "комуз", "фракци", "ячей", "конвейер", "конвент", "конвенци", "конверси", "конво", "конвой", "конвульс", "конвульси", "конгломер", "конго", "конгресс", "конгруэнт", "конгруэнц", "конденс", "кондитер", "кондици", "кондрашк", "кондуит", "конец", "конечно", "конкистадор", "конквистадор", "конкорданс", "конкрет", "конкретн", "конкреци", "конкур", "коннотаци", "коновод", "конопл", "сноп", "консеквентн", "консенсус", "консерват", "консерватори", "консерватор", "консигн", "консилиум", "консистент", "консистенц", "консист", "консолид", "консоме", "консон", "констант", "констанц", "констат", "конститу", "констру", "консул", "консуль", "консульт", "консьерж", "контагий", "контаги", "контамин", "контач", "контейнер", "контекст", "контингент", "континуум", "конт", "конто", "контрабанд", "контра", "контрагент", "контражур", "контральто", "контральт", "контрамарк", "контрамароч", "контрапост", "контрапункт", "контрассигн", "контраст", "фагот", "контрданс", "контрибуци", "манёвр", "маневр", "контроверз", "октав", "контрол", "контроллер", "реформ", "шанс", "контръ", "эскарп", "контуж", "контуз", "конур", "конус", "конфедер", "конфедерат", "конфекци", "конфер", "ансь", "конференци", "конфесси", "конфет", "конфетти", "конфигураци", "конфиденциальн", "конфирм", "конфиск", "конфитюр", "конфорк", "конформ", "конфороч", "конфронт", "конфуци", "конц", "концепт", "концепц", "концерн", "концесси", "концип", "лагерь", "конъектур", "конъюнктив", "конъюнктур", "конъюнкци", "конь", "коньк", "коньяк", "коньяч", "юх", "юш", "коопт", "координат", "координ", "копал", "копейк", "копей", "копён", "копи", "копий", "копир", "копл", "копн", "копоть", "копр", "копул", "копчик", "копыл", "копь", "корабел", "корабель", "корабл", "корабль", "коралл", "кораль", "коральк", "коран", "корвалол", "корвет", "корд", "корде", "кордельер", "кордильер", "кордит", "кордон", "коре", "корейк", "корей", "коренаст", "кореш", "корж", "корзин", "кориандр", "коридор", "коринк", "коринф", "корифей", "кориц", "коричн", "коричнев", "корич", "кухн", "отпрыск", "корнет", "корнилов", "корол", "король", "коромысл", "корон", "коронк", "корост", "коростель", "корот", "фокус", "короч", "корп", "корпи", "корпор", "корпускул", "коррад", "коррази", "корреальн", "коррект", "корректн", "коррел", "корреспонд", "корриг", "коррид", "коррод", "коррумп", "корруп", "корсаж", "корсак", "корсар", "корсет", "корсик", "корт", "кортеж", "кортес", "кортизон", "кортик", "стерон", "корточк", "и:", "корунд", "корчаг", "корчаж", "евь", "корчем", "корчм", "коршун", "корысть", "корыт", "корь", "корюшк", "коряв", "коряг", "коряж", "коряк", "коряч", "косарь", "косатк", "косач", "косвенн", "космет", "космополит", "космос", "попереч", "коста", "рик", "костёл", "костёль", "костёр", "костер", "туберкул", "костр", "костыл", "костыль", "утиль", "косул", "халв", "ынк", "ыноч", "косяк", "косяч", "кот", "котёл", "котел", "котель", "котил", "котлас", "котлет", "котомк", "котон", "котор", "коттедж", "котурн", "кофе", "кофр", "кофт", "кочева", "кочёв", "кочев", "кочевряж", "кочевь", "кочегар", "кочедыж", "кочедык", "кочень", "кочерг", "кочерёж", "кочерыг", "кочерыж", "кочет", "кочеч", "кочеш", "кочк", "кочмар", "кошар", "кошев", "кошёв", "кошел", "кошёл", "кошель", "кошенил", "кошениль", "кошер", "кошм", "кошмар", "кошом", "кощей", "кощун", "коэффициент", "краб", "кравч", "кравчик", "краг", "краен", "краеуголь", "ешек", "краж", "крайн", "краковяк", "крал", "крамбамбули", "крамол", "крамоль", "крамп", "крани", "крапив", "краплак", "тал", "кратер", "кратк", "кратч", "крах", "крахмаль", "крачк", "краюх", "краюш", "креветк", "кредо", "крейс", "крейцер", "крекер", "крек", "крем", "кремень", "кремеш", "кремл", "кремль", "кремн", "фтор", "крен", "крендел", "крендель", "креол", "креоль", "дешин", "крепк", "крепость", "крепч", "крепь", "креса", "кресель", "кресл", "крёст", "кресть", "кретин", "кретон", "кречет", "кречёт", "крещендо", "крешендо", "кривич", "янь", "поступ", "криз", "крикет", "криль", "криминал", "криминаль", "кримин", "кримплен", "кринк", "крынк", "криноч", "крыноч", "кринум", "крио", "крипт", "кристаль", "критерий", "критери", "кроват", "кровать", "кровель", "паразит", "кровл", "обращ", "останавл", "пий", "кровь", "крокет", "крок", "крокодил", "крокус", "кролик", "крол", "кролич", "кроль", "крольч", "кроманьон", "кроме", "кромешн", "кромк", "фуг", "кромоч", "крон", "принц", "циркуль", "кронштейн", "кроп", "кропл", "кропот", "кросн", "ворд", "чайн", "крот", "кротк", "кротч", "крох", "крохал", "крохаль", "крохо", "кроше", "чулоч", "яш", "верть", "кружев", "кружеч", "кружк", "крузейро", "круиз", "круп", "крупн", "калибер", "куск", "масштаб", "панель", "серий", "узор", "формат", "крупье", "крушин", "крыж", "крыжов", "крылеч", "крыльц", "крым", "крыс", "шеч", "крюк", "крюч", "крюшон", "кряж", "ксёндз", "ксер", "ксерокс", "ксил", "кстати", "ктитор", "кто", "куб", "кубан", "кубар", "кубарь", "кубк", "кубов", "кубок", "кубрик", "кубышеч", "кубышк", "кувалд", "кувшин", "кувшинк", "кувырк", "кувыр", "куг", "кугуар", "кудахч", "кудель", "кудел", "кудес", "кудл", "куз", "кузн", "кузнечик", "кузов", "кузьк", "кукареку", "кукиш", "кукл", "клукс", "кукол", "куколь", "кукс", "кукуруз", "кулаж", "кулак", "кулан", "кулац", "кулачь", "кулебяк", "кул", "кулеш", "кули", "кулиг", "кулик", "кулинар", "кулич", "кулон", "кулуар", "кульбит", "кульмин", "культив", "культяпк", "кум", "кумач", "кумека", "кумир", "кумул", "кумык", "кумыс", "хан", "кумыч", "кун", "кунак", "кунац", "кунач", "кунжут", "кунсткамер", "купав", "купаж", "ле", "купат", "купе", "купец", "купеч", "купидон", "куплет", "купно", "купол", "куполь", "купон", "купорос", "купц", "купч", "купюр", "курабье", "кураг", "кураж", "курак", "курант", "кураре", "курар", "курбет", "курган", "кургуз", "курд", "курдюк", "курдюч", "курен", "курень", "курк", "куркуль", "курок", "куропатк", "куропаточ", "курорт", "куроч", "курсив", "курсорн", "куртизанк", "куртин", "куртк", "курточ", "курултай", "курфюрст", "курчатов", "курьёз", "кустар", "кустарь", "кутафь", "кутей", "кутерьм", "кутн", "кутузк", "кухар", "кухмистер", "кухон", "кухонь", "куц", "куч", "кучер", "кучеряв", "кушак", "кушач", "кушетк", "кущ", "кхмер", "кыш", "кьянти", "кьят", "кювет", "кюммель", "кюрасо", "кюре", "кюри", "кюр", "лабаз", "лабильн", "лабиринт", "лабрадор", "лаванд", "лаваш", "лавин", "лавирова", "лавиров", "лавр", "венч", "лавсан", "лавч", "лагер", "линь", "тинг", "лагун", "ладан", "ладей", "ладн", "ладон", "ладонь", "ладош", "ладь", "лазарет", "лазер", "терапи", "лазор", "лазур", "лазурь", "лай", "лайб", "лайд", "лайк", "лакей", "лакмус", "лаком", "лакон", "лакриц", "лакрич", "лакт", "лакун", "лал", "ламантин", "ламарк", "ламберт", "ламбрекен", "ламинари", "ламин", "лампас", "ламут", "лангет", "лангуст", "ландо", "ланд", "ландшафт", "ландыш", "ланит", "ланк", "ланол", "лансье", "лантан", "ланцет", "лань", "лаос", "лаот", "лапид", "лапланд", "лапот", "лапоть", "лапсердак", "лапт", "лапш", "ларг", "ларго", "ларёк", "лар", "ларёч", "ларинг", "трахе", "ларь", "лас", "лассаль", "лассо", "ласт", "ластик", "ластич", "ласточк", "латви", "латвий", "латекс", "латентн", "латеральн", "латер", "латин", "латифунд", "латук", "латунь", "латын", "латынь", "латыш", "лауреат", "лафа", "лафит", "лахудр", "лацкан", "лаццарони", "лач", "лачуг", "лачуж", "лб", "лебед", "лебёд", "лебедь", "лебез", "лебяж", "левад", "левантин", "левиафан", "левит", "левкас", "левко", "левкой", "бережь", "оппортун", "фланг", "эс", "левретк", "левул", "легав", "легал", "легаль", "легат", "иссимо", "легато", "леггорн", "легенд", "легион", "легитим", "лёгк", "легк", "раж", "раствор", "сво", "онеч", "легч", "леденец", "леденеч", "леденц", "леденч", "леди", "леер", "лезви", "лезгин", "лейбл", "лейбор", "лейтенант", "лейт", "мотив", "лейц", "лек", "лекал", "лекаль", "пом", "лекс", "лекц", "лемех", "лемм", "лемур", "лён", "ленд", "лорд", "ленок", "ленто", "ленч", "ленчик", "лень", "леопард", "лепестк", "лепесток", "лепесточ", "лепеч", "лепёшеч", "лепёшк", "лепр", "лепт", "лесбий", "лесби", "луг", "питомник", "промысл", "степ", "степь", "тас", "тундр", "эксплуат", "лёсс", "лесс", "лест", "лесть", "летальн", "летарг", "летарги", "лечо", "леш", "лещ", "лещин", "лж", "классич", "лиственниц", "присяг", "пророк", "социал", "теори", "лиан", "либерал", "либераль", "либерти", "либидо", "либо", "либретт", "либретто", "ливан", "ливер", "мя:", "ливр", "ливрей", "ливре", "лиг", "лигатур", "лид", "лиж", "ликвид", "ликёр", "лилей", "лили", "лилипут", "лил", "лилов", "лиман", "лимн", "лимон", "лимонад", "лимузин", "лимф", "анг", "оит", "сарк", "линга", "линеар", "линеарн", "лине", "линий", "лино", "линолеум", "линотип", "линч", "фусц", "липси", "лир", "эп", "лисель", "лиссабон", "листь", "лиственнич", "литавр", "литв", "литер", "литерат", "литов", "глиф", "литораль", "литот", "литургий", "литург", "литурги", "фак", "лиф", "лифт", "лих", "леть", "лихтер", "лицедей", "лицезр", "лице", "лицей", "лицемер", "лицензия", "лиценци", "лицеприят", "личин", "лиша", "лишай", "лишн", "лишь", "лобби", "лобб", "лобз", "лобзик", "лобио", "лоби", "лобк", "лобок", "лобыз", "ловелас", "логос", "лоджи", "лодк", "лодоч", "лодч", "лодыг", "лодыж", "лодыр", "лодырь", "ложбин", "ложемент", "ложеч", "ложк", "классиц", "ложь", "лозунг", "локал", "локальн", "локаут", "локо", "локон", "локот", "локоть", "локт", "ломбард", "ломбер", "ломов", "ломонос", "лонгет", "лонж", "лонжерон", "лон", "лопар", "лопарь", "лопасть", "лопат", "лопот", "лопоч", "лопух", "лопуш", "лоретк", "лорнет", "лорн", "лор", "лос", "лоск", "лоскут", "лосос", "лосось", "лось", "лосьон", "лот", "лотерей", "лотк", "лото", "лоток", "лотос", "лоточ", "лох", "лохан", "лохань", "лоцман", "лошадь", "лошак", "лошач", "лош", "лощин", "лояльн", "аеч", "лужич", "луз", "лузг", "луидор", "лукав", "лукошк", "лунк", "луноч", "лунь", "лучезарн", "лучш", "лык", "лыч", "льв", "льгот", "льд", "лье", "триер", "льст", "любознательн", "любопыт", "люкс", "люлеч", "люли", "люльк", "люмбаго", "люмен", "люмин", "фор", "люп", "люпус", "люстр", "люстрин", "лют", "лютер", "лютик", "лютн", "люф", "люфт", "люцерн", "люэс", "люэт", "лягуш", "лягушеч", "лягушк", "лядин", "лядун", "ляжк", "ляль", "лял", "лямбд", "лямк", "лямоч", "ляпис", "ляссе", "лях", "ляш", "мавзолей", "мавр", "магарадж", "магарыч", "магдебург", "магистер", "магистр", "маги", "магм", "магнат", "магн", "магнето", "ческий", "магне", "ориум", "стрикци", "магноли", "маго", "магот", "магомет", "мадам", "мадаполам", "мадемуазель", "мадер", "мадонн", "мадригал", "мадригаль", "мадьяр", "мажар", "мажор", "мажордом", "мажорит", "минор", "мазер", "мазур", "мазурик", "мазурк", "мазуроч", "мазут", "мазь", "юка", "маис", "май", "майдан", "майк", "майн", "майна", "майолик", "майонез", "майор", "майоран", "майорат", "майя", "макадам", "макак", "макао", "макарон", "македон", "макет", "маки", "макиавелл", "макинтош", "макияж", "маклак", "маклач", "маклер", "макраме", "макрел", "макрель", "макро", "объект", "процесс", "макрурус", "максвелл", "макси", "макулатур", "макушеч", "макушк", "малаг", "мала", "малазий", "малайк", "малай", "малак", "малахай", "малах", "малахольн", "енеч", "мали", "малий", "малин", "малле", "актуаль", "вероятн", "малодуш", "вестн", "инициатив", "конструкт", "маль", "наблюд", "обита", "осведомл", "снащ", "поня", "посещ", "представ", "примен", "приспособл", "пристойн", "притяз", "приятн", "распростран", "рентабельн", "росси", "симпат", "состоя", "тираж", "убед", "уда", "удоб", "удовлетвор", "уступ", "уязв", "эластич", "мальв", "мальтуз", "мальчик", "мальч", "ишеч", "юсеньк", "юточ", "явк", "маляр", "малярий", "маляри", "мам", "мамалыг", "мамзель", "мамлюк", "мамон", "мамонт", "манатк", "мангал", "манган", "мангл", "мангль", "манго", "манг", "мангуст", "мандарин", "мандат", "мандолин", "мандраж", "манеж", "манекен", "манер", "манжет", "мани", "маникюр", "манипул", "манифест", "манихе", "манихей", "манишк", "манк", "манко", "манн", "мансард", "манси", "мантий", "мантиль", "мантисс", "манти", "манто", "ману", "манул", "манускрипт", "мануфактур", "манчестер", "маньер", "маньчжур", "мао", "маори", "марабу", "маразм", "маракова", "марал", "мараль", "марант", "маратхи", "марафон", "марганец", "марганц", "маргарин", "маргаритк", "маргинали", "маргиналь", "марго", "марель", "марен", "маренго", "мари", "марий", "маринк", "марионетк", "марионеточ", "марихуан", "марказ", "маркграф", "ский", "маркетинг", "маркетри", "маркиз", "маркизет", "маркит", "маркшейдер", "марл", "мармелад", "мармор", "мародёр", "марокен", "марокк", "мароч", "марсал", "марсельез", "марс", "март", "мартен", "мартини", "мартин", "мартиролог", "мартын", "мартышеч", "мартышк", "мартыш", "марципан", "маршалл", "маршрут", "марь", "марьяж", "масаи", "масака", "маскулин", "халат", "сыр", "фасов", "экстракц", "масон", "мастак", "мастач", "мастер", "мастик", "маст", "мастит", "мастихин", "мастич", "мастодонт", "мастурб", "масть", "матадор", "математ", "матер", "материй", "матёр", "матине", "матиц", "матич", "матрас", "матрац", "матрёшк", "матриарх", "матрикул", "матриц", "матрич", "матрос", "матч", "мать", "маузер", "мафи", "ози", "махин", "махн", "махор", "махр", "мац", "мацони", "мачете", "маштак", "маштач", "маэстозо", "маэстро", "маюскул", "маюскуль", "маятник", "мгл", "мгновени", "мгновен", "меандр", "мебел", "мебель", "мебл", "мега", "мегер", "мег", "мегрел", "мегрель", "мёд", "медал", "медаль", "медальон", "медвед", "медведь", "медвеж", "мед", "меделян", "меджлис", "медиальн", "медиан", "меди", "медиеваль", "медиев", "медикамент", "медит", "медиум", "медицин", "медресе", "междомети", "междомет", "межд", "усоб", "междоусобица", "глазь", "рейс", "рядь", "соб", "межен", "межень", "министер", "полось", "рёбер", "регион", "республик", "сесси", "территори", "уточ", "факультет", "шахт", "межъ", "мезальянс", "мезг", "мездр", "мез", "ентери", "ентерий", "енхим", "мезонин", "мексик", "меланж", "мелан", "меланхол", "есх", "меласс", "мелед", "мелин", "мелис", "мелисс", "мелк", "крестьян", "пиш", "фас", "собственн", "сопоч", "темь", "точеч", "чешуй", "мелод", "мелоди", "мело", "мелос", "мелоч", "мелочь", "мель", "мельхиор", "юзг", "мембран", "меморандум", "мемориал", "мемориаль", "мемуар", "мендел", "менеджер", "менестрель", "мензул", "мензульн", "мензур", "мензурк", "мензуроч", "менинг", "энцефал", "мениск", "менонит", "менстру", "ментик", "ментор", "менуэт", "меньш", "меню", "мергель", "мерёж", "мерек", "меренг", "мерехлюнди", "мерещ", "мере", "меридиан", "меридион", "мерин", "меркантил", "меркантильн", "мерк", "мерлушеч", "мерлушк", "мероприяти", "мерсер", "мерси", "месмер", "месс", "месси", "блюст", "местоимен", "месть", "месье", "мсье", "месяц", "базис", "порошок", "метан", "сомат", "стабильн", "метастаз", "метастат", "метатез", "метафор", "фраз", "метео", "прогноз", "услови", "метиз", "метил", "метис", "метк", "метлах", "метол", "метоним", "метоп", "метранпаж", "метрдотель", "метресс", "метрик", "метрич", "метро", "политен", "метропол", "метч", "мефистофель", "мех", "рецепт", "меценат", "мечет", "мечеть", "мешк", "мешот", "мешоч", "мещер", "мзд", "миазм", "астен", "мигрень", "миди", "мизан", "миз", "мизгирь", "мизерере", "мизер", "мизинец", "мизинч", "микадо", "риз", "баро", "миниатюр", "транзистор", "флор", "микс", "микстур", "милдью", "миледи", "милицей", "милици", "милли", "микрон", "милорд", "милостынь", "милостын", "милость", "мим", "мимо", "мимоз", "минарет", "мингрел", "мингрель", "миндал", "минерал", "минера", "минераль", "мине", "мини", "минимал", "минимальн", "миног", "минож", "минотавр", "минтай", "минус", "минускул", "минускуль", "миньон", "мио", "дистроф", "илл", "мирабел", "мирабель", "мирабил", "мираж", "мирвол", "мирз", "мириад", "мирон", "созерц", "мирр", "мирт", "миск", "мисс", "мисси", "миссис", "мистери", "мист", "мистраль", "мистрис", "митинг", "миткал", "миткаль", "митр", "митральез", "митрополит", "митрополич", "митропол", "миттель", "шпиль", "миф", "елий", "елл", "мичман", "мичурин", "мишарь", "мишен", "мишень", "миш", "мишур", "млад", "млек", "млеч", "мнем", "мнени", "мног", "лезвий", "обещ", "стадий", "станоч", "шпиндель", "щетин", "этап", "множ", "моветон", "могикан", "могил", "мод", "модальн", "модем", "модерато", "модерн", "модильон", "модул", "модус", "можжевел", "можжевёл", "можжевель", "можно", "моза", "мозж", "ечок", "мозол", "мозоль", "мойв", "мокасин", "мокко", "мокр", "мокш", "молвь", "молдав", "молдов", "еняск", "молескин", "молибден", "моллюск", "молни", "молний", "молн", "молод", "молодь", "молож", "молозив", "молок", "молокан", "молоть", "молох", "молочай", "мольберт", "моляр", "момент", "монарш", "монастыр", "монастырь", "монац", "монгол", "монголь", "мон", "мони", "монист", "монокок", "нукле", "монополь", "спектакль", "монпансье", "монстр", "монтекристо", "монумент", "мопс", "моралите", "мораторий", "морган", "морген", "мордв", "мордов", "морен", "морж", "морз", "морин", "морков", "морковь", "мормон", "мормыш", "морок", "морошк", "морс", "мортир", "морщ", "москаль", "москатель", "москв", "рец", "москит", "московк", "москов", "мосл", "мосол", "мостов", "мосье", "моськ", "мотель", "овил", "овиль", "нарт", "пех", "ресурс", "моторн", "мотоцикл", "мотто", "мотыж", "мотылёк", "мотылёч", "мотыль", "мотыльк", "мох", "мохер", "мохн", "овик", "моцарт", "моцион", "мочаг", "мочаж", "мочаль", "мочеч", "мочк", "мошен", "мошк", "мошн", "мошон", "мразь", "мрак", "мракобес", "мрач", "мст", "муар", "ее:", "енёк", "муз", "музе", "музей", "музиц", "музык", "мук", "сей", "муксун", "мукузани", "мул", "мулат", "мулине", "мулл", "мульт", "мульч", "муляж", "муми", "мумиё", "мум", "мундштук", "мундштуч", "муниципальн", "муравей", "муравь", "мураш", "мурен", "мурз", "мурл", "мурмолк", "мурч", "мусават", "мускат", "мускул", "мускуль", "мускус", "муслин", "мусс", "муссон", "мустанг", "мусульм", "мута", "мутовк", "мутовч", "мутон", "муторн", "мутуз", "муть", "муфель", "муфтий", "мух", "мухлева", "мухорт", "мухояр", "муш", "мушк", "мушкет", "мушмул", "муэдзин", "мщ", "мыз", "мыль", "мыльч", "мымр", "мыс", "мыслете", "мысль", "мыт", "мытарь", "мытищ", "мыть", "мыш", "хвостник", "мышц", "мышь", "мышьяк", "мышьяч", "мыщелк", "мыщелок", "мэлан", "мэ", "нэ", "мэр", "мэрон", "мэтр", "мюзикл", "мюрид", "мяг", "мягк", "мягч", "мяк", "мякин", "мямл", "мяс", "мятлик", "мяч", "набалдашник", "набат", "набекрень", "наблюс", "набоб", "наваг", "наважд", "вакш", "вастр", "навах", "навед", "навест", "навет", "навещ", "ничь", "наволок", "наволоч", "вряд", "вык", "нагаеч", "нагайк", "наган", "нагель", "нагл", "дворь", "главь", "надежд", "наде", "надзир", "клювь", "копыть", "надлеж", "надменн", "надоб", "бн", "надоед", "надоес", "надолб", "нось", "пойм", "почеч", "надсад", "надсаж", "трес", "надфиль", "хвость", "хрящ", "надъ", "ындивид", "жалова", "наждак", "наждач", "нажив", "наживл", "назал", "назаль", "здравств", "земь", "назида", "назнач", "назой", "зю", "наиб", "наив", "наивн", "изнан", "наизусть", "мень", "наипаче", "наити", "худш", "чащ", "найд", "най", "найтов", "кипь", "копыль", "накось", "нактоуз", "налаг", "налим", "налицо", "наличник", "налог", "налож", "наложниц", "налой", "налыгач", "магнич", "намаз", "намедни", "намёк", "намек", "наместник", "наместнич", "нана", "нанай", "нанду", "нан", "наним", "нанк", "нансук", "наня", "наоборот", "наобум", "одеколон", "особ", "машь", "охот", "напа", "напад", "напалм", "напареули", "напас", "напасть", "пахт", "перек", "наперс", "пёрст", "перч", "пло", "плож", "плоч", "наполеон", "помад", "помаж", "портач", "послед", "направ", "напрас", "приним", "проказ", "пропал", "пророч", "прочь", "напряг", "напрячь", "напрячься", "пульс", "пх", "пыж", "напыщ", "нарв", "наргиле", "нард", "нардек", "нарек", "нарёк", "нареч", "наречь", "наречься", "нарзан", "нарицательн", "наркоз", "нарк", "нарочит", "нарочн", "нарцисс", "нарыв", "сандал", "насеком", "сест", "сквозь", "скит", "скольк", "наслад", "наслажд", "сла", "наслег", "сло", "слоня", "смерд", "смерть", "насморк", "насмороч", "собач", "совсем", "насос", "спех", "наст", "наста", "настав", "наставл", "настежь", "стиль", "настичь", "настиг", "столеч", "стольк", "стораж", "сторож", "ённый", "настоя", "настоящ", "настра", "странств", "настро", "настрой", "настропал", "стряп", "наступ", "наступл", "настурци", "настырн", "сул", "сумасброд", "суп", "супл", "сурьм", "сурьмл", "насущн", "насчёт", "таратор", "тёч", "натив", "ние", "нато", "тонк", "наторе", "торос", "натр", "труд", "труж", "натюрморт", "углерож", "удал", "удач", "науст", "усь", "наущ", "фабр", "нафталин", "нафтен", "нафтол", "нахал", "нахаль", "хам", "нахим", "нахлобуч", "хлы", "хлыст", "хмур", "наход", "нахожд", "хохл", "нац", "нач", "начеку", "начерт", "начин", "чуд", "чх", "нашармака", "шаромыж", "нашатыр", "нашатырь", "нашест", "шиль", "шинкова", "шкод", "шля", "экономл", "ябед", "наяд", "наян", "нганасан", "неандертал", "неандерталь", "неаполит", "неб", "благосклонн", "небось", "небреж", "небрежн", "был", ":", "неважн", "домёк", "невеж", "невежд", "невзгод", "невзначай", "невзрачн", "внят", "невод", "возврат", "возвращ", "воздерж", "нег", "негатив", "где", "неглиже", "неглиж", "негоду", "негод", "гож", "приим", "негоци", "негр", "негус", "дальн", "недаром", "жог", "дозвол", "недоимк", "недомог", "недоразум", "недосуг", "недотёп", "трог", "недоум", "учес", "учёт", "учит", "учт", "недр", "недуг", "дурн", "жда", "нежели", "нежен", "нежин", "нежн", "забуд", "незадач", "замысл", "регистр", "заурядн", "незыблем", "неимоверн", "неистов", "йд", "нейлон", "нейр", "гумор", "эндо", "крин", "нейтрал", "нейтральн", "неказист", "нек", "конкурент", "некр", "нектар", "нелеп", "нельм", "нелюдим", "ненависть", "нарок", "наруш", "ненасть", "нен", "нужн", "нул", "нео", "авангард", "обрат", "необходим", "объективн", "объя", "обыкн", "необычайн", "обычн", "одинаков", "одобр", "евл", "оказ", "неон", "ницше", "оправд", "опроверж", "опрятн", "публик", "ординарн", "романт", "слаб", "осторожн", "осуществ", "схоласт", "осяза", "отврат", "отлич", "отлуч", "отраз", "чужд", "отъемл", "официальн", "формл", "ощут", "непал", "непаль", "плох", "побед", "повин", "поворот", "повтор", "погодь", "погож", "подоба", "подчин", "позвол", "посвящ", "посредственн", "постиж", "постоянн", "постоян", "треб", "правед", "правиль", "правомер", "правомоч", "превзойд", "убежд", "презент", "преклонн", "непреложн", "престиж", "привет", "привилег", "выч", "неприкаянн", "прилич", "приня", "сутств", "притвор", "прихот", "причастн", "неприязн", "неприязнь", "неприятель", "прия", "провер", "продолж", "прозрачн", "произволь", "произнос", "просвещ", "противл", "профил", "профиль", "нептун", "пыль", "равен", "равнодуш", "раде", "нерадив", "разреш", "расторж", "рациональн", "рач", "регулярн", "нереид", "нерест", "нерк", "родн", "нерп", "нерях", "неряш", "самостоятельн", "свойств", "енен", "несессер", "склон", "скромн", "скры", "сладк", "случай", "слых", "совершен", "совмест", "совпад", "соглас", "солидн", "сомне", "сообразн", "соответств", "состоятельн", "спокойн", "справедлив", "сравн", "стандарт", "стройн", "несураз", "несуразн", "несусветн", "счасть", "нет", "твёрд", "нетопырь", "традици", "тривиальн", "нетто", "угодн", "удобн", "удовольств", "неужели", "неужто", "неуклюж", "неукоснительн", "уме", "умё", "уряд", "учтив", "уют", "неф", "нефел", "промысел", "экспорт", "нефть", "хорош", "христь", "цензур", "нечаянн", "ему", "нечестив", "чётк", "чистоплотн", "чисть", "бельн", "членораздельн", "что", "широк", "нешто", "этич", "нив", "нивх", "нигери", "нигерий", "нидерланд", "четверт", "низверг", "низверж", "низк", "легир", "низри", "никел", "никель", "куды", "нимб", "нимф", "ниоб", "нипочём", "ниппель", "сколеч", "нис", "проверг", "проверж", "шёлк", "эмаль", "нить", "ницц", "ево", "шеньк", "чуть", "ниш", "нищ", "нобил", "новелл", "нововведение", "новока", "преставл", "сёл", "тёл", "нога", "ногай", "ногот", "ноготь", "ногт", "ножниц", "ножнич", "ножовк", "ножовоч", "ноздр", "ноз", "нокаут", "нокдаун", "ноктюрн", "нол", "ноль", "нуль", "номенклатур", "номер", "номинал", "номиналь", "нон", "ноне", "нонсенс", "нор", "норвеж", "норд", "норичник", "норк", "норманд", "норманн", "норов", "носк", "носок", "носоч", "ностальг", "ностальги", "нот", "нота", "бен", "нотари", "нотаци", "нототени", "ночь", "ношп", "нощь", "ноябрь", "нуби", "нубий", "нувориш", "нуг", "нукер", "нукл", "нулл", "нумизмат", "нунций", "нут", "нутаци", "нутри", "нын", "ньютон", "ньюфаундленд", "п", "ню", "нюанс", "нюн", "нюрнберг", "нянь", "оазис", "бандерол", "обая", "вреж", "домл", "земел", "безображ", "опаш", "ызвест", "вл", "обезьян", "обелиск", "обёр", "обёрт", "кислорож", "обескураж", "смерч", "цвеч", "чещ", "обет", "обечайк", "обж", "обиняк", "обитель", "обихаж", "обиход", "облав", "благоображ", "облада", "облак", "лапл", "лапош", "область", "облатк", "облаточ", "облек", "облепих", "облеч", "облечь", "облечься", "облигаци", "облик", "обл", "обличь", "обложк", "локач", "локоч", "обломов", "облучок", "обма", "мишул", "морач", "обморок", "обмороч", "обмундир", "наж", "найтовл", "обнаруж", "обним", "обня", "обойм", "ествл", "обод", "обожа", "обоз", "оболочк", "оболоч", "оболт", "льщ", "обоня", "оборач", "оборк", "обормот", "оборон", "обороч", "оборч", "осабл", "особл", "бочь", "обоюдн", "обоюд", "образец", "образов", "образц", "образч", "рамл", "ревиз", "обрек", "обрёк", "ремиз", "обрес", "обреч", "обречь", "обречься", "решёт", "оброк", "обруч", "обр", "обряд", "обсерватор", "обсерваци", "обсидиан", "обскурант", "союж", "обстановк", "обстановоч", "обстоятельн", "обстоятельств", "стрек", "обструкци", "сужд", "обуз", "уз", "обурева", "уславл", "обух", "обуш", "обуя", "чекрыж", "шаст", "обширн", "обшлаг", "обшлаж", "граждан", "теор", "университет", "становл", "фабрич", "эстет", "егор", "едь", "объяв", "ягн", "обыва", "обыдён", "обыденн", "обык", "ынтеллигент", "обычай", "бюрокрач", "оваль", "оваци", "овёс", "овеч", "веществл", "овод", "овраг", "овраж", "овул", "овц", "овч", "оглобель", "оглобл", "глоуш", "глупл", "стрель", "огнь", "оголтел", "огон", "огород", "огорош", "огорч", "государствл", "оград", "огражд", "гребь", "огрех", "огромн", "грубл", "огул", "огуль", "огурец", "огуреч", "огурч", "далж", "дежд", "одерж", "одесс", "одес", "одеял", "одеяль", "один", "ёшенек", "одиозн", "одиссе", "однако", "дерёв", "одно", "плунжер", "полч", "станич", "фамил", "чась", "одонт", "одр", "одуванчик", "одул", "одуль", "одутл", "одухотвор", "ожерель", "забоч", "заглав", "заглавл", "озадач", "озар", "озер", "озёр", "пшенич", "озир", "знакомл", "знобл", "озокер", "озон", "озор", "ойкумен", "ойрот", "окази", "каймл", "окаянн", "окаян", "океан", "океа", "окей", "оккази", "окклюд", "окклюз", "оккуп", "оклад", "окн", "околач", "околёс", "околес", "околиц", "околоток", "околоточ", "усть", "щит", "околыш", "окольнич", "окольн", "конфуж", "окоп", "корач", "окорок", "кочур", "окош", "окрест", "округ", "оксалат", "оксид", "оксиморон", "оксюморон", "оксол", "окт", "окта", "октро", "октябр", "окун", "оку", "окунь", "кургуж", "олад", "оладь", "олеандр", "оле", "олен", "олень", "олеш", "олив", "олигарх", "олимп", "олиф", "олицетвор", "олов", "олух", "ольх", "ольш", "омар", "омбр", "омег", "мертвл", "мещан", "омлет", "омнибус", "мов", "молаж", "омул", "омуль", "омут", "онагр", "онан", "ондатр", "оникс", "ономастик", "онт", "онуч", "оо", "опак", "опал", "палубл", "опаль", "опар", "ивл", "паскуд", "паскуж", "опек", "пён", "переж", "полномоч", "опеш", "опи", "опий", "оплеух", "оплеуш", "плеш", "оплот", "плош", "оплы", "опля", "опо", "позор", "опок", "ополч", "поляч", "монтаж", "порос", "посред", "постыл", "поч", "поэт", "пояс", "оппозици", "оппон", "оправ", "оправл", "предмеч", "оприч", "пробк", "опроверг", "опрометчив", "опрометью", "простоволос", "простофил", "прыщ", "оптим", "опус", "опушеч", "опушк", "опять", "орав", "оракул", "орангутан", "орангутанг", "оранж", "оранжев", "оранжерей", "оранжере", "орарь", "оратор", "оргазм", "орги", "снаст", "орд", "орден", "ордер", "ординар", "ординат", "ордин", "орёл", "ореол", "орех", "ореш", "оригинал", "оригиналь", "оригинальн", "ориентал", "ориентальн", "оркан", "оркестр", "орл", "орлец", "орнамент", "орнит", "птер", "орок", "орос", "ороч", "орочон", "орош", "ортодокс", "ортопед", "орто", "оруди", "оруд", "орудова", "оружей", "оружи", "орфо", "орхиде", "осад", "осажд", "осан", "сатан", "осведом", "свежёва", "свежева", "свещ", "свинц", "свиреп", "оседл", "осёл", "оселок", "осен", "осень", "серед", "серч", "осетин", "осётр", "осетр", "осин", "сирот", "скальп", "скверн", "осклаб", "осклабл", "оском", "скопл", "оскорб", "оскорбл", "скором", "скотин", "скуд", "слабл", "сланц", "осл", "осман", "смел", "ться", "осм", "смирн", "осмос", "осмот", "смугл", "основн", "а:", "особь", "осок", "осокор", "осокорь", "солаж", "солов", "сопл", "осот", "осп", "средн", "оста", "остальн", "остановл", "осташ", "стебел", "осте", "хондр", "стерв", "остерег", "остерёг", "остереж", "остеречь", "остеречься", "остинато", "остов", "остойчив", "остолоп", "осто", "остров", "острог", "острож", "пёстр", "стропил", "прян", "рёбр", "сатир", "социальн", "остяк", "остяц", "остяч", "осу", "осуществл", "осцилл", "ливл", "ось", "осьм", "отав", "такелаж", "отар", "отваг", "вад", "отваж", "твержд", "верз", "отверсти", "отвеч", "отвращ", "отдох", "отдух", "отдуш", "отдых", "отек", "отель", "отец", "отеч", "отзыва", "колошмач", "откровен", "откровенн", "куд", "отлын", "отлы", "отменн", "отним", "отнюдь", "отня", "отображ", "отобраз", "тождеств", "тожеств", "тождествл", "тожествл", "рин", "отороп", "оторопь", "отороч", "отповедь", "полирова", "полиров", "отпор", "почк", "отправл", "отрад", "отраж", "реаг", "отребь", "редакт", "отрек", "отрёк", "репет", "трепь", "ретир", "реценз", "отреч", "отречь", "отреш", "отрица", "отрог", "родь", "отрож", "отрок", "отроч", "отруб", "отрывок", "отрывоч", "рыж", "отряж", "салют", "себ", "отсек", "стеж", "отстран", "сюд", "тепель", "топыр", "торж", "трансл", "туз", "ужин", "туреч", "тучн", "футбол", "отча", "отч", "чебуч", "чубуч", "черенк", "отчёт", "отчит", "чихвост", "чихвощ", "отшель", "отъ", "отъём", "отъя", "ощ", "оуэн", "офис", "офит", "офицер", "офицерь", "официаль", "официант", "офици", "фонар", "офорт", "француж", "француз", "офсайд", "офсет", "офтальм", "футер", "охапк", "охламон", "хлопь", "хораш", "продукц", "хоч", "охр", "охти", "охт", "хул", "цепен", "очаг", "очаж", "очевидн", "чель", "очень", "очерёд", "очередь", "очерет", "очеч", "чум", "очут", "очух", "шараш", "швартов", "швартовл", "шелом", "шеломл", "шельм", "шин", "шлихт", "шлюз", "штраф", "щен", "щер", "щупь", "ялов", "паблисити", "пав", "павиан", "пагод", "падеграс", "падеж", "пади", "шах", "падре", "дч", "падь", "паж", "паз", "пазанк", "пазанок", "пазух", "пазуш", "пайк", "пак", "пакгауз", "пакет", "пакистан", "пакл", "пакость", "пакт", "паладин", "паланкин", "палантин", "палас", "палатальн", "палатк", "палаточ", "палаццо", "палач", "палаш", "палев", "пале", "онто", "тропич", "палех", "палеш", "пали", "палисад", "палисандр", "палитр", "палк", "паллад", "палладиум", "паллиатив", "палоло", "палом", "палоч", "палтус", "пальм", "пальмир", "итин", "пальп", "пальт", "пальто", "памп", "пампас", "памперо", "пампуш", "памфлет", "память", "панам", "пананг", "панариций", "панаце", "панд", "пандан", "пандект", "пандем", "пандит", "пандури", "пандус", "панегирик", "панегир", "панегирич", "панел", "пани", "паникадил", "паниров", "панихид", "панич", "панк", "панкреас", "панкреат", "панно", "сперм", "панталон", "пант", "пантеон", "пантер", "панцирь", "панъ", "эллин", "пап", "папавер", "папай", "папах", "папаш", "паперт", "паперть", "папир", "папирос", "папирус", "папк", "папоротник", "папоч", "паприк", "папуас", "папул", "парабеллум", "парабол", "пара", "парагва", "парагвай", "гелий", "параграф", "парад", "парадигм", "парадиз", "парадокс", "иммунитет", "парализ", "паралит", "паралич", "параллакс", "параллакт", "параллел", "пипед", "параллель", "параметр", "парандж", "парано", "параной", "парапет", "парат", "параф", "парафраз", "парафраст", "параш", "парашют", "парвеню", "пардон", "пареми", "парен", "паренхим", "парень", "пари", "париж", "парик", "парикмахер", "паритет", "парич", "паркет", "паркинг", "паркинсон", "паркова", "парнас", "парн", "пародий", "парод", "пароди", "донт", "пароли", "пароль", "паром", "ономаз", "проф", "парт", "партер", "партизан", "партикуляр", "партитур", "партнёр", "поруч", "стаж", "ёб", "парубок", "парусин", "парфорс", "парфюмер", "парф", "парцелл", "парцелль", "парч", "пасек", "пасеч", "паскаль", "пасквиль", "пасквил", "паслён", "пасмурн", "пасмурь", "паспарту", "пасс", "пассаж", "пассакаль", "пассат", "пассатиж", "пассе", "пассер", "пассив", "пасси", "пастель", "пастер", "пастернак", "пастил", "пастиччо", "пастор", "пастораль", "пасть", "пасх", "сын", "пасьянс", "патер", "патерик", "патетик", "патетич", "патефон", "патин", "патио", "патиссон", "патл", "паток", "паточ", "патриарх", "патриарш", "патримони", "патримоний", "патрици", "патриций", "патр", "таш", "патрул", "пауз", "паузок", "паук", "паупер", "пауч", "паф", "пафос", "пахлав", "пацан", "пациент", "пациф", "паче", "пачеч", "пачул", "паша", "паштет", "паюс", "паяс", "паяц", "пеан", "пег", "педал", "педаль", "педант", "педераст", "педиатр", "педикюр", "техникум", "пеж", "пезо", "песо", "пейзаж", "пейзан", "пекин", "пеклева", "пеклёва", "пеклёв", "пелерин", "пеликан", "пелик", "пелит", "пельмен", "пельмеш", "пемз", "пенал", "пенальти", "пенат", "пендель", "пендинк", "пенз", "пеницилл", "пенк", "пенни", "пеноч", "пенс", "пенси", "пенсне", "пентагон", "пента", "пенчинг", "пень", "пеньк", "пеньюар", "пеня", "пеон", "пепель", "пепл", "пепс", "трахей", "клаш", "престоль", "статей", "перг", "пергамен", "пергамент", "пергамин", "барщ", "вораш", "перевясл", "яя", "передо", "дряг", "инач", "лопач", "мт", "переним", "переня", "перепел", "перепёл", "переплева", "перепонк", "перепоноч", "перепонч", "переправ", "переправл", "снаряж", "составл", "переста", "станавл", "сыль", "тружд", "упрямл", "усерд", "уступл", "фасон", "формул", "перец", "че", "переч", "шеп", "переяр", "пери", "перил", "перилл", "периль", "перипети", "перистальтич", "периферий", "перифер", "перифери", "фраст", "перкал", "перкаль", "перкусси", "перкут", "перл", "перламутр", "перлов", "перлон", "перлюстр", "перманент", "перм", "перпендикуляр", "перрон", "персик", "перси", "перстен", "перстень", "перстн", "персть", "пертурб", "перу", "перун", "перф", "перфор", "перх", "перц", "перцип", "перчатк", "перчаточ", "першерон", "перь", "пёс", "сен", "песет", "песец", "пескарь", "песк", "песок", "песоч", "пессим", "пест", "пестицид", "цветь", "песц", "песч", "петель", "петер", "бург", "бурж", "петит", "петици", "петлюр", "петрушеч", "петрушк", "петуни", "петух", "пехлеви", "пехлевий", "печать", "печенег", "печенеж", "печён", "печень", "печорин", "пеш", "едрал", "пешеч", "пешк", "пешн", "пещер", "пиал", "пиан", "пианино", "пиано", "пиастр", "пигалиц", "пигмей", "пигм", "пигус", "пиджак", "пиджач", "пиетет", "пижам", "пижм", "пижон", "пикантн", "пикап", "пике", "пикет", "пикколо", "пикник", "пикнич", "пикт", "пикул", "пилав", "пилигрим", "пилик", "пилон", "пилюль", "пилюл", "пилястр", "пим", "пинак", "пингвин", "пинетк", "пинкертон", "пинт", "пинцет", "пинчер", "пион", "пионер", "вожат", "пипетк", "пирамид", "пирамидон", "пират", "пиреней", "пирит", "пирке", "пирог", "пирож", "пирс", "пируэт", "писк", "писсуар", "пистик", "пистолет", "пистоль", "пистон", "письм", "питер", "пити", "питомнич", "питон", "пифагор", "пихт", "пицц", "пиццикато", "пиччикато", "пичуг", "пичуж", "пияв", "средств", "плаги", "одий", "планид", "плани", "планк", "планоч", "планч", "шайб", "планшет", "планшир", "планширь", "плас", "пластилин", "пластыр", "пластырь", "платан", "платк", "плато", "платок", "платон", "платоч", "платформ", "плать", "плаун", "плафон", "плах", "плахт", "плац", "плацдарм", "плацебо", "плацент", "плашкоут", "плаш", "плащ", "плебей", "плебисцит", "плев", "плевел", "плевель", "плевр", "плед", "плези", "плезир", "плейбой", "плейер", "плексиглас", "племян", "племяш", "пленарн", "пленум", "плёнч", "пленэр", "плеон", "азм", "плесен", "плесень", "плещ", "еш", "плеть", "плешь", "плеяд", "пли", "плие", "плинт", "плинтус", "плис", "плисс", "плит", "плов", "плой", "пломбир", "плоск", "плотник", "плотниц", "плотнич", "плошеч", "плошк", "площадоч", "площ", "плуж", "плутон", "плюгав", "плюрал", "плюральн", "плюс", "плюск", "плюсн", "плюх", "плюш", "плюшк", "пляж", "пляш", "пневмат", "пневм", "склероз", "балак", "барахт", "блёск", "побор", "бульк", "повад", "поваж", "поверг", "повер", "верь", "повес", "повествова", "повестк", "повесть", "повет", "поветь", "повидл", "повилик", "повилич", "повод", "врежд", "повстан", "погань", "гибь", "гнуш", "погост", "погреб", "погрёб", "погрес", "громл", "грохат", "подагр", "подат", "подать", "бедёр", "подбород", "подбородок", "подбородоч", "подвал", "подверг", "подверж", "дош", "подвиг", "подвиж", "подвиз", "подвод", "подвох", "поддан", "доминант", "дён", "поджар", "поджи", "задор", "подий", "поди", "кузьм", "лавок", "лавочь", "подле", "подлеж", "подлежащ", "подлог", "подлож", "мастерь", "месь", "мость", "мышк", "натуж", "поднач", "есь", "низь", "подним", "подня", "подым", "подобостраст", "подог", "подож", "оконь", "подол", "опеч", "подоплёк", "подошв", "подпа", "подпад", "подпас", "персь", "подпоручик", "прапорщик", "пространств", "подпруг", "пушь", "разумева", "реберь", "подробн", "ружей", "подряд", "подряж", "ряс", "свах", "свин", "седель", "подсоб", "подсобл", "кращ", "подсолн", "подспорь", "стакан", "стерег", "стерёг", "стереж", "стеречь", "стожь", "столич", "подстрек", "сум", "подтверд", "подтвержд", "тибр", "трибун", "тропик", "трун", "усадеб", "подушеч", "подушк", "фар", "подхалим", "подхалюз", "хорунж", "подчас", "шельф", "шеф", "подшипник", "шкипер", "шофе", "подъ", "яз", "ярем", "подъя", "ызб", "ынтегр", "ытож", "поезж", "поём", "пожалуй", "пожалуйста", "пожар", "пожив", "пожил", "поз", "задь", "позвонк", "позвонок", "позж", "поздрав", "поздравл", "зёв", "пози", "позици", "злащ", "знабл", "позумент", "поим", "пойнтер", "пока", "покер", "покид", "поклад", "клаж", "покойн", "поколени", "поколен", "покров", "покрови", "кумек", "покус", "покуш", "полат", "полб", "шпат", "полем", "полемич", "полен", "полеш", "жизн", "акрил", "полиграф", "полинези", "полинезий", "полип", "полис", "синтетич", "полисмен", "стади", "стирол", "стироль", "политур", "полицай", "полицей", "полици", "полиц", "полишинель", "этил", "эфир", "полно", "полов", "половник", "полог", "полож", "положительн", "полоз", "полок", "полощ", "полость", "полотенеч", "полотенц", "полотн", "полоч", "порци", "седьм", "семестр", "полсть", "полст", "суток", "полтав", "полтин", "дуплекс", "колл", "легальн", "полундр", "опущ", "помеш", "понтон", "презр", "прицеп", "пролетари", "пролетарий", "пролетар", "разор", "сапож", "серьёзн", "синтет", "сред", "станок", "стационар", "сукн", "тень", "финал", "финаль", "четв", "ерт", "шёпот", "шерсть", "полушк", "штоф", "шуб", "экипаж", "эскадрон", "ют", "царств", "ёрт", "полчищ", "полчок", "полым", "полын", "полынь", "польк", "полян", "малк", "марг", "директор", "ме", "померанец", "померанц", "поместь", "помеша", "помещ", "помидор", "помост", "помп", "помпадур", "пезн", "помпон", "напрасн", "нарош", "понёв", "понедельник", "понедельнич", "пони", "пономар", "пономарь", "понос", "понош", "понт", "понур", "пончик", "пончо", "нюш", "нянч", "поощр", "попа", "адь", "попас", "поперёк", "поперх", "попир", "поплин", "попон", "попра", "прёк", "прек", "притч", "поприщ", "попугай", "попуга", "популяр", "популярн", "попурри", "попусти", "пых", "поработ", "порабощ", "развлёк", "развлечь", "разъ", "рань", "порей", "порица", "порн", "порог", "порож", "порок", "поролон", "роскош", "порох", "порошк", "порошоч", "порск", "портал", "порталь", "портативн", "портвейн", "портер", "портик", "портк", "портмоне", "портн", "портплед", "сигар", "португал", "португаль", "портулак", "портупей", "портупе", "портфель", "портье", "портьер", "портянк", "портяноч", "руковод", "рух", "ручей", "порфир", "поршен", "поршень", "поршн", "порядк", "поряд", "сап", "посвят", "сейчас", "семен", "серёд", "середь", "посет", "сетова", "сив", "поскон", "посконь", "скуп", "последн", "пословиц", "послович", "смак", "пособ", "пособл", "содейств", "солонь", "соревнова", "посох", "сочувств", "посош", "способствова", "посредством", "посредств", "поссибил", "пос", "постав", "поставл", "постамент", "постанавл", "постанов", "постановл", "постель", "постепенн", "постепен", "стесн", "постиг", "постичь", "позит", "странич", "пострел", "строж", "постромк", "постромоч", "скриптум", "постул", "поступательн", "поступл", "ступь", "факт", "постъ", "эмбрион", "посуд", "судач", "суров", "посяг", "так", "тат", "поташ", "потвор", "потенциал", "потенциаль", "потенц", "потолок", "потолоч", "толст", "толщ", "потом", "потому", "тонь", "торапл", "торопл", "торч", "траф", "трафл", "потрох", "туск", "тщ", "упражн", "фарт", "флирт", "хваль", "хвар", "хер", "хит", "хищ", "хмель", "поход", "походя", "похот", "похоть", "храбр", "храм", "христос", "хуж", "целуй", "чавка", "чай", "початк", "початок", "чван", "челомк", "почём", "почему", "почерк", "почечуй", "почитай", "альон", "амт", "почти", "почто", "шевель", "шев", "пошехон", "штуч", "щаж", "поэзи", "поэм", "эт", "юрод", "праведн", "правёж", "правил", "право", "правоверн", "правомерн", "пораж", "преем", "православ", "прагмат", "праж", "праздник", "празднич", "пралине", "пралин", "прасол", "прах", "прачеч", "прачк", "пращ", "пращур", "преамбул", "превал", "превент", "превенци", "вкусн", "преврат", "превратн", "гадк", "преград", "прегражд", "преда", "предани", "предвар", "предвзят", "предвод", "предвосхит", "предвосхищ", "грозь", "предел", "дерзк", "предикат", "предикац", "предлаг", "предложени", "предместь", "предок", "предостав", "предоставл", "осторож", "предполаг", "предполож", "предпочес", "предпочит", "предпочт", "предприим", "предприним", "предприня", "предприя", "пясть", "рак", "предрассудок", "предрек", "предреч", "предречь", "свадеб", "председатель", "представл", "предтеч", "уведом", "уведомл", "предупред", "предупрежд", "упрежд", "предъ", "юбилей", "предъяв", "предъявл", "ярмароч", "ыд", "ынсульт", "ынфаркт", "ыстор", "ыстори", "ыюль", "ыюнь", "прежде", "преж", "презерватив", "президент", "президиум", "презир", "презумпци", "преимуществ", "преисподн", "преисполн", "прейскурант", "прекрасн", "прекрат", "прекращ", "прелаг", "прелат", "прелест", "прелесть", "прелож", "прелюбодей", "прелюбоде", "прелюд", "прелюди", "преми", "прем", "премьер", "пренебрег", "пренебрёг", "пренебреж", "пренебречь", "прени", "преображ", "преобраз", "отличн", "препар", "препина", "препира", "преподава", "препода", "препон", "принт", "противн", "пререка", "прериаль", "прери", "прерогатив", "пресвитер", "преследова", "пресловут", "пресмыка", "прессинг", "престав", "прест", "престол", "странн", "претвор", "претенд", "претенз", "претенц", "претор", "ужас", "префект", "преферанс", "префикс", "чёрн", "прибаутк", "прибауточ", "прибег", "брежь", "приват", "приватн", "приверед", "приверж", "привеч", "привилеги", "гвожд", "приглас", "приглаш", "пригож", "голубл", "пригоршн", "пригоршен", "приз", "призир", "призм", "призна", "признак", "призор", "призрак", "призрач", "призре", "призр", "приключ", "кноп", "кнопл", "прикор", "прилагательн", "прилежн", "лыг", "прим", "донн", "примак", "примат", "примитив", "примул", "примус", "принадлеж", "норавл", "норовл", "принтер", "кр.", "овражь", "приоритет", "припадок", "припадоч", "парков", "припер", "припёр", "приправ", "приправл", "природ", "русл", "скорб", "словь", "смир", "совокуп", "совокупл", "приспе", "приспеш", "приспич", "приспосабл", "приспособ", "пристав", "стадион", "пристальн", "пристращ", "приструн", "стяж", "стяжь", "присущ", "присяж", "террас", "притом", "притон", "приторн", "тул", "приуроч", "фальц", "прификс", "прихлеба", "прихоть", "чаль", "причащ", "причём", "причт", "причет", "причиндал", "шабр", "шел", "шепёт", "шоссе", "шпандор", "шпор", "щуч", "приязн", "приязнь", "ям", "приятель", "прият", "боран", "пробоч", "пробст", "пробч", "валанд", "провансаль", "прован", "провиант", "провизи", "провизор", "провизорн", "провинци", "проволок", "проворн", "провор", "провоц", "прогалин", "глоч", "прогнат", "гневл", "прогност", "гнусав", "гнусавл", "гресс", "продел", "продель", "прод", "продовольств", "продольн", "продувн", "продюсер", "проём", "проец", "прожект", "проз", "засед", "прозект", "прозелит", "прозорлив", "произвес", "произвол", "произнес", "произнош", "произо", "проис", "пройдох", "пройм", "прок", "прокаж", "проклам", "клитик", "ь", "прокт", "прокур", "пролёт", "пролет", "пролив", "пролог", "пролонг", "пролюви", "пролювий", "промежуток", "промежуточ", "променад", "промилле", "пронз", "проним", "прононс", "пронунсиаменто", "пронунциаменто", "проня", "пропад", "пропаж", "пропан", "пропасть", "пропедевтик", "пропедевтич", "пропеллер", "пропилен", "проповеда", "проповед", "проповедь", "прополис", "пудел", "раб", "проран", "прорв", "ректор", "прорех", "прореш", "прорица", "рость", "рубь", "прорух", "просвет", "просвир", "просфор", "седь", "семинар", "сканд", "скач", "слы", "просод", "проспект", "просперити", "спряг", "простат", "простер", "простир", "проститу", "проститут", "народь", "простор", "пространн", "простраци", "проступ", "простын", "существова", "прось", "таран", "тарахт", "протеж", "протект", "протекци", "протер", "протестант", "противень", "дифтерий", "иприт", "лихорадоч", "себорей", "скольж", "судорож", "торпед", "холер", "цинг", "шок", "эпидем", "эрозий", "эрози", "тл", "зоа", "протоколь", "протон", "топи", "транжир", "профан", "фершпил", "професси", "професс", "шлиф", "финт", "фу", "харч", "прохвост", "прохиндей", "процесси", "шляп", "штуд", "прояв", "проявл", "прудон", "пружин", "прус", "прусс", "прут", "прытк", "прытч", "прыть", "прюнел", "прюнель", "пряда", "прядь", "пряжеч", "пряжк", "пряник", "прянич", "пряч", "псалм", "оди", "псалом", "псалтыр", "псалтырь", "псевд", "астени", "иатр", "фармак", "психр", "псков", "псориаз", "пт", "енч", "пуансон", "пуантил", "пуант", "публич", "пугов", "пудель", "пуделя", "пудинг", "пудлинг", "пузыр", "пузырь", "пук", "пул", "пуловер", "пульвер", "пуль", "пульман", "пульмон", "пульп", "пум", "пун", "пунктир", "пунктуальн", "пункту", "пункци", "пунсон", "пунцов", "пунш", "пуп", "пупавк", "пупс", "пупыр", "пупырь", "пург", "пурген", "пур", "пуритан", "пурпур", "пускай", "пустельг", "пустул", "пусть", "путассу", "путёв", "путём", "путин", "путл", "путн", "путти", "путч", "пуф", "пуццолан", "пучин", "пушеч", "пушк", "пушту", "ий:", "пуэбло", "пуэрто", "пфенниг", "пчел", "пчёл", "семь", "пчель", "пшениц", "пшён", "пшен", "пшик", "пшют", "пыжик", "пырей", "пыр", "пыш", "пышн", "пьедестал", "пьекс", "пьеро", "пьес", "чуг", "пэр", "пэ", "тэ", "пюпитр", "пюре", "пяд", "пядь", "пяль", "пяст", "пятибалльный", "пять", "раввин", "равелин", "рагу", "радар", "радж", "радиатор", "радикал", "радикальн", "радикулит", "навигаци", "компар", "реле", "репродукт", "рубк", "точк", "эх", "радиус", "радуг", "радуж", "радуниц", "радуш", "раёк", "раёш", "разбав", "разбавл", "разбой", "бомбл", "ец:", "разве", "вереж", "разврат", "развращ", "разгильдяй", "раздоль", "раздор", "раздраж", "разева", "раззяв", "разин", "лакомл", "несчаст", "разним", "темп", "разня", "разоблач", "одолж", "мл", "разраж", "разраз", "розн", "ухаб", "разъя", "разым", "этак", "раин", "рай", "обес", "ракель", "ракетк", "ракеточ", "ракит", "ракл", "раковин", "раков", "скорпион", "ракурс", "ракуш", "ракш", "ралл", "рамазан", "рамбулье", "рамоли", "рамп", "ранг", "рангоут", "рандеву", "ранетк", "ранец", "ранжир", "рант", "рантье", "ранчеро", "ранчо", "рапид", "рапир", "раппорт", "рапс", "рапсоди", "раритет", "расей", "критик", "кружал", "распин", "подобл", "располага", "распоряд", "распоряж", "расправ", "расправл", "простёр", "распр", "распя", "свес", "серж", "сироп", "сиропл", "тьсор", "ть]", "сясор", "ся]", "средоточ", "средотач", "расста", "расстояни", "стройк", "расторг", "расточ", "растр", "растяп", "фасова", "франч", "фуфыр", "хляб", "хорохор", "целов", "чух", "штыб", "щебен", "щедр", "ратин", "ратуш", "рать", "раунатин", "раунд", "раух", "топаз", "рафин", "рафи", "рахис", "рах", "рационал", "ра", "рац", "рашпиль", "рд", "реабилит", "реакц", "реали", "реаним", "реани", "реб", "ребр", "ребус", "рёв", "реванш", "ревен", "ревень", "реверанс", "ревербер", "реверс", "реверси", "ревизи", "ревмат", "револьвер", "трибунал", "ревю", "регали", "регат", "регби", "регб", "регенер", "регент", "регламент", "реглан", "регот", "регредиент", "регресс", "редеч", "редис", "металль", "редук", "редуплик", "редуплиц", "редут", "редуц", "редч", "редьк", "реестр", "рееч", "резед", "резекци", "резервуар", "резидент", "резиденци", "резистентн", "резистивн", "резк", "резолют", "резолюци", "резон", "резорцин", "результ", "резус", "резч", "резюм", "импорт", "рей", "рейк", "рейсмас", "рейсмус", "рейтар", "рейтинг", "рейтуз", "рейх", "реквием", "реквиз", "реквизит", "рекогносц", "реконстру", "реконструкт", "реконструк", "рекорд", "рекрут", "рект", "рекупер", "реликв", "реликви", "реликт", "релятив", "релятивн", "реляци", "рем", "ремарк", "ремен", "ремень", "ремесл", "ремеш", "ремит", "ремн", "натурал", "ренегат", "ренессанс", "ренет", "реноме", "рент", "рентген", "ким", "кинемат", "рео", "реп", "репар", "патри", "репе", "репей", "репертуар", "реплик", "реплиц", "репрезент", "репресс", "репресси", "реприз", "репродук", "репродуц", "репс", "рептили", "рептиль", "репутаци", "реслинг", "реснит", "ресниц", "респектабельн", "респир", "респондент", "реставр", "реституци", "ресторан", "ретив", "ретикул", "ретин", "реторт", "ретро", "спектив", "флекси", "флекс", "ретушь", "рефер", "референдум", "рефери", "рефлекс", "рефлект", "рефракт", "рефракци", "рефрен", "рефул", "рех", "рецензи", "рецепци", "рецесс", "рецесси", "рецидив", "рецип", "циркул", "рецит", "речитатив", "речк", "решётк", "решёточ", "решётч", "решетч", "решк", "эваку", "риал", "риб", "флав", "риг", "ригель", "ригор", "ридикюль", "ризотто", "рикошет", "римл", "рим", "ринг", "пластич", "риск", "рислинг", "риста", "ритенуто", "ритор", "риторик", "риторич", "ритуал", "ритуаль", "рихт", "рицин", "ришелье", "ркацители", "робинзон", "робк", "робот", "робо", "робч", "ров", "ровес", "рогож", "рогоз", "уль", "родан", "родео", "неньк", "родник", "роднич", "родничок", "рододендр", "рододендрон", "родон", "рожь", "розали", "розг", "розетк", "розмарин", "розов", "рок", "рокад", "рокайль", "рокер", "рококо", "рокоч", "рокфор", "рол", "роль", "ром", "роман", "романс", "романсеро", "ромашк", "ромб", "ромштекс", "ронгалит", "рондино", "рондо", "ропщ", "роскошь", "росомах", "росомаш", "пашь", "ростбиф", "ростр", "альный", "рота", "ротатор", "ротац", "ротмистр", "зе", "ротон", "ротонд", "ротор", "роял", "рояль", "рт", "ртут", "ртуть", "рубаи", "рубанок", "рубато", "рубах", "рубаш", "рубероид", "рубид", "рубин", "рубищ", "рубль", "рубрик", "рудимент", "ружь", "руин", "рукопашн", "оят", "оять", "рулад", "рулет", "рулетк", "рулеточ", "рулон", "румб", "румын", "рундук", "рундуч", "рупи", "рупор", "русалк", "русалоч", "руссо", "руст", "рут", "руте", "рутен", "рутин", "рухлядь", "руче", "ручь", "чонк", "рыдван", "рык", "рыль", "рынок", "рыноч", "рып", "рысь", "рыцар", "рыцарь", "рычаг", "рычаж", "рьян", "рэкет", "рюкзак", "рюкзач", "рюм", "рюмк", "рюмоч", "рюх", "рюш", "рябин", "рябь", "рявк", "рядн", "ряженк", "ряпух", "ряпуш", "ряск", "саам", "саами", "сабан", "туй", "сабель", "сабл", "сабо", "сабот", "сабур", "саван", "саванн", "савк", "саврас", "саг", "сагайдак", "сагайдач", "саго", "саеч", "сажён", "сажень", "сазан", "сазандари", "сайг", "сайгак", "сайгач", "сайд", "сайк", "сайр", "саквояж", "сакл", "сакман", "саксаул", "саксауль", "саксон", "саксофон", "сакур", "салаг", "салаж", "салазк", "салазоч", "салак", "саламандр", "салат", "салоп", "салфетк", "салфеточ", "салхино", "сальд", "сальдо", "сальмонелл", "сальто", "мортал", "салями", "саму", "саман", "самб", "самбо", "самбук", "самодеятельн", "самоед", "заб", "зва", "разлож", "сопряж", "пл", "стерильн", "уничиж", "уничтож", "спока", "споко", "устран", "утверд", "фертильн", "финанс", "флюс", "самурай", "самшит", "санаторий", "санатор", "сангвин", "сангвиник", "сангвинич", "сандали", "сантал", "сандаль", "сандарак", "сандвич", "сандхи", "санкци", "санорин", "санскрит", "санти", "сантим", "сантимент", "сантон", "эпид", "сапажу", "саперави", "сапог", "валя", "сапон", "сапр", "пел", "сапфир", "сарабанд", "сара", "сарай", "саранч", "сарафан", "сарацин", "сардельк", "сардин", "сардоникс", "сардонич", "сарж", "сари", "сарказм", "саркаст", "саркофаг", "сармат", "сарпинк", "сателлит", "сатин", "сатинёр", "сатисфакци", "сатрап", "сатур", "саун", "сафари", "сафлор", "сафьян", "рафинад", "сахиб", "сациви", "сачк", "саше", "болч", "сбор", "бренд", "сбру", "сбы", "свад", "свадь", "сваеч", "свайк", "свай", "сван", "свар", "свастик", "свать", "сваш", "сведени", "свежь", "свёкл", "свекл", "свеколь", "свёкор", "свекр", "сверб", "сверг", "свер", "сверж", "сверз", "сверст", "допуст", "задач", "изысканн", "монополи", "протекц", "сверхъ", "ёмк", "сверчк", "сверчок", "преставлени", "свидани", "свидань", "свидетель", "свинец", "свинк", "тус", "свинч", "свинь", "свирель", "свирист", "свит", "свитер", "вит", "свищ", "обыч", "свой", "войлач", "сволоч", "сволочь", "свор", "свояк", "свояч", "свяч", "горбл", "сграффито", "сда", "сдоб", "сдобр", "себе", "себоре", "север", "сахалин", "севрюг", "севрюж", "сегмент", "сегнет", "сегодня", "сегрег", "седалищ", "седёл", "седм", "сезам", "сейм", "сейнер", "тектон", "сейф", "сейш", "секвестр", "секвой", "секир", "секретар", "секретер", "секрец", "сект", "секуляр", "секундант", "селадон", "селёд", "селезен", "селезёнк", "селезёноч", "селезень", "селезн", "селективн", "селект", "селектор", "селекци", "селен", "селитр", "сельд", "сельдерей", "сельджук", "сельдь", "селькуп", "угодь", "семаси", "семафор", "сёмг", "семе", "семинари", "семиотик", "семиотич", "сёмуж", "сенат", "сенбернар", "сенегал", "сенегаль", "сенн", "сенсаци", "симон", "сенсит", "сенсор", "сенсуал", "сенсуальн", "сентаво", "сентенци", "сентиментал", "сентиментальн", "сентименталь", "сентимо", "сентябрь", "сень", "сеньор", "сепарат", "сепар", "сепсис", "серафим", "серб", "хорват", "сервант", "сервелат", "сервиз", "сервил", "сервильн", "сервир", "сервитут", "серв", "сердит", "сердолик", "сердц", "сердч", "середи", "серёжеч", "серёжк", "серенад", "сержант", "сери", "сермяг", "сермяж", "серн", "серп", "серпантин", "серпент", "серпентин", "серпянк", "серсо", "сертификат", "сёрфинг", "серьг", "сеттер", "окрыл", "сечься", "сибарит", "сивер", "душк", "душч", "сиволап", "си", "сивух", "сивуч", "сивуш", "сиг", "сигм", "сигнарант", "сигнатур", "сидер", "сидр", "сиен", "сиз", "сизиф", "сика", "сикх", "сили", "силик", "силиц", "силк", "силлог", "силок", "силон", "силуэт", "сильф", "симби", "символ", "симпати", "симплекс", "симпозиум", "симфони", "симфонь", "симфон", "синагог", "синапс", "синапт", "сингал", "сингаль", "сингуляр", "синдикал", "синдик", "синдиц", "синдром", "синдх", "синдхи", "синекдох", "синекур", "синел", "синель", "синема", "синклит", "синкоп", "синкрет", "синод", "синопсис", "синопт", "синтагм", "синтакс", "синтакт", "хр", "синьор", "сирен", "сирень", "сиречь", "сири", "сирий", "сирокко", "сиртаки", "сир", "систол", "сись", "сис", "ситалл", "ситар", "ситец", "ситник", "ситро", "ситуат", "ситуаци", "ситц", "ситч", "сифилид", "сифилис", "сифилит", "сифил", "сифон", "скабрёзн", "скаж", "сказуем", "скай", "скалдыр", "скалк", "скальд", "скальпель", "скаме", "скамей", "скамь", "скандаль", "скандинав", "скан", "скапо", "скарб", "скаред", "скар", "скарлатин", "скат", "скатёр", "скатерт", "скатерть", "скаут", "скафандр", "кащ", "скваж", "сквайр", "сквалыг", "сквалыж", "скваттер", "сквер", "скворец", "сквореч", "сквор", "скворц", "скворч", "скелет", "скенн", "скепс", "скепт", "скерц", "скерцо", "скетч", "скипетр", "скипидар", "скиф", "скиц", "склеп", "склиз", "склизк", "склок", "клоня", "склоч", "склянк", "скляноч", "скоб", "скобк", "скобоч", "сковород", "сколопендр", "сколь", "скользч", "скоморох", "скоморош", "сконто", "скопидом", "копыч", "скорбут", "скорбь", "скорлуп", "скорняж", "скорняк", "скоромн", "скост", "скот", "кощ", "скрежещ", "скрепер", "скрижаль", "скрипиц", "скрупулёзн", "хобот", "скряг", "скряж", "скудель", "скудн", "скудо", "скук", "кукож", "скульпт", "скумбри", "скунс", "ердяй", "скутер", "скуфей", "скуфь", "интенсивн", "слад", "сладч", "слайд", "слалом", "сланец", "слединг", "сленг", "слепень", "ший", "слесар", "слив", "слиз", "слизь", "линя", "слобод", "слобож", "словак", "словар", "словарь", "словац", "словач", "словен", "словин", "случ", "слышь", "слюд", "сляб", "слякот", "слякоть", "лямз", "смазлив", "смальт", "смарагд", "смахива", "смач", "смеж", "смежн", "смек", "сметан", "смёт", "смог", "смокв", "смокинг", "смоков", "смоль", "смородин", "сморчк", "сморчок", "мошеннич", "смрад", "смур", "смушк", "смычк", "смычок", "смят", "снабд", "снадобь", "снайпер", "снасть", "снег", "снегирь", "снед", "снедь", "снетк", "снеток", "снет", "снеточ", "сниск", "сноб", "снов", "сноров", "снох", "сныть", "собак", "соблазн", "собол", "соболезн", "соболь", "ятник", "собор", "бственн", "событи", "соверш", "совесть", "совк", "вмест", "совмещ", "совок", "совкупл", "совокупн", "совоч", "совпа", "совпас", "соврат", "совращ", "гб", "согд", "согласно", "соглаш", "содом", "содрог", "сожал", "созерца", "созида", "сойк", "сок", "сокол", "соколь", "сокровенн", "сокровищ", "солано", "солдат", "солдать", "солда", "солен", "солидар", "солипс", "солитер", "солитёр", "солн", "солнц", "соло", "соловей", "соловь", "сольдо", "сольфеджио", "сольфеджо", "соляр", "сомали", "сомалий", "сомбреро", "сомин", "сомнамбул", "сомн", "сомо", "сомон", "сонат", "сонет", "сонетк", "сонм", "соображ", "сообразова", "сообразов", "сообщ", "сооруд", "сопер", "сопк", "сопел", "сопостав", "сопоставл", "сопран", "сопрано", "сопро", "сопротивл", "сорат", "сорбит", "сорван", "сорго", "соревну", "сорог", "сорок", "сорокопут", "сорочеч", "сороч", "сорочк", "имент", "сортир", "сосен", "сосён", "сосиск", "сосисоч", "сосн", "состо", "состяза", "сосул", "сосуль", "соте", "товарищ", "соус", "соц", "обяза", "сочельник", "сочень", "сош", "спагетти", "спаниель", "спардек", "спардеч", "спарж", "спартак", "спарт", "спасибо", "спасиб", "спекул", "спекуль", "пелё", "спеле", "цет", "спесь", "специальн", "ифич", "специ", "спидвей", "спидол", "спид", "спикер", "спиккато", "спиннинг", "спиноз", "спирал", "спираль", "спир", "спирит", "спиц", "спич", "спичеч", "спичк", "сплач", "сплин", "сплот", "сплоч", "сподвиж", "споза", "спокой", "сполох", "спонде", "спондей", "спондил", "спонсор", "спорад", "гоний", "карпий", "способ", "спотк", "спотык", "похабн", "спо", "справ", "справл", "справн", "спринт", "спринц", "спровад", "спроваж", "спрут", "спряж", "спурт", "спустя", "спят", "сраж", "средь", "медиц", "статист", "сретени", "сретен", "срок", "сряд", "ссад", "ссаж", "ссуд", "ссуж", "сутул", "табун", "ставрид", "ставрополь", "стагнаци", "стад", "стай", "стак", "стаккато", "стаксель", "сталагм", "сталакт", "стал", "стамеск", "стамесоч", "станиол", "станиоль", "станиц", "строение", "ище", "станс", "станций", "стапель", "стара", "старост", "старш", "старшин", "стате", "статн", "стату", "статус", "статут", "этк", "стать", "стафил", "стаханов", "стачеч", "стачк", "твораж", "творож", "стеарин", "стеатит", "стебл", "стез", "стек", "эмал", "стёкл", "стекол", "стеколь", "стеллаж", "стеллит", "стель", "темн", "стена", "стенд", "степенн", "степень", "степс", "стерео", "стеречься", "стержен", "стержень", "стержн", "стерил", "стерлинг", "стерляд", "стерлядь", "стерляж", "стерн", "стернь", "стет", "стилет", "стило", "стипенди", "стиракс", "стихарь", "стихий", "стихир", "стихи", "стогн", "стодол", "стоеросов", "стож", "стоик", "стоиц", "стоич", "стол", "столбов", "столиц", "столп", "столыпин", "столяр", "стом", "сторн", "сторно", "стор", "стотинк", "страда", "страж", "стражд", "страз", "странгул", "страниц", "страсбург", "страсть", "стратег", "страт", "страус", "стрежень", "стрежн", "стрекоз", "стрекоч", "стремглав", "стрем", "стремл", "стремн", "стрепет", "стрепт", "стретто", "стрех", "стриппер", "стриптиз", "стрихнин", "стричься", "трест", "строк", "стронц", "строп", "стропиль", "строптив", "трост", "трощ", "струп", "стручк", "стручок", "стручоч", "студебекер", "студент", "студенч", "стул", "стуль", "ступень", "ступиц", "ступич", "тыр", "стюард", "стяг", "стяжа", "суаре", "суахили", "суббот", "сублим", "субмарин", "субсид", "субсиди", "субстантив", "субстанци", "субститут", "субституц", "субстрат", "субтильн", "титр", "субъ", "экватор", "этн", "сувенир", "суверен", "суверенн", "сувой", "суворов", "песь", "сугроб", "сугуб", "судак", "судан", "судар", "сударь", "судён", "суди", "судн", "судорог", "судьб", "судь", "суевер", "суе", "сук", "суле", "султан", "султанк", "сулугуни", "суматох", "суматош", "сумбур", "сумереч", "сумерк", "сумер", "сумм", "сумоч", "сумч", "сумятиц", "сундук", "сундуч", "сунн", "визор", "гетеродин", "маркет", "финиш", "суперъ", "яхт", "элит", "пес", "супин", "супонь", "супостат", "супплетив", "супплетивн", "суппорт", "супруг", "супруж", "сургуч", "сурд", "сурж", "сурик", "сурк", "сурн", "суровь", "сурок", "суроч", "суррогат", "сурч", "сусал", "сусаль", "сусек", "суслик", "суслич", "суслон", "суспенд", "суспенз", "суспензи", "сутан", "сутен", "сутк", "сутолок", "сутолоч", "суть", "сутяг", "сутяж", "суфле", "суфл", "суфраж", "суффикс", "сухмен", "сухмень", "фрукт", "сучь", "сушь", "существительн", "существ", "суэц", "сфигм", "сфинкс", "сфорцандо", "сфорцато", "схизм", "схим", "схи", "стве", "хрумк", "сцинтилл", "сциф", "якш", "сыворотк", "сывороточ", "ымит", "ымпровиз", "сыпл", "сырок", "сырт", "сырть", "сыч", "сычуг", "сычуж", "ыщ", "сьерр", "сэр", "сюзане", "сюзерен", "сюит", "сюрприз", "сюр", "сюртук", "сюртуч", "сяж", "сяк", "табак", "табака", "таба", "табан", "табасаран", "табач", "табель", "таблет", "таблетк", "таблит", "таблиц", "таблич", "табло", "табор", "табу", "табул", "табурет", "таверн", "таволг", "таволж", "таволож", "тавот", "тавт", "таган", "таджик", "таджич", "таёж", "таз", "таи", "таиланд", "таит", "тайг", "тайм", "таймень", "тайфун", "также", "таки", "такс", "такыр", "талдыч", "талер", "талий", "талисман", "тали", "талл", "талмуд", "талон", "талыш", "тальк", "таль", "тальянк", "там", "тамад", "тамарикс", "тамариск", "тамбур", "тамил", "тамиль", "таможен", "таможн", "тампон", "тамтам", "тангенц", "танго", "тандем", "танец", "танзани", "танзаний", "танин", "тантал", "тантьем", "тап", "тапк", "тапоч", "тарабан", "тарабар", "таракан", "таракаш", "тарант", "тарантас", "тарантелл", "тарантул", "тарань", "тарарам", "тарарах", "тарата", "таратай", "тарбаган", "тарелк", "тарелоч", "тарельч", "тарту", "тархан", "тархун", "татами", "татар", "тату", "тать", "тафт", "тафь", "тахе", "тахи", "тахин", "тахт", "тачанк", "тачеч", "тачк", "тварь", "твар", "твердо", "твердь", "тверёз", "твёрж", "твид", "твист", "твиши", "твой", "творог", "тебенев", "тебенёв", "тебенёк", "тебеньк", "тевтон", "тезавр", "тезаурус", "тёзк", "теин", "тейлор", "текин", "текстиль", "текстур", "телег", "тележ", "телекс", "тайп", "телеут", "факс", "теллур", "грей", "тембр", "темляк", "темляч", "хвой", "темпер", "темперамент", "тенденци", "тендер", "тенёт", "теннис", "тенор", "тент", "теорем", "теорий", "тепер", "теперь", "тёпл", "терат", "терем", "терилен", "термидор", "терминал", "терминаль", "термит", "бигуд", "термозит", "эмисси", "тёрн", "терн", "терпен", "терпент", "терпин", "терпк", "терпуг", "терпч", "терракот", "терр", "терренкур", "террикон", "террор", "терц", "тесём", "тест", "тесть", "тесьм", "тетан", "тетани", "тёт", "тетерев", "тетёр", "тетер", "тетив", "тетра", "тетрад", "тетрадь", "тетр", "теург", "тефтел", "тёш", "тёщ", "тибет", "тигель", "тигр", "тик", "тильбюри", "тильд", "тимол", "тимофе", "тимпан", "тимур", "тин", "типикон", "типун", "тирад", "тире", "тиристор", "титан", "титл", "титуль", "тиун", "тифл", "тифон", "ткемали", "тмин", "тог", "тогда", "того", "тож", "тоже", "той", "токай", "токкат", "толерантн", "толмач", "толокн", "толокон", "толочься", "брю", "толуол", "томагавк", "томас", "томат", "томн", "флюор", "томош", "томпак", "тондо", "тонзилл", "тоннел", "тоннель", "туннель", "ый]", "тонус", "топол", "тополь", "топор", "топчан", "топч", "топь", "торак", "каустик", "торб", "торбас", "тореадор", "тореро", "торец", "тори", "ториц", "торич", "торнадо", "тороват", "торок", "торош", "торс", "торт", "торшер", "торшон", "тост", "тот", "тотализатор", "тоталитар", "тотальн", "тотем", "тотчас", "тохар", "точно", "тпру", "траверз", "траверс", "травертин", "травести", "траектори", "трайбал", "трак", "тракт", "трактат", "трактир", "трактова", "трактов", "траль", "трамблёр", "трамвай", "трамплин", "транзит", "транзитивн", "гресси", "трансильван", "иордан", "транскриб", "транскрип", "трансмисс", "трансмисси", "трансмиттер", "транспарант", "транспир", "транспон", "транспортир", "уран", "трансферт", "трансцендент", "трансъ", "транше", "трап", "трапец", "трапеци", "трапп", "трас", "тратт", "траулер", "траур", "трафарет", "трафареч", "трах", "требух", "требуш", "тревог", "трейлер", "трел", "трель", "трельяж", "трембит", "тремол", "тремоло", "трензель", "тренчик", "трепак", "трепан", "трепанг", "трепел", "трепель", "треска", "трет", "ёво", "угол", "треф", "ёхъ", "треченто", "ёш", "оточ", "триад", "триангул", "триас", "триб", "тривиаль", "триггер", "девять:", "триенале", "тризн", "трико", "трик", "трикотаж", "триктрак", "триллион", "маран", "местр", "трио", "триод", "триодь", "триппер", "птих", "тритон", "триумвир", "триумф", "трифоль", "трихин", "троакар", "троглодит", "трок", "троллей", "тромбон", "флеб", "тромп", "тропарь", "трос", "тростник", "трость", "тротил", "тротуар", "трофей", "трофик", "трофич", "трохе", "трохей", "трох", "троцк", "трубадур", "трувер", "труп", "трупп", "трут", "трутень", "трутн", "трущоб", "трынк", "трю", "трюк", "трюм", "трюмо", "трюфел", "трюфель", "трюх", "тряп", "тряпь", "тсс", "туалет", "туарег", "туб", "тубероз", "тубо", "тув", "тугрик", "ту", "туес", "тужурк", "тузем", "тузлук", "тузлуч", "тук", "тукан", "тулей", "тулов", "тулуз", "тулумбас", "тулуп", "туль", "туляр", "емий", "тумак", "тумб", "тумбл", "тунгус", "туне", "тунец", "тунеяд", "туник", "тунис", "туннел", "тунц", "тупей", "тупик", "турбулентн", "турель", "турец", "туркестан", "туркмен", "турлы", "турмалин", "турман", "турне", "турнепс", "турник", "турникет", "турн", "турнюр", "турок", "турпан", "турсук", "турухтан", "турч", "тустеп", "тут", "тутти", "туф", "туфель", "туфл", "туфт", "туч", "тушеваль", "тушин", "тушканчик", "тушь", "тшш", "тщательн", "тщедуш", "тщеслав", "тщет", "ты", "тоб", "тыкв", "тыков", "тыл", "тыль", "тын", "тырк", "тырл", "тырс", "тысч", "тысяц", "тысячь", "тьфу", "тюбетей", "тюбик", "тюбинг", "тюл", "тюлен", "тюлень", "тюль", "тюльпан", "тюлюлю", "тюрбан", "тюрем", "тюрок", "тюрч", "тюрьм", "тютюн", "тюфяк", "тюфяч", "тюч", "тягч", "тят", "тять", "уби", "ублюдок", "ублюдоч", "убог", "убож", "убо", "убой", "убрус", "вековеч", "увертюр", "увечь", "увещ", "увол", "уволь", "увул", "увы", "углевод", "угле", "угожд", "уголовн", "уголов", "угоразд", "угор", "угорь", "угост", "угощ", "угр", "гробл", "грож", "угрюм", "угу", "удав", "удаль", "удел", "удель", "дивл", "удил", "удмурт", "удовольстви", "удод", "удостовер", "досто", "удруч", "душь", "удэ", "удэге", "удэгей", "уезд", "уже", "ужели", "ужель", "ужли", "ужо", "узбек", "узбеч", "уздень", "ы:", "узк", "бёдр", "очь", "узуальн", "узурп", "узус", "уйгур", "уйм", "уключин", "укромн", "укроп", "крощ", "уксус", "улан", "улей", "лепёт", "улик", "улит", "улиц", "уловк", "улус", "улуч", "ультимат", "ультимо", "ультрамарин", "микроб", "реак", "фарфор", "фиолетов", "ульч", "улюлю", "умбр", "мерщвл", "умлаут", "умляут", "исступлени", "умык", "ундевит", "ундин", "уни", "универ", "универсал", "универсальн", "универс", "уник", "уним", "унион", "унисон", "унитаз", "унитарн", "унтер", "унт", "унци", "уня", "упова", "упо", "упорн", "упраздн", "упред", "упруж", "пряжь", "упырь", "ура", "ураган", "урарт", "урду", "урем", "уретр", "урн", "бил", "урок", "урочищ", "уругва", "уругвай", "урюк", "урюч", "урядник", "уряднич", "усадьб", "усердн", "слажд", "усопш", "успени", "успен", "уссур", "сетречь", "устриц", "устрич", "сугубл", "утварь", "утёс", "утил", "утилитар", "утилитарн", "утк", "утл", "уток", "утоп", "утор", "утюг", "ухар", "ухарь", "ухит", "ухич", "ухищр", "ухмыл", "ухмыль", "хожь", "участв", "участк", "участь", "учред", "учуг", "учуж", "ушат", "шыр", "ушкуй", "ушл", "ущел", "ущель", "ущерб", "ущербл", "уязвл", "фаб", "фабиан", "фабльо", "фаблио", "фабул", "фавн", "фавор", "фавус", "фа", "фазан", "фазис", "фай", "файл", "факел", "факель", "цуг", "факир", "факсимиле", "факсимиль", "фактор", "фактори", "фактур", "факультатив", "фалалей", "фаланг", "фалбал", "фалд", "фалер", "фалл", "фаллос", "фальс", "фаль", "фальцет", "фальшь", "фамили", "фамильярн", "фанабери", "фанариот", "фанат", "фанг", "фанданго", "фанз", "фант", "фантази", "фантасмагор", "фантасмагори", "фантаст", "фантом", "фанфар", "фанфарон", "фарад", "фарадей", "фарандол", "фараон", "фарватер", "фаринг", "фарисей", "фармазон", "гноз", "гност", "пей", "фарс", "фарси", "фартук", "фартуч", "фарц", "фасад", "фасет", "фаск", "фасол", "фасоль", "фат", "фатал", "фаталь", "фатум", "фауст", "фашин", "фаэтон", "фаянс", "февраль", "федер", "феер", "феери", "фейербах", "фейерверк", "фейервероч", "фейхоа", "фекали", "фекаль", "феллах", "фелл", "фельд", "фебель", "фельдъ", "фельетон", "фемин", "фен", "фён", "феникс", "фенол", "феномен", "фено", "фенхель", "ферз", "ферзь", "ферлакур", "фермат", "фермер", "фермуар", "фернамбук", "ферр", "ферт", "ферул", "ферязь", "феск", "фестон", "фетиш", "фетр", "фехт", "фешенебельн", "фе", "фиалк", "фиаско", "лизин", "фиг", "фигаро", "фигляр", "фиде", "фидер", "фьельд", "фиельд", "физиогном", "физиократ", "фиксатуар", "фиксол", "фиксоль", "фикт", "фикус", "фикци", "филармон", "филармони", "филател", "филатели", "филе", "филёнк", "филёноч", "филёнч", "филёр", "филиал", "филиаль", "филигран", "филигрань", "филин", "филиппик", "филиппин", "филипп", "филистер", "филистимл", "филлит", "кладий", "филон", "филумен", "фильдекос", "фильдеперс", "фимиам", "финик", "финики", "финикий", "финифт", "финифть", "финлянд", "финтифлюшк", "фиорд", "фьорд", "фиоритур", "фирм", "фирн", "фисгармони", "фиск", "фискал", "фискаль", "фисташк", "фистул", "фитил", "фитиль", "бентос", "фитюльк", "фифи", "фихте", "фишеч", "фишк", "фишю", "флаг", "флагман", "флакон", "фламанд", "фламенко", "фламинго", "фламинг", "фланел", "фланель", "флан", "фланец", "фланк", "фланц", "флат", "флаттер", "флегм", "флегмон", "флейт", "флейц", "флексий", "флект", "флёр", "флёрдоранж", "флеш", "флешь", "флибустьер", "флигел", "флигель", "флогистон", "флокс", "фломастер", "флоренти", "флорентий", "флоридин", "флукту", "флюкту", "флуоресц", "флюоресц", "флюгарк", "флюгароч", "флюгер", "флюид", "фляг", "фляж", "фогт", "фойе", "фок", "фокстрот", "фолиант", "фолио", "фолликул", "фольг", "фольк", "фольклор", "фольксдойче", "фонарь", "енд", "форвард", "форд", "фордзон", "фордыбач", "форейтор", "форел", "форель", "форзац", "форинт", "формуляр", "форсунк", "форсуноч", "фортель", "фортепиан", "фортепьян", "фортепиано", "фортепьяно", "форточк", "форточ", "фортун", "форшмак", "форштадт", "фосген", "фоск", "есц", "фот", "проек", "топо", "фотофиниш", "эмульс", "этюд", "фофан", "фрагмент", "фраер", "фрак", "фраки", "фракий", "фрамуг", "фрамуж", "франк", "франклин", "франко", "франц", "франциск", "фрапп", "фратр", "фрау", "фрач", "фрегат", "фрейд", "фрейлейн", "фрейлин", "фрейм", "фрекен", "френ", "френч", "фреон", "фреск", "фри", "фривольн", "фригидн", "фриги", "фригий", "фрикадельк", "фрикасе", "фрик", "фристайл", "фритюр", "фриш", "фронд", "фронтон", "фру", "фтизи", "фуганок", "фуганоч", "фугас", "фугато", "фужер", "фузе", "фузи", "фук", "фукс", "фукси", "фуле", "фуляр", "фундамент", "фунд", "фундук", "фуникулёр", "фур", "фуражеч", "фуражк", "фури", "фурк", "фурнитур", "фурор", "фурункул", "фурч", "фурье", "р", "фут", "футляр", "футур", "фуфаеч", "фуфай", "фу:", "фуэте", "фьють", "фэ", "бэ", "эр", "фюзеляж", "хабанер", "хабар", "хавбек", "хавронь", "хав", "хадж", "хаджи", "хаз", "хазар", "хай", "хайл", "хакас", "хаки", "халд", "халдей", "халиф", "халтур", "халуп", "халцедон", "халяв", "хамелеон", "хамит", "хамовн", "хамь", "ханж", "ханты", "ханум", "ханурик", "хаос", "хаот", "харакири", "харатей", "харать", "хариус", "хар", "харти", "харчо", "хасид", "хат", "хауз", "хауса", "хафиз", "хахаль", "ньк", "хачапури", "хвать", "хворост", "хворь", "хвощ", "хво", "хевсур", "хедер", "хек", "хем", "сорбци", "херес", "херувим", "хетт", "хеш", "хибар", "хив", "хиджр", "хижин", "химер", "химк", "хинди", "хинду", "хинкали", "хиппи", "хипп", "хиро", "мант", "хитин", "хитон", "хламид", "хламидомонад", "хламь", "хлев", "хлестаков", "хлещ", "хлесть", "хлобыст", "хлопец", "хлопк", "хлопок", "хлопоч", "хлопч", "фенон", "филль", "пикр", "хлуп", "хлупь", "хлыщ", "хлюст", "хлябь", "хляск", "хляс", "хляст", "хлястик", "хмарь", "хмурь", "хмы", "хмырь", "хн", "хобби", "я:", "ходж", "хокке", "хоккей", "хокку", "холерич", "холе", "холк", "холл", "холоп", "холст", "холуй", "холщ", "холяв", "хомяк", "хомяч", "хонинг", "хоп", "хоппер", "хорал", "хораль", "хоре", "хорей", "хорёк", "ямб", "хором", "хорт", "хоругв", "хоругвь", "хорь", "хорьк", "хорьч", "хоть", "хотя", "хохлом", "хохм", "хохол", "хохо", "зда", "хребт", "хрен", "хрестоматий", "хрестомати", "хризантем", "хриз", "праз", "тил", "хрум", "хруп", "хрустал", "хрусталь", "хрущ", "хрущёв", "хрыч", "хряк", "хряп", "хряск", "хряс", "хряст", "хрясть", "хрясь", "хряч", "хулахуп", "хулигань", "хунвейбин", "хунт", "хунхуз", "хурал", "хурм", "хутор", "цанг", "цапл", "цапф", "царь", "цац", "цевк", "цевоч", "цевь", "цедр", "цезар", "цез", "цезур", "цейлон", "цейс", "цейтнот", "целков", "целл", "фан", "целлул", "целомудр", "цемянк", "цент", "центавр", "центнер", "фуж", "цео", "цепь", "цербер", "церебр", "спинальн", "церемони", "церемоний", "цер", "церкв", "церковь", "цесар", "цесарь", "цеце", "циан", "цибул", "цивил", "цивиль", "цигарк", "цигейк", "цидул", "цикад", "циклоп", "цикорий", "цикор", "цимбал", "цинандали", "циновк", "циновоч", "цирк", "циркон", "циркуляр", "циркум", "циркумфлекс", "цирр", "цирюль", "цитадель", "цитр", "цитрус", "циферблат", "цифир", "цифирь", "цицеро", "цо", "цоколь", "цоп", "цук", "цукат", "цунами", "цып", "цыпл", "цыц", "чабан", "чабер", "чабёр", "чабр", "чавыч", "чагатай", "чадр", "вые", "чайк", "чакан", "чалм", "чао", "чапыг", "чапыж", "чардаш", "чарльстон", "чартер", "чарт", "часовен", "часовн", "часом", "частик", "частн", "частух", "частушеч", "частушк", "чатал", "чать", "чаус", "чауш", "чахотк", "чахоточ", "чахохбили", "чач", "чачван", "чаш", "чебак", "чебот", "чёбот", "чебурах", "чебураш", "чебурек", "чебуреч", "чеддер", "чек", "чекмарь", "чекмень", "чекуш", "чёлк", "чёлн", "челн", "чел", "чёлоч", "челюсть", "челяд", "челядь", "чем", "чембало", "чембур", "чемер", "чемодан", "чемпион", "чепан", "чепец", "чепрак", "чепрач", "чепух", "чепч", "червл", "червон", "червь", "чердак", "чердач", "черевик", "черевич", "черёд", "черемис", "черёмух", "черёмуш", "черемш", "черенок", "череноч", "черепах", "черепаш", "черепит", "черепиц", "черепич", "черепок", "черес", "чересчур", "черешен", "черешн", "черешок", "черешч", "черкас", "черкес", "черкеш", "чернил", "черниль", "быль", "чёрств", "чёрт", "чертог", "чертополох", "чеснок", "чесноч", "честер", "чесуч", "четверг", "ерть", "чётч", "четь", "чех", "чехард", "чехол", "чехоль", "чечевиц", "чечевич", "чечен", "чечет", "чечёт", "чеш", "чешу", "чианури", "чибис", "чиви", "чигирь", "чиж", "чизель", "чий", "чилиг", "чили", "чилий", "чилим", "чиляг", "чинар", "чинквеченто", "почит", "чипс", "чирей", "чир", "чирок", "чифир", "чифирь", "чихирь", "чичероне", "чо", "чон", "чонгури", "чопорн", "чох", "чохом", "чрев", "чред", "чрезвычайн", "чтоб", "чуб", "чубар", "чубук", "чуваш", "чувяк", "чувяч", "чугун", "чудь", "чуеч", "чуйк", "чукот", "чукч", "чулан", "чулк", "чумаз", "чумак", "чумац", "чумиз", "чун", "чурбак", "чурбан", "чурбач", "чурек", "чурк", "чуроч", "чурчхел", "чут", "чухн", "чухон", "чучел", "чучель", "чушк", "чушь", "шабёр", "шабер", "шабли", "шаблон", "шавк", "шагрен", "шагрень", "шаеч", "шайк", "шайтан", "шакал", "шаланд", "шалаш", "шалбер", "шале", "шалман", "шалопай", "шалопут", "шалфей", "шаль", "шальвар", "шаман", "шаматон", "шамот", "шампан", "шампиньон", "шампунь", "шампур", "шандал", "шанеж", "шанец", "шансонетк", "шансонье", "шантаж", "шантрап", "шанцев", "шаньг", "шапито", "шапк", "шапоч", "шапч", "шарабан", "шарад", "шарах", "шариат", "шаривари", "шарлатан", "шарм", "шарманк", "шарман", "шаровар", "шаров", "шаромыг", "шарошеч", "шарошк", "шартрез", "шарф", "шассе", "шасси", "шасть", "шатен", "шатёр", "шатр", "шаф", "шафран", "шахер", "шашеч", "шаш", "шашк", "шашлык", "шашлыч", "шашн", "швабр", "шваль", "шварк", "швах", "швед", "швейцар", "швеллер", "шворень", "шкворень", "шебарш", "шебут", "шевалье", "шевелюр", "шевинг", "шевиот", "шевро", "шевр", "шеврон", "шедевр", "шезлонг", "шейк", "шейх", "шелк", "шеллак", "шеллач", "шеллинг", "шелох", "шелух", "шепел", "шепот", "шептал", "шепч", "шербет", "шеренг", "шеренож", "шериф", "шероховат", "шерп", "шерри", "шерф", "шершав", "шершень", "шершн", "шестерён", "шестерн", "шесть", "шибк", "шибч", "шиворот", "шиз", "шизофрен", "шик", "шикарн", "шиллинг", "шил", "шимми", "шимпанзе", "шинел", "шинель", "шинк", "шинков", "шинок", "шиншилл", "шиньон", "ширм", "широч", "шифон", "шифоньер", "шихт", "шиш", "шишеч", "шишк", "шкалик", "шкаль", "шканеч", "шканц", "шкатулк", "шкатулоч", "шкаф", "шквал", "шкваль", "шквар", "шкет", "шкив", "шкот", "шкур", "шлаг", "шлагбаум", "портланд", "шлам", "шланг", "шле", "шлей", "шлейф", "шлёнд", "цы", "шлеп", "шлих", "шлиц", "шлык", "шлыч", "шлюп", "шлягер", "шлямбур", "шлях", "шляхет", "шляхт", "шматок", "шмел", "шмель", "шмотк", "шмяк", "шнапс", "шнеллер", "шницель", "шницел", "шовин", "шоколад", "шомпол", "шомполь", "шорк", "шорох", "шорт", "шосс", "шотланд", "шоу", "шоф", "шпаг", "шпагат", "шпаж", "шпак", "шпал", "шпалер", "шпан", "шпангоут", "шпандырь", "шпаргал", "шпатель", "шпатл", "шпик", "шпилеч", "шпильк", "шпинат", "шпингалет", "шпинель", "шпион", "шпиц", "шпицрутен", "шплинт", "шприц", "шпрот", "шпул", "шпуль", "шпур", "шпын", "шрам", "шрапнель", "шредер", "шрифт", "штабел", "штабель", "штакетник", "штал", "штамб", "штамм", "штанген", "штандарт", "штапел", "штапель", "штатив", "штафирк", "штейгер", "штейн", "штекер", "штемпель", "штепсель", "штепсел", "штиблет", "штиль", "штифт", "штольн", "штопор", "шторм", "штос", "штрейк", "брехер", "штрек", "штук", "штукар", "штукарь", "штунд", "штурвал", "штурваль", "штурм", "штуцер", "штык", "штыр", "штырь", "шуан", "шуг", "шугай", "шулер", "шумер", "шумовк", "шурин", "шурь", "шурова", "шуров", "шурп", "шуруп", "шурф", "шуст", "шустр", "шушер", "шушун", "шхун", "щавел", "щавель", "щ", "щебеч", "щебн", "щегл", "щёголь", "щеголь", "щек", "щеколд", "щёкот", "щекоч", "щёл", "щёлок", "щёлоч", "щёлочь", "щелч", "щель", "щён", "щепетильн", "щепот", "щепоть", "щёточ", "щиколотк", "щипец", "щипл", "щиповк", "щипц", "щириц", "щук", "щупл", "щучина", "эбен", "эбонит", "эбули", "эва", "эвак", "эвапор", "эвдемон", "эвен", "эвенк", "эвкалипт", "эвклаз", "эволюци", "эврика", "эвристик", "эвристич", "эв", "эвтектик", "эвтектич", "эвфем", "эвфон", "эвфу", "эгалитар", "эге", "эгид", "эго", "эгрет", "эдак", "эдельвейс", "эдем", "эдици", "эжек", "эзоп", "эзофаг", "эй", "эйдет", "эйнштейн", "эйфори", "эк", "экарте", "эквадор", "эквилибр", "экви", "экзальт", "экзарх", "экзегез", "экзегет", "экзеку", "экзем", "экземпляр", "экзерсис", "экзистенци", "экзо", "экз", "экзот", "токсин", "экивок", "экип", "эклект", "эклер", "эклиптик", "эклиптич", "эконо", "экседр", "эксик", "эксит", "экскав", "экскремент", "экскурс", "экслибрис", "экспанс", "экспед", "эксперимент", "эксперт", "экспир", "эксплик", "эксплиц", "эксплоз", "экспозе", "экспози", "экспозици", "экспон", "экспресс", "экспромт", "экспропри", "экссудат", "экссудац", "экстаз", "экстат", "экстемпорале", "экстемпорали", "экстерн", "экстер", "цепт", "рецепц", "экстирпаци", "экстр", "экстравагантн", "экстраг", "экстрадици", "экстракт", "экстрак", "сенс", "экстрем", "экстренн", "эксфолиат", "эксфолиац", "эксцентр", "эксцесс", "эктаз", "экто", "эктоп", "экумен", "экю", "эласт", "элегантн", "элег", "электрик", "лебёдк", "ицин", "распредел", "стрик", "тельфер", "элементарн", "элениум", "элеутер", "элизий", "элизи", "эликсир", "элимин", "эллинг", "эллипс", "эллипсис", "элоквент", "элоквенц", "эль", "эльдорадо", "эльзас", "эльф", "элюви", "элювий", "элю", "элятив", "эман", "эмансип", "эмбарго", "эмблем", "эмбол", "эмбри", "мбри", "эмир", "эмиссар", "эмит", "эмиттер", "эм", "эммер", "эмпирей", "эмпир", "эмпири", "эму", "эмульси", "эмфаз", "эмфат", "эмфизем", "энанти", "эндем", "мит", "энд", "телий", "энео", "энерги", "энигмат", "еский", "дэ", "клитич", "птоз", "энто", "энтом", "энтузиазм", "энтузиаст", "энциклопед", "энциклопеди", "эоз", "эо", "эол", "эпат", "эпендим", "эпентез", "эпентет", "эпигон", "эпиграмм", "эпиграф", "эпидеми", "эпи", "эпизод", "зоот", "эпикуре", "эпикурей", "эпилепс", "эпилепт", "эпистол", "эпистроф", "эпиталам", "эпитафи", "эпители", "эпителий", "эпитет", "эпоксидн", "эполет", "эпонж", "эпопе", "эпос", "эпох", "эрб", "эргат", "эрго", "эре", "эрег", "эрек", "эрзац", "эрз", "эритр", "эрод", "эрот", "эруд", "эрупт", "эрупц", "эрцгерцог", "эскадр", "эскадриль", "эскалад", "эскалатор", "эскалаци", "эскалоп", "эскамот", "эскиз", "эскимо", "эскимос", "эскорт", "эскудо", "эскулап", "эспад", "эспадон", "эспадрон", "эспандер", "эспаньолк", "эспарто", "эсперант", "эсперанто", "эссе", "эст", "эстакад", "эстамп", "эстафет", "эстези", "эстокад", "эстомп", "эстон", "эстрагон", "эстрад", "этажерк", "эталон", "этик", "этиол", "эти", "это", "этот", "этруск", "этрус", "эф", "эфедр", "эфемер", "эфенди", "эфес", "эфиоп", "эхин", "эшафот", "юань", "юбил", "юбк", "юбоч", "юбч", "ювелир", "юдоль", "юд", "юз", "юкагир", "юкк", "юкол", "юмор", "юнак", "юнац", "юнг", "юниор", "юнкер", "юнкерс", "юнкерь", "нат", "юньнань", "юпитер", "юрид", "юрис", "пруденци", "юрт", "юс", "юст", "юстици", "юфт", "юфть", "яблок", "яблон", "яблонь", "яблоч", "явор", "ягд", "ягел", "ягель", "ягноб", "ягодиц", "ягодич", "ягуар", "ядрен", "ядрён", "язь", "яиц", "яич", "яйл", "яйц", "яко", "якобин", "якобы", "якорь", "якут", "якша", "ял", "ялт", "яма", "ямай", "январ", "январь", "янки", "янсен", "янтар", "янтарь", "янычар", "япон", "яранг", "ярд", "ярк", "ярлык", "ярлыч", "ярмарк", "ярм", "яров", "ярослав", "яруг", "ярч", "ярыг", "ярыж", "ярь", "ясак", "ясач", "ясель", "ясен", "ясень", "ясмин", "ясочк", "яспис", "яств", "ястреб", "ястык", "ястыч", "ясырь", "ятаган", "ятрыш", "ять", "яфетид", "яфет", "яхонт", "яче", "ячмен", "ячмень", "ячнев", "яшм", "ящериц", "ящерич", "ящик", "ящич", "ящур"]);
+        static postfix = new $mol_spell_morphs(["а", "ива", "ова", "ствова", "ествова", "изова", "ирова", "изирова", "ства", "ка", "яка", "ича", "нича", "б", "об", "ытьб", "в", "ав", "ощав", "ев", "ив", "лив", "овлив", "елив", "члив", "чив", "ов", "овь", "тв", "ств", "овств", "еств", "инств", "тельств", "ляв", "аг", "инг", "ург", "уг", "ыг", "д", "ад", "иад", "арад", "оид", "ядь", "е", "ое", "ые", "аж", "ёж", "ёжь", "из", "оз", "и", "ки", "очки", "ушки", "нюшки", "унюшки", "еньки", "ошеньки", "охоньки", "ами", "ками", "ай", "атай", "o", "ей", "алей", "ачей", "ий", "овий", "стви", "ни", "ани", "овани", "ени", "арий", "ери", "орий", "ти", "ци", "аци", "изаци", "ици", "нци", "енци", "ачий", "ичий", "a", "ой", "кой", "уй", "тяй", "к", "ак", "чак", "авк", "овк", "ловк", "анек", "енек", "онек", "ышек", "ежк", "ик", "евик", "ник", "овник", "еник", "ейник", "арник", "атник", "льник", "истик", "чик", "щик", "овщик", "льщик", "айк", "ейк", "лк", "анк", "инк", "онк", "унк", "ок", "онок", "чонок", "ушок", "ерк", "урк", "ск", "вск", "евск", "овск", "еск", "ческ", "ическ", "истичес", "лезск", "эзск", "йск", "ейск", "ийск", "нск", "анск", "ианск", "енск", "инск", "унск", "тельск", "етк", "отк", "ютк", "ук", "чук", "ацк", "ецк", "чк", "ачк", "ечк", "ичка", "очк", "шк", "ашк", "ёшк", "ишк", "ушк", "ышк", "ык", "ульк", "усеньк", "ошеньк", "оньк", "охоньк", "юк", "як", "няк", "ль", "л", "ал", "аль", "овал", "ёл", "ель", "ел", "тель", "итель", "ил", "ол", "оль", "ул", "ыль", "изм", "онизм", "им", "ом", "м", "ком", "иком", "ышком", "няком", "уном", "ишом", "ым", "нь", "н", "ан", "уган", "иан", "овиан", "лан", "ман", "ебн", "обн", "евн", "ивн", "овн", "ень", "ен", "ён", "мен", "смен", "яжн", "знь", "езн", "изн", "овизн", "озн", "иозн", "ин", "бин", "овин", "лин", "елин", "нин", "анин", "жан", "чан", "овчан", "ичан", "инчан", "тян", "итян", "атин", "чин", "щин", "овщин", "льщин", "йн", "ейн", "нн", "анн", "ованн", "ированн", "енн", "ённ", "овенн", "ственн", "менн", "онн", "ионн", "ационн", "он", "арн", "орн", "сн", "снь", "отн", "ятн", "ун", "ичн", "иничн", "очн", "шн", "ашн", "ишн", "ышн", "льн", "альн", "идальн", "иальн", "ональн", "уальн", "ельн", "абельн", "ибельн", "тельн", "ительн", "ильн", "ынь", "иян", "о", "ко", "очко", "енько", "ошенько", "онько", "охонько", "но", "овато", "ар", "арь", "атарь", "ер", "p", "онер", "мейстер", "up", "ор", "вор", "тор", "атор", "итор", "ур", "тур", "amyp", "итур", "ырь", "яр", "с", "ис", "анс", "есс", "ус", "ариус", "ть", "т", "am", "ат", "оват", "иат", "дцать", "надцать", "чат", "евт", "ет", "итет", "ит", "овит", "нит", "инит", "ант", "ент", "мент", "амент", "емент", "от", "оть", "иот", "аст", "ист", "ость", "имость", "ность", "нность", "енность", "тость", "ут", "у", "ку", "еньку", "оньку", "ому", "ну", "ану", "оту", "х", "ах", "ках", "их", "ох", "ух", "ц", "ец", "авец", "овец", "лец", "омец", "нец", "енец", "инец", "иц", "овиц", "лиц", "ниц", "овниц", "ениц", "атниц", "униц", "ичниц", "очниц", "ешниц", "льниц", "тельниц", "льц", "ч", "ач", "ич", "евич", "ович", "нич", "уч", "ыч", "ш", "аш", "иш", "айш", "ейш", "ошь", "ош", "уш", "оныш", "ащ", "ищ", "бищ", "овищ", "лищ", "ущ", "еющ", "ы", "жды", "ажды", "ою", "ую", "остью", "мя", "ее", "ше", "учи", "ши", "вши", "вш", "ёх", "ся", "сь", "те", "ть"]);
+        static foot = new $mol_spell_morphs(['а', 'ам', 'ами', 'ас', 'am', 'ax', 'ая', 'е', 'её', 'ей', 'ем', 'еми', 'емя', 'ex', 'ею', 'ёт', 'ёте', 'ёх', 'ёшь', 'и', 'ие', 'ий', 'им', 'ими', 'ит', 'ите', 'их', 'ишь', 'ию', 'м', 'ми', 'мя', 'о', 'ов', 'ого', 'ое', 'оё', 'ой', 'ом', 'ому', 'ою', 'cm', 'у', 'ум', 'умя', 'ут', 'ух', 'ую', 'шь']);
+    }
+    $.$mol_spell_ru = $mol_spell_ru;
+})($ || ($ = {}));
+//mol/spell/ru/ru.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_spell_any extends Object {
+        static test(word) {
+            return $mol_spell_ru.test(word);
+        }
+    }
+    $.$mol_spell_any = $mol_spell_any;
+})($ || ($ = {}));
+//mol/spell/any/any.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_spell_demo extends $.$mol_spell_demo {
+            report() {
+                const wrong = [];
+                const words = new Set(this.article().toLowerCase().match(/\p{Letter}{2,}/ug));
+                for (const word of words) {
+                    if ($mol_spell_any.test(word))
+                        continue;
+                    wrong.push(word);
+                }
+                return wrong.join('\n');
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_spell_demo.prototype, "report", null);
+        $$.$mol_spell_demo = $mol_spell_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/spell/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/spell/demo/demo.view.css", "[mol_spell_demo_report] {\n\tcolor: var(--mol_theme_focus);\n}\n");
+})($ || ($ = {}));
+//mol/spell/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_stack_demo extends $mol_example_small {
+        sub() {
+            return [
+                this.Collage()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_stack",
+                "layout"
+            ];
+        }
+        Back() {
+            const obj = new this.$.$mol_image();
+            obj.uri = () => "https://thiscatdoesnotexist.com/";
+            return obj;
+        }
+        Front() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                "❤🧡💛💚💙💜🤎🖤"
+            ];
+            return obj;
+        }
+        Collage() {
+            const obj = new this.$.$mol_stack();
+            obj.sub = () => [
+                this.Back(),
+                this.Front()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_stack_demo.prototype, "Back", null);
+    __decorate([
+        $mol_mem
+    ], $mol_stack_demo.prototype, "Front", null);
+    __decorate([
+        $mol_mem
+    ], $mol_stack_demo.prototype, "Collage", null);
+    $.$mol_stack_demo = $mol_stack_demo;
+})($ || ($ = {}));
+//mol/stack/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/stack/demo/demo.view.css", "[mol_stack_demo_front] {\n\tmargin: auto;\n}\n");
+})($ || ($ = {}));
+//mol/stack/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_string_demo extends $mol_example_small {
+        title() {
+            return "String input field in various states";
+        }
+        sub() {
+            return [
+                this.Simple(),
+                this.Hint(),
+                this.Filled(),
+                this.Disabled(),
+                this.Button()
+            ];
+        }
+        tags() {
+            return [
+                "input",
+                "string",
+                "text",
+                "field"
+            ];
+        }
+        name(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Simple() {
+            const obj = new this.$.$mol_string();
+            obj.value = (val) => this.name(val);
+            return obj;
+        }
+        Hint() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => "Batman";
+            obj.value = (val) => this.name(val);
+            return obj;
+        }
+        name2(val) {
+            if (val !== undefined)
+                return val;
+            return "Jocker";
+        }
+        Filled() {
+            const obj = new this.$.$mol_string();
+            obj.value = (val) => this.name2(val);
+            return obj;
+        }
+        Disabled() {
+            const obj = new this.$.$mol_string();
+            obj.disabled = () => true;
+            obj.value = (val) => this.name2(val);
+            return obj;
+        }
+        Button() {
+            const obj = new this.$.$mol_string_button();
+            obj.value = (val) => this.name2(val);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_string_demo.prototype, "name", null);
+    __decorate([
+        $mol_mem
+    ], $mol_string_demo.prototype, "Simple", null);
+    __decorate([
+        $mol_mem
+    ], $mol_string_demo.prototype, "Hint", null);
+    __decorate([
+        $mol_mem
+    ], $mol_string_demo.prototype, "name2", null);
+    __decorate([
+        $mol_mem
+    ], $mol_string_demo.prototype, "Filled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_string_demo.prototype, "Disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_string_demo.prototype, "Button", null);
+    $.$mol_string_demo = $mol_string_demo;
+})($ || ($ = {}));
+//mol/string/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_switch_demo extends $mol_example {
+        title() {
+            return "Color switchers in various state";
+        }
+        sub() {
+            return [
+                this.Demo_items()
+            ];
+        }
+        tags() {
+            return [
+                "switch",
+                "option",
+                "group",
+                "radio"
+            ];
+        }
+        color(val) {
+            if (val !== undefined)
+                return val;
+            return "red";
+        }
+        option_red() {
+            return "Red";
+        }
+        option_green() {
+            return "Green";
+        }
+        option_blue() {
+            return "Blue";
+        }
+        option_infernal() {
+            return "Color which can not be displayed on your device";
+        }
+        Enabled() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (val) => this.color(val);
+            obj.options = () => ({
+                red: this.option_red(),
+                green: this.option_green(),
+                blue: this.option_blue(),
+                infernal: this.option_infernal()
+            });
+            return obj;
+        }
+        Enabled_labeler() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Read/Write";
+            obj.Content = () => this.Enabled();
+            return obj;
+        }
+        Disabled() {
+            const obj = new this.$.$mol_switch();
+            obj.value = (val) => this.color(val);
+            obj.enabled = () => false;
+            obj.options = () => ({
+                red: this.option_red(),
+                green: this.option_green(),
+                blue: this.option_blue()
+            });
+            return obj;
+        }
+        Disabled_labeler() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Read only";
+            obj.Content = () => this.Disabled();
+            return obj;
+        }
+        Demo_items() {
+            const obj = new this.$.$mol_list();
+            obj.sub = () => [
+                this.Enabled_labeler(),
+                this.Disabled_labeler()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_switch_demo.prototype, "color", null);
+    __decorate([
+        $mol_mem
+    ], $mol_switch_demo.prototype, "Enabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_switch_demo.prototype, "Enabled_labeler", null);
+    __decorate([
+        $mol_mem
+    ], $mol_switch_demo.prototype, "Disabled", null);
+    __decorate([
+        $mol_mem
+    ], $mol_switch_demo.prototype, "Disabled_labeler", null);
+    __decorate([
+        $mol_mem
+    ], $mol_switch_demo.prototype, "Demo_items", null);
+    $.$mol_switch_demo = $mol_switch_demo;
+})($ || ($ = {}));
+//mol/switch/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_text_code_demo extends $mol_example_small {
+        title() {
+            return "Markdow visualization example";
+        }
+        sub() {
+            return [
+                this.Text()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_list",
+                "text",
+                "code",
+                "syntax highlighting"
+            ];
+        }
+        source() {
+            return "";
+        }
+        syntax() {
+            return null;
+        }
+        uri_resolve(id) {
+            return "";
+        }
+        Text() {
+            const obj = new this.$.$mol_text_code();
+            obj.sidebar_showed = () => true;
+            obj.text = () => this.source();
+            obj.syntax = () => this.syntax();
+            obj.uri_resolve = (id) => this.uri_resolve(id);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_text_code_demo.prototype, "Text", null);
+    $.$mol_text_code_demo = $mol_text_code_demo;
+})($ || ($ = {}));
+//mol/text/code/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_text_code_demo extends $.$mol_text_code_demo {
+            source() {
+                return this.$.$mol_fetch.text('web.js');
+            }
+            syntax() {
+                return new $mol_syntax2({
+                    ...this.$.$mol_syntax2_md_code.lexems,
+                    'code-link': /\$\w+(?:_\w+)*/,
+                });
+            }
+            uri_resolve(uri) {
+                return `https://github.com/search?l=Markdown&q=org%3Ahyoo-ru+${encodeURIComponent(uri)}&type=Code`;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_text_code_demo.prototype, "source", null);
+        __decorate([
+            $mol_mem
+        ], $mol_text_code_demo.prototype, "syntax", null);
+        $$.$mol_text_code_demo = $mol_text_code_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/text/code/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_pencil extends $mol_icon {
+        path() {
+            return "M20.71,7.04C21.1,6.65 21.1,6 20.71,5.63L18.37,3.29C18,2.9 17.35,2.9 16.96,3.29L15.12,5.12L18.87,8.87M3,17.25V21H6.75L17.81,9.93L14.06,6.18L3,17.25Z";
+        }
+    }
+    $.$mol_icon_pencil = $mol_icon_pencil;
+})($ || ($ = {}));
+//mol/icon/pencil/-view.tree/pencil.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_text_demo extends $mol_example_large {
+        title() {
+            return "Markdown visualization example";
+        }
+        sub() {
+            return [
+                this.Book()
+            ];
+        }
+        tags() {
+            return [
+                "text",
+                "markdown"
+            ];
+        }
+        search(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Search() {
+            const obj = new this.$.$mol_search_jumper();
+            obj.query = (next) => this.search(next);
+            obj.Root = () => this.View();
+            return obj;
+        }
+        Edit_icon() {
+            const obj = new this.$.$mol_icon_pencil();
+            return obj;
+        }
+        Edit() {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => ({
+                edit: ""
+            });
+            obj.sub = () => [
+                this.Edit_icon()
+            ];
+            return obj;
+        }
+        View() {
+            const obj = new this.$.$mol_text();
+            obj.text = () => this.text();
+            obj.highlight = () => this.search();
+            return obj;
+        }
+        View_page() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "Output";
+            obj.tools = () => [
+                this.Search(),
+                this.Edit()
+            ];
+            obj.body = () => [
+                this.View()
+            ];
+            return obj;
+        }
+        Close_icon() {
+            const obj = new this.$.$mol_icon_cross();
+            return obj;
+        }
+        Close() {
+            const obj = new this.$.$mol_link();
+            obj.arg = () => ({
+                edit: null
+            });
+            obj.sub = () => [
+                this.Close_icon()
+            ];
+            return obj;
+        }
+        text(next) {
+            if (next !== undefined)
+                return next;
+            return "# Header level 1\n## Header level 2\n### Header level 3\n#### Header level 4\n##### Header level 5\n###### Header level 6\n\n# List\n\n- first item\n  1. first of first item\n  2. second of first item\n  > quote as item\n  > > quote in quote\n  > + list inside quote\n- second item\n\n# Inline Formatting\n\n- Some **strong text**\n- Some *emphasis text*\n- Some ~~deleted text~~\n- Some `short_code(\"foo\")` & ```long_code(`${bar}`)```\n- Some \"quoted text\"\n\n# Hyper Link\n\n* Some [link *with* title](http://example.org).\n* Auto http link: http://mol.hyoo.ru, (http://mol.hyoo.ru), http://mol.hyoo.ru.\n* Some [*unsafe* link](somescript:document.cookie).\n\n# Embedding\n\n## Image\n![](https://mol.hyoo.ru/mol/logo/logo.svg)\n\n## Video\n![](https://www.youtube.com/embed/XNt7DEkisKg)\n\n## Site\n![](https://life.hyoo.ru)\n\n## Inline\n\n- Badge: [![Deploy](https://github.com/hyoo-ru/mam_mol/actions/workflows/deploy.yml/badge.svg)](https://github.com/hyoo-ru/mam_mol/actions/workflows/deploy.yml)\n- Broken images: ![*Alternative* text](https://example.org/404.png) ![](https://example.org/404.svg)\n- Unsafe images: ![*Alternative* text](somescript:document.cookie) ![](somescript:document.cookie)\n\n# Preformatted Code\n\n```js\nclass SomeCode {\n\twith_prolog: true\n}\n```\n\n\tclass SomeCode {\n\t\twith_indents: true\n\t}\n\n# Table\n\n|           | ~~Column~~ 1 | ~~Column~~ 2 | ~~Column~~ 3\n|-----------|--------------|--------------|-------------\n| ~~Row~~ 1 | ~~Cell~~ 1x1 | ~~Cell~~ 2x1 | ~~Cell~~ 3x1\n| ~~Row~~ 2 | ~~Cell~~ 1x2 | ~~Cell~~ 2x2 | ~~Cell~~ 3x2\n| ~~Row~~ 3 | ~~Cell~~ 1x3 | ~~Cell~~ 2x3 | ~~Cell~~ 3x3\n| ~~Row~~ 4 | ~~Cell~~ 1x4 | ~~Cell~~ 2x4 | ~~Cell~~ 3x4\n| ~~Row~~ 5 | ~~Cell~~ 1x5 | ~~Cell~~ 2x5 | ~~Cell~~ 3x5\n| ~~Row~~ 6 | ~~Cell~~ 1x6 | ~~Cell~~ 2x6 | ~~Cell~~ 3x6\n| ~~Row~~ 7 | ~~Cell~~ 1x7 | ~~Cell~~ 2x7 | ~~Cell~~ 3x7\n| ~~Row~~ 8 | ~~Cell~~ 1x8 | ~~Cell~~ 2x8 | ~~Cell~~ 3x8\n| ~~Row~~ 9 | ~~Cell~~ 1x9 | ~~Cell~~ 2x9 | ~~Cell~~ 3x9\n";
+        }
+        Code() {
+            const obj = new this.$.$mol_textarea();
+            obj.value = (next) => this.text(next);
+            return obj;
+        }
+        Code_page() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => "Input";
+            obj.tools = () => [
+                this.Close()
+            ];
+            obj.body = () => [
+                this.Code()
+            ];
+            return obj;
+        }
+        pages() {
+            return [
+                this.View_page(),
+                this.Code_page()
+            ];
+        }
+        Book() {
+            const obj = new this.$.$mol_book2();
+            obj.Placeholder = () => null;
+            obj.pages = () => this.pages();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "search", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Search", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Edit_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Edit", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "View", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "View_page", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Close_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Close", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "text", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Code", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Code_page", null);
+    __decorate([
+        $mol_mem
+    ], $mol_text_demo.prototype, "Book", null);
+    $.$mol_text_demo = $mol_text_demo;
+})($ || ($ = {}));
+//mol/text/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_text_demo extends $.$mol_text_demo {
+            edit() {
+                return this.$.$mol_state_arg.value('edit') !== null;
+            }
+            pages() {
+                return [
+                    this.View_page(),
+                    ...this.edit() ? [this.Code_page()] : [],
+                ];
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_text_demo.prototype, "pages", null);
+        $$.$mol_text_demo = $mol_text_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/text/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/text/demo/demo.view.css", "[mol_text_demo_view_page] {\n\tflex: 1 0 40rem;\n}\n\n[mol_text_demo_code_page] {\n\tflex: 0 0 40rem;\n}\n\n[mol_text_demo_view_page_body],\n[mol_text_demo_code_page_body] {\n\tpadding: var(--mol_gap_block);\n}\n");
+})($ || ($ = {}));
+//mol/text/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_textarea_demo extends $mol_example_small {
+        title() {
+            return "Text input field in various states";
+        }
+        sub() {
+            return [
+                this.Empty_descr(),
+                this.Filled_descr(),
+                this.Disabled()
+            ];
+        }
+        tags() {
+            return [
+                "textarea",
+                "code",
+                "syntax highlighting"
+            ];
+        }
+        empty_descr(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Empty_descr() {
+            const obj = new this.$.$mol_textarea();
+            obj.hint = () => "source code";
+            obj.value = (next) => this.empty_descr(next);
+            return obj;
+        }
+        filled_descr(next) {
+            if (next !== undefined)
+                return next;
+            return "function hello( name = 'World' ) {\n\treturn `Hello, ${ name }!`\n}";
+        }
+        Filled_descr() {
+            const obj = new this.$.$mol_textarea();
+            obj.sidebar_showed = () => true;
+            obj.value = (next) => this.filled_descr(next);
+            return obj;
+        }
+        symbols_hint() {
+            return "";
+        }
+        Disabled() {
+            const obj = new this.$.$mol_textarea();
+            obj.enabled = () => false;
+            obj.value = () => this.symbols_hint();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_textarea_demo.prototype, "empty_descr", null);
+    __decorate([
+        $mol_mem
+    ], $mol_textarea_demo.prototype, "Empty_descr", null);
+    __decorate([
+        $mol_mem
+    ], $mol_textarea_demo.prototype, "filled_descr", null);
+    __decorate([
+        $mol_mem
+    ], $mol_textarea_demo.prototype, "Filled_descr", null);
+    __decorate([
+        $mol_mem
+    ], $mol_textarea_demo.prototype, "Disabled", null);
+    $.$mol_textarea_demo = $mol_textarea_demo;
+})($ || ($ = {}));
+//mol/textarea/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_textarea_demo extends $.$mol_textarea_demo {
+            symbols_hint() {
+                let rows = [
+                    ...Object.entries(this.Disabled().symbols_alt())
+                        .map(([name, val]) => `Alt + ${name}: ${val}`),
+                    ...Object.entries(this.Disabled().symbols_alt_shift())
+                        .map(([name, val]) => `Alt + Shift + ${name}: ${val}`),
+                ];
+                return rows.join('\n');
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_textarea_demo.prototype, "symbols_hint", null);
+        $$.$mol_textarea_demo = $mol_textarea_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/textarea/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/textarea/demo/demo.view.css", "[mol_textarea_demo] {\n\talign-self: stretch;\n}\n\n[mol_textarea_demo_inputs] {\n\tpadding: var(--mol_gap_block);\n}\n");
+})($ || ($ = {}));
+//mol/textarea/demo/-css/demo.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_example_code extends $mol_example {
+        sub() {
+            return [
+                this.Sandbox()
+            ];
+        }
+        tags() {
+            return [
+                "sandbox",
+                "eval",
+                "js",
+                "javascript"
+            ];
+        }
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Sandbox() {
+            const obj = new this.$.$hyoo_js_eval();
+            obj.Menu_page = () => null;
+            obj.Perf = () => null;
+            obj.Bookmark = () => null;
+            obj.code = (next) => this.code(next);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_example_code.prototype, "code", null);
+    __decorate([
+        $mol_mem
+    ], $mol_example_code.prototype, "Sandbox", null);
+    $.$mol_example_code = $mol_example_code;
+})($ || ($ = {}));
+//mol/example/code/-view.tree/code.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/example/code/code.view.css", "[mol_example_code] {\n\tflex: 1 1 auto;\n\tflex-direction: column;\n\tbox-shadow: 0 0 0 1px var(--mol_theme_line);\n\tborder-radius: var(--mol_gap_round);\n\tmax-width: 100%;\n\tmax-height: 100%;\n\toverflow: hidden;\n}\n");
+})($ || ($ = {}));
+//mol/example/code/-css/code.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_time_demo extends $mol_example_code {
+        title() {
+            return "Time processing library sandbox";
+        }
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "const now = new $mol_time_moment\nconst today = now.toString( 'YYYY-MM-DD' )\nconst tomorrow = now.shift( 'P1D' ).toString( 'DD Mon' )\n\nconst week = new $mol_time_duration( 'P7D' )\nconst days = week.count( 'P1D' )\n\nconst nextYear = new $mol_time_interval( '/P1Y' )\nconst anniversary = nextYear.end.toString( 'YYYY-MM-DD hh:mm' )";
+        }
+        tags() {
+            return [
+                "$mol_time",
+                "moment",
+                "duraion",
+                "interval"
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_time_demo.prototype, "code", null);
+    $.$mol_time_demo = $mol_time_demo;
+})($ || ($ = {}));
+//mol/time/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_toolbar extends $mol_view {
+        attr() {
+            return {
+                ...super.attr(),
+                mol_toolbar_expanded: this.expanded()
+            };
+        }
+        sub() {
+            return [
+                this.Bar(),
+                this.Expand()
+            ];
+        }
+        items() {
+            return [];
+        }
+        Bar() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => this.items();
+            return obj;
+        }
+        expanded(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        Expand() {
+            const obj = new this.$.$mol_check_expand();
+            obj.checked = (val) => this.expanded(val);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar.prototype, "Bar", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar.prototype, "expanded", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar.prototype, "Expand", null);
+    $.$mol_toolbar = $mol_toolbar;
+})($ || ($ = {}));
+//mol/toolbar/-view.tree/toolbar.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem, vh, per } = $mol_style_unit;
+        $mol_style_define($mol_toolbar, {
+            flex: {
+                grow: 1,
+                wrap: 'wrap',
+                direction: 'row-reverse',
+            },
+            display: 'flex',
+            position: 'relative',
+            overflow: 'hidden',
+            Bar: {
+                display: 'flex',
+                justifyContent: 'flex-end',
+                flex: {
+                    grow: 1,
+                    shrink: 1,
+                    wrap: 'wrap',
+                },
+                margin: {
+                    right: rem(2.5),
+                },
+                minWidth: 0,
+                maxHeight: rem(2.5),
+            },
+            Expand: {
+                height: rem(2.5),
+                margin: {
+                    top: rem(-2.5),
+                    left: rem(-2.5),
+                },
+                Icon: {
+                    transform: 'rotate(90deg)',
+                },
+            },
+            '@': {
+                mol_toolbar_expanded: {
+                    true: {
+                        Bar: {
+                            maxHeight: vh(100),
+                        },
+                        Expand: {
+                            Icon: {
+                                transform: 'rotate(270deg)',
+                            },
+                        },
+                    },
+                },
+            },
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/toolbar/toolbar.view.tree.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_toolbar extends $.$mol_toolbar {
+        }
+        $$.$mol_toolbar = $mol_toolbar;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/toolbar/toolbar.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_content_cut extends $mol_icon {
+        path() {
+            return "M19,3L13,9L15,11L22,4V3M12,12.5C11.72,12.5 11.5,12.28 11.5,12C11.5,11.72 11.72,11.5 12,11.5C12.28,11.5 12.5,11.72 12.5,12C12.5,12.28 12.28,12.5 12,12.5M6,20C4.9,20 4,19.1 4,18C4,16.89 4.9,16 6,16C7.1,16 8,16.9 8,18C8,19.11 7.1,20 6,20M6,8C4.9,8 4,7.1 4,6C4,4.89 4.9,4 6,4C7.1,4 8,4.9 8,6C8,7.11 7.1,8 6,8M9.64,7.64C9.87,7.14 10,6.59 10,6C10,3.79 8.21,2 6,2C3.79,2 2,3.79 2,6C2,8.21 3.79,10 6,10C6.59,10 7.14,9.87 7.64,9.64L10,12L7.64,14.36C7.14,14.13 6.59,14 6,14C3.79,14 2,15.79 2,18C2,20.21 3.79,22 6,22C8.21,22 10,20.21 10,18C10,17.41 9.87,16.86 9.64,16.36L12,14L19,21H22V20L9.64,7.64Z";
+        }
+    }
+    $.$mol_icon_content_cut = $mol_icon_content_cut;
+})($ || ($ = {}));
+//mol/icon/content/cut/-view.tree/cut.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_content_paste extends $mol_icon {
+        path() {
+            return "M19,20H5V4H7V7H17V4H19M12,2C12.55,2 13,2.45 13,3C13,3.55 12.55,4 12,4C11.45,4 11,3.55 11,3C11,2.45 11.45,2 12,2M19,2H14.82C14.4,0.84 13.3,0 12,0C10.7,0 9.6,0.84 9.18,2H5C3.9,2 3,2.9 3,4V20C3,21.1 3.9,22 5,22H19C20.1,22 21,21.1 21,20V4C21,2.9 20.1,2 19,2Z";
+        }
+    }
+    $.$mol_icon_content_paste = $mol_icon_content_paste;
+})($ || ($ = {}));
+//mol/icon/content/paste/-view.tree/paste.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_delete extends $mol_icon {
+        path() {
+            return "M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19C6,20.1 6.9,21 8,21H16C17.1,21 18,20.1 18,19V7H6V19Z";
+        }
+    }
+    $.$mol_icon_delete = $mol_icon_delete;
+})($ || ($ = {}));
+//mol/icon/delete/-view.tree/delete.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_toolbar_demo extends $mol_example_small {
+        title() {
+            return "Foldable toolbar demo";
+        }
+        sub() {
+            return [
+                this.Toolbar()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_string",
+                "$mol_button",
+                "$mol_icon",
+                "toolbar",
+                "button",
+                "icon"
+            ];
+        }
+        search_hint() {
+            return "Search...";
+        }
+        Search() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => this.search_hint();
+            return obj;
+        }
+        replace_hint() {
+            return "Replace...";
+        }
+        Replace() {
+            const obj = new this.$.$mol_string();
+            obj.hint = () => this.replace_hint();
+            return obj;
+        }
+        approve_label() {
+            return "Approve";
+        }
+        Approve() {
+            const obj = new this.$.$mol_button_major();
+            obj.title = () => this.approve_label();
+            return obj;
+        }
+        decline_label() {
+            return "Decline";
+        }
+        Decline() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => this.decline_label();
+            return obj;
+        }
+        Copy_icon() {
+            const obj = new this.$.$mol_icon_content_copy();
+            return obj;
+        }
+        Copy() {
+            const obj = new this.$.$mol_button_minor();
+            obj.sub = () => [
+                this.Copy_icon()
+            ];
+            return obj;
+        }
+        Cut_icon() {
+            const obj = new this.$.$mol_icon_content_cut();
+            return obj;
+        }
+        Cut() {
+            const obj = new this.$.$mol_button_minor();
+            obj.sub = () => [
+                this.Cut_icon()
+            ];
+            return obj;
+        }
+        Paste_icon() {
+            const obj = new this.$.$mol_icon_content_paste();
+            return obj;
+        }
+        Paste() {
+            const obj = new this.$.$mol_button_minor();
+            obj.sub = () => [
+                this.Paste_icon()
+            ];
+            return obj;
+        }
+        Delete_icon() {
+            const obj = new this.$.$mol_icon_delete();
+            return obj;
+        }
+        Delete() {
+            const obj = new this.$.$mol_button_minor();
+            obj.sub = () => [
+                this.Delete_icon()
+            ];
+            return obj;
+        }
+        Toolbar() {
+            const obj = new this.$.$mol_toolbar();
+            obj.items = () => [
+                this.Search(),
+                this.Replace(),
+                this.Approve(),
+                this.Decline(),
+                this.Copy(),
+                this.Cut(),
+                this.Paste(),
+                this.Delete()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Search", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Replace", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Approve", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Decline", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Copy_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Copy", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Cut_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Cut", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Paste_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Paste", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Delete_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Delete", null);
+    __decorate([
+        $mol_mem
+    ], $mol_toolbar_demo.prototype, "Toolbar", null);
+    $.$mol_toolbar_demo = $mol_toolbar_demo;
+})($ || ($ = {}));
+//mol/toolbar/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        $mol_style_define($mol_toolbar_demo, {
+            alignSelf: 'stretch'
+        });
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/toolbar/demo/demo.view.tree.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_video_player extends $mol_view {
+        dom_name() {
+            return "video";
+        }
+        playing(val) {
+            if (val !== undefined)
+                return val;
+            return false;
+        }
+        volume(val) {
+            if (val !== undefined)
+                return val;
+            return 0;
+        }
+        time(val) {
+            if (val !== undefined)
+                return val;
+            return 0;
+        }
+        duration() {
+            return 0;
+        }
+        attr() {
+            return {
+                src: this.uri(),
+                controls: this.controls(),
+                autoplay: this.autoplay(),
+                loop: this.loop(),
+                poster: this.poster()
+            };
+        }
+        event() {
+            return {
+                volumechange: (event) => this.revolume(event),
+                timeupdate: (event) => this.retime(event),
+                durationchange: (event) => this.redurate(event),
+                playing: (event) => this.play_started(event),
+                play: (event) => this.play(event),
+                pause: (event) => this.pause(event)
+            };
+        }
+        uri() {
+            return "";
+        }
+        controls() {
+            return true;
+        }
+        autoplay() {
+            return true;
+        }
+        loop() {
+            return false;
+        }
+        poster() {
+            return "";
+        }
+        revolume(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        retime(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        redurate(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        play_started(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        play(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        pause(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "playing", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "volume", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "time", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "revolume", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "retime", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "redurate", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "play_started", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "play", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player.prototype, "pause", null);
+    $.$mol_video_player = $mol_video_player;
+})($ || ($ = {}));
+//mol/video/player/-view.tree/player.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_video_player extends $.$mol_video_player {
+            dom_node() {
+                return super.dom_node();
+            }
+            volume(next) {
+                this.revolume();
+                if (next === undefined) {
+                    return this.dom_node().volume;
+                }
+                else {
+                    return this.dom_node().volume = Math.max(0, Math.min(next, 1));
+                }
+            }
+            time(next) {
+                this.retime();
+                if (next === undefined) {
+                    return this.dom_node().currentTime;
+                }
+                else {
+                    return this.dom_node().currentTime = Math.max(0, Math.min(next, this.duration()));
+                }
+            }
+            duration() {
+                this.redurate();
+                return this.dom_node().duration;
+            }
+            playing(next) {
+                if (next === undefined) {
+                    return false;
+                }
+                else {
+                    if (next) {
+                        this.dom_node().play();
+                    }
+                    else {
+                        this.dom_node().pause();
+                    }
+                    return next;
+                }
+            }
+            play() {
+                this.playing(true);
+            }
+            pause() {
+                this.playing(false);
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_video_player.prototype, "volume", null);
+        __decorate([
+            $mol_mem
+        ], $mol_video_player.prototype, "time", null);
+        __decorate([
+            $mol_mem
+        ], $mol_video_player.prototype, "duration", null);
+        __decorate([
+            $mol_mem
+        ], $mol_video_player.prototype, "playing", null);
+        $$.$mol_video_player = $mol_video_player;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/video/player/player.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/video/player/player.view.css", "[mol_video_player] {\n\tflex: 1 1 auto;\n}\n");
+})($ || ($ = {}));
+//mol/video/player/-css/player.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_video_player_demo extends $mol_example_large {
+        title() {
+            return "Reactive video player";
+        }
+        sub() {
+            return [
+                this.Controls(),
+                this.Player()
+            ];
+        }
+        tags() {
+            return [
+                "$mol_row",
+                "$mol_button",
+                "$mol_check",
+                "$mol_paragraph",
+                "$mol_number",
+                "$mol_labeler",
+                "video",
+                "player",
+                "palyback",
+                "upload",
+                "media"
+            ];
+        }
+        files() {
+            return this.Open().files();
+        }
+        Open() {
+            const obj = new this.$.$mol_button_open();
+            return obj;
+        }
+        Playing_icon() {
+            const obj = new this.$.$mol_icon_play();
+            return obj;
+        }
+        Playing() {
+            const obj = new this.$.$mol_check_icon();
+            obj.checked = (val) => this.playing(val);
+            obj.Icon = () => this.Playing_icon();
+            return obj;
+        }
+        Duration() {
+            const obj = new this.$.$mol_paragraph();
+            obj.sub = () => [
+                this.duration()
+            ];
+            return obj;
+        }
+        Duration_labeler() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Duration";
+            obj.content = () => [
+                this.Duration()
+            ];
+            return obj;
+        }
+        Time() {
+            const obj = new this.$.$mol_number();
+            obj.value = (val) => this.time(val);
+            obj.precision_view = () => 0.001;
+            return obj;
+        }
+        Time_labeler() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Time";
+            obj.content = () => [
+                this.Time()
+            ];
+            return obj;
+        }
+        Volume() {
+            const obj = new this.$.$mol_number();
+            obj.value = (val) => this.volume(val);
+            obj.precision = () => 0.001;
+            return obj;
+        }
+        Volume_labeler() {
+            const obj = new this.$.$mol_labeler();
+            obj.title = () => "Volume";
+            obj.content = () => [
+                this.Volume()
+            ];
+            return obj;
+        }
+        Controls() {
+            const obj = new this.$.$mol_row();
+            obj.sub = () => [
+                this.Open(),
+                this.Playing(),
+                this.Duration_labeler(),
+                this.Time_labeler(),
+                this.Volume_labeler()
+            ];
+            return obj;
+        }
+        uri() {
+            return "";
+        }
+        playing(val) {
+            return this.Player().playing(val);
+        }
+        volume(val) {
+            return this.Player().volume(val);
+        }
+        time(val) {
+            return this.Player().time(val);
+        }
+        duration() {
+            return this.Player().duration();
+        }
+        Player() {
+            const obj = new this.$.$mol_video_player();
+            obj.uri = () => this.uri();
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Open", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Playing_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Playing", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Duration", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Duration_labeler", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Time", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Time_labeler", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Volume", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Volume_labeler", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Controls", null);
+    __decorate([
+        $mol_mem
+    ], $mol_video_player_demo.prototype, "Player", null);
+    $.$mol_video_player_demo = $mol_video_player_demo;
+})($ || ($ = {}));
+//mol/video/player/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_video_player_demo extends $.$mol_video_player_demo {
+            uri() {
+                const file = this.files()[0];
+                if (!file)
+                    return null;
+                return URL.createObjectURL(file);
+            }
+        }
+        $$.$mol_video_player_demo = $mol_video_player_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/video/player/demo/demo.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_eye extends $mol_icon {
+        path() {
+            return "M12,9C10.34,9 9,10.34 9,12C9,13.66 10.34,15 12,15C13.66,15 15,13.66 15,12C15,10.34 13.66,9 12,9M12,17C9.24,17 7,14.76 7,12C7,9.24 9.24,7 12,7C14.76,7 17,9.24 17,12C17,14.76 14.76,17 12,17M12,4.5C7,4.5 2.73,7.61 1,12C2.73,16.39 7,19.5 12,19.5C17,19.5 21.27,16.39 23,12C21.27,7.61 17,4.5 12,4.5Z";
+        }
+    }
+    $.$mol_icon_eye = $mol_icon_eye;
+})($ || ($ = {}));
+//mol/icon/eye/-view.tree/eye.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_password extends $mol_view {
+        type(val) {
+            if (val !== undefined)
+                return val;
+            return "password";
+        }
+        sub() {
+            return this.content();
+        }
+        hint() {
+            return "";
+        }
+        value(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        submit(event) {
+            if (event !== undefined)
+                return event;
+            return null;
+        }
+        enabled() {
+            return true;
+        }
+        Pass() {
+            const obj = new this.$.$mol_string();
+            obj.type = () => this.type();
+            obj.hint = () => this.hint();
+            obj.value = (val) => this.value(val);
+            obj.submit = (event) => this.submit(event);
+            obj.enabled = () => this.enabled();
+            return obj;
+        }
+        checked(val) {
+            if (val !== undefined)
+                return val;
+            return true;
+        }
+        Show_icon() {
+            const obj = new this.$.$mol_icon_eye();
+            return obj;
+        }
+        Show() {
+            const obj = new this.$.$mol_check_icon();
+            obj.checked = (val) => this.checked(val);
+            obj.Icon = () => this.Show_icon();
+            return obj;
+        }
+        content() {
+            return [
+                this.Pass(),
+                this.Show()
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_password.prototype, "type", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password.prototype, "value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password.prototype, "submit", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password.prototype, "Pass", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password.prototype, "checked", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password.prototype, "Show_icon", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password.prototype, "Show", null);
+    $.$mol_password = $mol_password;
+})($ || ($ = {}));
+//mol/password/-view.tree/password.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_password extends $.$mol_password {
+            checked(next) {
+                this.type(next ? 'text' : 'password');
+                return next ?? false;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_password.prototype, "checked", null);
+        $$.$mol_password = $mol_password;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/password/password.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_password_demo extends $mol_example_small {
+        title() {
+            return "Password input field based on $mol_string";
+        }
+        sub() {
+            return [
+                this.Simple(),
+                this.Hint()
+            ];
+        }
+        tags() {
+            return [
+                "password",
+                "input"
+            ];
+        }
+        pass(val) {
+            if (val !== undefined)
+                return val;
+            return "Hello world";
+        }
+        Simple() {
+            const obj = new this.$.$mol_password();
+            obj.value = (val) => this.pass(val);
+            return obj;
+        }
+        pass2(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Hint() {
+            const obj = new this.$.$mol_password();
+            obj.value = (val) => this.pass2(val);
+            obj.hint = () => "Top secret";
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_password_demo.prototype, "pass", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password_demo.prototype, "Simple", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password_demo.prototype, "pass2", null);
+    __decorate([
+        $mol_mem
+    ], $mol_password_demo.prototype, "Hint", null);
+    $.$mol_password_demo = $mol_password_demo;
+})($ || ($ = {}));
+//mol/password/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_lights_demo extends $mol_example_small {
+        title() {
+            return "Switcher between light/dark themes (usually for `$mol_theme_auto` plugin).";
+        }
+        sub() {
+            return [
+                this.Sample()
+            ];
+        }
+        tags() {
+            return [
+                "light",
+                "dark",
+                "theme",
+                "switcher"
+            ];
+        }
+        Theme() {
+            const obj = new this.$.$mol_theme_auto();
+            return obj;
+        }
+        Lighter() {
+            const obj = new this.$.$mol_lights_toggle();
+            return obj;
+        }
+        Sample() {
+            const obj = new this.$.$mol_view();
+            obj.plugins = () => [
+                this.Theme()
+            ];
+            obj.sub = () => [
+                this.Lighter()
+            ];
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_lights_demo.prototype, "Theme", null);
+    __decorate([
+        $mol_mem
+    ], $mol_lights_demo.prototype, "Lighter", null);
+    __decorate([
+        $mol_mem
+    ], $mol_lights_demo.prototype, "Sample", null);
+    $.$mol_lights_demo = $mol_lights_demo;
+})($ || ($ = {}));
+//mol/lights/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
     var $$;
     (function ($$) {
         class $hyoo_mol extends $.$hyoo_mol {

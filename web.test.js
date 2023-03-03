@@ -4111,81 +4111,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const { unicode_only, line_end, tab, repeat_greedy, optional, forbid_after, force_after, char_only, char_except } = $mol_regexp;
-    $.$hyoo_crowd_tokenizer = $mol_regexp.from({
-        token: {
-            'line-break': line_end,
-            'indents': repeat_greedy(tab, 1),
-            'emoji': [
-                unicode_only('Extended_Pictographic'),
-                optional(unicode_only('Emoji_Modifier')),
-                repeat_greedy([
-                    unicode_only('Emoji_Component'),
-                    unicode_only('Extended_Pictographic'),
-                    optional(unicode_only('Emoji_Modifier')),
-                ]),
-            ],
-            'link': /\b(https?:\/\/[^\s,.;:!?")]+(?:[,.;:!?")][^\s,.;:!?")]+)+)/,
-            'Word': [
-                [
-                    forbid_after(line_end),
-                    unicode_only('White_Space'),
-                ],
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]), 1),
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ])),
-            ],
-            'word': [
-                [
-                    forbid_after(line_end),
-                    unicode_only('White_Space'),
-                ],
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]), 1),
-            ],
-            'spaces': [
-                forbid_after(line_end),
-                repeat_greedy(unicode_only('White_Space'), 1),
-                force_after(unicode_only('White_Space')),
-            ],
-            'space': [
-                forbid_after(line_end),
-                unicode_only('White_Space'),
-                forbid_after([
-                    unicode_only('White_Space'),
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]),
-            ],
-            'others': [
-                repeat_greedy(char_except([
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                    unicode_only('White_Space'),
-                ]), 1),
-            ],
-        },
-    }).native;
-})($ || ($ = {}));
-//hyoo/crowd/tokenizer/tokenizer.ts
-;
-"use strict";
-var $;
-(function ($) {
     $mol_test({
         'empty string'() {
             $mol_assert_like(''.match($hyoo_crowd_tokenizer), null);
@@ -4220,142 +4145,6 @@ var $;
     });
 })($ || ($ = {}));
 //hyoo/crowd/tokenizer/tokenizer.test.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_text extends $hyoo_crowd_node {
-        text(next) {
-            if (next === undefined) {
-                return this.str();
-            }
-            else {
-                const prev = this.units();
-                const lines = next.match(/.*\n|.+$/g) ?? [];
-                $mol_reconcile({
-                    prev,
-                    from: 0,
-                    to: prev.length,
-                    next: lines,
-                    equal: (next, prev) => {
-                        if (typeof prev.data === 'string')
-                            return false;
-                        return this.land.node(prev.self, $hyoo_crowd_text).str() === next;
-                    },
-                    drop: (prev, lead) => this.land.wipe(prev),
-                    insert: (next, lead) => {
-                        const unit = this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', []);
-                        this.land.node(unit.self, $hyoo_crowd_text).str(next);
-                        return unit;
-                    },
-                    update: (next, prev, lead) => {
-                        this.land.node(prev.self, $hyoo_crowd_text).str(next);
-                        return prev;
-                    },
-                });
-                return next;
-            }
-        }
-        str(next) {
-            if (next === undefined) {
-                let str = '';
-                for (const unit of this.units()) {
-                    if (typeof unit.data === 'string')
-                        str += unit.data;
-                    else
-                        str += this.land.node(unit.self, $hyoo_crowd_text).str();
-                }
-                return str;
-            }
-            else {
-                this.write(next, 0, -1);
-                return next;
-            }
-        }
-        write(next, str_from = -1, str_to = str_from) {
-            const list = this.units();
-            let from = str_from < 0 ? list.length : 0;
-            let word = '';
-            while (from < list.length) {
-                word = String(list[from].data);
-                if (str_from <= word.length) {
-                    next = word.slice(0, str_from) + next;
-                    break;
-                }
-                str_from -= word.length;
-                if (str_to > 0)
-                    str_to -= word.length;
-                from++;
-            }
-            let to = str_to < 0 ? list.length : from;
-            while (to < list.length) {
-                word = String(list[to].data);
-                to++;
-                if (str_to < word.length) {
-                    next = next + word.slice(str_to);
-                    break;
-                }
-                str_to -= word.length;
-            }
-            if (from && from === list.length) {
-                --from;
-                next = String(list[from].data) + next;
-            }
-            const words = next.match($hyoo_crowd_tokenizer) ?? [];
-            this.as($hyoo_crowd_list).insert(words, from, to);
-            return this;
-        }
-        point_by_offset(offset) {
-            let off = offset;
-            for (const unit of this.units()) {
-                if (typeof unit.data === 'string') {
-                    const len = String(unit.data).length;
-                    if (off <= len)
-                        return [unit.self, off];
-                    else
-                        off -= len;
-                }
-                else {
-                    const found = this.land.node(unit.self, $hyoo_crowd_text).point_by_offset(off);
-                    if (found[0] !== '0_0')
-                        return found;
-                    off = found[1];
-                }
-            }
-            return ['0_0', off];
-        }
-        offset_by_point([self, offset]) {
-            for (const unit of this.units()) {
-                if (unit.self === self)
-                    return [self, offset];
-                if (typeof unit.data === 'string') {
-                    offset += unit.data.length;
-                }
-                else {
-                    const found = this.land.node(unit.self, $hyoo_crowd_text).offset_by_point([self, offset]);
-                    if (found[0] !== '0_0')
-                        return [self, found[1]];
-                    offset = found[1];
-                }
-            }
-            return ['0_0', offset];
-        }
-        selection(peer, next) {
-            const reg = this.land.selection(peer);
-            if (next) {
-                reg.value(next.map(offset => this.point_by_offset(offset)));
-                return next;
-            }
-            else {
-                this.units();
-                return reg.value()
-                    ?.map(point => this.offset_by_point(point)[1]) ?? [0, 0];
-            }
-        }
-    }
-    $.$hyoo_crowd_text = $hyoo_crowd_text;
-})($ || ($ = {}));
-//hyoo/crowd/text/text.ts
 ;
 "use strict";
 var $;
@@ -6088,28 +5877,7 @@ var $;
 //mol/tree2/to/json/json.test.ts
 ;
 "use strict";
-//mol/type/unary/unary.ts
-;
-"use strict";
-//mol/type/param/param.ts
-;
-"use strict";
 //mol/type/param/param.test.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_data_pipe(...funcs) {
-        return $mol_data_setup(function (input) {
-            let value = input;
-            for (const func of funcs)
-                value = $mol_func_is_class(func) ? new func(value) : func.call(this, value);
-            return value;
-        }, { funcs });
-    }
-    $.$mol_data_pipe = $mol_data_pipe;
-})($ || ($ = {}));
-//mol/data/pipe/pipe.ts
 ;
 "use strict";
 var $;
@@ -7154,5 +6922,479 @@ var $;
     });
 })($ || ($ = {}));
 //mol/base64/encode/encode.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'triplets'() {
+            $mol_assert_equal(new $mol_time_interval('2015-01-01/P1M').end.toString(), '2015-02-01');
+            $mol_assert_equal(new $mol_time_interval('P1M/2015-02-01').start.toString(), '2015-01-01');
+            $mol_assert_equal(new $mol_time_interval('2015-01-01/2015-02-01').duration.toString(), 'PT2678400S');
+        },
+        'comparison'() {
+            const iso = '2021-01-02/2022-03-04';
+            $mol_assert_like(new $mol_time_interval(iso), new $mol_time_interval(iso));
+        },
+    });
+})($ || ($ = {}));
+//mol/time/interval/interval.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'convertion to primitives'() {
+            var unit = new $mol_unit_money_usd(5);
+            $mol_assert_equal(unit.valueOf(), 5);
+            $mol_assert_equal(unit * 2, 10);
+            $mol_assert_equal(unit + '', '$5');
+            $mol_assert_equal(`${unit}`, '$5');
+            $mol_assert_equal(unit.toString(), '$5');
+            $mol_assert_equal(String(unit), '$5');
+        },
+        'arithmetic'() {
+            var usd1 = new $mol_unit_money_usd(2);
+            var usd2 = new $mol_unit_money_usd(3);
+            var rur = new $mol_unit_money_rur(2);
+            $mol_assert_equal($mol_unit.summ(usd1, usd2).toString(), '$5');
+            $mol_assert_equal(usd1.mult(2).toString(), '$4');
+        },
+    });
+})($ || ($ = {}));
+//mol/unit/unit.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is string'() {
+            $mol_data_string('');
+        },
+        'Is not string'() {
+            $mol_assert_fail(() => {
+                $mol_data_string(0);
+            }, '0 is not a string');
+        },
+        'Is object string'() {
+            $mol_assert_fail(() => {
+                $mol_data_string(new String('x'));
+            }, 'x is not a string');
+        },
+    });
+})($ || ($ = {}));
+//mol/data/string/string.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_data_number = (val) => {
+        if (typeof val === 'number')
+            return val;
+        return $mol_fail(new $mol_data_error(`${val} is not a number`));
+    };
+})($ || ($ = {}));
+//mol/data/number/number.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is number'() {
+            $mol_data_number(0);
+        },
+        'Is not number'() {
+            $mol_assert_fail(() => {
+                $mol_data_number('x');
+            }, 'x is not a number');
+        },
+        'Is object number'() {
+            $mol_assert_fail(() => {
+                $mol_data_number(new Number(''));
+            }, '0 is not a number');
+        },
+    });
+})($ || ($ = {}));
+//mol/data/number/number.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is empty array'() {
+            $mol_data_array($mol_data_number)([]);
+        },
+        'Is array'() {
+            $mol_data_array($mol_data_number)([1, 2]);
+        },
+        'Is not array'() {
+            $mol_assert_fail(() => {
+                $mol_data_array($mol_data_number)({ [0]: 1, length: 1, map: () => { } });
+            }, '[object Object] is not an array');
+        },
+        'Has wrong item'() {
+            $mol_assert_fail(() => {
+                $mol_data_array($mol_data_number)([1, '1']);
+            }, '[1] 1 is not a number');
+        },
+        'Has wrong deep item'() {
+            $mol_assert_fail(() => {
+                $mol_data_array($mol_data_array($mol_data_number))([[], [0, 0, false]]);
+            }, '[1] [2] false is not a number');
+        },
+    });
+})($ || ($ = {}));
+//mol/data/array/array.test.ts
+;
+"use strict";
+//mol/type/partial/undefined/undefined.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Fit to record'() {
+            const User = $mol_data_record({ age: $mol_data_number });
+            User({ age: 0 });
+        },
+        'Extends record'() {
+            const User = $mol_data_record({ age: $mol_data_number });
+            User({ age: 0, name: 'Jin' });
+        },
+        'Shrinks record'() {
+            $mol_assert_fail(() => {
+                const User = $mol_data_record({ age: $mol_data_number, name: $mol_data_string });
+                User({ age: 0 });
+            }, '["name"] undefined is not a string');
+        },
+        'Shrinks deep record'() {
+            $mol_assert_fail(() => {
+                const User = $mol_data_record({ wife: $mol_data_record({ age: $mol_data_number }) });
+                User({ wife: {} });
+            }, '["wife"] ["age"] undefined is not a number');
+        },
+    });
+})($ || ($ = {}));
+//mol/data/record/record.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'header level 1'() {
+            const res = [...`= text\n`.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.header, '= text\n');
+            $mol_assert_equal(res.marker, '=');
+            $mol_assert_equal(res.content, 'text');
+        },
+        'header level 6'() {
+            const res = [...`====== text\n`.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.header, '====== text\n');
+            $mol_assert_equal(res.marker, '======');
+            $mol_assert_equal(res.content, 'text');
+        },
+        'header level too many'() {
+            const res = [...`======= text\n`.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.paragraph, '======= text\n');
+            $mol_assert_equal(res.content, '======= text');
+        },
+        'different blocks'() {
+            const text = `
+				= header
+				paragraph
+				= header
+			`.replace(/^\t+/gm, '');
+            const res = [...text.matchAll($hyoo_marked_flow)];
+            $mol_assert_equal(res[0].groups.paragraph, '\n');
+            $mol_assert_equal(res[0].groups.content, '');
+            $mol_assert_equal(res[1].groups.header, '= header\n');
+            $mol_assert_equal(res[1].groups.marker, '=');
+            $mol_assert_equal(res[1].groups.content, 'header');
+            $mol_assert_equal(res[2].groups.paragraph, 'paragraph\n');
+            $mol_assert_equal(res[2].groups.content, 'paragraph');
+            $mol_assert_equal(res[3].groups.header, '= header\n');
+            $mol_assert_equal(res[3].groups.marker, '=');
+            $mol_assert_equal(res[3].groups.content, 'header');
+        },
+        'plain list'() {
+            const text = `
+				- foo
+				- bar
+			`.slice(1).replace(/^\t+/gm, '');
+            const res = [...text.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.list, '- foo\n- bar\n');
+        },
+        'nested lists'() {
+            const text = `
+				- foo
+				  + bar
+				- lol
+			`.slice(1).replace(/^\t+/gm, '');
+            const res = [...text.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.list, '- foo\n  + bar\n- lol\n');
+        },
+        'quote'() {
+            const text = `
+				" foo
+				" bar
+			`.slice(1).replace(/^\t+/gm, '');
+            const res = [...text.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.quote, '" foo\n" bar\n');
+        },
+        'quote in list'() {
+            const text = `
+				- foo
+				  " bar
+				- lol
+			`.slice(1).replace(/^\t+/gm, '');
+            const res = [...text.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.list, '- foo\n  " bar\n- lol\n');
+        },
+        'table'() {
+            const text = `
+				! foo
+				  ! bar
+				! lol
+				  ! 777
+			`.slice(1).replace(/^\t+/gm, '');
+            const res = [...text.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.table, '! foo\n  ! bar\n! lol\n  ! 777\n');
+        },
+        'script'() {
+            const text = `
+			    foo
+			  ++bar
+			  --lol
+			  **777
+			`.slice(1).replace(/^\t+/gm, '');
+            const res = [...text.matchAll($hyoo_marked_flow)][0].groups;
+            $mol_assert_equal(res.script, '    foo\n  ++bar\n  --lol\n  **777\n');
+        },
+    });
+})($ || ($ = {}));
+//hyoo/marked/flow/flow.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $hyoo_harp_to_string(query) {
+        return Object.entries(query).map(([field, harp]) => {
+            if (field === '+')
+                return '';
+            if (field === '=')
+                return '';
+            if (field === '!=')
+                return '';
+            if (!harp)
+                return '';
+            const order = harp['+'] === true ? '+' : harp['+'] === false ? '-' : '';
+            const filter = harp['='] ? '=' : harp['!='] ? '!=' : '';
+            const name = encodeURIComponent(field);
+            let values = (harp['='] || harp['!='] || []).map(([min, max]) => {
+                if (max === undefined || min === max)
+                    return encodeURIComponent(String(min));
+                min = (min === undefined) ? '' : encodeURIComponent(String(min));
+                max = (max === undefined) ? '' : encodeURIComponent(String(max));
+                return `${min}@${max}`;
+            }).join(',');
+            let fetch = $hyoo_harp_to_string(harp);
+            if (fetch)
+                fetch = `[${fetch}]`;
+            return `${order}${name}${filter}${values}${fetch}`;
+        }).filter(Boolean).join(';');
+    }
+    $.$hyoo_harp_to_string = $hyoo_harp_to_string;
+})($ || ($ = {}));
+//hyoo/harp/to/string/string.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function check(str, query) {
+        $mol_assert_like(str, $hyoo_harp_to_string(query));
+        $mol_assert_like(query, $hyoo_harp_from_string(str));
+    }
+    $mol_test({
+        'root'() {
+            check('', {});
+        },
+        'only field'() {
+            check('user%3D777', {
+                'user=777': {},
+            });
+        },
+        'primary key'() {
+            check('user=jin%2C777', {
+                user: {
+                    '=': [['jin,777']],
+                },
+            });
+        },
+        'single fetch'() {
+            check('friend[age%24]', {
+                friend: {
+                    age$: {},
+                },
+            });
+        },
+        'fetch and primary key'() {
+            check('user=jin[friend]', {
+                'user': {
+                    '=': [['jin']],
+                    friend: {},
+                },
+            });
+        },
+        'multiple fetch'() {
+            check('age;friend', {
+                age: {},
+                friend: {},
+            });
+        },
+        'common query string back compatible'() {
+            $mol_assert_like($hyoo_harp_from_string('user=jin&age=100500'), {
+                user: {
+                    '=': [['jin']],
+                },
+                age: {
+                    '=': [['100500']],
+                },
+            });
+        },
+        'common pathname back compatible'() {
+            $mol_assert_like($hyoo_harp_from_string('users/jin/comments'), {
+                users: {},
+                jin: {},
+                comments: {},
+            });
+        },
+        'deep fetch'() {
+            check('my[friend[age];name];stat', {
+                my: {
+                    friend: {
+                        age: {},
+                    },
+                    name: {},
+                },
+                stat: {},
+            });
+        },
+        'orders'() {
+            check('+age;-name', {
+                age: {
+                    '+': true
+                },
+                name: {
+                    '+': false
+                },
+            });
+        },
+        'filter types'() {
+            check('sex=female;status!=married', {
+                sex: {
+                    '=': [['female']],
+                },
+                status: {
+                    '!=': [['married']],
+                },
+            });
+        },
+        'filter ranges'() {
+            check('sex=female;age=18@25;weight=@50;height=150@;hobby=paint,singing', {
+                sex: {
+                    '=': [['female']],
+                },
+                age: {
+                    '=': [['18', '25']],
+                },
+                weight: {
+                    '=': [['', '50']],
+                },
+                height: {
+                    '=': [['150', '']],
+                },
+                hobby: {
+                    '=': [['paint'], ['singing']],
+                },
+            });
+        },
+        'unescaped values'() {
+            $mol_assert_like($hyoo_harp_from_string('foo=jin=777;bar=jin!=666'), {
+                foo: {
+                    '=': [['jin=777']],
+                },
+                bar: {
+                    '=': [['jin!=666']],
+                },
+            });
+        },
+        'slicing'() {
+            check('friend[_num=0@100]', {
+                friend: {
+                    _num: { '=': [['0', '100']] },
+                },
+            });
+        },
+        'complex'() {
+            check('pullRequest[state=closed,merged;+repository[name;private];-updateTime;_num=0@100]', {
+                pullRequest: {
+                    state: {
+                        '=': [
+                            ['closed'],
+                            ['merged'],
+                        ]
+                    },
+                    repository: {
+                        '+': true,
+                        name: {},
+                        private: {},
+                    },
+                    updateTime: {
+                        '+': false,
+                    },
+                    _num: {
+                        '=': [['0', '100']],
+                    },
+                },
+            });
+        },
+    });
+})($ || ($ = {}));
+//hyoo/harp/harp.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Word making'() {
+            $mol_assert_ok($mol_spell_ru.test('пил'));
+            $mol_assert_ok($mol_spell_ru.test('пила'));
+            $mol_assert_ok($mol_spell_ru.test('запил'));
+            $mol_assert_ok($mol_spell_ru.test('завопил'));
+            $mol_assert_ok($mol_spell_ru.test('пилил'));
+            $mol_assert_ok($mol_spell_ru.test('пилоел'));
+            $mol_assert_ok($mol_spell_ru.test('недоперепилоперенедоела'));
+        },
+        'Wrong words'() {
+            $mol_assert_not($mol_spell_ru.test('недперепила'));
+            $mol_assert_not($mol_spell_ru.test('недоbook'));
+        },
+    });
+})($ || ($ = {}));
+//mol/spell/ru/ru.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Known language'() {
+            $mol_assert_ok($mol_spell_any.test('пила'));
+        },
+        'Unknown language'() {
+            $mol_assert_not($mol_spell_any.test('пиri'));
+        },
+    });
+})($ || ($ = {}));
+//mol/spell/any/any.test.ts
 
 //# sourceMappingURL=web.test.js.map
