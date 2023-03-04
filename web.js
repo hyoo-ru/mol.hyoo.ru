@@ -16002,7 +16002,7 @@ var $;
 //hyoo/bench/app/-css/app.view.css.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "7ca4736";
+let $hyoo_sync_revision = "a0ca8ec";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -17649,7 +17649,7 @@ var $;
     $.$hyoo_sync_masters = [
         `wss://sync.hyoo.ru/`,
         `wss://crowd.up.railway.app/`,
-        'wss://sync-hyoo-ru.herokuapp.com/',
+        `wss://crowd2.up.railway.app/`,
     ];
 })($ || ($ = {}));
 //hyoo/sync/masters/masters.ts
@@ -41485,7 +41485,7 @@ var $;
         uri(next) {
             if (next !== undefined)
                 return next;
-            return "pullRequest[state=closed,merged;+repository[name;private;owner[name];_len[issue]];-updateTime;author[name];_num=20@30]";
+            return "pullRequest(state=closed=merged=;+repository(name;private;owner(name);_len(issue));-updateTime;author(name);_num=20@30=)";
         }
         Uri() {
             const obj = new this.$.$mol_textarea();
@@ -41552,11 +41552,10 @@ var $;
 (function ($) {
     const syntax = new $mol_syntax2({
         'filter': /!?=/,
-        'list_separator': /,/,
         'range_separator': /@/,
-        'fetch_open': /\[/,
+        'fetch_open': /\(/,
         'fetch_separator': /[;&\/?#]/,
-        'fetch_close': /\]/,
+        'fetch_close': /\)/,
     });
     function $hyoo_harp_from_string(uri) {
         let parent = {};
@@ -41587,7 +41586,10 @@ var $;
             'filter': (filter, chinks, offset) => {
                 if (values) {
                     if (range) {
-                        range.push(range.pop() + filter);
+                        if (filter === '!=')
+                            range.push(range.pop() + '!');
+                        values.push(range);
+                        range = null;
                     }
                     else {
                         range = [filter];
@@ -41601,12 +41603,6 @@ var $;
                     parent[''] = values;
                 }
             },
-            'list_separator': (found, chunks, offset) => {
-                if (!range)
-                    fail_at(offset);
-                values.push(range);
-                range = null;
-            },
             'range_separator': (found, chunks, offset) => {
                 if (!values)
                     fail_at(offset);
@@ -41614,14 +41610,15 @@ var $;
             },
             'fetch_open': (found, chunks, offset) => {
                 if (range) {
-                    values.push(range);
-                    range = null;
+                    range[range.length - 1] += found;
                 }
-                if (!prev)
-                    fail_at(offset);
-                parent = prev;
-                values = null;
-                prev = null;
+                else {
+                    if (!prev)
+                        fail_at(offset);
+                    parent = prev;
+                    values = null;
+                    prev = null;
+                }
             },
             'fetch_separator': (found, chunks, offset) => {
                 if (range) {
@@ -41632,14 +41629,15 @@ var $;
                 values = null;
                 prev = null;
             },
-            'fetch_close': () => {
+            'fetch_close': (found) => {
                 if (range) {
-                    values.push(range);
-                    range = null;
+                    range[range.length - 1] += found;
                 }
-                parent = stack.pop();
-                values = null;
-                prev = null;
+                else {
+                    parent = stack.pop();
+                    values = null;
+                    prev = null;
+                }
             },
         });
         if (range)
