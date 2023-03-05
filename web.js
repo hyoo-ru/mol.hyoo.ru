@@ -24036,7 +24036,7 @@ var $;
         end,
     ]);
 })($ || ($ = {}));
-//mol/view/tree2/prop/sigrature.ts
+//mol/view/tree2/prop/signature.ts
 ;
 "use strict";
 var $;
@@ -26196,7 +26196,7 @@ var $;
     function args_of(prop, bidi = true) {
         const { key, next } = prop_parts(prop);
         return prop.struct('(,)', [
-            ...key ? [prop.data(key.length > 1 ? key.slice(1) : 'id')] : [],
+            ...key ? [prop.struct(key.length > 1 ? key.slice(1) : 'id')] : [],
             ...(bidi && next) ? [prop.struct('next')] : [],
         ]);
     }
@@ -26231,9 +26231,12 @@ var $;
         if (next)
             addons.push(decorate());
         const val = prop.hack({
-            '@': (locale, belt) => localized_string.hack({
-                '#key': key => [locale.data(`${klass.type}_${name}`)],
-            }),
+            '@': (locale, belt, context) => {
+                const chain = context.chain?.join('_');
+                return localized_string.hack({
+                    '#key': key => [locale.data(`${klass.type}_${name}${chain ? `_${chain}` : ''}`)],
+                });
+            },
             '<=': bind => [
                 bind.struct('()', [
                     bind.kids[0].struct('this'),
@@ -26256,26 +26259,27 @@ var $;
             '^': (ref) => [
                 ref.struct('...', [
                     ref.struct('()', [
-                        ref.struct('super'),
+                        ref.struct(ref.kids[0]?.type ? 'this' : 'super'),
                         ref.struct('[]', [
-                            ref.data(name),
+                            ref.data(ref.kids[0]?.type ?? name),
                         ]),
                         ref.struct('(,)')
                     ]),
                 ]),
             ],
-            '*': (obj, belt) => [
+            '*': (obj, belt, context) => [
                 obj.struct('{,}', obj.kids.map(field => {
                     if (field.type === '^')
                         return field.list([field]).hack(belt)[0];
+                    const field_name = field.type.replace(/\?\w*$/, '');
                     return field.struct(':', [
-                        field.data(name_of(field)),
+                        field.data(field_name),
                         field.kids[0].type === '<=>'
                             ? field.struct('=>', [
                                 params_of(field),
                                 ...field.hack(belt),
                             ])
-                            : field.hack(belt)[0],
+                            : field.hack(belt, { ...context, chain: [...context.chain ?? [], field_name] })[0],
                     ]);
                 }).filter(this.$mol_guard_defined)),
             ],
@@ -26319,6 +26323,10 @@ var $;
                                         over.struct('()', [
                                             over.struct('this'),
                                             over.struct('[]', [
+                                                over.data(name),
+                                            ]),
+                                            args_of(prop),
+                                            over.struct('[]', [
                                                 over.data(oname),
                                             ]),
                                             args_of(over),
@@ -26346,7 +26354,13 @@ var $;
                         input.struct('const', [
                             input.struct('obj'),
                             input.struct('new', [
-                                input.struct(input.type),
+                                input.struct('this'),
+                                input.struct('[]', [
+                                    input.data('$'),
+                                ]),
+                                input.struct('[]', [
+                                    input.data(input.type),
+                                ]),
                                 input.struct('(,)', input.select('/', null).hack(belt)),
                             ]),
                         ]),
