@@ -16488,7 +16488,7 @@ var $;
 //hyoo/bench/app/-css/app.view.css.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "a0ca8ec";
+let $hyoo_sync_revision = "6f92ff4";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -28735,14 +28735,21 @@ var $;
 var $;
 (function ($) {
     class $mol_section extends $mol_list {
+        level() {
+            return 1;
+        }
         rows() {
             return [
                 this.Head(),
                 this.Content()
             ];
         }
+        title_dom_name() {
+            return "h1";
+        }
         Title() {
             const obj = new this.$.$mol_paragraph();
+            obj.dom_name = () => this.title_dom_name();
             obj.title = () => this.title();
             return obj;
         }
@@ -28793,7 +28800,22 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/section/section.view.css", "[mol_section_head] {\n\tjustify-content: space-between;\n\talign-items: flex-end;\n\tflex-wrap: wrap;\n}\n\n[mol_section_title] {\n\tpadding: var(--mol_gap_text);\n\ttext-shadow: 0 0;\n}\n");
+    var $$;
+    (function ($$) {
+        class $mol_section extends $.$mol_section {
+            title_dom_name() {
+                return 'h' + this.level();
+            }
+        }
+        $$.$mol_section = $mol_section;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/section/section.view.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/section/section.view.css", "[mol_section_head] {\n\tjustify-content: space-between;\n\talign-items: flex-end;\n\tflex-wrap: wrap;\n}\n\n[mol_section_title] {\n\tpadding: var(--mol_gap_text);\n\ttext-shadow: 0 0;\n\tfont-size: 1.5rem;\n\tfont-weight: normal;\n}\n");
 })($ || ($ = {}));
 //mol/section/-css/section.view.css.ts
 ;
