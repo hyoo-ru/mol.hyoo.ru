@@ -523,6 +523,7 @@
     "$mol_date_demo",
     "$mol_date",
     "$mol_icon_calendar",
+    "$mol_icon_calendar_today",
     "$mol_format",
     "$mol_deck_demo",
     "$mol_dimmer_demo",
