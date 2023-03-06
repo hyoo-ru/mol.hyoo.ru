@@ -6609,7 +6609,7 @@ var $;
 //mol/lights/toggle/toggle.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "87b1e2e";
+let $hyoo_sync_revision = "18dcd8d";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -8316,7 +8316,7 @@ var $;
         land_init(land) {
             this.db_land_init(land);
             if (!land.grabbed())
-                this.$.$mol_wait_timeout(5000);
+                this.$.$mol_wait_timeout(1000);
         }
         land(id) {
             return this.world().land_sync(id);
@@ -10060,8 +10060,8 @@ var $;
             content() {
                 return this.release() || this.details();
             }
-            changed_moment(next) {
-                return new $mol_time_moment(this.details_node()?.land.last_stamp());
+            changed_moment() {
+                return new $mol_time_moment((this.release_node() ?? this.details_node())?.land.last_stamp());
             }
             book(next) {
                 const book_node = this.sub('book', $hyoo_crowd_reg);
@@ -15699,6 +15699,10 @@ var $;
             const obj = new this.$.$hyoo_page_side();
             return obj;
         }
+        peer(id) {
+            const obj = new this.$.$hyoo_page_side();
+            return obj;
+        }
         book() {
             const obj = new this.$.$hyoo_page_side();
             return obj;
@@ -15911,30 +15915,10 @@ var $;
             obj.value_moment = () => this.changed_moment();
             return obj;
         }
-        peer(id) {
-            const obj = new this.$.$hyoo_page_side();
-            return obj;
-        }
-        Author_link(id) {
-            const obj = new this.$.$hyoo_meta_link();
-            obj.meta = () => this.peer(id);
-            return obj;
-        }
-        author_list() {
-            return [
-                this.Author_link("0_0")
-            ];
-        }
-        Author_list() {
-            const obj = new this.$.$mol_view();
-            obj.sub = () => this.author_list();
-            return obj;
-        }
         Signature() {
             const obj = new this.$.$mol_view();
             obj.sub = () => [
-                this.Changed(),
-                this.Author_list()
+                this.Changed()
             ];
             return obj;
         }
@@ -15942,6 +15926,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_page_side_view.prototype, "profile", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_page_side_view.prototype, "peer", null);
     __decorate([
         $mol_mem
     ], $hyoo_page_side_view.prototype, "book", null);
@@ -16018,15 +16005,6 @@ var $;
         $mol_mem
     ], $hyoo_page_side_view.prototype, "Changed", null);
     __decorate([
-        $mol_mem_key
-    ], $hyoo_page_side_view.prototype, "peer", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_page_side_view.prototype, "Author_link", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_page_side_view.prototype, "Author_list", null);
-    __decorate([
         $mol_mem
     ], $hyoo_page_side_view.prototype, "Signature", null);
     $.$hyoo_page_side_view = $hyoo_page_side_view;
@@ -16079,9 +16057,6 @@ var $;
             details() {
                 return this.editing() ? this.side_details() : this.side_content();
             }
-            author_list() {
-                return [...this.authors()].map(peer => this.Author_link(peer));
-            }
             slides_content() {
                 return super.slides_content()
                     .replace('{title}', this.title() || '{title}')
@@ -16103,9 +16078,6 @@ var $;
         __decorate([
             $mol_mem
         ], $hyoo_page_side_view.prototype, "search_show", null);
-        __decorate([
-            $mol_mem
-        ], $hyoo_page_side_view.prototype, "author_list", null);
         __decorate([
             $mol_mem
         ], $hyoo_page_side_view.prototype, "slides_content", null);
@@ -16145,13 +16117,6 @@ var $;
                 direction: 'row-reverse',
                 wrap: 'wrap',
             },
-        },
-        Author_list: {
-            flex: {
-                wrap: 'wrap',
-                shrink: 1,
-            },
-            justifyContent: 'flex-end',
         },
     });
 })($ || ($ = {}));
