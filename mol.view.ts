@@ -1,9 +1,10 @@
 namespace $.$$ {
 	export class $hyoo_mol extends $.$hyoo_mol {
 		
-		@ $mol_mem
-		description() {
-			return $mol_file.relative( 'mol/readme.md' ).text() as string
+		Placeholder() {
+			if( this.spread() === 'docs' ) return this.Docs().Placeholder()
+			if( !this.spread() ) return super.Placeholder()
+			return null as any
 		}
 		
 	}

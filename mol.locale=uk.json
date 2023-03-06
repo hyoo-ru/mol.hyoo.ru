@@ -1,14 +1,9 @@
 {
   "$hyoo_mol_menu_title": "$mol фреймворк",
-  "$hyoo_mol_Main_title": "Вступ",
-  "$hyoo_mol_Memes_hint": "Меми",
-  "$hyoo_mol_Video_hint": "Відео",
-  "$hyoo_mol_News_hint": "Новини",
-  "$hyoo_mol_Chat_hint": "Обговорення",
-  "$hyoo_mol_Demos_title": "Приклади",
-  "$hyoo_mol_View_tree_title": "View.Tree пісочниця",
+  "$hyoo_mol_Docs_title": "Документация",
+  "$hyoo_mol_Demos_menu_title": "Приклади",
+  "$hyoo_mol_View_tree_title": "Пісочниця",
   "$hyoo_mol_Articles_menu_title": "Статті",
-  "$hyoo_mol_Apps_title": "Додатки",
-  "$hyoo_mol_Icons_title": "Іконки",
-  "$hyoo_mol_Slides_title": "Презентації"
+  "$hyoo_mol_Apps_menu_title": "Додатки",
+  "$hyoo_mol_Icons_title": "Іконки"
 }

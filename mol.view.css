@@ -17,3 +17,7 @@
 [hyoo_mol_icons] {
 	flex: 1000 0 40rem;
 }
+
+[hyoo_mol_docs_menu_foot] {
+	display: none;
+}
