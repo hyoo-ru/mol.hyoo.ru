@@ -4278,6 +4278,7 @@ declare namespace $ {
         Theme(): $$.$mol_theme_auto;
         search_start(next?: any): any;
         Search_start(): $$.$mol_hotkey;
+        menu_title(): string;
         names_demo_filtered(): readonly string[];
         filter_suggests(): readonly string[];
         sources_uri(): string;
@@ -4298,7 +4299,6 @@ declare namespace $ {
     class $mol_app_demo_menu extends $mol_page {
         names(): readonly string[];
         filter_suggests(): readonly string[];
-        title(): string;
         Body(): $$.$mol_scroll;
         Option(id: any): $$.$mol_link;
         filter(val?: any): string;

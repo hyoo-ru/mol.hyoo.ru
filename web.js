@@ -6318,7 +6318,9 @@ var $;
             }
             spread_title(spread) {
                 const page = this.spreads()[spread];
-                return page instanceof $mol_book2 && page.pages()[0]?.title() || page.title();
+                return page instanceof $mol_book2
+                    && page.pages()[0]?.title()
+                    || page.title();
             }
         }
         __decorate([
@@ -14017,6 +14019,7 @@ var $;
         }
         Menu() {
             const obj = new this.$.$mol_app_demo_menu();
+            obj.title = () => this.menu_title();
             obj.names = () => this.names_demo_filtered();
             obj.filter_suggests = () => this.filter_suggests();
             obj.tools = () => this.tools();
@@ -14072,6 +14075,9 @@ var $;
             });
             obj.mod_ctrl = () => true;
             return obj;
+        }
+        menu_title() {
+            return this.$.$mol_locale.text('$mol_app_demo_menu_title');
         }
         names_demo_filtered() {
             return [];
@@ -14166,9 +14172,6 @@ var $;
         }
         filter_suggests() {
             return [];
-        }
-        title() {
-            return this.$.$mol_locale.text('$mol_app_demo_menu_title');
         }
         Body() {
             const obj = new this.$.$mol_scroll();
