@@ -1794,6 +1794,74 @@ $mol_status $mol_view
 	sub /
 		<= message \
 
+$mol_tag_tree $mol_list
+	tag_current? \
+	ids /
+	tags* /
+	Item* $mol_view
+		sub /
+			<= item_title* \
+	sub /
+		<= Tag*0 $mol_expander
+			title <= tag_name* \
+			expanded? <=> tag_expanded*? false
+			content /
+				<= Tag_tree* $mol_tag_tree
+					ids <= tag_ids* /
+					tags* <= tags*
+					Item* <= Item*
+
+$mol_icon_dots_vertical $mol_icon path \M12,16C13.1,16 14,16.9 14,18C14,19.1 13.1,20 12,20C10.9,20 10,19.1 10,18C10,16.9 10.9,16 12,16M12,10C13.1,10 14,10.9 14,12C14,13.1 13.1,14 12,14C10.9,14 10,13.1 10,12C10,10.9 10.9,10 12,10M12,4C13.1,4 14,4.9 14,6C14,7.1 13.1,8 12,8C10.9,8 10,7.1 10,6C10,4.9 10.9,4 12,4Z
+
+$mol_select $mol_pick
+	dictionary?val *
+	options /string
+	value?val \
+	option_label_default \
+	Option_row* $mol_button_minor
+		event_click?event <=> event_select*?event null
+		sub <= option_content* /
+			<= Option_label* $mol_dimmer
+				haystack <= option_label* \
+				needle <= filter_pattern?val \
+	No_options $mol_view
+		sub /
+			<= no_options_message @ \No options
+	plugins /
+		^
+		<= Nav $mol_nav
+			keys_y <= nav_components /$mol_view
+			current_y?component <=> option_focused?component null
+			cycle?val <=> nav_cycle?val true
+	hint @ \Pick..
+	bubble_content /
+		<= Filter
+		<= Menu $mol_list
+			rows <= menu_content /$mol_view
+	Filter $mol_string
+		value?val <=> filter_pattern?val \
+		hint @ \Filter..
+		submit?event <=> submit?event null
+		enabled <= enabled true
+	Trigger_icon $mol_icon_dots_vertical
+
+$mol_select_list $mol_view
+	value?val /string
+	dictionary *
+	Badge* $mol_button_minor
+		title <= badge_title* \badge
+		click?event <=> remove*?event null
+		hint <= badge_hint @ \Drop
+		enabled <= drop_enabled <= enabled true
+	Pick $mol_select
+		align_hor <= align_hor \right
+		options <= options_pickable <= options /string
+		value?val <=> pick?val \
+		option_label* <= option_title* \
+		trigger_enabled <= pick_enabled <= enabled true
+		hint <= pick_hint @ \Add..
+		Trigger_icon <= Pick_icon $mol_icon_plus
+
 $mol_icon_settings $mol_icon path \M12,15.5C10.07,15.5 8.5,13.93 8.5,12C8.5,10.07 10.07,8.5 12,8.5C13.93,8.5 15.5,10.07 15.5,12C15.5,13.93 13.93,15.5 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z
 
 $mol_app_demo $mol_book2
@@ -1810,10 +1878,16 @@ $mol_app_demo $mol_book2
 	demo_block_list /
 		\$mol_example_small
 		\$mol_example_large
+	Menu2 $mol_app_demo_menu2
+		item_ids <= names_demo_all /string
+		item_tags* <= widget_tags* /string
+		title <= menu_title @ \$mol examples
 	Menu $mol_app_demo_menu
 		title <= menu_title @ \$mol examples
 		names <= names_demo_filtered /string
 		filter_suggests <= filter_suggests /string
+		tags_selected? <=> tags_selected? /string
+		tags_dictionary <= tags_dictionary *
 		tools <= tools /
 			<= Sources $mol_link_source
 				uri <= sources_uri \https://github.com/hyoo-ru/mam_mol/
@@ -1835,12 +1909,25 @@ $mol_app_demo $mol_book2
 			<= selected \
 			<= detail_empty_postfix @ \"
 
+$mol_app_demo_menu2 $mol_page
+	Body $mol_scroll
+		sub /
+			<= List $mol_list rows /
+				<= Tree $mol_tag_tree
+					ids <= item_ids /string
+					tags* <= item_tags* /string
+					Item* <= Item* $mol_button_minor
+						title <= item_title* \
+
 $mol_app_demo_menu $mol_page
 	names /string
 	filter_suggests /string
 	Body $mol_scroll
 		sub /
 			<= List $mol_list rows /
+				<= Tags $mol_select_list
+					value?val <=> tags_selected?val /string
+					dictionary <= tags_dictionary *
 				<= Filter $mol_search
 					query?val <=> filter?val \
 					- suggests <= filter_suggests
@@ -2830,57 +2917,6 @@ $hyoo_mol_bench_analysis $mol_link
 	hint @ \Analysis
 	sub /
 		<= Icon $mol_icon_poll
-
-$mol_icon_dots_vertical $mol_icon path \M12,16C13.1,16 14,16.9 14,18C14,19.1 13.1,20 12,20C10.9,20 10,19.1 10,18C10,16.9 10.9,16 12,16M12,10C13.1,10 14,10.9 14,12C14,13.1 13.1,14 12,14C10.9,14 10,13.1 10,12C10,10.9 10.9,10 12,10M12,4C13.1,4 14,4.9 14,6C14,7.1 13.1,8 12,8C10.9,8 10,7.1 10,6C10,4.9 10.9,4 12,4Z
-
-$mol_select $mol_pick
-	dictionary?val *
-	options /string
-	value?val \
-	option_label_default \
-	Option_row* $mol_button_minor
-		event_click?event <=> event_select*?event null
-		sub <= option_content* /
-			<= Option_label* $mol_dimmer
-				haystack <= option_label* \
-				needle <= filter_pattern?val \
-	No_options $mol_view
-		sub /
-			<= no_options_message @ \No options
-	plugins /
-		^
-		<= Nav $mol_nav
-			keys_y <= nav_components /$mol_view
-			current_y?component <=> option_focused?component null
-			cycle?val <=> nav_cycle?val true
-	hint @ \Pick..
-	bubble_content /
-		<= Filter
-		<= Menu $mol_list
-			rows <= menu_content /$mol_view
-	Filter $mol_string
-		value?val <=> filter_pattern?val \
-		hint @ \Filter..
-		submit?event <=> submit?event null
-		enabled <= enabled true
-	Trigger_icon $mol_icon_dots_vertical
-
-$mol_select_list $mol_view
-	value?val /string
-	dictionary *
-	Badge* $mol_button_minor
-		title <= badge_title* \badge
-		click?event <=> remove*?event null
-		hint <= badge_hint @ \Drop
-		enabled <= drop_enabled <= enabled true
-	Pick $mol_select
-		align_hor <= align_hor \right
-		options <= options_pickable <= options /string
-		value?val <=> pick?val \
-		option_label* <= option_title* \
-		trigger_enabled <= pick_enabled <= enabled true
-		hint <= pick_hint @ \Add..
-		Trigger_icon <= Pick_icon $mol_icon_plus
 
 $hyoo_tree $mol_book2
 	transform_map *
@@ -6164,23 +6200,6 @@ $mol_switch_demo $mol_example
 		\option
 		\group
 		\radio
-
-$mol_tag_tree $mol_list
-	tag_current? \
-	ids /
-	tags* /
-	Item* $mol_view
-		sub /
-			<= item_title* \
-	sub /
-		<= Tag*0 $mol_expander
-			title <= tag_name* \
-			expanded? <=> tag_expanded*? false
-			content /
-				<= Tag_tree* $mol_tag_tree
-					ids <= tag_ids* /
-					tags* <= tags*
-					Item* <= Item*
 
 $mol_tag_tree_demo $mol_example
 	title \Autoatic tag tree
