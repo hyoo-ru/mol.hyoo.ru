@@ -14197,7 +14197,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_embed_any extends $mol_ghost {
+    class $mol_embed_any extends $mol_view {
         Image() {
             const obj = new this.$.$mol_image();
             obj.title = () => this.title();
@@ -14258,11 +14258,11 @@ var $;
                 }
                 return 'object';
             }
-            Sub() {
+            sub() {
                 switch (this.type()) {
-                    case 'image': return this.Image();
-                    case 'youtube': return this.Youtube();
-                    default: return this.Object();
+                    case 'image': return [this.Image()];
+                    case 'youtube': return [this.Youtube()];
+                    default: return [this.Object()];
                 }
             }
         }
@@ -14271,7 +14271,7 @@ var $;
         ], $mol_embed_any.prototype, "type", null);
         __decorate([
             $mol_mem
-        ], $mol_embed_any.prototype, "Sub", null);
+        ], $mol_embed_any.prototype, "sub", null);
         $$.$mol_embed_any = $mol_embed_any;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
