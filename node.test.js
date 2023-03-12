@@ -29797,6 +29797,10 @@ var $;
             const sub = json.map(json => $mol_tree2_from_json(json, span));
             return new $mol_tree2('/', '', sub, span);
         }
+        if (ArrayBuffer.isView(json)) {
+            const buf = new Uint8Array(json.buffer, json.byteOffset, json.byteLength);
+            return $mol_tree2.data(String.fromCharCode(...buf), [], span);
+        }
         if (json instanceof Date) {
             return new $mol_tree2('', json.toISOString(), [], span);
         }
@@ -55974,6 +55978,7 @@ var $;
             $mol_assert_equal($mol_tree2_from_json([]).toString(), '/\n');
             $mol_assert_equal($mol_tree2_from_json([false, true]).toString(), '/\n\tfalse\n\ttrue\n');
             $mol_assert_equal($mol_tree2_from_json([0, 1, 2.3]).toString(), '/\n\t0\n\t1\n\t2.3\n');
+            $mol_assert_equal($mol_tree2_from_json(new Uint16Array([1, 10, 256])).toString(), '\\\x01\x00\n\\\x00\x00\x01\n');
             $mol_assert_equal($mol_tree2_from_json(['', 'foo', 'bar\nbaz']).toString(), '/\n\t\\\n\t\\foo\n\t\\\n\t\t\\bar\n\t\t\\baz\n');
             $mol_assert_equal($mol_tree2_from_json({ 'foo': false, 'bar\nbaz': 'lol' }).toString(), '*\n\tfoo false\n\t\\\n\t\t\\bar\n\t\t\\baz\n\t\t\\lol\n');
         },
