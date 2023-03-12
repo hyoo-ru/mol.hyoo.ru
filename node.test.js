@@ -6967,7 +6967,7 @@ var $;
 //mol/lights/toggle/toggle.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "792f351";
+let $hyoo_sync_revision = "1b2fd4b";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -10238,10 +10238,22 @@ var $;
                 return id ? this.world().Fund($hyoo_page_side).Item(id) : null;
             }
             bookmarks_node(next) {
-                return this.sub('bookmarks', $hyoo_crowd_list);
+                const fresh = this.yoke('$hyoo_page_side:bookmarks', $hyoo_crowd_list);
+                if (!fresh)
+                    return fresh;
+                const old = this.sub('bookmarks', $hyoo_crowd_list);
+                for (const mark of old.list()) {
+                    const id = $mol_int62_string_ensure(mark);
+                    if (id)
+                        fresh.add(id);
+                    old.drop(id);
+                }
+                return fresh;
             }
             bookmarks(next) {
                 const node = this.bookmarks_node();
+                if (!node)
+                    return [];
                 const ids = node.list(next?.map(side => side.id()));
                 const Fund = this.world().Fund($hyoo_page_side);
                 return ids.map(id => Fund.Item(id));
@@ -10258,6 +10270,8 @@ var $;
             }
             bookmarked(id, next) {
                 const node = this.bookmarks_node();
+                if (!node)
+                    return false;
                 if (next === undefined)
                     return node.list().includes(id);
                 if (next)
@@ -17669,7 +17683,17 @@ var $;
                 return super.download_name().replace('{filename}', this.title());
             }
             download_blob() {
-                return new $mol_dom_context.Blob([`${this.permalink()}\n\n${this.details()}`], { type: 'text/markdown' });
+                let details = this.details() + '\n';
+                const visit = (book) => {
+                    details += '--\n\n';
+                    details += '= ' + book.title() + '\n\n';
+                    details += book.details().replace(/^(=+) /gm, '=$1 ') + '\n';
+                    for (const page of book.pages())
+                        visit(page);
+                };
+                for (const page of this.side().pages())
+                    visit(page);
+                return new $mol_dom_context.Blob([`${this.permalink()}\n\n${details}`], { type: 'text/x-marked' });
             }
             copy_html() {
                 return this.$.$hyoo_marked_to_html(`= ${this.title()}\n\n${this.details()}\n\n${this.export_sign()}`);
