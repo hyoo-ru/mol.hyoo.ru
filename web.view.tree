@@ -1489,88 +1489,6 @@ $hyoo_page $mol_book2
 					sub /
 						<= Сlose_icon $mol_icon_cross
 
-$mol_icon_forum $mol_icon path \M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
-
-$mol_icon_forum_outline $mol_icon path \M15,4V11H5.17L4,12.17V4H15M16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12V3C17,2.45 16.55,2 16,2M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
-
-$mol_icon_open_in_new $mol_icon path \M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V12H19V19Z
-
-$mol_chat $mol_link
-	seed \
-	opened false
-	arg * mol_chat \
-	hint <= title
-	sub /
-		<= Icon $mol_icon_forum_outline
-	pages /
-		<= Page $mol_page
-			title <= title @ \Discussion
-			tools /
-				<= Esternal $mol_link
-					uri <= standalone \
-					sub /
-						<= Standalone_icon $mol_icon_open_in_new
-				<= Close $mol_link
-					arg * mol_chat null
-					sub /
-						<= Close_icon $mol_icon_cross
-			Body <= Embed $mol_frame
-				uri <= embed \
-
-$hyoo_habhub $mol_book2
-	plugins /
-		<= Theme $mol_theme_auto
-		<= Search_start $mol_hotkey
-			key * F? <=> search_start? null
-			mod_ctrl true
-	Menu_page $mol_page
-		title <= menu_title \HabHub
-		tools <= tools_root /
-			<= Add $mol_link
-				hint \Add article
-				uri \https://github.com/nin-jin/habhub
-				sub /
-					<= Add_icon $mol_icon_plus
-			<= Source_link $mol_link_source
-				uri \https://github.com/hyoo-ru/habhub.hyoo.ru
-			<= Lights $mol_lights_toggle
-		body /
-			<= Search $mol_search_jumper
-				query?val <=> search?val \
-				Root <= Details_body $mol_view
-			<= Menu $mol_list
-				rows <= menu_rows /
-	Details!id $mol_page
-		title <= gist_current_title \
-		tools /
-			<= Details_chat!id $mol_chat
-				seed <= chat_seed!id \
-				pages => chat_pages!id
-			<= Created $mol_paragraph
-				title <= gist_current_created \
-			<= Details_link $mol_link_source
-				uri <= details_link \
-			<= Close $mol_link
-				arg <= close_arg *
-					author null
-					repo null
-					article null
-					gist null
-				sub /
-					<= Close_icon $mol_icon_cross
-		body_scroll_top?val <=> details_scroll_top?val 0
-		body /
-			<= Datails_text $mol_text
-				highlight <= search
-				text <= gist_current_content \
-	Menu_row!id $mol_link
-		minimal_height 40
-		sub /
-			<= Menu_row_title!id $mol_dimmer
-				needle <= search
-				haystack <= gist_title!id \
-		arg <= gist_arg!id *
-
 $hyoo_apps $mol_book2
 	Placeholder null
 	plugins /
@@ -1862,6 +1780,34 @@ $mol_select_list $mol_view
 		trigger_enabled <= pick_enabled <= enabled true
 		hint <= pick_hint @ \Add..
 		Trigger_icon <= Pick_icon $mol_icon_plus
+
+$mol_icon_forum $mol_icon path \M17,12V3C17,2.45 16.55,2 16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
+
+$mol_icon_forum_outline $mol_icon path \M15,4V11H5.17L4,12.17V4H15M16,2H3C2.45,2 2,2.45 2,3V17L6,13H16C16.55,13 17,12.55 17,12V3C17,2.45 16.55,2 16,2M21,6H19V15H6V17C6,17.55 6.45,18 7,18H18L22,22V7C22,6.45 21.55,6 21,6Z
+
+$mol_icon_open_in_new $mol_icon path \M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19C3,20.1 3.9,21 5,21H19C20.1,21 21,20.1 21,19V12H19V19Z
+
+$mol_chat $mol_link
+	seed \
+	opened false
+	arg * mol_chat \
+	hint <= title
+	sub /
+		<= Icon $mol_icon_forum_outline
+	pages /
+		<= Page $mol_page
+			title <= title @ \Discussion
+			tools /
+				<= Esternal $mol_link
+					uri <= standalone \
+					sub /
+						<= Standalone_icon $mol_icon_open_in_new
+				<= Close $mol_link
+					arg * mol_chat null
+					sub /
+						<= Close_icon $mol_icon_cross
+			Body <= Embed $mol_frame
+				uri <= embed \
 
 $mol_icon_settings $mol_icon path \M12,15.5C10.07,15.5 8.5,13.93 8.5,12C8.5,10.07 10.07,8.5 12,8.5C13.93,8.5 15.5,10.07 15.5,12C15.5,13.93 13.93,15.5 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z
 
@@ -3093,11 +3039,8 @@ $hyoo_mol $mol_book2_catalog
 		docs
 			<= Docs $hyoo_page
 				side_main_id \j0mafl_shvwnd
-				title @ \Documentation
+				title @ \Encyclopedia
 				tools_ext / <= Spread_close
-		articles <= Articles $hyoo_habhub
-			menu_title @ \Articles
-			tools_root / <= Spread_close
 		apps <= Apps $hyoo_apps
 			menu_title @ \Applications
 			tools / <= Spread_close
