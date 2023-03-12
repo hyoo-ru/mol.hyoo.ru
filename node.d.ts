@@ -5430,6 +5430,7 @@ declare namespace $ {
 declare namespace $ {
     class $mol_example extends $mol_view {
         tags(): readonly string[];
+        aspects(): readonly string[];
     }
 }
 
@@ -5453,152 +5454,97 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_status extends $mol_view {
-        status(): string;
-        minimal_height(): number;
-        minimal_width(): number;
-        sub(): readonly any[];
-        message(): string;
-    }
-}
-
-declare namespace $.$$ {
-    class $mol_status extends $.$mol_status {
-        message(): any;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
     class $mol_tag_tree extends $mol_list {
-        tag_current(next?: any): string;
         ids_tags(): {};
-        ids(): readonly any[];
-        tags(id: any): readonly any[];
-        Item(id: any): $mol_view;
-        sub(): readonly any[];
-        item_title(id: any): string;
+        tree(): {};
+        tree_path(): readonly string[];
+        path_sep(): string;
+        tag_names(): {};
         tag_name(id: any): string;
-        tag_expanded(id: any, next?: any): boolean;
-        tag_ids(id: any): readonly any[];
-        Tag_tree(id: any): $$.$mol_tag_tree;
+        levels_expanded(): number;
+        Item(id: any): $mol_view;
+        Tags(): readonly $mol_view[];
+        Items(): readonly $mol_view[];
+        sub(): readonly $mol_view[];
         Tag(id: any): $$.$mol_expander;
+        item_title(id: any): string;
+        tag_expanded(id: any, next?: any): boolean;
+        tree_path_id(id: any): readonly string[];
+        Tag_tree(id: any): $$.$mol_tag_tree;
     }
+}
+
+declare namespace $ {
+    function $mol_compare_text<Item>(item?: (item: Item) => string): (a: Item, b: Item) => number;
 }
 
 declare namespace $.$$ {
-    class $mol_tag_tree extends $.$mol_tag_tree {
-        ids(): readonly string[];
-        tags(id: string): any;
-        tag_expanded(id: string, next?: boolean): boolean;
-        tags_ids(): Record<string, string[]>;
-        groups(): {
-            '': string[];
-        };
-        tag_ids(tag: string): string[];
-        sub(): $mol_view[];
-        tag_name(tag: string): string;
+    type Tree = {
+        [K: string]: Tree;
+    } & {
+        __ids?: string[];
+    };
+    export class $mol_tag_tree extends $.$mol_tag_tree {
+        tag_expanded(id: readonly string[], next?: boolean): boolean;
+        tag_expanded_default(id: readonly string[]): boolean;
+        ids_tags(): Record<string, readonly string[]>;
+        tree(): Tree;
+        tree_sub(): Tree;
+        Tags(): $mol_expander[];
+        Items(): $mol_view[];
+        tag_names(): Record<string, string>;
+        tag_name(tree_path: readonly string[]): string;
+        item_title(id: readonly string[]): string;
+        tree_path_id(id: readonly string[]): readonly string[];
     }
+    export {};
 }
 
 declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_icon_dots_vertical extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_select extends $mol_pick {
-        dictionary(val?: any): {};
-        options(): readonly string[];
-        value(val?: any): string;
-        option_label_default(): string;
-        Option_row(id: any): $mol_button_minor;
-        No_options(): $mol_view;
-        plugins(): readonly any[];
-        hint(): string;
-        bubble_content(): readonly any[];
-        Filter(): $$.$mol_string;
-        Trigger_icon(): $mol_icon_dots_vertical;
-        event_select(id: any, event?: any): any;
-        option_label(id: any): string;
-        filter_pattern(val?: any): string;
-        Option_label(id: any): $$.$mol_dimmer;
-        option_content(id: any): readonly any[];
-        no_options_message(): string;
-        nav_components(): readonly $mol_view[];
-        option_focused(component?: any): any;
-        nav_cycle(val?: any): boolean;
-        Nav(): $$.$mol_nav;
-        menu_content(): readonly $mol_view[];
-        Menu(): $$.$mol_list;
-        submit(event?: any): any;
-        enabled(): boolean;
-    }
-}
-
-declare namespace $.$$ {
-    class $mol_select extends $.$mol_select {
-        filter_pattern(next?: string): string;
-        open(): void;
-        options(): readonly string[];
-        options_filtered(): readonly string[];
-        option_label(id: string): any;
-        option_rows(): $mol_button_minor[];
-        option_focused(component?: $mol_view): $mol_view | $mol_string | null;
-        event_select(id: string, event?: MouseEvent): void;
-        nav_components(): ($mol_string | $mol_button_minor)[];
-        trigger_content(): readonly $mol_view_content[];
-        menu_content(): $mol_view[];
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_select_list extends $mol_view {
-        value(val?: any): readonly string[];
-        dictionary(): {};
-        Badge(id: any): $mol_button_minor;
-        Pick(): $$.$mol_select;
-        badge_title(id: any): string;
-        remove(id: any, event?: any): any;
-        badge_hint(): string;
-        enabled(): boolean;
-        drop_enabled(): boolean;
-        align_hor(): string;
-        options(): readonly string[];
-        options_pickable(): readonly string[];
-        pick(val?: any): string;
+    class $mol_app_demo_menu extends $mol_page {
+        names(): readonly string[];
+        widget_tags(id: any): readonly string[];
+        widget_aspects(id: any): readonly string[];
+        widget_title(id: any): string;
+        search_start(next?: any): any;
+        Body(): $$.$mol_scroll;
+        Option(id: any): $$.$mol_link;
+        filter(val?: any): string;
+        Filter(): $$.$mol_search;
+        Selector(): $mol_row;
+        ids_tags(): {};
+        levels_expanded_default(): number;
+        levels_expanded(): number;
+        Tree(): $$.$mol_tag_tree;
+        List(): $$.$mol_list;
+        option_arg(id: any): {};
         option_title(id: any): string;
-        pick_enabled(): boolean;
-        pick_hint(): string;
-        Pick_icon(): $mol_icon_plus;
+        Option_title(id: any): $$.$mol_dimmer;
     }
 }
 
 declare namespace $.$$ {
-    class $mol_select_list extends $.$mol_select_list {
-        value(val?: string[]): readonly string[];
-        pick(key?: string): string;
-        options(): readonly string[];
-        options_pickable(): readonly string[];
-        option_title(key: string): string;
-        badge_title(index: number): string;
-        pick_enabled(): boolean;
-        sub(): ($mol_button_minor | $mol_select)[];
-        title(): string;
-        remove(index: number): void;
+    class $mol_app_demo_menu extends $.$mol_app_demo_menu {
+        filter(next?: string): string;
+        option_arg(id: readonly string[]): {
+            demo: string | undefined;
+        };
+        option_title(path_id: readonly string[]): string;
+        search_start(event?: Event): void;
+        filter_last_word_completed(): boolean;
+        filter_words(): string[];
+        ids_tags(): Record<string, string[]>;
+        tags_filtered(): string[];
+        filter_suggests(): string[];
+        levels_expanded(): number;
+        names_filtered(): readonly string[];
     }
 }
 
-declare namespace $.$$ {
+declare namespace $ {
 }
 
 declare namespace $ {
@@ -5661,74 +5607,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_app_demo extends $mol_book2 {
-        editor_title(): string;
-        source_prefix(): string;
-        repo_dict(): {
-            mol: string;
-        };
-        pages(): readonly any[];
-        plugins(): readonly any[];
-        demo_block_list(): readonly any[];
-        Menu2(): $$.$mol_app_demo_menu2;
-        Menu(): $$.$mol_app_demo_menu;
-        chat_pages(id: any): $mol_page[];
-        Detail(id: any): $mol_app_demo_detail;
-        Readme_page(): $$.$mol_app_demo_readme;
-        Detail_empty_message(): $$.$mol_status;
-        detail_title(): string;
-        blocks(): readonly any[];
-        Theme(): $$.$mol_theme_auto;
-        search_start(next?: any): any;
-        Search_start(): $$.$mol_hotkey;
-        names_demo_all(): readonly string[];
-        widget_tags(id: any): readonly string[];
-        menu_title(): string;
-        names_demo_filtered(): readonly string[];
-        filter_suggests(): readonly string[];
-        tags_selected(next?: any): readonly string[];
-        tags_dictionary(): {};
-        sources_uri(): string;
-        Sources(): $mol_link_source;
-        Lights(): $$.$mol_lights_toggle;
-        tools(): readonly any[];
-        chat_seed(id: any): string;
-        detail_description(): string;
-        edit_uri(): string;
-        Demo(): $mol_view;
-        repo(): string;
-        module(): readonly string[];
-        source_link(): string;
-        detail_empty_prefix(): string;
-        selected(): string;
-        detail_empty_postfix(): string;
-    }
-    class $mol_app_demo_menu2 extends $mol_page {
-        Body(): $$.$mol_scroll;
-        item_ids(): readonly string[];
-        item_tags(id: any): readonly string[];
-        item_title(id: any): string;
-        Item(id: any): $mol_button_minor;
-        Tree(): $$.$mol_tag_tree;
-        List(): $$.$mol_list;
-    }
-    class $mol_app_demo_menu extends $mol_page {
-        names(): readonly string[];
-        filter_suggests(): readonly string[];
-        Body(): $$.$mol_scroll;
-        Option(id: any): $$.$mol_link;
-        tags_selected(val?: any): readonly string[];
-        tags_dictionary(): {};
-        Tags(): $$.$mol_select_list;
-        filter(val?: any): string;
-        Filter(): $$.$mol_search;
-        options(): readonly any[];
-        Options(): $$.$mol_list;
-        List(): $$.$mol_list;
-        option_arg(id: any): {};
-        option_title(id: any): string;
-        Option_title(id: any): $$.$mol_dimmer;
-    }
     class $mol_app_demo_detail extends $mol_page {
         description(): string;
         tools(): readonly any[];
@@ -5751,6 +5629,9 @@ declare namespace $ {
         Close(): $$.$mol_link;
         Demo(): $mol_view;
     }
+}
+
+declare namespace $ {
     class $mol_app_demo_readme extends $mol_page {
         link_template(): string;
         repo(): string;
@@ -5771,10 +5652,6 @@ declare namespace $ {
         uri_base(next?: any): string;
         Not_found_caption(): string;
     }
-}
-
-declare namespace $ {
-    function $mol_func_is_class(func: Function): boolean;
 }
 
 declare namespace $ {
@@ -5814,6 +5691,82 @@ declare namespace $ {
     }
 }
 
+declare namespace $.$$ {
+    class $mol_app_demo_readme_not_found_error extends Error {
+        module: readonly string[];
+        constructor(module: readonly string[]);
+    }
+    class $mol_app_demo_readme extends $.$mol_app_demo_readme {
+        link(module: readonly string[]): string;
+        uri_base(next?: string): string;
+        readme(): string;
+        body(): $mol_view[];
+    }
+}
+
+declare namespace $ {
+    class $mol_status extends $mol_view {
+        status(): string;
+        minimal_height(): number;
+        minimal_width(): number;
+        sub(): readonly any[];
+        message(): string;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_status extends $.$mol_status {
+        message(): any;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_app_demo extends $mol_book2 {
+        editor_title(): string;
+        source_prefix(): string;
+        repo_dict(): {
+            mol: string;
+        };
+        plugins(): readonly any[];
+        demo_block_list(): readonly any[];
+        search_start(next?: any): void;
+        Menu(): $$.$mol_app_demo_menu;
+        chat_pages(id: any): $mol_page[];
+        Detail(id: any): $mol_app_demo_detail;
+        Readme_page(): $$.$mol_app_demo_readme;
+        Detail_empty_message(): $$.$mol_status;
+        detail_title(): string;
+        Theme(): $$.$mol_theme_auto;
+        Search_start(): $$.$mol_hotkey;
+        menu_title(): string;
+        names(): readonly string[];
+        widget_tags(id: any): readonly string[];
+        widget_aspects(id: any): readonly string[];
+        widget_title(id: any): string;
+        sources_uri(): string;
+        Sources(): $mol_link_source;
+        Lights(): $$.$mol_lights_toggle;
+        tools(): readonly any[];
+        chat_seed(id: any): string;
+        detail_description(): string;
+        edit_uri(): string;
+        Demo(): $mol_view;
+        repo(): string;
+        module(): readonly string[];
+        source_link(): string;
+        detail_empty_prefix(): string;
+        selected(): string;
+        detail_empty_postfix(): string;
+    }
+}
+
+declare namespace $ {
+    function $mol_func_is_class(func: Function): boolean;
+}
+
 declare namespace $ {
     class $mol_app_demo_main extends $mol_page {
         minimal_width(): number;
@@ -5839,23 +5792,16 @@ declare namespace $.$$ {
         component_name(name: string): string;
         detail_title(): string;
         detail_description(): string;
-        names_demo_all(): string[];
+        names(): string[];
         widget_tags(name: string): string[];
         widget_title(name: string): string;
-        search_start(event?: Event): void;
-        filter(): string;
-        filter_last_word_completed(): boolean;
-        filter_words(): string[];
-        names_demo_filtered(): string[];
-        tags_dictionary(): Record<string, string>;
-        tags_filtered(): string[];
-        filter_suggests(): string[];
+        widget_aspects(name: string): readonly string[];
         selected(): string;
         readme_page(): boolean;
         selected_class_name(): string;
         Widget(name: string): $mol_example;
         names_demo(): string[];
-        blocks(): $mol_view[];
+        pages(): $mol_view[];
         Demo(): $mol_example;
         logo_uri(): string;
         source_link(): string;
@@ -5867,27 +5813,6 @@ declare namespace $.$$ {
         module(): string[];
         chat_link(): string;
         edit_uri(): string;
-    }
-    class $mol_app_demo_menu extends $.$mol_app_demo_menu {
-        filter(next?: string): string;
-        options(): $mol_link[];
-        option_arg(id: string): {
-            demo: string;
-        };
-        option_title(id: string): string;
-    }
-    class $mol_app_demo_menu2 extends $.$mol_app_demo_menu2 {
-        item_title(id: string): string;
-    }
-    class $mol_app_demo_readme_not_found_error extends Error {
-        module: readonly string[];
-        constructor(module: readonly string[]);
-    }
-    class $mol_app_demo_readme extends $.$mol_app_demo_readme {
-        link(module: readonly string[]): string;
-        uri_base(next?: string): string;
-        readme(): string;
-        body(): $mol_view[];
     }
 }
 
@@ -6112,10 +6037,6 @@ declare namespace $ {
         param_precision(id: any): number;
         Param_value(id: any): $$.$mol_number;
     }
-}
-
-declare namespace $ {
-    function $mol_compare_text<Item>(item?: (item: Item) => string): (a: Item, b: Item) => number;
 }
 
 declare namespace $.$$ {
@@ -7583,6 +7504,104 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_icon_dots_vertical extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_select extends $mol_pick {
+        dictionary(val?: any): {};
+        options(): readonly string[];
+        value(val?: any): string;
+        option_label_default(): string;
+        Option_row(id: any): $mol_button_minor;
+        No_options(): $mol_view;
+        plugins(): readonly any[];
+        hint(): string;
+        bubble_content(): readonly any[];
+        Filter(): $$.$mol_string;
+        Trigger_icon(): $mol_icon_dots_vertical;
+        event_select(id: any, event?: any): any;
+        option_label(id: any): string;
+        filter_pattern(val?: any): string;
+        Option_label(id: any): $$.$mol_dimmer;
+        option_content(id: any): readonly any[];
+        no_options_message(): string;
+        nav_components(): readonly $mol_view[];
+        option_focused(component?: any): any;
+        nav_cycle(val?: any): boolean;
+        Nav(): $$.$mol_nav;
+        menu_content(): readonly $mol_view[];
+        Menu(): $$.$mol_list;
+        submit(event?: any): any;
+        enabled(): boolean;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_select extends $.$mol_select {
+        filter_pattern(next?: string): string;
+        open(): void;
+        options(): readonly string[];
+        options_filtered(): readonly string[];
+        option_label(id: string): any;
+        option_rows(): $mol_button_minor[];
+        option_focused(component?: $mol_view): $mol_view | $mol_string | null;
+        event_select(id: string, event?: MouseEvent): void;
+        nav_components(): ($mol_string | $mol_button_minor)[];
+        trigger_content(): readonly $mol_view_content[];
+        menu_content(): $mol_view[];
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_select_list extends $mol_view {
+        value(val?: any): readonly string[];
+        dictionary(): {};
+        Badges(): readonly $mol_view[];
+        badges_list(): readonly $mol_view[];
+        Badge(id: any): $mol_button_minor;
+        sub(): readonly $mol_view[];
+        badge_title(id: any): string;
+        remove(id: any, event?: any): any;
+        badge_hint(): string;
+        enabled(): boolean;
+        drop_enabled(): boolean;
+        align_hor(): string;
+        options(): readonly string[];
+        options_pickable(): readonly string[];
+        pick(val?: any): string;
+        option_title(id: any): string;
+        pick_enabled(): boolean;
+        pick_hint(): string;
+        Pick_icon(): $mol_icon_plus;
+        Pick(): $$.$mol_select;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_select_list extends $.$mol_select_list {
+        value(val?: string[]): readonly string[];
+        pick(key?: string): string;
+        options(): readonly string[];
+        options_pickable(): readonly string[];
+        option_title(key: string): string;
+        badge_title(index: number): string;
+        pick_enabled(): boolean;
+        Badges(): $mol_button_minor[];
+        title(): string;
+        remove(index: number): void;
+    }
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $ {
     class $hyoo_tree extends $mol_book2 {
         transform_map(): {
             $mol_tree2_from_string: {
@@ -8046,6 +8065,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         Side(): $mol_view;
         First(): $mol_view;
         Second(): $mol_view;
@@ -8085,6 +8105,7 @@ declare namespace $ {
         Empty(): $$.$mol_status;
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         Pizza(): $mol_page;
         Hot_dogs(): $mol_page;
         Fries(): $mol_page;
@@ -8130,6 +8151,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         fail(event?: any): any;
         Major_enabled(): $mol_button_major;
         Major_disabled(): $mol_button_major;
@@ -8264,6 +8286,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         Simple(): $$.$mol_card;
         Pending(): $$.$mol_card;
     }
@@ -11592,6 +11615,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         name(val?: any): string;
         Simple(): $$.$mol_string;
         Hint(): $$.$mol_string;
@@ -11625,6 +11649,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         item_title(id: any): string;
         Item(id: any): $mol_button_minor;
         Tree(): $$.$mol_tag_tree;
@@ -11633,9 +11658,7 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_tag_tree_demo extends $.$mol_tag_tree_demo {
-        item_ids(): string[];
-        item_tags(id: string): string[];
-        item_title(id: string): string;
+        item_title(path: readonly string[]): string;
     }
 }
 
