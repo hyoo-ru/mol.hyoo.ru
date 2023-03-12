@@ -12,11 +12,8 @@ $hyoo_mol $mol_book2_catalog
 		docs
 			<= Docs $hyoo_page
 				side_main_id \j0mafl_shvwnd
-				title @ \Documentation
+				title @ \Encyclopedia
 				tools_ext / <= Spread_close
-		articles <= Articles $hyoo_habhub
-			menu_title @ \Articles
-			tools_root / <= Spread_close
 		apps <= Apps $hyoo_apps
 			menu_title @ \Applications
 			tools / <= Spread_close
