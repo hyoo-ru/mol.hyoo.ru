@@ -7814,6 +7814,8 @@ declare namespace $ {
         Apps(): $$.$hyoo_apps;
         Demos(): $$.$mol_app_demo;
         Bench(): $hyoo_mol_bench;
+        View_tree_syntax_icon(): $mol_icon_help;
+        View_tree_syntax(): $$.$mol_link;
         tree_pipeline(): readonly any[];
         tree_source(): string;
         View_tree(): $$.$hyoo_tree;

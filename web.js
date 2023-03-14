@@ -30886,6 +30886,19 @@ var $;
             ];
             return obj;
         }
+        View_tree_syntax_icon() {
+            const obj = new this.$.$mol_icon_help();
+            return obj;
+        }
+        View_tree_syntax() {
+            const obj = new this.$.$mol_link();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_mol_View_tree_syntax_hint');
+            obj.uri = () => "#!section=docs/=vv2nig_s5zr0f";
+            obj.sub = () => [
+                this.View_tree_syntax_icon()
+            ];
+            return obj;
+        }
         tree_pipeline() {
             return [
                 "$mol_tree2_from_string",
@@ -30901,6 +30914,7 @@ var $;
             obj.title = () => this.$.$mol_locale.text('$hyoo_mol_View_tree_title');
             obj.Presets = () => null;
             obj.source_tools = () => [
+                this.View_tree_syntax(),
                 this.Spread_close()
             ];
             obj.pipeline_default = () => this.tree_pipeline();
@@ -30935,6 +30949,12 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_mol.prototype, "Bench", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "View_tree_syntax_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol.prototype, "View_tree_syntax", null);
     __decorate([
         $mol_mem
     ], $hyoo_mol.prototype, "View_tree", null);
