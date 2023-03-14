@@ -7002,7 +7002,7 @@ var $;
 //mol/lights/toggle/toggle.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "318df19";
+let $hyoo_sync_revision = "0f54419";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -8526,7 +8526,7 @@ var $;
         land_init(land) {
             this.db_land_init(land);
             if (!land.grabbed())
-                this.$.$mol_wait_timeout(1000);
+                this.$.$mol_wait_timeout(10);
         }
         land(id) {
             return this.world().land_sync(id);
@@ -16016,8 +16016,8 @@ var $;
         released() {
             return this.side().released();
         }
-        side_content() {
-            return this.side().content();
+        side_release() {
+            return this.side().release();
         }
         changed_moment() {
             return this.side().changed_moment();
@@ -16368,7 +16368,7 @@ var $;
                 event?.preventDefault();
             }
             details() {
-                return this.editing() ? this.side_details() : this.side_content();
+                return this.editing() ? this.side_details() : this.side_release();
             }
             author_list() {
                 return [...this.authors()].map(peer => this.Author_link(peer));
