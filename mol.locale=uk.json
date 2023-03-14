@@ -3,6 +3,7 @@
   "$hyoo_mol_Docs_title": "Энциклопедия",
   "$hyoo_mol_Demos_menu_title": "Приклади",
   "$hyoo_mol_View_tree_title": "Пісочниця",
+  "$hyoo_mol_View_tree_syntax_hint": "Синтаксис view.tree",
   "$hyoo_mol_Apps_menu_title": "Додатки",
   "$hyoo_mol_Icons_title": "Іконки"
 }
