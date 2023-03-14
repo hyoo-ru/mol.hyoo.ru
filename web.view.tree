@@ -9,6 +9,7 @@ $mol_scroll $mol_view
 		scroll?event <=> event_scroll?event null
 
 $mol_book2 $mol_scroll
+	menu_title \
 	sub <= pages /$mol_view
 	minimal_width 0
 	Placeholder $mol_view
@@ -1123,7 +1124,7 @@ $hyoo_page_side_view $mol_page
 			sub /
 				<= Changed $mol_date
 					value_moment <= changed_moment
-				- <= Author_list $mol_view
+				<= Author_list $mol_view
 					sub <= author_list /
 						<= Author_link*0_0 $hyoo_meta_link
 							meta <= peer*
@@ -3065,7 +3066,7 @@ $hyoo_mol $mol_book2_catalog
 		docs
 			<= Docs $hyoo_page
 				side_main_id \j0mafl_shvwnd
-				title @ \Encyclopedia
+				menu_title @ \Encyclopedia
 				tools_ext / <= Spread_close
 		apps <= Apps $hyoo_apps
 			menu_title @ \Applications

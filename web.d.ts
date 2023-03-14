@@ -816,6 +816,7 @@ declare namespace $.$$ {
 
 declare namespace $ {
     class $mol_book2 extends $mol_scroll {
+        menu_title(): string;
         sub(): readonly $mol_view[];
         minimal_width(): number;
         Placeholder(): $mol_view;
@@ -831,6 +832,7 @@ declare namespace $ {
 declare namespace $.$$ {
     class $mol_book2 extends $.$mol_book2 {
         title(): string;
+        menu_title(): string;
         sub(): readonly $mol_view[];
         bring(): void;
     }
@@ -4335,6 +4337,9 @@ declare namespace $ {
         details(): string;
         Details(): $$.$mol_text;
         Changed(): $$.$mol_date;
+        Author_link(id: any): $$.$hyoo_meta_link;
+        author_list(): readonly any[];
+        Author_list(): $mol_view;
         Signature(): $mol_view;
     }
 }
@@ -4350,6 +4355,7 @@ declare namespace $.$$ {
         search_start(event?: KeyboardEvent): void;
         search_stop(event?: KeyboardEvent): void;
         details(): string;
+        author_list(): $hyoo_meta_link[];
         slides_content(): string;
         slides_send(): void;
     }
