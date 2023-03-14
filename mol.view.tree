@@ -12,7 +12,7 @@ $hyoo_mol $mol_book2_catalog
 		docs
 			<= Docs $hyoo_page
 				side_main_id \j0mafl_shvwnd
-				title @ \Encyclopedia
+				menu_title @ \Encyclopedia
 				tools_ext / <= Spread_close
 		apps <= Apps $hyoo_apps
 			menu_title @ \Applications
