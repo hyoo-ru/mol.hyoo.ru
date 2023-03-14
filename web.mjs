@@ -6565,7 +6565,7 @@ var $;
 //mol/lights/toggle/toggle.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "52ca50c";
+let $hyoo_sync_revision = "318df19";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
