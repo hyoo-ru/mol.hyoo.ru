@@ -2873,8 +2873,7 @@ $mol_select $mol_pick
 $mol_select_list $mol_view
 	value?val /string
 	dictionary *
-	Badges /$mol_view
-	badges_list /$mol_view
+	badges_list <= Badges /$mol_view
 	Badge* $mol_button_minor
 		title <= badge_title* \badge
 		click?event <=> remove*?event null
@@ -2890,7 +2889,7 @@ $mol_select_list $mol_view
 			hint <= pick_hint @ \Add..
 			Trigger_icon <= Pick_icon $mol_icon_plus
 		^
-			badges_list <= Badges /$mol_view
+			badges_list
 
 $hyoo_tree $mol_book2
 	transform_map *

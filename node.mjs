@@ -30242,11 +30242,8 @@ var $;
         dictionary() {
             return {};
         }
-        Badges() {
-            return [];
-        }
         badges_list() {
-            return [];
+            return this.Badges();
         }
         Badge(id) {
             const obj = new this.$.$mol_button_minor();
@@ -30261,6 +30258,9 @@ var $;
                 this.Pick(),
                 ...this.badges_list()
             ];
+        }
+        Badges() {
+            return [];
         }
         badge_title(id) {
             return "badge";
