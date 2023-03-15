@@ -9,7 +9,7 @@ $hyoo_mol $mol_book2_catalog
 		<= Lights $mol_lights_toggle
 	param \section
 	spreads *
-		docs
+		\
 			<= Docs $hyoo_page
 				side_main_id \j0mafl_shvwnd
 				menu_title @ \Encyclopedia
@@ -28,7 +28,7 @@ $hyoo_mol $mol_book2_catalog
 			source_tools /
 				<= View_tree_syntax $mol_link
 					hint @ \view.tree syntax
-					uri \#!section=docs/=vv2nig_s5zr0f
+					uri \#!=vv2nig_s5zr0f
 					sub /
 						<= View_tree_syntax_icon $mol_icon_help
 				<= Spread_close
@@ -37,7 +37,7 @@ $hyoo_mol $mol_book2_catalog
 				\$mol_view_tree2_to_text
 				\$mol_tree2_text_to_string
 			source_default <= tree_source \
-				\- \Syntax: #!section=docs/=vv2nig_s5zr0f
+				\- \Syntax: #!=vv2nig_s5zr0f
 				\$hyoo_mol_example $mol_page
 				\	title \Example
 				\	params * foo <= changable?val /string
