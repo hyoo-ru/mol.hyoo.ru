@@ -7783,7 +7783,7 @@ declare namespace $ {
         menu_tools(): readonly any[];
         param(): string;
         spreads(): {
-            "": $$.$hyoo_page;
+            docs: $$.$hyoo_page;
             apps: $$.$hyoo_apps;
             demos: $$.$mol_app_demo;
             bench: $hyoo_mol_bench;

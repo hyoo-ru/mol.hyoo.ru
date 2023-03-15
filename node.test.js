@@ -30879,7 +30879,7 @@ var $;
         }
         spreads() {
             return {
-                "": this.Docs(),
+                docs: this.Docs(),
                 apps: this.Apps(),
                 demos: this.Demos(),
                 bench: this.Bench(),
@@ -30945,7 +30945,7 @@ var $;
         View_tree_syntax() {
             const obj = new this.$.$mol_link();
             obj.hint = () => this.$.$mol_locale.text('$hyoo_mol_View_tree_syntax_hint');
-            obj.uri = () => "#!=vv2nig_s5zr0f";
+            obj.uri = () => "#!section=docs/=vv2nig_s5zr0f";
             obj.sub = () => [
                 this.View_tree_syntax_icon()
             ];
@@ -30959,7 +30959,7 @@ var $;
             ];
         }
         tree_source() {
-            return "- \\Syntax: #!=vv2nig_s5zr0f\n$hyoo_mol_example $mol_page\n\ttitle \\Example\n\tparams * foo <= changable?val /string\n\tbody /\n\t\t<= Select $hyoo_mol_example_selector\n\t\t\tempty @ \\No content\n\t\t\tvalue?val <=> info_value?val +NaN\n\t\t\tkids <= info_kids /$mol_view_content\n";
+            return "- \\Syntax: #!section=docs/=vv2nig_s5zr0f\n$hyoo_mol_example $mol_page\n\ttitle \\Example\n\tparams * foo <= changable?val /string\n\tbody /\n\t\t<= Select $hyoo_mol_example_selector\n\t\t\tempty @ \\No content\n\t\t\tvalue?val <=> info_value?val +NaN\n\t\t\tkids <= info_kids /$mol_view_content\n";
         }
         View_tree() {
             const obj = new this.$.$hyoo_tree();
