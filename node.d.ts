@@ -7810,7 +7810,7 @@ declare namespace $ {
         menu_tools(): readonly any[];
         param(): string;
         spreads(): {
-            docs: $$.$hyoo_page;
+            "": $$.$hyoo_page;
             apps: $$.$hyoo_apps;
             demos: $$.$mol_app_demo;
             bench: $hyoo_mol_bench;
