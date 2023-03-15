@@ -14136,6 +14136,12 @@ var $;
         pip() {
             return true;
         }
+        clipboard_read() {
+            return true;
+        }
+        clipboard_write() {
+            return true;
+        }
         uri(val) {
             if (val !== undefined)
                 return val;
@@ -14175,6 +14181,8 @@ var $;
                     ...this.encription() ? ['encrypted-media'] : [],
                     ...this.gyroscope() ? ['gyroscope'] : [],
                     ...this.pip() ? ['picture-in-picture'] : [],
+                    ...this.clipboard_read() ? [`clipboard-read self ${this.uri()}`] : [],
+                    ...this.clipboard_write() ? [`clipboard-write self ${this.uri()}`] : [],
                 ].join(';');
             }
         }
