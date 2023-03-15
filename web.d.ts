@@ -5457,7 +5457,6 @@ declare namespace $ {
         Option(id: any): $$.$mol_link;
         filter(val?: any): string;
         Filter(): $$.$mol_search;
-        Selector(): $mol_row;
         ids_tags(): {};
         levels_expanded_default(): number;
         levels_expanded(): number;
@@ -5726,31 +5725,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_dom_serialize(node: Node): string;
-}
-
-declare namespace $ {
-    function $mol_assert_ok(value: any): void;
-    function $mol_assert_not(value: any): void;
-    function $mol_assert_fail(handler: () => any, ErrorRight?: any): any;
-    function $mol_assert_equal<Value>(...args: [Value, Value, ...Value[]]): void;
-    function $mol_assert_unique(...args: [any, any, ...any[]]): void;
-    function $mol_assert_like<Value>(head: Value, ...tail: Value[]): undefined;
-    function $mol_assert_dom(left: Element, right: Element): void;
-}
-
-declare namespace $ {
-    class $mol_import extends $mol_object2 {
-        static module(uri: string): any;
-        static module_async(uri: string): Promise<any>;
-        static script(uri: string): any;
-        static script_async(uri: string): Promise<any>;
-        static style(uri: string): any;
-        static style_async(uri: string): any;
-    }
-}
-
-declare namespace $ {
     class $mol_icon_tick extends $mol_icon {
         path(): string;
     }
@@ -5926,7 +5900,7 @@ declare namespace $ {
         description(): string;
         Descr(): $$.$mol_text;
         param_fields(): readonly any[];
-        Param_fields(): $mol_row;
+        Param_fields(): $mol_view;
         result(): any;
         result_col_title(id: any): string;
         result_col_sort(val?: any): string;
@@ -6024,6 +5998,33 @@ declare namespace $ {
         setup(next?: string): string;
         measure(next?: string): string;
         steal(donor: $hyoo_js_perf_case): void;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_js_perf_bench extends $hyoo_crowd_struct {
+        title(next?: string): string;
+        prefix(next?: string): string;
+        postfix(next?: string): string;
+        cases(): $hyoo_js_perf_case[];
+        case_ensure(index: number): $hyoo_js_perf_case;
+        case_add(): $hyoo_js_perf_case;
+        case_drop(index: number): void;
+        case_dupe(index: number): $hyoo_js_perf_case;
+        case_swap(index: number): number;
+        steal(donor: $hyoo_js_perf_bench): void;
+        changable(): boolean;
+    }
+}
+
+declare namespace $ {
+    class $mol_import extends $mol_object2 {
+        static module(uri: string): any;
+        static module_async(uri: string): Promise<any>;
+        static script(uri: string): any;
+        static script_async(uri: string): Promise<any>;
+        static style(uri: string): any;
+        static style_async(uri: string): any;
     }
 }
 
@@ -6174,6 +6175,20 @@ declare namespace $ {
         Result(): $$.$mol_list;
         Result_page(): $mol_page;
     }
+}
+
+declare namespace $ {
+    function $mol_dom_serialize(node: Node): string;
+}
+
+declare namespace $ {
+    function $mol_assert_ok(value: any): void;
+    function $mol_assert_not(value: any): void;
+    function $mol_assert_fail(handler: () => any, ErrorRight?: any): any;
+    function $mol_assert_equal<Value>(...args: [Value, Value, ...Value[]]): void;
+    function $mol_assert_unique(...args: [any, any, ...any[]]): void;
+    function $mol_assert_like<Value>(head: Value, ...tail: Value[]): undefined;
+    function $mol_assert_dom(left: Element, right: Element): void;
 }
 
 declare namespace $ {
@@ -6517,6 +6532,8 @@ declare namespace $ {
     class $hyoo_js_perf extends $mol_page {
         title(): string;
         yard(): $hyoo_sync_client;
+        bench_id(): any;
+        bench(): $hyoo_js_perf_bench;
         titles(): readonly string[];
         prefixes(): readonly string[];
         sources(): readonly string[];
@@ -6574,22 +6591,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $hyoo_js_perf_bench extends $hyoo_crowd_struct {
-        title(next?: string): string;
-        prefix(next?: string): string;
-        postfix(next?: string): string;
-        cases(): $hyoo_js_perf_case[];
-        case_ensure(index: number): $hyoo_js_perf_case;
-        case_add(): $hyoo_js_perf_case;
-        case_drop(index: number): void;
-        case_dupe(index: number): $hyoo_js_perf_case;
-        case_swap(index: number): number;
-        steal(donor: $hyoo_js_perf_bench): void;
-        changable(): boolean;
-    }
-}
-
-declare namespace $ {
     function $mol_range2<Item = number>(item?: (index: number) => Item, size?: () => number): Item[];
     class $mol_range2_array<Item> extends Array<Item> {
         concat(...tail: this[]): Item[];
@@ -6637,7 +6638,8 @@ declare namespace $.$$ {
     class $hyoo_js_perf extends $.$hyoo_js_perf {
         title(): string;
         bench_fund(): $hyoo_crowd_fund<typeof $hyoo_js_perf_bench>;
-        bench(): $hyoo_js_perf_bench | null;
+        bench_id(): `${string}_${string}` | null;
+        bench(): $hyoo_js_perf_bench;
         bench_new(): $hyoo_js_perf_bench;
         bench_fork(): $hyoo_js_perf_bench;
         bench_changable(): $hyoo_js_perf_bench;
@@ -6761,21 +6763,25 @@ declare namespace $ {
         Close_item(): $$.$mol_link;
         param(): string;
         spreads(): {
+            reactivity: $hyoo_mol_bench_perf;
             equals: $hyoo_mol_bench_perf;
-            changelog: $hyoo_mol_bench_visual;
-            toxic: $hyoo_mol_bench_visual;
+            moment: $hyoo_mol_bench_perf;
             markdown: $hyoo_mol_bench_perf;
             rope: $hyoo_mol_bench_bench;
+            todomvc: $hyoo_mol_bench_bench;
+            changelog: $hyoo_mol_bench_visual;
+            toxic: $hyoo_mol_bench_visual;
             dbmon: $hyoo_mol_bench_visual;
             habr: $hyoo_mol_bench_visual;
-            init: $hyoo_mol_bench_perf;
-            reactivity: $hyoo_mol_bench_perf;
             sierp: $hyoo_mol_bench_visual;
-            todomvc: $hyoo_mol_bench_bench;
-            moment: $hyoo_mol_bench_perf;
         };
         Close_item_icon(): $mol_icon_cross;
+        Init(): $hyoo_mol_bench_perf;
         equals(): $hyoo_mol_bench_perf;
+        moment(): $hyoo_mol_bench_perf;
+        Markdown(): $hyoo_mol_bench_perf;
+        Rope(): $hyoo_mol_bench_bench;
+        Todomvc(): $hyoo_mol_bench_bench;
         Chanelog_mol(): $$.$mol_embed_native;
         Changelog_vue(): $$.$mol_embed_native;
         Changelog_vanilla(): $$.$mol_embed_native;
@@ -6783,8 +6789,6 @@ declare namespace $ {
         Toxic_mol(): $$.$mol_embed_native;
         Toxic_vue(): $$.$mol_embed_native;
         Toxic(): $hyoo_mol_bench_visual;
-        Markdown(): $hyoo_mol_bench_perf;
-        Rope(): $hyoo_mol_bench_bench;
         DBMon_mol(): $$.$mol_embed_native;
         DBMon_vue(): $$.$mol_embed_native;
         DBMon_react(): $$.$mol_embed_native;
@@ -6793,14 +6797,10 @@ declare namespace $ {
         Habr_mol(): $$.$mol_embed_native;
         Habr_vue(): $$.$mol_embed_native;
         Habr(): $hyoo_mol_bench_visual;
-        Init(): $hyoo_mol_bench_perf;
-        Reactivity(): $hyoo_mol_bench_perf;
         Sierp_mol(): $$.$mol_embed_native;
         Sierp_react(): $$.$mol_embed_native;
         Sierp_glimmer(): $$.$mol_embed_native;
         Sierp(): $hyoo_mol_bench_visual;
-        Todomvc(): $hyoo_mol_bench_bench;
-        moment(): $hyoo_mol_bench_perf;
     }
     class $hyoo_mol_bench_bench extends $hyoo_bench_app {
         addon_title(): string;
@@ -11184,6 +11184,93 @@ declare namespace $.$$ {
 }
 
 declare namespace $.$$ {
+}
+
+declare namespace $ {
+    class $mol_icon_clock extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_pick_time extends $mol_pick {
+        Icon(): $mol_icon_clock;
+        bubble_content(): readonly any[];
+        value_moment(next?: any): $mol_time_moment;
+        value(next?: any): string;
+        enabled(): boolean;
+        Input(): $$.$mol_format;
+        hour_selected(next?: any): string;
+        hour_options(): {};
+        Hours(): $$.$mol_switch;
+        Delimiter(): $$.$mol_paragraph;
+        minute_selected(next?: any): string;
+        minute_options(): {};
+        Minutes(): $$.$mol_switch;
+        Pickers(): $mol_row;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_pick_time extends $.$mol_pick_time {
+        trigger_content(): (string | $mol_icon_clock)[];
+        value_moment(next?: $mol_time_moment): $mol_time_moment;
+        value(next?: string): string;
+        hour_selected(hour_str?: string): string;
+        minute_selected(minute_str?: string): string;
+        hour_options(): {
+            '0': string;
+            '1': string;
+            '2': string;
+            '3': string;
+            '4': string;
+            '5': string;
+            '6': string;
+            '7': string;
+            '8': string;
+            '9': string;
+            '10': string;
+            '11': string;
+            '12': string;
+            '13': string;
+            '14': string;
+            '15': string;
+            '16': string;
+            '17': string;
+            '18': string;
+            '19': string;
+            '20': string;
+            '21': string;
+            '22': string;
+            '23': string;
+        };
+        minute_options(): {
+            '0': string;
+            '5': string;
+            '10': string;
+            '15': string;
+            '20': string;
+            '25': string;
+            '30': string;
+            '35': string;
+            '40': string;
+            '45': string;
+            '50': string;
+            '55': string;
+        };
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_pick_time_demo extends $mol_example_small {
+        sub(): readonly any[];
+        tags(): readonly any[];
+        moment(next?: any): $mol_time_moment;
+        Picker(): $$.$mol_pick_time;
+    }
 }
 
 declare namespace $ {
