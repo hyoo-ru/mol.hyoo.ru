@@ -2881,6 +2881,7 @@ $hyoo_mol $mol_book2_catalog
 				\			value? <=> selector_value? \bidi bind
 				\			options <= dictionary
 				\			focused => selector_focused
+				\
 		icons <= Icons $mol_frame
 			title @ \Icons
 			uri \https://nin-jin.github.io/mol_icon/
