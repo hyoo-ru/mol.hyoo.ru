@@ -1074,7 +1074,7 @@ declare namespace $ {
         height_max(): number;
         Bubble(): $mol_pop_bubble;
     }
-    class $mol_pop_bubble extends $mol_scroll {
+    class $mol_pop_bubble extends $mol_view {
         sub(): readonly $mol_view_content[];
         style(): {
             maxHeight: number;
@@ -4188,7 +4188,7 @@ declare namespace $ {
         day_ghost(id: any): boolean;
         day_holiday(id: any): boolean;
         day_selected(id: any): boolean;
-        day_theme(id: any): string;
+        day_theme(id: any): any;
         day_text(id: any): string;
         day_content(id: any): readonly any[];
     }
@@ -4199,12 +4199,12 @@ declare namespace $ {
             mol_calendar_holiday: boolean;
             mol_calendar_ghost: boolean;
             mol_calendar_selected: boolean;
-            mol_theme: string;
+            mol_theme: any;
         };
         holiday(): boolean;
         ghost(): boolean;
         selected(): boolean;
-        theme(): string;
+        theme(): any;
     }
 }
 
@@ -4225,7 +4225,7 @@ declare namespace $.$$ {
         day_holiday(day: string): boolean;
         day_ghost(day: string): boolean;
         day_selected(day: string): boolean;
-        day_theme(day: string): string;
+        day_theme(day: string): any;
     }
 }
 
@@ -7549,6 +7549,7 @@ declare namespace $ {
         Nav(): $$.$mol_nav;
         menu_content(): readonly $mol_view[];
         Menu(): $$.$mol_list;
+        Bubble_pane(): $$.$mol_scroll;
         submit(event?: any): any;
         enabled(): boolean;
     }
@@ -9356,12 +9357,10 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
-        greet_message(): string;
-        Greeter(): $$.$mol_card;
-        quest_message(): string;
-        Quester(): $$.$mol_card;
-        command_message(): string;
-        Commander(): $$.$mol_card;
+        Greeting(): $$.$mol_card;
+        Question(): $$.$mol_card;
+        Answer(): $$.$mol_card;
+        Command(): $$.$mol_card;
         Deck(): $$.$mol_deck;
     }
 }
