@@ -37,16 +37,28 @@ $hyoo_mol $mol_book2_catalog
 				\$mol_view_tree2_to_text
 				\$mol_tree2_text_to_string
 			source_default <= tree_source \
-				\- \Syntax: #!section=docs/=vv2nig_s5zr0f
-				\$hyoo_mol_example $mol_page
-				\	title \Example
-				\	params * foo <= changable?val /string
-				\	body /
-				\		<= Select $hyoo_mol_example_selector
-				\			empty @ \No content
-				\			value?val <=> info_value?val +NaN
-				\			kids <= info_kids /$mol_view_content
-				\
+				\- \Syntax: #!section=docs/=vv2nig_s5zr0fcvCV 
+				\$hyoo_mol_example_app $mol_page
+				\	dictionary *
+				\		^
+				\		units /
+				\			null
+				\			false
+				\			true
+				\		numbs /number
+				\			+5
+				\			+Infinity
+				\			-Infinity
+				\			NaN
+				\		text \
+				\			\hello
+				\			\word
+				\	body /$mol_view
+				\		<= Selector $hyoo_mol_example_selector
+				\			empty @ \Multilingual string
+				\			value? <=> selector_value? \bidi bind
+				\			options <= dictionary
+				\			focused => selector_focused
 		icons <= Icons $mol_frame
 			title @ \Icons
 			uri \https://nin-jin.github.io/mol_icon/
