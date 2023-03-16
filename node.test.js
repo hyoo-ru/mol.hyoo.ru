@@ -30966,7 +30966,7 @@ var $;
             ];
         }
         tree_source() {
-            return "- \\Syntax: #!section=docs/=vv2nig_s5zr0f\n$hyoo_mol_example $mol_page\n\ttitle \\Example\n\tparams * foo <= changable?val /string\n\tbody /\n\t\t<= Select $hyoo_mol_example_selector\n\t\t\tempty @ \\No content\n\t\t\tvalue?val <=> info_value?val +NaN\n\t\t\tkids <= info_kids /$mol_view_content\n";
+            return "- \\Syntax: #!section=docs/=vv2nig_s5zr0fcvCV \n$hyoo_mol_example_app $mol_page\n\tdictionary *\n\t\t^\n\t\tunits /\n\t\t\tnull\n\t\t\tfalse\n\t\t\ttrue\n\t\tnumbs /number\n\t\t\t+5\n\t\t\t+Infinity\n\t\t\t-Infinity\n\t\t\tNaN\n\t\ttext \\\n\t\t\t\\hello\n\t\t\t\\word\n\tbody /$mol_view\n\t\t<= Selector $hyoo_mol_example_selector\n\t\t\tempty @ \\Multilingual string\n\t\t\tvalue? <=> selector_value? \\bidi bind\n\t\t\toptions <= dictionary\n\t\t\tfocused => selector_focused";
         }
         View_tree() {
             const obj = new this.$.$hyoo_tree();
