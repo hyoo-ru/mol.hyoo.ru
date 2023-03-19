@@ -30545,6 +30545,12 @@ var $;
             obj.uri = () => "#!source=!%20doctype%20html%0A%3F%20xml%20version%20%5C1.0%0A--%20%5Centry%20point%0Ahtml%0A%09meta%20%40%20charset%20%5Cutf-8%0A%09body%0A%09%09a%0A%09%09%09%40%20href%20%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fxml.tree%0A%09%09%09%5Cxml.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_xml_to_text~%24mol_tree2_text_to_string";
             return obj;
         }
+        XmlTree() {
+            const obj = new this.$.$mol_link();
+            obj.title = () => "XML ⇒ xml.tree";
+            obj.uri = () => "#!pipeline=%24mol_dom_parse~%24mol_tree2_xml_from_dom/source=%3C!DOCTYPE%20html%3E%0A%3Chtml%20lang%3D%22en%22%3E%0A%09%3Ctitle%3EExample%3C%2Ftitle%3E%0A%3C%2Fhtml%3E";
+            return obj;
+        }
         Js() {
             const obj = new this.$.$mol_link();
             obj.title = () => "js.tree ⇒ JS";
@@ -30587,6 +30593,7 @@ var $;
                 this.View(),
                 this.Json(),
                 this.Xml(),
+                this.XmlTree(),
                 this.Js(),
                 this.Wasm(),
                 this.jack(),
@@ -30691,6 +30698,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_tree.prototype, "Xml", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_tree.prototype, "XmlTree", null);
     __decorate([
         $mol_mem
     ], $hyoo_tree.prototype, "Js", null);

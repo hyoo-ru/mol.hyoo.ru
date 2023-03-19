@@ -7769,6 +7769,7 @@ declare namespace $ {
         View(): $$.$mol_link;
         Json(): $$.$mol_link;
         Xml(): $$.$mol_link;
+        XmlTree(): $$.$mol_link;
         Js(): $$.$mol_link;
         Wasm(): $$.$mol_link;
         jack(): $$.$mol_link;
