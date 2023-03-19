@@ -7008,7 +7008,7 @@ var $;
 //mol/lights/toggle/toggle.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "ddabd34";
+let $hyoo_sync_revision = "e443b9f";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -7760,7 +7760,7 @@ var $;
             let land_id = $mol_int62_string_ensure(this.value());
             if (land_id)
                 return world.land_sync(land_id);
-            if (this.land.level(this.land.peer().id) < $hyoo_crowd_peer_level.add)
+            if (!this.land.allowed_add())
                 return null;
             const land = $mol_wire_sync(world).grab(law, mod, add);
             this.value(land.id());
@@ -8016,6 +8016,8 @@ var $;
             if (next === undefined)
                 return prev;
             if (next <= prev)
+                return prev;
+            if (!this.allowed_law())
                 return prev;
             const time = this._clocks[$hyoo_crowd_unit_group.auth].tick(peer);
             const auth = this.peer_id();
@@ -8535,7 +8537,7 @@ var $;
         land_init(land) {
             this.land_sync(land);
             if (!land.grabbed())
-                this.$.$mol_wait_timeout(5_000);
+                this.$.$mol_wait_timeout(10_000);
         }
         land(id) {
             return this.world().land_sync(id);
@@ -9160,7 +9162,7 @@ var $;
                 };
                 line.onerror = () => {
                     this.master_cursor((this.master_cursor() + 1) % this.$.$hyoo_sync_masters.length);
-                    fail(new Error(`Master is unabailable`));
+                    fail(new Error(`Master is unavailable`));
                 };
             });
         }
@@ -10266,9 +10268,9 @@ var $;
                     return details;
                 const land = details.land;
                 const meta = this.world().Fund($hyoo_meta_model).Item(land.id());
-                if (land.allowed_mod())
+                if (this.land.allowed_mod())
                     meta.whole(this);
-                if (land.allowed_law())
+                if (this.land.allowed_law())
                     meta.steal_rights(this);
                 return details;
             }
@@ -10280,8 +10282,8 @@ var $;
             }
             release_node() {
                 const release = this.yoke('release', $hyoo_crowd_blob);
-                if (release)
-                    release.land.steal_rights(this.land);
+                if (this.land.allowed_law())
+                    release?.land.steal_rights(this.land);
                 return release;
             }
             release(next) {
@@ -19148,7 +19150,7 @@ var $;
                 return book === side ? side.title() : `${side.title()} | ${book.title()}`;
             }
             aura_showing(next) {
-                const book = this.side_current_book();
+                const book = this.side_books()[0] ?? this.side_current();
                 const key = `aura_showing:${book.id()}`;
                 return this.$.$mol_state_local.value(key, next?.toString()) !== 'false';
             }
