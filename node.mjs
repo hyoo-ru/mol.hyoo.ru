@@ -7008,7 +7008,7 @@ var $;
 //mol/lights/toggle/toggle.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "fd5f534";
+let $hyoo_sync_revision = "f5e0b6d";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -9149,7 +9149,7 @@ var $;
             let interval;
             line.onclose = () => {
                 clearInterval(interval);
-                setTimeout(() => this.reconnects(null), 5000);
+                setTimeout(() => this.reconnects(null), 1000);
             };
             Object.assign(line, {
                 destructor: () => {
@@ -9170,10 +9170,11 @@ var $;
                     done(line);
                 };
                 line.onerror = () => {
-                    line.onclose = () => { };
+                    line.onclose = event => {
+                        fail(new Error(`Master is unavailable (${event.code})`));
+                    };
                     clearInterval(interval);
                     this.master_cursor((this.master_cursor() + 1) % this.$.$hyoo_sync_masters.length);
-                    fail(new Error(`Master is unavailable`));
                 };
             });
         }
@@ -19213,7 +19214,12 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_offline();
+    try {
+        $mol_offline();
+    }
+    catch (error) {
+        console.error(error);
+    }
 })($ || ($ = {}));
 //mol/offline/install/install.ts
 ;
