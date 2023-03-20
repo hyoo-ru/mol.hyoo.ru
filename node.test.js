@@ -7000,7 +7000,7 @@ var $;
 //mol/lights/toggle/toggle.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "f5e0b6d";
+let $hyoo_sync_revision = "fcc9026";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -8061,6 +8061,8 @@ var $;
             return authors;
         }
         steal_rights(donor) {
+            if (!this.allowed_law())
+                return;
             for (const peer of donor.peers()) {
                 this.level(peer, donor.level(peer));
             }
@@ -8527,7 +8529,7 @@ var $;
             return world;
         }
         land_init(land) {
-            this.land_sync(land);
+            this.db_land_init(land);
             if (!land.grabbed())
                 this.$.$mol_wait_timeout(10_000);
         }
@@ -8677,7 +8679,7 @@ var $;
             const units = land.delta(clocks);
             if (!units.length)
                 return;
-            $mol_wire_sync(this).line_send_units(line, units);
+            this.line_send_units(line, units);
             this.$.$mol_log3_rise({
                 place: this,
                 land: land.id(),
@@ -10272,10 +10274,9 @@ var $;
                     return details;
                 const land = details.land;
                 const meta = this.world().Fund($hyoo_meta_model).Item(land.id());
-                if (this.land.allowed_mod())
+                if (land.allowed_mod())
                     meta.whole(this);
-                if (this.land.allowed_law())
-                    meta.steal_rights(this);
+                meta.steal_rights(this);
                 return details;
             }
             details(next) {
@@ -10286,8 +10287,7 @@ var $;
             }
             release_node() {
                 const release = this.yoke('release', $hyoo_crowd_blob);
-                if (this.land.allowed_law())
-                    release?.land.steal_rights(this.land);
+                release?.land.steal_rights(this.land);
                 return release;
             }
             release(next) {
@@ -19198,6 +19198,26 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_wire_stale(task) {
+        try {
+            return task();
+        }
+        catch (error) {
+            if (!(error instanceof Promise))
+                return $mol_fail_hidden(error);
+            const fiber = $mol_wire_auto();
+            if (!(fiber instanceof $mol_wire_fiber))
+                return;
+            return $mol_wire_probe(() => fiber.result());
+        }
+    }
+    $.$mol_wire_stale = $mol_wire_stale;
+})($ || ($ = {}));
+//mol/wire/stale/stale.ts
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_offline() { }
     $.$mol_offline = $mol_offline;
 })($ || ($ = {}));
@@ -19230,12 +19250,11 @@ var $;
                 return book === side ? side.title() : `${side.title()} | ${book.title()}`;
             }
             aura_showing(next) {
-                const book = this.side_books()[0] ?? this.side_current();
-                const key = `aura_showing:${book.id()}`;
+                const key = `aura_showing:${this.book_id()}`;
                 return this.$.$mol_state_local.value(key, next?.toString()) !== 'false';
             }
             aura_image() {
-                try {
+                return $mol_wire_stale(() => {
                     if (!this.aura_showing())
                         return '';
                     const side = this.side_current();
@@ -19244,11 +19263,7 @@ var $;
                         return '';
                     const shade = 'hsla( 0deg, 0%, calc( 50% + var(--mol_theme_luma) * 50% ), .666 )';
                     return `linear-gradient( ${shade}, ${shade} ), url("${aura}")`;
-                }
-                catch (error) {
-                    $mol_fail_log(error);
-                    return $mol_wire_probe(() => this.aura_image()) ?? '';
-                }
+                }) ?? '';
             }
             editing(next) {
                 return this.$.$mol_state_session.value('edit', next) ?? false;
@@ -19283,29 +19298,26 @@ var $;
             side_current_book() {
                 return this.side_current().book() ?? this.side_current();
             }
-            side_books() {
-                try {
+            book_id() {
+                return $mol_wire_stale(() => {
                     if (!this.side_menu_showed())
-                        return [];
+                        return '';
                     const side = this.side_current();
                     const books = side.books().slice().reverse();
                     if (side.pages().length || this.side_menu_showed())
                         books.push(side);
-                    return books;
-                }
-                catch (error) {
-                    $mol_fail_log(error);
-                    return $mol_wire_probe(() => this.side_books()) ?? [];
-                }
+                    return books[0]?.id() ?? '';
+                }) ?? this.side_current_id();
             }
             side_menu_showed(next) {
                 return next ?? Boolean(this.side_current().book() || this.side_current().pages().length > 0);
             }
             pages() {
                 const id = this.side_current_id();
+                const book = this.book_id();
                 return [
                     this.Gap('left'),
-                    ...this.side_books().slice(0, 1).map(book => this.Side_menu(book.id())),
+                    ...book ? [this.Side_menu(book)] : [],
                     this.View(id),
                     ...this.info() ? [this.Info(id)] : [],
                     ...this.editing() ? [this.Edit(id)] : [],
@@ -19362,7 +19374,7 @@ var $;
         ], $hyoo_page.prototype, "side_current_id", null);
         __decorate([
             $mol_mem
-        ], $hyoo_page.prototype, "side_books", null);
+        ], $hyoo_page.prototype, "book_id", null);
         __decorate([
             $mol_mem
         ], $hyoo_page.prototype, "side_menu_showed", null);
