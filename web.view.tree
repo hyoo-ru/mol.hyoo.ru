@@ -2667,8 +2667,7 @@ $mol_select_list $mol_view
 			trigger_enabled <= pick_enabled <= enabled true
 			hint <= pick_hint @ \Add..
 			Trigger_icon <= Pick_icon $mol_icon_plus
-		^
-			badges_list
+		^ badges_list
 
 $hyoo_tree $mol_book2
 	transform_map *
