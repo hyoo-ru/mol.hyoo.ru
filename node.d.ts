@@ -3679,6 +3679,7 @@ declare namespace $ {
         Row(id: any): $$.$mol_text_code_row;
         rows(): readonly any[];
         Rows(): $$.$mol_list;
+        text_export(): string;
         Copy(): $$.$mol_button_copy;
     }
 }
@@ -3715,6 +3716,7 @@ declare namespace $.$$ {
         }>;
         uri_base(): string;
         uri_resolve(uri: string): string;
+        text_export(): string;
     }
 }
 
@@ -4898,8 +4900,8 @@ declare namespace $.$$ {
         permalink(): string;
         export_sign(): string;
         download_name(): string;
-        download_blob(): Blob;
         copy_text(): string;
+        download_blob(): Blob;
         copy_html(): string;
         copy_md(): string;
     }
