@@ -7816,7 +7816,6 @@ declare namespace $.$$ {
         transform_options(): string[];
         result(index: number): string | $mol_tree2 | Uint8Array | $mol_wasm_module;
         result_text(): string;
-        close(index: number): void;
     }
 }
 
