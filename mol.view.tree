@@ -18,7 +18,7 @@ $hyoo_mol $mol_book2_catalog
 			menu_title @ \Applications
 			tools / <= Spread_close
 		demos <= Demos $mol_app_demo
-			menu_title @ \Examples
+			menu_title @ \Demos
 			tools / <= Spread_close
 		bench <= Bench $hyoo_mol_bench
 			menu_tools / <= Spread_close
