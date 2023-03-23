@@ -25335,6 +25335,9 @@ var $;
         menu_title() {
             return this.bench_title();
         }
+        permalink() {
+            return "";
+        }
         plugins() {
             return [
                 this.Theme(),
@@ -25926,6 +25929,9 @@ var $;
             }
             bench_id() {
                 return $mol_int62_string_ensure(this.$.$mol_state_arg.value('bench'));
+            }
+            permalink() {
+                return `https://perf.js.hyoo.ru/#!bench=${this.bench_id()}`;
             }
             bench() {
                 const id = this.bench_id();
@@ -26985,9 +26991,17 @@ var $;
         }
         menu_tools() {
             return [
+                this.Permalink(),
                 this.Analysis(),
                 this.Close()
             ];
+        }
+        Permalink() {
+            const obj = new this.$.$mol_link_iconed();
+            obj.title = () => "";
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_mol_bench_perf_Permalink_hint');
+            obj.uri = () => this.permalink();
+            return obj;
         }
         analysis_uri() {
             return "";
@@ -27002,6 +27016,9 @@ var $;
             return obj;
         }
     }
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench_perf.prototype, "Permalink", null);
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench_perf.prototype, "Analysis", null);

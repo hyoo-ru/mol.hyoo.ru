@@ -2337,6 +2337,7 @@ $hyoo_js_perf $mol_book2
 	prefixes /string
 	sources /string
 	menu_title <= bench_title
+	permalink \
 	plugins /
 		<= Theme $mol_theme_auto
 		<= Hotkey $mol_hotkey
@@ -2590,6 +2591,10 @@ $hyoo_mol_bench_perf $hyoo_js_perf
 	Fork null
 	New null
 	menu_tools /
+		<= Permalink $mol_link_iconed
+			title \
+			hint @ \Customize
+			uri <= permalink
 		<= Analysis $hyoo_mol_bench_analysis
 			uri <= analysis_uri \
 		<= Close $mol_view

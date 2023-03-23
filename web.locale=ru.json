@@ -94,6 +94,7 @@
 	"$hyoo_mol_View_tree_title": "Песочница",
 	"$hyoo_mol_bench_analysis_hint": "Анализ результатов",
 	"$hyoo_mol_bench_menu_title": "Сравнения",
+	"$hyoo_mol_bench_perf_Permalink_hint": "Настроить",
 	"$hyoo_mol_menu_title": "$mol фреймворк",
 	"$hyoo_page_menu_About_hint": "О проекте $hyoo_page",
 	"$hyoo_page_menu_Aura_showing_hint": "Отображение фонов",
