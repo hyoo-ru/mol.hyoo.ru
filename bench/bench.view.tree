@@ -117,6 +117,10 @@ $hyoo_mol_bench_perf $hyoo_js_perf
 	Fork null
 	New null
 	menu_tools /
+		<= Permalink $mol_link_iconed
+			title \
+			hint @ \Customize
+			uri <= permalink
 		<= Analysis $hyoo_mol_bench_analysis
 			uri <= analysis_uri \
 		<= Close $mol_view
