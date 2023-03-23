@@ -6041,6 +6041,38 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_icon_help extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_help_circle extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_help_circle_outline extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    function $mol_dom_serialize(node: Node): string;
+}
+
+declare namespace $ {
+    function $mol_assert_ok(value: any): void;
+    function $mol_assert_not(value: any): void;
+    function $mol_assert_fail(handler: () => any, ErrorRight?: any): any;
+    function $mol_assert_equal<Value>(...args: [Value, Value, ...Value[]]): void;
+    function $mol_assert_unique(...args: [any, any, ...any[]]): void;
+    function $mol_assert_like<Value>(head: Value, ...tail: Value[]): undefined;
+    function $mol_assert_dom(left: Element, right: Element): void;
+}
+
+declare namespace $ {
     class $mol_import extends $mol_object2 {
         static module(uri: string): any;
         static module_async(uri: string): Promise<any>;
@@ -6198,20 +6230,6 @@ declare namespace $ {
         Result(): $$.$mol_list;
         Result_page(): $mol_page;
     }
-}
-
-declare namespace $ {
-    function $mol_dom_serialize(node: Node): string;
-}
-
-declare namespace $ {
-    function $mol_assert_ok(value: any): void;
-    function $mol_assert_not(value: any): void;
-    function $mol_assert_fail(handler: () => any, ErrorRight?: any): any;
-    function $mol_assert_equal<Value>(...args: [Value, Value, ...Value[]]): void;
-    function $mol_assert_unique(...args: [any, any, ...any[]]): void;
-    function $mol_assert_like<Value>(head: Value, ...tail: Value[]): undefined;
-    function $mol_assert_dom(left: Element, right: Element): void;
 }
 
 declare namespace $ {
@@ -6534,43 +6552,24 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_icon_help extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_icon_help_circle extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_icon_help_circle_outline extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $hyoo_js_perf extends $mol_page {
-        title(): string;
+    class $hyoo_js_perf extends $mol_book2 {
         yard(): $hyoo_sync_client;
         bench_id(): any;
         bench(): $hyoo_js_perf_bench;
         titles(): readonly string[];
         prefixes(): readonly string[];
         sources(): readonly string[];
+        menu_title(): string;
         plugins(): readonly any[];
-        Body(): $$.$mol_book2;
-        Case_measurable(id: any): $mol_check_box;
-        Case(id: any): $$.$hyoo_js_perf_case_row;
-        Title(): $mol_string_button;
-        tools(): readonly any[];
+        pages(): readonly any[];
         Theme(): $$.$mol_theme_auto;
         run(event?: any): any;
         Hotkey(): $$.$mol_hotkey;
+        menu_tools(): readonly any[];
         Online(): $$.$hyoo_sync_online;
         Source(): $mol_link_source;
+        About_icon(): $mol_icon_help_circle_outline;
+        About(): $$.$mol_link;
         Lights(): $$.$mol_lights_toggle;
         changable(): boolean;
         prefix(val?: any): string;
@@ -6583,10 +6582,8 @@ declare namespace $ {
         Hint(): $$.$mol_text;
         Common_content(): $$.$mol_list;
         Common(): $mol_page;
-        cases(): readonly any[];
-        Cases(): $$.$mol_list;
-        cases_pane_content(): readonly any[];
-        Cases_pane(): $$.$mol_scroll;
+        bench_title(next?: any): string;
+        Title(): $mol_string_button;
         case_title(id: any, next?: any): string;
         case_prefix(id: any, next?: any): string;
         source(id: any, next?: any): string;
@@ -6596,7 +6593,10 @@ declare namespace $ {
         case_drop(id: any, next?: any): any;
         case_dupe(id: any, next?: any): any;
         case_swap(id: any, next?: any): any;
-        bench_title(next?: any): string;
+        Case_measurable(id: any): $mol_check_box;
+        Case(id: any): $$.$hyoo_js_perf_case_row;
+        cases(): readonly any[];
+        Cases(): $$.$mol_list;
         measurable_all(): readonly any[];
         Measurable_all(): $$.$mol_check_group;
         Run_icon(): $mol_icon_play;
@@ -6608,8 +6608,7 @@ declare namespace $ {
         bench_new(next?: any): any;
         New_icon(): $mol_icon_plus_box;
         New(): $mol_button_minor;
-        About_icon(): $mol_icon_help_circle_outline;
-        About(): $$.$mol_link;
+        Cases_pane(): $mol_page;
     }
 }
 
@@ -6659,7 +6658,6 @@ declare namespace $.$$ {
         get memory_per_iteration(): number;
     }
     class $hyoo_js_perf extends $.$hyoo_js_perf {
-        title(): string;
         bench_fund(): $hyoo_crowd_fund<typeof $hyoo_js_perf_bench>;
         bench_id(): `${string}_${string}` | null;
         bench(): $hyoo_js_perf_bench;
@@ -6834,8 +6832,10 @@ declare namespace $ {
     }
     class $hyoo_mol_bench_perf extends $hyoo_js_perf {
         changable(): boolean;
-        head(): readonly any[];
-        tools(): readonly any[];
+        Share(): any;
+        Fork(): any;
+        New(): any;
+        menu_tools(): readonly any[];
         analysis_uri(): string;
         Analysis(): $hyoo_mol_bench_analysis;
         Close(): $mol_view;

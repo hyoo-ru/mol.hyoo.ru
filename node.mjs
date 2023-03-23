@@ -22724,6 +22724,147 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_icon_help extends $mol_icon {
+        path() {
+            return "M10,19H13V22H10V19M12,2C17.35,2.22 19.68,7.62 16.5,11.67C15.67,12.67 14.33,13.33 13.67,14.17C13,15 13,16 13,17H10C10,15.33 10,13.92 10.67,12.92C11.33,11.92 12.67,11.33 13.5,10.67C15.92,8.43 15.32,5.26 12,5C10.34,5 9,6.34 9,8H6C6,4.69 8.69,2 12,2Z";
+        }
+    }
+    $.$mol_icon_help = $mol_icon_help;
+})($ || ($ = {}));
+//mol/icon/help/-view.tree/help.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_help_circle extends $mol_icon {
+        path() {
+            return "M15.07,11.25L14.17,12.17C13.45,12.89 13,13.5 13,15H11V14.5C11,13.39 11.45,12.39 12.17,11.67L13.41,10.41C13.78,10.05 14,9.55 14,9C14,7.89 13.1,7 12,7C10.9,7 10,7.9 10,9H8C8,6.79 9.79,5 12,5C14.21,5 16,6.79 16,9C16,9.88 15.64,10.67 15.07,11.25M13,19H11V17H13M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.47 17.5,2 12,2Z";
+        }
+    }
+    $.$mol_icon_help_circle = $mol_icon_help_circle;
+})($ || ($ = {}));
+//mol/icon/help/circle/-view.tree/circle.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_icon_help_circle_outline extends $mol_icon {
+        path() {
+            return "M11,18H13V16H11V18M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6C9.79,6 8,7.79 8,10H10C10,8.9 10.9,8 12,8C13.1,8 14,8.9 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10C16,7.79 14.21,6 12,6Z";
+        }
+    }
+    $.$mol_icon_help_circle_outline = $mol_icon_help_circle_outline;
+})($ || ($ = {}));
+//mol/icon/help/circle/outline/-view.tree/outline.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_dom_serialize(node) {
+        const serializer = new $mol_dom_context.XMLSerializer;
+        return serializer.serializeToString(node);
+    }
+    $.$mol_dom_serialize = $mol_dom_serialize;
+})($ || ($ = {}));
+//mol/dom/serialize/serialize.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_assert_ok(value) {
+        if (value)
+            return;
+        $mol_fail(new Error(`${value} ≠ true`));
+    }
+    $.$mol_assert_ok = $mol_assert_ok;
+    function $mol_assert_not(value) {
+        if (!value)
+            return;
+        $mol_fail(new Error(`${value} ≠ false`));
+    }
+    $.$mol_assert_not = $mol_assert_not;
+    function $mol_assert_fail(handler, ErrorRight) {
+        const fail = $.$mol_fail;
+        try {
+            $.$mol_fail = $.$mol_fail_hidden;
+            handler();
+        }
+        catch (error) {
+            if (!ErrorRight)
+                return error;
+            $.$mol_fail = fail;
+            if (typeof ErrorRight === 'string') {
+                $mol_assert_equal(error.message, ErrorRight);
+            }
+            else {
+                $mol_assert_ok(error instanceof ErrorRight);
+            }
+            return error;
+        }
+        finally {
+            $.$mol_fail = fail;
+        }
+        $mol_fail(new Error('Not failed'));
+    }
+    $.$mol_assert_fail = $mol_assert_fail;
+    function $mol_assert_equal(...args) {
+        for (let i = 0; i < args.length; ++i) {
+            for (let j = 0; j < args.length; ++j) {
+                if (i === j)
+                    continue;
+                if (Number.isNaN(args[i]) && Number.isNaN(args[j]))
+                    continue;
+                if (args[i] !== args[j])
+                    $mol_fail(new Error(`Not equal (${i + 1}:${j + 1})\n${args[i]}\n${args[j]}`));
+            }
+        }
+    }
+    $.$mol_assert_equal = $mol_assert_equal;
+    function $mol_assert_unique(...args) {
+        for (let i = 0; i < args.length; ++i) {
+            for (let j = 0; j < args.length; ++j) {
+                if (i === j)
+                    continue;
+                if (args[i] === args[j] || (Number.isNaN(args[i]) && Number.isNaN(args[j]))) {
+                    $mol_fail(new Error(`args[${i}] = args[${j}] = ${args[i]}`));
+                }
+            }
+        }
+    }
+    $.$mol_assert_unique = $mol_assert_unique;
+    function $mol_assert_like(head, ...tail) {
+        for (let [index, value] of Object.entries(tail)) {
+            if (!$mol_compare_deep(value, head)) {
+                const print = (val) => {
+                    if (!val)
+                        return val;
+                    if (typeof val !== 'object')
+                        return val;
+                    if ('outerHTML' in val)
+                        return val.outerHTML;
+                    try {
+                        return JSON.stringify(val);
+                    }
+                    catch (error) {
+                        console.error(error);
+                        return val;
+                    }
+                };
+                return $mol_fail(new Error(`Not like (1:${+index + 2})\n${print(head)}\n---\n${print(value)}`));
+            }
+        }
+    }
+    $.$mol_assert_like = $mol_assert_like;
+    function $mol_assert_dom(left, right) {
+        $mol_assert_equal($mol_dom_serialize(left), $mol_dom_serialize(right));
+    }
+    $.$mol_assert_dom = $mol_assert_dom;
+})($ || ($ = {}));
+//mol/assert/assert.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_import extends $mol_object2 {
         static module(uri) {
             return $mol_wire_sync(this).module_async(uri);
@@ -23603,111 +23744,6 @@ var $;
     $.$hyoo_js_eval = $hyoo_js_eval;
 })($ || ($ = {}));
 //hyoo/js/eval/-view.tree/eval.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_dom_serialize(node) {
-        const serializer = new $mol_dom_context.XMLSerializer;
-        return serializer.serializeToString(node);
-    }
-    $.$mol_dom_serialize = $mol_dom_serialize;
-})($ || ($ = {}));
-//mol/dom/serialize/serialize.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_assert_ok(value) {
-        if (value)
-            return;
-        $mol_fail(new Error(`${value} ≠ true`));
-    }
-    $.$mol_assert_ok = $mol_assert_ok;
-    function $mol_assert_not(value) {
-        if (!value)
-            return;
-        $mol_fail(new Error(`${value} ≠ false`));
-    }
-    $.$mol_assert_not = $mol_assert_not;
-    function $mol_assert_fail(handler, ErrorRight) {
-        const fail = $.$mol_fail;
-        try {
-            $.$mol_fail = $.$mol_fail_hidden;
-            handler();
-        }
-        catch (error) {
-            if (!ErrorRight)
-                return error;
-            $.$mol_fail = fail;
-            if (typeof ErrorRight === 'string') {
-                $mol_assert_equal(error.message, ErrorRight);
-            }
-            else {
-                $mol_assert_ok(error instanceof ErrorRight);
-            }
-            return error;
-        }
-        finally {
-            $.$mol_fail = fail;
-        }
-        $mol_fail(new Error('Not failed'));
-    }
-    $.$mol_assert_fail = $mol_assert_fail;
-    function $mol_assert_equal(...args) {
-        for (let i = 0; i < args.length; ++i) {
-            for (let j = 0; j < args.length; ++j) {
-                if (i === j)
-                    continue;
-                if (Number.isNaN(args[i]) && Number.isNaN(args[j]))
-                    continue;
-                if (args[i] !== args[j])
-                    $mol_fail(new Error(`Not equal (${i + 1}:${j + 1})\n${args[i]}\n${args[j]}`));
-            }
-        }
-    }
-    $.$mol_assert_equal = $mol_assert_equal;
-    function $mol_assert_unique(...args) {
-        for (let i = 0; i < args.length; ++i) {
-            for (let j = 0; j < args.length; ++j) {
-                if (i === j)
-                    continue;
-                if (args[i] === args[j] || (Number.isNaN(args[i]) && Number.isNaN(args[j]))) {
-                    $mol_fail(new Error(`args[${i}] = args[${j}] = ${args[i]}`));
-                }
-            }
-        }
-    }
-    $.$mol_assert_unique = $mol_assert_unique;
-    function $mol_assert_like(head, ...tail) {
-        for (let [index, value] of Object.entries(tail)) {
-            if (!$mol_compare_deep(value, head)) {
-                const print = (val) => {
-                    if (!val)
-                        return val;
-                    if (typeof val !== 'object')
-                        return val;
-                    if ('outerHTML' in val)
-                        return val.outerHTML;
-                    try {
-                        return JSON.stringify(val);
-                    }
-                    catch (error) {
-                        console.error(error);
-                        return val;
-                    }
-                };
-                return $mol_fail(new Error(`Not like (1:${+index + 2})\n${print(head)}\n---\n${print(value)}`));
-            }
-        }
-    }
-    $.$mol_assert_like = $mol_assert_like;
-    function $mol_assert_dom(left, right) {
-        $mol_assert_equal($mol_dom_serialize(left), $mol_dom_serialize(right));
-    }
-    $.$mol_assert_dom = $mol_assert_dom;
-})($ || ($ = {}));
-//mol/assert/assert.ts
 ;
 "use strict";
 var $;
@@ -25275,46 +25311,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_icon_help extends $mol_icon {
-        path() {
-            return "M10,19H13V22H10V19M12,2C17.35,2.22 19.68,7.62 16.5,11.67C15.67,12.67 14.33,13.33 13.67,14.17C13,15 13,16 13,17H10C10,15.33 10,13.92 10.67,12.92C11.33,11.92 12.67,11.33 13.5,10.67C15.92,8.43 15.32,5.26 12,5C10.34,5 9,6.34 9,8H6C6,4.69 8.69,2 12,2Z";
-        }
-    }
-    $.$mol_icon_help = $mol_icon_help;
-})($ || ($ = {}));
-//mol/icon/help/-view.tree/help.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_icon_help_circle extends $mol_icon {
-        path() {
-            return "M15.07,11.25L14.17,12.17C13.45,12.89 13,13.5 13,15H11V14.5C11,13.39 11.45,12.39 12.17,11.67L13.41,10.41C13.78,10.05 14,9.55 14,9C14,7.89 13.1,7 12,7C10.9,7 10,7.9 10,9H8C8,6.79 9.79,5 12,5C14.21,5 16,6.79 16,9C16,9.88 15.64,10.67 15.07,11.25M13,19H11V17H13M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.47 17.5,2 12,2Z";
-        }
-    }
-    $.$mol_icon_help_circle = $mol_icon_help_circle;
-})($ || ($ = {}));
-//mol/icon/help/circle/-view.tree/circle.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_icon_help_circle_outline extends $mol_icon {
-        path() {
-            return "M11,18H13V16H11V18M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6C9.79,6 8,7.79 8,10H10C10,8.9 10.9,8 12,8C13.1,8 14,8.9 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10C16,7.79 14.21,6 12,6Z";
-        }
-    }
-    $.$mol_icon_help_circle_outline = $mol_icon_help_circle_outline;
-})($ || ($ = {}));
-//mol/icon/help/circle/outline/-view.tree/outline.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_js_perf extends $mol_page {
-        title() {
-            return this.$.$mol_locale.text('$hyoo_js_perf_title');
-        }
+    class $hyoo_js_perf extends $mol_book2 {
         yard() {
             const obj = new this.$.$hyoo_sync_client();
             return obj;
@@ -25335,52 +25332,19 @@ var $;
         sources() {
             return [];
         }
+        menu_title() {
+            return this.bench_title();
+        }
         plugins() {
             return [
                 this.Theme(),
                 this.Hotkey()
             ];
         }
-        Body() {
-            const obj = new this.$.$mol_book2();
-            obj.pages = () => [
+        pages() {
+            return [
                 this.Common(),
                 this.Cases_pane()
-            ];
-            return obj;
-        }
-        Case_measurable(id) {
-            return this.Case(id).Measurable();
-        }
-        Case(id) {
-            const obj = new this.$.$hyoo_js_perf_case_row();
-            obj.title = (next) => this.case_title(id, next);
-            obj.prefix = (next) => this.case_prefix(id, next);
-            obj.source = (next) => this.source(id, next);
-            obj.measurable = (next) => this.case_measurable(id, next);
-            obj.sample = () => this.case_sample(id);
-            obj.results = (next) => this.results(id, next);
-            obj.changable = () => this.changable();
-            obj.drop = (next) => this.case_drop(id, next);
-            obj.dupe = (next) => this.case_dupe(id, next);
-            obj.swap = (next) => this.case_swap(id, next);
-            return obj;
-        }
-        Title() {
-            const obj = new this.$.$mol_string_button();
-            obj.value = (next) => this.bench_title(next);
-            obj.hint = () => this.title();
-            obj.enabled = () => this.changable();
-            return obj;
-        }
-        tools() {
-            return [
-                this.Measurable_all(),
-                this.Run(),
-                this.Share(),
-                this.Fork(),
-                this.New(),
-                this.About()
             ];
         }
         Theme() {
@@ -25400,6 +25364,9 @@ var $;
             });
             return obj;
         }
+        menu_tools() {
+            return [];
+        }
         Online() {
             const obj = new this.$.$hyoo_sync_online();
             obj.yard = () => this.yard();
@@ -25408,6 +25375,18 @@ var $;
         Source() {
             const obj = new this.$.$mol_link_source();
             obj.uri = () => "https://github.com/hyoo-ru/perf.js.hyoo.ru";
+            return obj;
+        }
+        About_icon() {
+            const obj = new this.$.$mol_icon_help_circle_outline();
+            return obj;
+        }
+        About() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => "https://page.hyoo.ru/#!=btunlj_fp1tum";
+            obj.sub = () => [
+                this.About_icon()
+            ];
             return obj;
         }
         Lights() {
@@ -25474,10 +25453,12 @@ var $;
         }
         Common() {
             const obj = new this.$.$mol_page();
-            obj.Head = () => null;
+            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_Common_title');
+            obj.tools = () => this.menu_tools();
             obj.foot = () => [
                 this.Online(),
                 this.Source(),
+                this.About(),
                 this.Lights()
             ];
             obj.body = () => [
@@ -25485,22 +25466,16 @@ var $;
             ];
             return obj;
         }
-        cases() {
-            return [];
+        bench_title(next) {
+            if (next !== undefined)
+                return next;
+            return "";
         }
-        Cases() {
-            const obj = new this.$.$mol_list();
-            obj.rows = () => this.cases();
-            return obj;
-        }
-        cases_pane_content() {
-            return [
-                this.Cases()
-            ];
-        }
-        Cases_pane() {
-            const obj = new this.$.$mol_scroll();
-            obj.sub = () => this.cases_pane_content();
+        Title() {
+            const obj = new this.$.$mol_string_button();
+            obj.value = (next) => this.bench_title(next);
+            obj.hint = () => this.menu_title();
+            obj.enabled = () => this.changable();
             return obj;
         }
         case_title(id, next) {
@@ -25546,10 +25521,32 @@ var $;
                 return next;
             return null;
         }
-        bench_title(next) {
-            if (next !== undefined)
-                return next;
-            return "";
+        Case_measurable(id) {
+            return this.Case(id).Measurable();
+        }
+        Case(id) {
+            const obj = new this.$.$hyoo_js_perf_case_row();
+            obj.title = (next) => this.case_title(id, next);
+            obj.prefix = (next) => this.case_prefix(id, next);
+            obj.source = (next) => this.source(id, next);
+            obj.measurable = (next) => this.case_measurable(id, next);
+            obj.sample = () => this.case_sample(id);
+            obj.results = (next) => this.results(id, next);
+            obj.changable = () => this.changable();
+            obj.drop = (next) => this.case_drop(id, next);
+            obj.dupe = (next) => this.case_dupe(id, next);
+            obj.swap = (next) => this.case_swap(id, next);
+            return obj;
+        }
+        cases() {
+            return [
+                this.Case("0")
+            ];
+        }
+        Cases() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.cases();
+            return obj;
         }
         measurable_all() {
             return [];
@@ -25614,15 +25611,19 @@ var $;
             ];
             return obj;
         }
-        About_icon() {
-            const obj = new this.$.$mol_icon_help_circle_outline();
-            return obj;
-        }
-        About() {
-            const obj = new this.$.$mol_link();
-            obj.uri = () => "https://habhub.hyoo.ru/#author=nin-jin/repo=HabHub/article=42";
-            obj.sub = () => [
-                this.About_icon()
+        Cases_pane() {
+            const obj = new this.$.$mol_page();
+            obj.title = () => this.bench_title();
+            obj.Title = () => this.Title();
+            obj.body = () => [
+                this.Cases()
+            ];
+            obj.tools = () => [
+                this.Measurable_all(),
+                this.Run(),
+                this.Share(),
+                this.Fork(),
+                this.New()
             ];
             return obj;
         }
@@ -25633,15 +25634,6 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "bench", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Body", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_js_perf.prototype, "Case", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "Title", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Theme", null);
@@ -25657,6 +25649,12 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Source", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "About_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "About", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Lights", null);
@@ -25689,10 +25687,10 @@ var $;
     ], $hyoo_js_perf.prototype, "Common", null);
     __decorate([
         $mol_mem
-    ], $hyoo_js_perf.prototype, "Cases", null);
+    ], $hyoo_js_perf.prototype, "bench_title", null);
     __decorate([
         $mol_mem
-    ], $hyoo_js_perf.prototype, "Cases_pane", null);
+    ], $hyoo_js_perf.prototype, "Title", null);
     __decorate([
         $mol_mem_key
     ], $hyoo_js_perf.prototype, "case_title", null);
@@ -25718,8 +25716,11 @@ var $;
         $mol_mem_key
     ], $hyoo_js_perf.prototype, "case_swap", null);
     __decorate([
+        $mol_mem_key
+    ], $hyoo_js_perf.prototype, "Case", null);
+    __decorate([
         $mol_mem
-    ], $hyoo_js_perf.prototype, "bench_title", null);
+    ], $hyoo_js_perf.prototype, "Cases", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Measurable_all", null);
@@ -25752,10 +25753,7 @@ var $;
     ], $hyoo_js_perf.prototype, "New", null);
     __decorate([
         $mol_mem
-    ], $hyoo_js_perf.prototype, "About_icon", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf.prototype, "About", null);
+    ], $hyoo_js_perf.prototype, "Cases_pane", null);
     $.$hyoo_js_perf = $hyoo_js_perf;
 })($ || ($ = {}));
 //hyoo/js/perf/-view.tree/perf.view.tree.ts
@@ -25923,9 +25921,6 @@ var $;
         }
         $$.$hyoo_js_perf_stats = $hyoo_js_perf_stats;
         class $hyoo_js_perf extends $.$hyoo_js_perf {
-            title() {
-                return (this.bench_title() ? this.bench_title() + ' | ' : '') + super.title();
-            }
             bench_fund() {
                 return this.yard().world().Fund($hyoo_js_perf_bench);
             }
@@ -26293,9 +26288,6 @@ var $;
         }
         __decorate([
             $mol_mem
-        ], $hyoo_js_perf.prototype, "title", null);
-        __decorate([
-            $mol_mem
         ], $hyoo_js_perf.prototype, "bench_fund", null);
         __decorate([
             $mol_mem
@@ -26410,7 +26402,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_tools] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 auto;\n\tmin-width: 20rem;\n}\n\n[hyoo_js_perf_common_content] {\n\tgap: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 120rem;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_cases] {\n\tpadding: var(--mol_gap_block);\n\tgap: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_common_foot] {\n\tpadding: var(--mol_gap_block);\n}\n");
+    $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_cases_pane_tools] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 25rem;\n}\n\n[hyoo_js_perf_common_content] {\n\tgap: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 80rem;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_cases] {\n\tpadding: var(--mol_gap_block);\n\tgap: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_common_foot] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/-css/perf.view.css.ts
 ;
@@ -26676,7 +26668,7 @@ var $;
         }
         Init() {
             const obj = new this.$.$hyoo_mol_bench_perf();
-            obj.title = () => "State Management";
+            obj.bench_title = () => "State Management";
             obj.analysis_uri = () => "https://github.com/nin-jin/HabHub/issues/48";
             obj.Close = () => this.Close_item();
             obj.bench_id = () => "9h2as6_u0mfnn";
@@ -26684,7 +26676,7 @@ var $;
         }
         equals() {
             const obj = new this.$.$hyoo_mol_bench_perf();
-            obj.title = () => "Deep Equals";
+            obj.bench_title = () => "Deep Equals";
             obj.analysis_uri = () => "https://t.me/mol_bench/31";
             obj.Close = () => this.Close_item();
             obj.bench_id = () => "hwh5lj_gpifwn";
@@ -26692,7 +26684,7 @@ var $;
         }
         moment() {
             const obj = new this.$.$hyoo_mol_bench_perf();
-            obj.title = () => "Time Moments";
+            obj.bench_title = () => "Time Moments";
             obj.analysis_uri = () => "https://t.me/mol_bench/10";
             obj.Close = () => this.Close_item();
             obj.bench_id = () => "lrvlhv_jz49k6";
@@ -26700,7 +26692,7 @@ var $;
         }
         Markdown() {
             const obj = new this.$.$hyoo_mol_bench_perf();
-            obj.title = () => "Markdown Parse";
+            obj.bench_title = () => "Markdown Parse";
             obj.analysis_uri = () => "https://t.me/mol_bench/27";
             obj.Close = () => this.Close_item();
             obj.bench_id = () => "egbl19_e5ljht";
@@ -26982,16 +26974,18 @@ var $;
         changable() {
             return false;
         }
-        head() {
-            return [
-                this.Run(),
-                this.Analysis(),
-                this.Title(),
-                this.Tools()
-            ];
+        Share() {
+            return null;
         }
-        tools() {
+        Fork() {
+            return null;
+        }
+        New() {
+            return null;
+        }
+        menu_tools() {
             return [
+                this.Analysis(),
                 this.Close()
             ];
         }
@@ -27098,7 +27092,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/mol/bench/bench.view.css", "[hyoo_mol_bench_menu] {\n\tflex: 0 0 15rem;\n}\n\n[hyoo_mol_bench_perf] {\n\tflex: 1 0 auto;\n}\n\n[hyoo_mol_bench_perf_title] {\n\tflex-grow: 1;\n}\n\n[hyoo_mol_bench_visual] {\n\tflex: 1 0 auto;\n}\n\n[hyoo_mol_bench_visual_body] {\n\tpadding: 0;\n}\n\n[hyoo_mol_bench_visual_deck_switch] {\n\tflex-grow: 1000;\n}\n\n[hyoo_mol_bench_visual_title] {\n\tflex-grow: 1;\n}\n\n[hyoo_mol_bench_visual_deck] {\n\tflex: 1 1 auto;\n}\n");
+    $mol_style_attach("hyoo/mol/bench/bench.view.css", "[hyoo_mol_bench_menu] {\n\tflex: 0 0 15rem;\n}\n\n[hyoo_mol_bench_perf_title] {\n\tflex-grow: 1;\n}\n\n[hyoo_mol_bench_visual] {\n\tflex: 1 0 auto;\n}\n\n[hyoo_mol_bench_visual_body] {\n\tpadding: 0;\n}\n\n[hyoo_mol_bench_visual_deck_switch] {\n\tflex-grow: 1000;\n}\n\n[hyoo_mol_bench_visual_title] {\n\tflex-grow: 1;\n}\n\n[hyoo_mol_bench_visual_deck] {\n\tflex: 1 1 auto;\n}\n");
 })($ || ($ = {}));
 //hyoo/mol/bench/-css/bench.view.css.ts
 ;
