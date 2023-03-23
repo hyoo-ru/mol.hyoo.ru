@@ -2,10 +2,6 @@
 	flex: 0 0 15rem;
 }
 
-[hyoo_mol_bench_perf] {
-	flex: 1 0 auto;
-}
-
 [hyoo_mol_bench_perf_title] {
 	flex-grow: 1;
 }

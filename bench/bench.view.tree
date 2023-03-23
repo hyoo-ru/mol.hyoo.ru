@@ -7,22 +7,22 @@ $hyoo_mol_bench $mol_book2_catalog
 	param \bench
 	spreads *
 		reactivity <= Init $hyoo_mol_bench_perf
-			title \State Management
+			bench_title \State Management
 			analysis_uri \https://github.com/nin-jin/HabHub/issues/48
 			Close <= Close_item
 			bench_id \9h2as6_u0mfnn
 		equals <= equals $hyoo_mol_bench_perf
-			title \Deep Equals
+			bench_title \Deep Equals
 			analysis_uri \https://t.me/mol_bench/31
 			Close <= Close_item
 			bench_id \hwh5lj_gpifwn
 		moment <= moment $hyoo_mol_bench_perf
-			title \Time Moments
+			bench_title \Time Moments
 			analysis_uri \https://t.me/mol_bench/10
 			Close <= Close_item
 			bench_id \lrvlhv_jz49k6
 		markdown <= Markdown $hyoo_mol_bench_perf
-			title \Markdown Parse
+			bench_title \Markdown Parse
 			analysis_uri \https://t.me/mol_bench/27
 			Close <= Close_item
 			bench_id \egbl19_e5ljht
@@ -113,13 +113,12 @@ $hyoo_mol_bench_bench $hyoo_bench_app
 
 $hyoo_mol_bench_perf $hyoo_js_perf
 	changable false
-	head /
-		<= Run
+	Share null
+	Fork null
+	New null
+	menu_tools /
 		<= Analysis $hyoo_mol_bench_analysis
 			uri <= analysis_uri \
-		<= Title
-		<= Tools
-	tools /
 		<= Close $mol_view
 
 $hyoo_mol_bench_visual $mol_page
