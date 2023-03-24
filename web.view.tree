@@ -2836,7 +2836,7 @@ $hyoo_tree $mol_book2
 					pick_hint <= add_hint @ \Add step..
 			body /
 				<= Result_text $mol_text_code
-					render_visible_only false
+					sidebar_showed true
 					text <= result_text null
 
 $hyoo_mol $mol_book2_catalog

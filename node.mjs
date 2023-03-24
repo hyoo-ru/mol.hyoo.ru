@@ -30810,7 +30810,7 @@ var $;
         }
         Result_text() {
             const obj = new this.$.$mol_text_code();
-            obj.render_visible_only = () => false;
+            obj.sidebar_showed = () => true;
             obj.text = () => this.result_text();
             return obj;
         }
