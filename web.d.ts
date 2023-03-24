@@ -5576,8 +5576,9 @@ declare namespace $ {
         description(): string;
         tools(): readonly any[];
         body(): readonly any[];
+        readme(next?: any): boolean;
         readme_icon(): $mol_icon_information_outline;
-        Readme(): $$.$mol_link;
+        Readme(): $mol_check_icon;
         chat_seed(): string;
         chat_pages(): $mol_page[];
         Chat(): $$.$mol_chat;
@@ -5602,6 +5603,7 @@ declare namespace $ {
         repo(): string;
         module(): readonly string[];
         title(): string;
+        opened(next?: any): boolean;
         tools(): readonly any[];
         Readme(): $$.$mol_text;
         Not_found(): $mol_view;
@@ -5609,10 +5611,8 @@ declare namespace $ {
         source_hint(): string;
         Source_link(): $mol_link_source;
         Close_icon(): $mol_icon_cross;
-        close_arg(): {
-            readme: any;
-        };
-        Close(): $$.$mol_link;
+        close(next?: any): any;
+        Close(): $mol_button_minor;
         readme(): string;
         uri_base(next?: any): string;
         Not_found_caption(): string;
@@ -5625,6 +5625,7 @@ declare namespace $.$$ {
         constructor(module: readonly string[]);
     }
     class $mol_app_demo_readme extends $.$mol_app_demo_readme {
+        close(): void;
         link(module: readonly string[]): string;
         uri_base(next?: string): string;
         readme(): string;
@@ -5681,6 +5682,7 @@ declare namespace $ {
         chat_seed(id: any): string;
         detail_description(): string;
         edit_uri(): string;
+        readme_page(next?: any): boolean;
         Demo(): $mol_view;
         repo(): string;
         module(): readonly string[];
@@ -5725,7 +5727,7 @@ declare namespace $.$$ {
         widget_title(name: string): string;
         widget_aspects(name: string): readonly string[];
         selected(): string;
-        readme_page(): boolean;
+        readme_page(next?: boolean): boolean;
         selected_class_name(): string;
         Widget(name: string): $mol_example;
         names_demo(): string[];
