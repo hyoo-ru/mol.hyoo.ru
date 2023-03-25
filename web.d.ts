@@ -7211,7 +7211,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_tree2_xml_from_dom(dom: Node): $mol_tree2;
+    function $mol_tree2_xml_from_dom(dom: InstanceType<typeof $mol_dom_context.Node>): $mol_tree2;
 }
 
 declare namespace $ {
