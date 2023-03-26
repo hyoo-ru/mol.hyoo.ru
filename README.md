@@ -2,8 +2,7 @@
 
 This portal is the synergetic mix of $mol-based microfrontends:
 
-- [$hyoo_habhub](https://habhub.hyoo.ru/)
-- [$hyoo_slides](https://slides.hyoo.ru)
+- [$hyoo_page](https://page.hyoo.ru/)
 - [$hyoo_apps](https://apps.hyoo.ru)
 - [$hyoo_crowd](https://crowd.hyoo.ru/)
 - [$hyoo_marked](https://marked.hyoo.ru/)
