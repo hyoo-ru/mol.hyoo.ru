@@ -28204,7 +28204,10 @@ var $;
 (function ($) {
     function $mol_tree2_to_json(tree) {
         if (!tree.type)
-            return tree.text();
+            if (tree.kids.length === 1 && tree.kids[0].type)
+                return this.$mol_tree2_to_json(tree.kids[0]);
+            else
+                return tree.text();
         if (tree.type === '-')
             return undefined;
         if (tree.type === 'true')
