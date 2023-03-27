@@ -4801,8 +4801,8 @@ declare namespace $ {
     let $hyoo_marked_flow: $mol_regexp<{
         [x: string]: string;
         readonly header: string;
-        readonly list: string;
         readonly table: string;
+        readonly list: string;
         readonly cut: string;
         readonly quote: string;
         readonly paragraph: string;
@@ -4811,8 +4811,8 @@ declare namespace $ {
         readonly mac_end: string;
         readonly content: string;
         readonly marker: string;
-        readonly kids: string;
         readonly indent: string;
+        readonly kids: string;
     }>;
 }
 
@@ -5070,8 +5070,10 @@ declare namespace $ {
         aura_showing(next?: any): boolean;
         search(): string;
         Menu(): $$.$hyoo_page_menu;
+        book_side(): $$.$hyoo_page_side;
+        book_pages_node(): readonly any[];
         tools_ext(): readonly any[];
-        Side_menu(id: any): $$.$hyoo_page_side_menu;
+        Side_menu(): $$.$hyoo_page_side_menu;
         side_menu_showed(next?: any): boolean;
         editing(next?: any): boolean;
         info(next?: any): boolean;
@@ -5118,6 +5120,8 @@ declare namespace $.$$ {
         side_current(): $hyoo_page_side;
         side_current_book(): $hyoo_page_side;
         book_id(): "" | `${string}_${string}`;
+        book_side(): $hyoo_page_side | null;
+        book_pages_node(): $hyoo_crowd_list;
         side_menu_showed(next?: boolean): boolean;
         pages(): ($mol_view | $hyoo_page_side_menu | $hyoo_page_side_view | $hyoo_page_side_edit | $hyoo_page_side_info | $hyoo_meta_rights)[];
         page_add(): void;
@@ -6149,7 +6153,7 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_dump_value extends $.$mol_dump_value {
-        sub(): $mol_expander[] | $mol_text_code[];
+        sub(): $mol_text_code[] | $mol_expander[];
         simple(): string;
         expand_title(): any;
         rows_values(): any[][];
@@ -7050,7 +7054,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "list" | "number" | "string" | "get" | "null" | "bool" | "dict" | "bind" | "put";
+    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "string" | "number" | "get" | "null" | "list" | "bool" | "dict" | "bind" | "put";
 }
 
 declare namespace $ {
@@ -10666,7 +10670,7 @@ declare namespace $.$$ {
         api(next?: any, force?: $mol_mem_force): any;
         update(event?: any): void;
         bounds_updated(): boolean;
-        center(next?: readonly [number, number], force?: $mol_mem_force): $mol_vector_2d<number> | readonly [number, number];
+        center(next?: readonly [number, number], force?: $mol_mem_force): readonly [number, number] | $mol_vector_2d<number>;
         render(): void;
     }
 }

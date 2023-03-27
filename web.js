@@ -18634,7 +18634,7 @@ var $;
         }
         pages() {
             return [
-                this.Side_menu("0_0"),
+                this.Side_menu(),
                 this.View("0_0"),
                 this.Edit("0_0"),
                 this.Info("0_0"),
@@ -18683,15 +18683,22 @@ var $;
             obj.aura_showing = (next) => this.aura_showing(next);
             return obj;
         }
+        book_side() {
+            const obj = new this.$.$hyoo_page_side();
+            return obj;
+        }
+        book_pages_node() {
+            return [];
+        }
         tools_ext() {
             return [];
         }
-        Side_menu(id) {
+        Side_menu() {
             const obj = new this.$.$hyoo_page_side_menu();
             obj.yard = () => this.yard();
-            obj.side = () => this.side(id);
+            obj.side = () => this.book_side();
             obj.side_current = () => this.side_current();
-            obj.list = () => this.pages_node(id);
+            obj.list = () => this.book_pages_node();
             obj.item_list = (id) => this.pages_node(id);
             obj.item_uri = (id) => this.side_uri(id);
             obj.item_add = (id, next) => this.side_add(id, next);
@@ -18811,7 +18818,10 @@ var $;
         $mol_mem
     ], $hyoo_page.prototype, "Menu", null);
     __decorate([
-        $mol_mem_key
+        $mol_mem
+    ], $hyoo_page.prototype, "book_side", null);
+    __decorate([
+        $mol_mem
     ], $hyoo_page.prototype, "Side_menu", null);
     __decorate([
         $mol_mem
@@ -19016,6 +19026,13 @@ var $;
                     return books[0]?.id() ?? '';
                 }) ?? this.side_current_id();
             }
+            book_side() {
+                const id = this.book_id();
+                return id ? this.side(id) : null;
+            }
+            book_pages_node() {
+                return this.pages_node(this.book_id());
+            }
             side_menu_showed(next) {
                 return next ?? Boolean(this.side_current().book() || this.side_current().pages().length > 0);
             }
@@ -19024,7 +19041,7 @@ var $;
                 const book = this.book_id();
                 return [
                     this.Gap('left'),
-                    ...book ? [this.Side_menu(book)] : [],
+                    ...book ? [this.Side_menu()] : [],
                     this.View(id),
                     ...this.info() ? [this.Info(id)] : [],
                     ...this.editing() ? [this.Edit(id)] : [],
@@ -27319,7 +27336,7 @@ var $;
         if (!superclass)
             return this.$mol_fail(err `No super class at ${klass.span}`);
         if (!class_regex.test(superclass.type))
-            return this.$mol_fail(err `Wrong super class name at ${superclass.span}`);
+            return this.$mol_fail(err `Wrong super class name ${JSON.stringify(superclass.type).replace(/(^"|"$)/g, "")} at ${superclass.span}`);
         return superclass;
     }
     $.$mol_view_tree2_class_super = $mol_view_tree2_class_super;
