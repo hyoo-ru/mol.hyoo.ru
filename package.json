@@ -352,6 +352,7 @@
     "$mol_app_demo_menu",
     "$mol_tag_tree",
     "$mol_tag",
+    "$mol_tag_sieve",
     "$mol_compare_text",
     "$mol_app_demo_detail",
     "$mol_chat",
