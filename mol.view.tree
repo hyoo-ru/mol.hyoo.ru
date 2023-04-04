@@ -15,6 +15,7 @@ $hyoo_mol $mol_book2_catalog
 			<= Docs $hyoo_page
 				side_main_id \j0mafl_shvwnd
 				menu_title @ \Encyclopedia
+				News null
 				tools_ext / <= Spread_close
 		apps <= Apps $hyoo_apps
 			menu_title @ \Applications
