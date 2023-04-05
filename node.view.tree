@@ -3091,6 +3091,58 @@ $hyoo_crowd_text_demo $mol_example_large
 		\text
 		\merge
 
+$mol_example_code $mol_example
+	sub /
+		<= Sandbox $hyoo_js_eval
+			Menu_page null
+			Perf null
+			Bookmark null
+			code? <=> code? \
+	tags /
+		\sandbox
+		\eval
+		\js
+		\javascript
+	aspects /
+		\Widget
+
+$mol_array_demo_chunks $mol_example_code
+	code? \
+		\const chunked_every = $mol_array_chunks( [ 1, 2, 3, 4, 5 ], () => true )
+		\const chunked_second = $mol_array_chunks( [ 1, 2, 3, 4, 5 ], (_,i)=> i === 2 )
+	tags /
+		\array
+		\chunks
+
+$mol_array_demo_lottery $mol_example_code
+	code? \
+		\const some_array = [1,2,3,4,5,6,7,8,9]
+		\const random_item = $mol_array_lottery(some_array)
+	tags /
+		\array
+		\random
+
+$mol_array_demo_trim $mol_example_code
+	code? \
+		\const array_with_undefined = [ undefined , null , 0, false , null , undefined , undefined ]
+		\const trimmed_array = $mol_array_trim(array_with_undefined)
+	tags /
+		\array
+		\trim
+
+$mol_assert_demo $mol_example_code
+	code? \
+		\$mol_assert_unique( 1 , 2 , 3 )
+		\$mol_assert_equal( 1 , 1 , 1 )
+		\$mol_assert_like( [1] , [1] , [1] )
+	tags /
+		\testing
+		\jest
+		\assert
+		\mocha
+		\chai
+		\unit
+
 $mol_icon_upload $mol_icon path \M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z
 
 $mol_button_open $mol_button_minor
@@ -6412,21 +6464,6 @@ $mol_textarea_demo $mol_example_small
 		\textarea
 		\code
 		\syntax highlighting
-	aspects /
-		\Widget
-
-$mol_example_code $mol_example
-	sub /
-		<= Sandbox $hyoo_js_eval
-			Menu_page null
-			Perf null
-			Bookmark null
-			code? <=> code? \
-	tags /
-		\sandbox
-		\eval
-		\js
-		\javascript
 	aspects /
 		\Widget
 

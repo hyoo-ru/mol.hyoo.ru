@@ -8498,6 +8498,59 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_example_code extends $mol_example {
+        sub(): readonly any[];
+        tags(): readonly any[];
+        aspects(): readonly any[];
+        code(next?: any): string;
+        Sandbox(): $$.$hyoo_js_eval;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    function $mol_array_chunks<Item>(array: Item[], br: (item: Item, index: number) => boolean): Item[][];
+}
+
+declare namespace $ {
+    class $mol_array_demo_chunks extends $mol_example_code {
+        code(next?: any): string;
+        tags(): readonly any[];
+    }
+}
+
+declare namespace $ {
+    function $mol_array_lottery<Value>(list: readonly Value[]): Value;
+}
+
+declare namespace $ {
+    class $mol_array_demo_lottery extends $mol_example_code {
+        code(next?: any): string;
+        tags(): readonly any[];
+    }
+}
+
+declare namespace $ {
+    function $mol_array_trim<Item>(array: Item[]): Item[];
+}
+
+declare namespace $ {
+    class $mol_array_demo_trim extends $mol_example_code {
+        code(next?: any): string;
+        tags(): readonly any[];
+    }
+}
+
+declare namespace $ {
+    class $mol_assert_demo extends $mol_example_code {
+        code(next?: any): string;
+        tags(): readonly any[];
+    }
+}
+
+declare namespace $ {
     class $mol_icon_upload extends $mol_icon {
         path(): string;
     }
@@ -8669,10 +8722,6 @@ declare namespace $ {
         sub(): readonly string[];
         filler_lines(): readonly string[];
     }
-}
-
-declare namespace $ {
-    function $mol_array_lottery<Value>(list: readonly Value[]): Value;
 }
 
 declare namespace $.$$ {
@@ -12282,19 +12331,6 @@ declare namespace $ {
 declare namespace $.$$ {
     class $mol_textarea_demo extends $.$mol_textarea_demo {
         symbols_hint(): string;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_example_code extends $mol_example {
-        sub(): readonly any[];
-        tags(): readonly any[];
-        aspects(): readonly any[];
-        code(next?: any): string;
-        Sandbox(): $$.$hyoo_js_eval;
     }
 }
 

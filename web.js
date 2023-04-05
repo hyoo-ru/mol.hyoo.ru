@@ -33123,6 +33123,205 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class $mol_example_code extends $mol_example {
+        sub() {
+            return [
+                this.Sandbox()
+            ];
+        }
+        tags() {
+            return [
+                "sandbox",
+                "eval",
+                "js",
+                "javascript"
+            ];
+        }
+        aspects() {
+            return [
+                "Widget"
+            ];
+        }
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Sandbox() {
+            const obj = new this.$.$hyoo_js_eval();
+            obj.Menu_page = () => null;
+            obj.Perf = () => null;
+            obj.Bookmark = () => null;
+            obj.code = (next) => this.code(next);
+            return obj;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_example_code.prototype, "code", null);
+    __decorate([
+        $mol_mem
+    ], $mol_example_code.prototype, "Sandbox", null);
+    $.$mol_example_code = $mol_example_code;
+})($ || ($ = {}));
+//mol/example/code/-view.tree/code.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/example/code/code.view.css", "[mol_example_code] {\n\tflex: 1 1 auto;\n\tflex-direction: column;\n\tbox-shadow: 0 0 0 1px var(--mol_theme_line);\n\tborder-radius: var(--mol_gap_round);\n\tmax-width: 100%;\n\tmax-height: 100%;\n\toverflow: hidden;\n}\n");
+})($ || ($ = {}));
+//mol/example/code/-css/code.view.css.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_array_chunks(array, br) {
+        let chunk = [];
+        const chunks = [chunk];
+        for (let i = 0; i < array.length; ++i) {
+            const item = array[i];
+            chunk.push(item);
+            if (br(item, i)) {
+                chunks.push(chunk = []);
+            }
+        }
+        if (chunk.length === 0)
+            chunks.pop();
+        return chunks;
+    }
+    $.$mol_array_chunks = $mol_array_chunks;
+})($ || ($ = {}));
+//mol/array/chunks/chunks.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_array_demo_chunks extends $mol_example_code {
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "const chunked_every = $mol_array_chunks( [ 1, 2, 3, 4, 5 ], () => true )\nconst chunked_second = $mol_array_chunks( [ 1, 2, 3, 4, 5 ], (_,i)=> i === 2 )";
+        }
+        tags() {
+            return [
+                "array",
+                "chunks"
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_array_demo_chunks.prototype, "code", null);
+    $.$mol_array_demo_chunks = $mol_array_demo_chunks;
+})($ || ($ = {}));
+//mol/array/demo/chunks/-view.tree/chunks.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_array_lottery(list) {
+        return list[Math.floor(Math.random() * list.length)];
+    }
+    $.$mol_array_lottery = $mol_array_lottery;
+})($ || ($ = {}));
+//mol/array/lottery/lottery.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_array_demo_lottery extends $mol_example_code {
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "const some_array = [1,2,3,4,5,6,7,8,9]\nconst random_item = $mol_array_lottery(some_array)";
+        }
+        tags() {
+            return [
+                "array",
+                "random"
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_array_demo_lottery.prototype, "code", null);
+    $.$mol_array_demo_lottery = $mol_array_demo_lottery;
+})($ || ($ = {}));
+//mol/array/demo/lottery/-view.tree/lottery.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_array_trim(array) {
+        let last = array.length;
+        while (last > 0) {
+            --last;
+            const value = array[last];
+            if (value === undefined)
+                array.pop();
+            else
+                break;
+        }
+        return array;
+    }
+    $.$mol_array_trim = $mol_array_trim;
+})($ || ($ = {}));
+//mol/array/trim/trim.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_array_demo_trim extends $mol_example_code {
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "const array_with_undefined = [ undefined , null , 0, false , null , undefined , undefined ]\nconst trimmed_array = $mol_array_trim(array_with_undefined)";
+        }
+        tags() {
+            return [
+                "array",
+                "trim"
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_array_demo_trim.prototype, "code", null);
+    $.$mol_array_demo_trim = $mol_array_demo_trim;
+})($ || ($ = {}));
+//mol/array/demo/trim/-view.tree/trim.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_assert_demo extends $mol_example_code {
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "$mol_assert_unique( 1 , 2 , 3 )\n$mol_assert_equal( 1 , 1 , 1 )\n$mol_assert_like( [1] , [1] , [1] )";
+        }
+        tags() {
+            return [
+                "testing",
+                "jest",
+                "assert",
+                "mocha",
+                "chai",
+                "unit"
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_assert_demo.prototype, "code", null);
+    $.$mol_assert_demo = $mol_assert_demo;
+})($ || ($ = {}));
+//mol/assert/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_icon_upload extends $mol_icon {
         path() {
             return "M9,16V10H5L12,3L19,10H15V16H9M5,20V18H19V20H5Z";
@@ -34379,16 +34578,6 @@ var $;
     $.$mol_filler = $mol_filler;
 })($ || ($ = {}));
 //mol/filler/-view.tree/filler.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_array_lottery(list) {
-        return list[Math.floor(Math.random() * list.length)];
-    }
-    $.$mol_array_lottery = $mol_array_lottery;
-})($ || ($ = {}));
-//mol/array/lottery/lottery.ts
 ;
 "use strict";
 var $;
@@ -50028,59 +50217,6 @@ var $;
     $mol_style_attach("mol/textarea/demo/demo.view.css", "[mol_textarea_demo] {\n\talign-self: stretch;\n}\n\n[mol_textarea_demo_inputs] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 //mol/textarea/demo/-css/demo.view.css.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_example_code extends $mol_example {
-        sub() {
-            return [
-                this.Sandbox()
-            ];
-        }
-        tags() {
-            return [
-                "sandbox",
-                "eval",
-                "js",
-                "javascript"
-            ];
-        }
-        aspects() {
-            return [
-                "Widget"
-            ];
-        }
-        code(next) {
-            if (next !== undefined)
-                return next;
-            return "";
-        }
-        Sandbox() {
-            const obj = new this.$.$hyoo_js_eval();
-            obj.Menu_page = () => null;
-            obj.Perf = () => null;
-            obj.Bookmark = () => null;
-            obj.code = (next) => this.code(next);
-            return obj;
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_example_code.prototype, "code", null);
-    __decorate([
-        $mol_mem
-    ], $mol_example_code.prototype, "Sandbox", null);
-    $.$mol_example_code = $mol_example_code;
-})($ || ($ = {}));
-//mol/example/code/-view.tree/code.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/example/code/code.view.css", "[mol_example_code] {\n\tflex: 1 1 auto;\n\tflex-direction: column;\n\tbox-shadow: 0 0 0 1px var(--mol_theme_line);\n\tborder-radius: var(--mol_gap_round);\n\tmax-width: 100%;\n\tmax-height: 100%;\n\toverflow: hidden;\n}\n");
-})($ || ($ = {}));
-//mol/example/code/-css/code.view.css.ts
 ;
 "use strict";
 var $;

@@ -7502,6 +7502,40 @@ var $;
 var $;
 (function ($) {
     $mol_test({
+        'empty array'() {
+            $mol_assert_like($mol_array_chunks([], () => true), []);
+        },
+        'one chunk'() {
+            $mol_assert_like($mol_array_chunks([1, 2, 3, 4, 5], () => false), [[1, 2, 3, 4, 5]]);
+        },
+        'last empty chunk'() {
+            $mol_assert_like($mol_array_chunks([1, 2, 3, 4, 5], (_, i) => i === 4), [[1, 2, 3, 4, 5]]);
+        },
+        'chunk for every item'() {
+            $mol_assert_like($mol_array_chunks([1, 2, 3, 4, 5], () => true), [[1], [2], [3], [4], [5]]);
+        },
+    });
+})($ || ($ = {}));
+//mol/array/chunks/chunks.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'trim array'() {
+            const array = [undefined, null, 0, false, null, undefined, undefined];
+            const correct = [undefined, null, 0, false, null];
+            $mol_array_trim(array);
+            $mol_assert_like(array, correct);
+        }
+    });
+})($ || ($ = {}));
+//mol/array/trim/trim.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
         'triplets'() {
             $mol_assert_equal(new $mol_time_interval('2015-01-01/P1M').end.toString(), '2015-02-01');
             $mol_assert_equal(new $mol_time_interval('P1M/2015-02-01').start.toString(), '2015-01-01');
