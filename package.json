@@ -687,7 +687,6 @@
     "$mol_text_code_demo",
     "$mol_text_demo",
     "$mol_textarea_demo",
-    "$mol_time_demo",
     "$mol_time_duration_demo",
     "$mol_time_interval_demo",
     "$mol_time_moment_demo",
