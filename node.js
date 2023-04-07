@@ -33314,7 +33314,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Playground"
             ];
         }
         code(next) {
@@ -33746,7 +33746,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         filled_items(val) {
@@ -33795,7 +33795,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Draw"
             ];
         }
         avatar_id(next) {
@@ -33890,7 +33890,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         mail_hint() {
@@ -34364,6 +34364,7 @@ var $;
         }
         aspects() {
             return [
+                "Widget/Navigation",
                 "Widget/Layout"
             ];
         }
@@ -34683,7 +34684,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control/Button"
             ];
         }
         fail(event) {
@@ -34811,7 +34812,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control/Button"
             ];
         }
         Share_page() {
@@ -34888,7 +34889,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget",
+                "Type/Date"
             ];
         }
         month() {
@@ -34962,7 +34964,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget",
+                "Type/Date"
             ];
         }
         month() {
@@ -35103,7 +35106,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget",
+                "Type/Date"
             ];
         }
         today() {
@@ -35240,7 +35244,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         Simple() {
@@ -37748,7 +37752,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Draw"
             ];
         }
         plan_title() {
@@ -37941,7 +37945,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Draw"
             ];
         }
         receipts_title() {
@@ -38242,7 +38246,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Draw"
             ];
         }
         forces_left_title() {
@@ -38411,7 +38415,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Integration"
             ];
         }
         chat_pages() {
@@ -38457,7 +38461,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         base_checked(val) {
@@ -38579,7 +38583,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         right(id, val) {
@@ -38633,7 +38637,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         base_expanded(val) {
@@ -38745,7 +38749,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         All() {
@@ -38981,7 +38985,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         Base_icon() {
@@ -39199,7 +39203,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         Qr() {
@@ -39299,7 +39303,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control",
+                "Type/Date"
             ];
         }
         date(val) {
@@ -39382,7 +39387,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         Greeting() {
@@ -39485,7 +39490,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Text"
             ];
         }
         One() {
@@ -39630,7 +39635,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Plugin"
             ];
         }
         transfer_adopt(transfer) {
@@ -39987,7 +39992,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         Content() {
@@ -40036,7 +40041,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Text"
             ];
         }
         Filler() {
@@ -40074,7 +40079,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Float"
             ];
         }
         Head_content() {
@@ -40202,7 +40207,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Form"
             ];
         }
         avatars_bid() {
@@ -40807,7 +40812,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Form"
             ];
         }
         model() {
@@ -41149,7 +41154,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         ip(next) {
@@ -41278,7 +41283,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Integration"
             ];
         }
         Frame() {
@@ -41412,7 +41417,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         items() {
@@ -42213,7 +42218,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         before(id) {
@@ -42369,7 +42374,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         Provider() {
@@ -42561,7 +42566,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget/Layout"
+                "Widget"
             ];
         }
         paint() {
@@ -42956,7 +42961,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Navigation"
             ];
         }
         this_label() {
@@ -43122,7 +43127,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Navigation"
             ];
         }
         uri(val) {
@@ -43246,7 +43251,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Navigation"
             ];
         }
         uri_generated() {
@@ -43319,7 +43324,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         items_сount(next) {
@@ -43443,7 +43448,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         check_list() {
@@ -43985,7 +43990,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         root_rows() {
@@ -44416,7 +44421,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Integration"
             ];
         }
         place_title() {
@@ -45024,7 +45029,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Plugin"
             ];
         }
         Nav() {
@@ -45147,7 +45152,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control",
+                "Type/Number"
             ];
         }
         value_string() {
@@ -46030,7 +46036,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         page(val) {
@@ -46084,7 +46090,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Draw"
             ];
         }
         saturation_series() {
@@ -46421,7 +46427,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Draw"
             ];
         }
         terrain_x() {
@@ -46538,7 +46544,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Float"
             ];
         }
         show_title() {
@@ -46823,7 +46829,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Float"
             ];
         }
         file_title() {
@@ -46980,7 +46986,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Draw"
             ];
         }
         fist() {
@@ -47066,7 +47072,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Float"
             ];
         }
         info_content_text() {
@@ -47470,7 +47476,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control",
+                "Type/Time"
             ];
         }
         moment(next) {
@@ -47523,7 +47530,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         name_hint() {
@@ -47669,7 +47676,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         product_title(id) {
@@ -47743,7 +47750,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Scroll"
             ];
         }
         Filler0() {
@@ -47874,7 +47881,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         suggests() {
@@ -47941,7 +47948,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         Section_content() {
@@ -48058,7 +48065,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         Section1_text() {
@@ -48167,7 +48174,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         color(val) {
@@ -48299,7 +48306,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         month(val) {
@@ -48360,7 +48367,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         priority(val) {
@@ -48413,7 +48420,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         friends(val) {
@@ -48850,7 +48857,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Plugin",
+                "Widget/Media"
             ];
         }
         Toggle_icon() {
@@ -49171,7 +49179,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         Back() {
@@ -49241,7 +49249,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control",
+                "Type/String"
             ];
         }
         name(val) {
@@ -49329,7 +49338,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         color(val) {
@@ -49436,7 +49445,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         item_title(id) {
@@ -49589,7 +49598,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Text"
             ];
         }
         source() {
@@ -49667,7 +49676,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Text"
             ];
         }
         search(next) {
@@ -49855,7 +49864,8 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control",
+                "Type/String"
             ];
         }
         empty_descr(next) {
@@ -49960,6 +49970,11 @@ var $;
                 "interval"
             ];
         }
+        aspects() {
+            return [
+                "Type/Time"
+            ];
+        }
     }
     __decorate([
         $mol_mem
@@ -49967,6 +49982,99 @@ var $;
     $.$mol_time_demo = $mol_time_demo;
 })($ || ($ = {}));
 //mol/time/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_time_duration_demo extends $mol_example_code {
+        title() {
+            return "Time processing library sandbox";
+        }
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "const week = new $mol_time_duration( 'P7D' )\nconst days = week.count( 'P1D' )";
+        }
+        tags() {
+            return [
+                "$mol_time",
+                "duraion"
+            ];
+        }
+        aspects() {
+            return [
+                "Type/Time"
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_time_duration_demo.prototype, "code", null);
+    $.$mol_time_duration_demo = $mol_time_duration_demo;
+})($ || ($ = {}));
+//mol/time/duration/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_time_interval_demo extends $mol_example_code {
+        title() {
+            return "Time processing library sandbox";
+        }
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "const nextYear = new $mol_time_interval( '/P1Y' )\nconst anniversary = nextYear.end.toString( 'YYYY-MM-DD hh:mm' )";
+        }
+        tags() {
+            return [
+                "$mol_time",
+                "interval"
+            ];
+        }
+        aspects() {
+            return [
+                "Type/Time"
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_time_interval_demo.prototype, "code", null);
+    $.$mol_time_interval_demo = $mol_time_interval_demo;
+})($ || ($ = {}));
+//mol/time/interval/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_time_moment_demo extends $mol_example_code {
+        title() {
+            return "Time processing library sandbox";
+        }
+        code(next) {
+            if (next !== undefined)
+                return next;
+            return "const now = new $mol_time_moment\nconst today = now.toString( 'YYYY-MM-DD' )\nconst tomorrow = now.shift( 'P1D' ).toString( 'DD Mon' )";
+        }
+        tags() {
+            return [
+                "$mol_time",
+                "moment"
+            ];
+        }
+        aspects() {
+            return [
+                "Type/Time"
+            ];
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_time_moment_demo.prototype, "code", null);
+    $.$mol_time_moment_demo = $mol_time_moment_demo;
+})($ || ($ = {}));
+//mol/time/moment/demo/-view.tree/demo.view.tree.ts
 ;
 "use strict";
 var $;
@@ -50158,7 +50266,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Layout"
             ];
         }
         search_hint() {
@@ -50534,7 +50642,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Media"
             ];
         }
         files() {
@@ -50820,7 +50928,7 @@ var $;
         }
         aspects() {
             return [
-                "Widget"
+                "Widget/Control"
             ];
         }
         pass(val) {
