@@ -1675,14 +1675,14 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_huggingface_run(this: $, space: string, method: string | number, ...data: readonly any[]): readonly string[];
-    function $mol_huggingface_async(space: string, method: number, ...data: readonly any[]): Promise<[string]> & {
+    function $mol_huggingface_run(this: $, space: string, method: string | number, ...data: readonly any[]): any[] | readonly string[];
+    function $mol_huggingface_async(space: string, method: number, ...data: readonly any[]): Promise<any[]> & {
         destructor: () => void;
     };
 }
 
 declare namespace $ {
-    function $hyoo_lingua_translate(this: $, lang: string, text: string): string;
+    function $hyoo_lingua_translate(this: $, lang: string, text: string): any;
 }
 
 declare namespace $ {
@@ -1694,7 +1694,7 @@ declare namespace $ {
         static lang(next?: string): string;
         static source(lang: string): any;
         static texts(lang: string, next?: $mol_locale_dict): $mol_locale_dict;
-        static text(key: string): string;
+        static text(key: string): unknown;
         static warn(key: string): null;
     }
 }
@@ -2017,7 +2017,7 @@ declare namespace $ {
         nav_focused(component?: any): any;
         Nav(): $$.$mol_nav;
         suggests_showed(val?: any): boolean;
-        hint(): string;
+        hint(): unknown;
         submit(event?: any): any;
         enabled(): boolean;
         keyboard(): string;
@@ -2160,7 +2160,7 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_link_source extends $mol_link {
-        hint(): string;
+        hint(): unknown;
         sub(): readonly any[];
         Icon(): $mol_icon_github_circle;
     }
@@ -2220,7 +2220,7 @@ declare namespace $ {
 declare namespace $ {
     class $mol_lights_toggle extends $mol_check_icon {
         Icon(): $mol_icon_brightness_6;
-        hint(): string;
+        hint(): unknown;
         checked(val?: any): boolean;
         Lights_icon(): $mol_icon_brightness_6;
         lights(val?: any): boolean;
@@ -2271,7 +2271,7 @@ declare namespace $ {
         Option_row(id: any): $mol_button_minor;
         No_options(): $mol_view;
         plugins(): readonly any[];
-        hint(): string;
+        hint(): unknown;
         bubble_content(): readonly any[];
         Filter(): $$.$mol_string;
         Trigger_icon(): $mol_icon_dots_vertical;
@@ -2280,7 +2280,7 @@ declare namespace $ {
         filter_pattern(val?: any): string;
         Option_label(id: any): $$.$mol_dimmer;
         option_content(id: any): readonly any[];
-        no_options_message(): string;
+        no_options_message(): unknown;
         nav_components(): readonly $mol_view[];
         option_focused(component?: any): any;
         nav_cycle(val?: any): boolean;
@@ -3600,7 +3600,7 @@ declare namespace $ {
         title(): string;
         meta(): $hyoo_meta_model;
         param(): string;
-        all_title(): string;
+        all_title(): unknown;
         sub(): readonly any[];
         Avatar(): $$.$mol_avatar;
         highlight(): string;
@@ -3610,7 +3610,7 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $hyoo_meta_link extends $.$hyoo_meta_link {
-        title(): string;
+        title(): {};
         uri(): string;
     }
 }
@@ -3955,7 +3955,7 @@ declare namespace $ {
 
 declare namespace $ {
     class $hyoo_page_menu extends $hyoo_meta_menu {
-        title_default(): string;
+        title_default(): unknown;
         attr(): {
             mol_theme: string;
         };
@@ -3975,7 +3975,7 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $hyoo_page_menu extends $.$hyoo_page_menu {
-        title(): string;
+        title(): unknown;
     }
 }
 
@@ -3983,7 +3983,7 @@ declare namespace $ {
     class $hyoo_page_side_news extends $mol_page {
         news(): $$.$hyoo_page_side[];
         side(): $$.$hyoo_page_side;
-        title(): string;
+        title(): unknown;
         attr(): {
             mol_theme: string;
         };
@@ -4046,13 +4046,13 @@ declare namespace $ {
 declare namespace $ {
     class $mol_paginator extends $mol_bar {
         sub(): readonly any[];
-        backward_hint(): string;
+        backward_hint(): unknown;
         backward(event?: any): any;
         Backward_icon(): $mol_icon_chevron_left;
         Backward(): $mol_button_minor;
         value(val?: any): number;
         Value(): $mol_view;
-        forward_hint(): string;
+        forward_hint(): unknown;
         forward(event?: any): any;
         Forward_icon(): $mol_icon_chevron_right;
         Forward(): $mol_button_minor;
@@ -4905,11 +4905,11 @@ declare namespace $ {
         month_moment(): $mol_time_moment;
         day_selected(id: any): boolean;
         day_click(id: any, event?: any): any;
-        prev_hint(): string;
+        prev_hint(): unknown;
         prev(event?: any): any;
         Prev_icon(): $mol_icon_chevron_left;
         Prev(): $mol_button_minor;
-        next_hint(): string;
+        next_hint(): unknown;
         next(event?: any): any;
         Next_icon(): $mol_icon_chevron_right;
         Next(): $mol_button_minor;
@@ -5335,7 +5335,7 @@ declare namespace $ {
         side(): $$.$hyoo_page_side;
         bring(): void;
         Title(): $mol_string_button;
-        export_sign(): string;
+        export_sign(): unknown;
         tools(): readonly any[];
         body(): readonly any[];
         Syntax(): $$.$mol_link_iconed;
@@ -5506,8 +5506,8 @@ declare namespace $ {
 declare namespace $ {
     let $hyoo_marked_flow: $mol_regexp<{
         [x: string]: string;
-        readonly header: string;
         readonly table: string;
+        readonly header: string;
         readonly list: string;
         readonly quote: string;
         readonly cut: string;
@@ -5516,8 +5516,8 @@ declare namespace $ {
         readonly win_end: string;
         readonly mac_end: string;
         readonly content: string;
-        readonly marker: string;
         readonly indent: string;
+        readonly marker: string;
         readonly kids: string;
     }>;
 }
@@ -5534,7 +5534,7 @@ declare namespace $.$$ {
     class $hyoo_page_side_edit extends $.$hyoo_page_side_edit {
         publish(): void;
         permalink(): string;
-        export_sign(): string;
+        export_sign(): any;
         download_name(): string;
         copy_text(): string;
         download_blob(): Blob;
@@ -5587,7 +5587,7 @@ declare namespace $ {
         referrers_list(): string[];
         referrers_stat(id: any): number;
         side(): $$.$hyoo_page_side;
-        title(): string;
+        title(): unknown;
         tools(): readonly any[];
         body(): readonly any[];
         slides_uri(): string;
@@ -5703,7 +5703,7 @@ declare namespace $ {
 
 declare namespace $ {
     class $hyoo_meta_rights extends $mol_page {
-        title(): string;
+        title(): unknown;
         editors(): readonly `${string}_${string}`[];
         meta(): $hyoo_meta_model;
         body(): readonly any[];
@@ -5711,7 +5711,7 @@ declare namespace $ {
         Editor_link(id: any): $$.$hyoo_meta_link;
         editor_list(): readonly any[];
         Editor_list(): $$.$mol_list;
-        editor_add_bid(): string;
+        editor_add_bid(): unknown;
         editor_add_id(next?: any): string;
         editable(): boolean;
         Editor_add_id(): $$.$mol_string;
@@ -5740,7 +5740,7 @@ declare namespace $.$$ {
         editor_add_rows(): ($mol_button_minor | $hyoo_meta_link | $mol_bar)[];
         editor_add_id(next?: string): `${string}_${string}`;
         editor_add_allowed(): boolean;
-        editor_add_bid(): string;
+        editor_add_bid(): unknown;
         editor_fill_all(): void;
         editor_add_submit(): void;
         editor_add_preview(): $hyoo_meta_person;
@@ -5846,214 +5846,214 @@ declare namespace $ {
         plugins(): readonly any[];
         pages(): readonly any[];
         groups(): {
-            release: string;
-            develop: string;
-            preview: string;
+            release: unknown;
+            develop: unknown;
+            preview: unknown;
         };
         apps(): {
             idea: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             board: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             notes: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             page: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             slides: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             search: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             lingua: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             talks: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             map: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             scout: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             fallacy: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             meme: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             calc: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             play: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             life: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             iq: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             todomvc: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             game: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             draw: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             artist: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             invest: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             lamps: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             questions: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             shelter: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             mail: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             gazporn: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             toys: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             mol: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             sync: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             piterjs: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             habhub: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             jseval: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             jsperf: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             jsopt: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             bench: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             toxic: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             request: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             tree: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             icons: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
             rdf: {
                 target: string;
-                title: string;
+                title: unknown;
                 uri: string;
             };
         };
         Theme(): $$.$mol_theme_auto;
-        menu_title(): string;
+        menu_title(): unknown;
         Source(): $mol_link_source;
         Lights(): $$.$mol_lights_toggle;
         tools(): readonly any[];
@@ -6261,11 +6261,11 @@ declare namespace $ {
         arg(): {
             mol_chat: string;
         };
-        hint(): string;
+        hint(): unknown;
         sub(): readonly any[];
         pages(): readonly any[];
         Icon(): $mol_icon_forum_outline;
-        title(): string;
+        title(): unknown;
         standalone(): string;
         Standalone_icon(): $mol_icon_open_in_new;
         Esternal(): $$.$mol_link;
@@ -6306,12 +6306,12 @@ declare namespace $ {
         chat_seed(): string;
         chat_pages(): $mol_page[];
         Chat(): $$.$mol_chat;
-        edit_hint(): string;
+        edit_hint(): unknown;
         Edit_speck(): $mol_speck;
         Edit_icon(): $mol_icon_settings;
         edit_uri(): string;
         Edit(): $$.$mol_link;
-        close_hint(): string;
+        close_hint(): unknown;
         Close_icon(): $mol_icon_cross;
         close_arg(): {
             demo: any;
@@ -6326,20 +6326,20 @@ declare namespace $ {
         link_template(): string;
         repo(): string;
         module(): readonly string[];
-        title(): string;
+        title(): unknown;
         opened(next?: any): boolean;
         tools(): readonly any[];
         Readme(): $$.$mol_text;
         Not_found(): $mol_view;
         source_link(): string;
-        source_hint(): string;
+        source_hint(): unknown;
         Source_link(): $mol_link_source;
         Close_icon(): $mol_icon_cross;
         close(next?: any): any;
         Close(): $mol_button_minor;
         readme(): string;
         uri_base(next?: any): string;
-        Not_found_caption(): string;
+        Not_found_caption(): unknown;
     }
 }
 
@@ -6394,7 +6394,7 @@ declare namespace $ {
         detail_title(): string;
         Theme(): $$.$mol_theme_auto;
         Search_start(): $$.$mol_hotkey;
-        menu_title(): string;
+        menu_title(): unknown;
         names(): readonly string[];
         widget_tags(id: any): readonly string[];
         widget_aspects(id: any): readonly string[];
@@ -6411,9 +6411,9 @@ declare namespace $ {
         repo(): string;
         module(): readonly string[];
         source_link(): string;
-        detail_empty_prefix(): string;
+        detail_empty_prefix(): unknown;
         selected(): string;
-        detail_empty_postfix(): string;
+        detail_empty_postfix(): unknown;
     }
 }
 
@@ -6545,10 +6545,10 @@ declare namespace $ {
             click: (val?: any) => any;
         };
         attr(): {
-            title: string;
+            title: unknown;
         };
         event_click(val?: any): any;
-        hint(): string;
+        hint(): unknown;
     }
 }
 
@@ -6635,8 +6635,8 @@ declare namespace $ {
         pages(): readonly any[];
         Menu_option(id: any): $mol_check_box;
         Param(id: any): $mol_labeler;
-        result_col_title_sample(): string;
-        addon_title(): string;
+        result_col_title_sample(): unknown;
+        addon_title(): unknown;
         filter(val?: any): string;
         Filter(): $$.$mol_search;
         source_link(): string;
@@ -6655,7 +6655,7 @@ declare namespace $ {
         result_col_sort(val?: any): string;
         Result(): $$.$mol_bench;
         Main_page(): $mol_page;
-        sandbox_title(): string;
+        sandbox_title(): unknown;
         bench(val?: any): string;
         Sandbox(): $$.$mol_frame;
         Sandbox_page(): $mol_page;
@@ -6723,7 +6723,7 @@ declare namespace $.$$ {
             };
         };
         sandbox_title(): string;
-        result_col_title(col_id: string): string;
+        result_col_title(col_id: string): unknown;
         step_title(step: string): string[];
         result_col_sort(next?: string): string;
         menu_options(): $mol_check_box[];
@@ -6947,7 +6947,7 @@ declare namespace $ {
         Error_view(): $mol_view;
         Error_mark(): $$.$mol_follower;
         Code_page(): $mol_page;
-        result_label(): string;
+        result_label(): unknown;
         Results_close_icon(): $mol_icon_cross;
         Results_close(): $$.$mol_link;
         log(id: any): readonly any[];
@@ -7084,28 +7084,28 @@ declare namespace $ {
         portions(): readonly any[];
         Portions(): $mol_view;
         title(): string;
-        frequency_hint(): string;
+        frequency_hint(): unknown;
         frequency(): string;
         Frequency(): $mol_view;
-        time_hint(): string;
+        time_hint(): unknown;
         time_total(): string;
         Time(): $mol_view;
-        iterations_hint(): string;
+        iterations_hint(): unknown;
         iterations(): string;
         Iterations(): $mol_view;
         Stats_main(): $mol_view;
-        memory_per_iteration_hint(): string;
+        memory_per_iteration_hint(): unknown;
         memory_per_iteration(): string;
         Memory_per_iteration(): $mol_view;
-        memory_hint(): string;
+        memory_hint(): unknown;
         memory_total(): string;
         Memory(): $mol_view;
         Stats_mem(): $mol_view;
-        size_hint(): string;
+        size_hint(): unknown;
         size(): number;
         Size(): $mol_view;
         Stats_size(): $mol_view;
-        deps_hint(): string;
+        deps_hint(): unknown;
         deps(): string;
         Deps(): $mol_view;
         Stats_deps(): $mol_view;
@@ -7240,7 +7240,7 @@ declare namespace $ {
     class $mol_button_share extends $mol_button_minor {
         uri(): string;
         capture(): any;
-        hint(): string;
+        hint(): unknown;
         sub(): readonly any[];
         Icon(): $mol_icon_share_variant;
     }
@@ -7507,7 +7507,7 @@ declare namespace $ {
 
 declare namespace $ {
     class $hyoo_mol_bench extends $mol_book2_catalog {
-        menu_title(): string;
+        menu_title(): unknown;
         Placeholder(): any;
         Close_item(): $$.$mol_link;
         param(): string;
@@ -7582,7 +7582,7 @@ declare namespace $ {
         Deck(): $$.$mol_deck;
     }
     class $hyoo_mol_bench_analysis extends $mol_link {
-        hint(): string;
+        hint(): unknown;
         sub(): readonly any[];
         Icon(): $mol_icon_poll;
     }
@@ -7696,7 +7696,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "string" | "number" | "get" | "null" | "list" | "bool" | "dict" | "bind" | "put";
+    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "string" | "object" | "number" | "get" | "null" | "list" | "bool" | "dict" | "bind" | "put";
 }
 
 declare namespace $ {
@@ -8167,7 +8167,7 @@ declare namespace $ {
         Badges(): readonly $mol_view[];
         badge_title(id: any): string;
         remove(id: any, event?: any): any;
-        badge_hint(): string;
+        badge_hint(): unknown;
         enabled(): boolean;
         drop_enabled(): boolean;
         align_hor(): string;
@@ -8176,7 +8176,7 @@ declare namespace $ {
         pick(val?: any): string;
         option_title(id: any): string;
         pick_enabled(): boolean;
-        pick_hint(): string;
+        pick_hint(): unknown;
         Pick_icon(): $mol_icon_plus;
         Pick(): $$.$mol_select;
     }
@@ -8351,11 +8351,11 @@ declare namespace $ {
         source_tools(): readonly $mol_view_content[];
         source_default(): string;
         source(val?: any): string;
-        source_hint(): string;
+        source_hint(): unknown;
         Source_text(): $$.$mol_textarea;
         Source(): $mol_page;
         transform_options(): readonly string[];
-        add_hint(): string;
+        add_hint(): unknown;
         result_title(): string;
         Pipeline(): $$.$mol_select_list;
         result_text(): any;
@@ -8391,7 +8391,7 @@ declare namespace $ {
     class $hyoo_mol extends $mol_book2_catalog {
         plugins(): readonly any[];
         Placeholder(): any;
-        menu_title(): string;
+        menu_title(): unknown;
         menu_tools(): readonly any[];
         menu_foot(): readonly any[];
         param(): string;
@@ -9802,7 +9802,7 @@ declare namespace $ {
         hint(): string;
         Manual(): $$.$mol_search;
         event_scan(val?: any): any;
-        scan_label(): string;
+        scan_label(): unknown;
         Scan(): $$.$mol_button;
     }
 }
