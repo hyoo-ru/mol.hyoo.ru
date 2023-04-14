@@ -1578,7 +1578,7 @@ declare namespace $ {
     class $mol_fetch_response extends $mol_object2 {
         readonly native: Response;
         constructor(native: Response);
-        status(): "unknown" | "success" | "inform" | "redirect" | "wrong" | "failed";
+        status(): "success" | "unknown" | "inform" | "redirect" | "wrong" | "failed";
         code(): number;
         message(): string;
         headers(): Headers;
@@ -5360,9 +5360,9 @@ declare namespace $ {
         readonly insertion: string;
         readonly deletion: string;
         readonly link: string;
-        readonly uri: string;
-        content: string;
         readonly marker: string;
+        readonly uri: string;
+        readonly content: string;
     }>;
 }
 
@@ -5485,8 +5485,8 @@ declare namespace $ {
     let $hyoo_marked_flow: $mol_regexp<{
         [x: string]: string;
         readonly header: string;
-        readonly table: string;
         readonly list: string;
+        readonly table: string;
         readonly quote: string;
         readonly cut: string;
         readonly paragraph: string;
@@ -5495,8 +5495,8 @@ declare namespace $ {
         readonly mac_end: string;
         readonly content: string;
         readonly marker: string;
-        readonly indent: string;
         readonly kids: string;
+        readonly indent: string;
     }>;
 }
 
@@ -5756,7 +5756,7 @@ declare namespace $ {
         Menu(): $$.$hyoo_page_menu;
         News(): $$.$hyoo_page_side_news;
         book_side(): $$.$hyoo_page_side;
-        book_pages_node(): readonly any[];
+        book_pages_node(): any;
         tools_ext(): readonly any[];
         Side_menu(): $$.$hyoo_page_side_menu;
         side_menu_showed(next?: any): boolean;
@@ -5805,7 +5805,7 @@ declare namespace $.$$ {
         side_current(): $hyoo_page_side;
         side_current_book(): $hyoo_page_side;
         book_id(): "" | `${string}_${string}`;
-        book_side(): $hyoo_page_side | null;
+        book_side(): $hyoo_page_side;
         book_pages_node(): $hyoo_crowd_list;
         side_menu_showed(next?: boolean): boolean;
         pages(): ($mol_view | $hyoo_page_side_news | $hyoo_page_side_menu | $hyoo_page_side_view | $hyoo_page_side_edit | $hyoo_page_side_info | $hyoo_meta_rights)[];
@@ -6850,7 +6850,7 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_dump_value extends $.$mol_dump_value {
-        sub(): $mol_text_code[] | $mol_expander[];
+        sub(): $mol_expander[] | $mol_text_code[];
         simple(): string;
         expand_title(): any;
         rows_values(): any[][];
@@ -7674,7 +7674,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "string" | "number" | "get" | "null" | "list" | "bool" | "dict" | "bind" | "put";
+    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "locale" | "object" | "list" | "number" | "string" | "get" | "null" | "bool" | "dict" | "bind" | "put";
 }
 
 declare namespace $ {
