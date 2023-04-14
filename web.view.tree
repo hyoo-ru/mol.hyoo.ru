@@ -1994,7 +1994,8 @@ $mol_app_demo_detail $mol_page
 		<= Demo $mol_view
 
 $mol_app_demo_readme $mol_page
-	link_template \https://raw.githubusercontent.com/{repo}/master/{module}/readme.md
+	readme_link_template \https://raw.githubusercontent.com/{repo}/HEAD/{module}/readme.md
+	source_link_template \https://github.com/{repo}/tree/HEAD/{module}
 	repo \
 	module /string
 	title @ \Readme
@@ -2024,9 +2025,7 @@ $mol_status $mol_view
 
 $mol_app_demo $mol_book2
 	editor_title <= detail_title \$mol
-	source_prefix \https://github.com/hyoo-ru/mam_mol/tree/master/
 	repo_dict *
-		mol \hyoo-ru/mam_mol
 	plugins /
 		<= Theme $mol_theme_auto
 		<= Search_start $mol_hotkey
@@ -2058,7 +2057,6 @@ $mol_app_demo $mol_book2
 		repo <= repo \
 		opened? <=> readme_page? false
 		module <= module /string
-		source_link <= source_link \
 	Detail_empty_message $mol_status
 		sub /
 			<= detail_empty_prefix @ \No one demo with prefix "
