@@ -624,6 +624,7 @@
     "$mol_icon_trash",
     "$mol_dump_demo",
     "$mol_expander_demo",
+    "$mol_fetch_demo",
     "$mol_filler_demo",
     "$mol_float_demo",
     "$mol_form_demo",
