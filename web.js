@@ -20019,6 +20019,7 @@ var $;
                 shrink: 1,
                 grow: 1,
             },
+            wordBreak: 'break-word',
         },
         Ref_item_stat: {
             padding: $mol_gap.text,
