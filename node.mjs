@@ -1039,7 +1039,7 @@ var $;
                 const sub = $mol_wire_auto();
                 const existen = sub?.track_next();
                 reuse: if (existen) {
-                    if (!(existen.constructor.name === '$mol_wire_task'))
+                    if (existen.constructor.name !== '$mol_wire_task')
                         break reuse;
                     if (existen.host !== host)
                         break reuse;
@@ -1207,7 +1207,7 @@ var $;
                     return this.resync([...this.args, next]);
                 if (!$mol_wire_fiber.warm)
                     return this.result();
-                if ($mol_wire_auto() instanceof $mol_wire_task) {
+                if ($mol_wire_auto()?.constructor.name === '$mol_wire_task') {
                     return this.once();
                 }
                 else {
@@ -1290,7 +1290,7 @@ var $;
                 if ((args.length === 0) || (args[0] === undefined)) {
                     if (!$mol_wire_fiber.warm)
                         return atom.result();
-                    if ($mol_wire_auto() instanceof $mol_wire_task) {
+                    if ($mol_wire_auto()?.constructor.name === '$mol_wire_task') {
                         return atom.once();
                     }
                     else {
@@ -1327,7 +1327,7 @@ var $;
                 if ((args.length === 1) || (args[1] === undefined)) {
                     if (!$mol_wire_fiber.warm)
                         return atom.result();
-                    if ($mol_wire_auto() instanceof $mol_wire_task) {
+                    if ($mol_wire_auto()?.constructor.name === '$mol_wire_task') {
                         return atom.once();
                     }
                     else {
@@ -8920,7 +8920,6 @@ var $;
             const unit_new = new $hyoo_crowd_unit(this.id(), auth, head, self, next, prev, time, data, null);
             this._unit_all.set(old_id, unit_new);
             unit_list.splice(seat, 0, unit_new);
-            unit_list.dirty = true;
             this._unit_alives.set(head, undefined);
             this.pub.emit();
             return unit_new;
