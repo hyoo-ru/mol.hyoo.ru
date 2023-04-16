@@ -1039,7 +1039,7 @@ var $;
                 const sub = $mol_wire_auto();
                 const existen = sub?.track_next();
                 reuse: if (existen) {
-                    if (!(existen instanceof $mol_wire_task))
+                    if (!(existen.constructor.name === '$mol_wire_task'))
                         break reuse;
                     if (existen.host !== host)
                         break reuse;
@@ -12252,7 +12252,7 @@ var $;
                 const found = [];
                 const pages = [];
                 const users = [this];
-                while (found.length < 16 && (pages.length || users.length)) {
+                while (found.length < 10 && (pages.length || users.length)) {
                     while (users.length) {
                         const user = users.shift();
                         if (visited.has(user))
