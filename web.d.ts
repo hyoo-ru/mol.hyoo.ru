@@ -7883,6 +7883,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         Sandbox(): $$.$hyoo_crowd_app;
     }
 }
@@ -11091,6 +11092,7 @@ declare namespace $ {
         title(): string;
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         Sandbox(): $$.$hyoo_marked_app;
     }
 }
@@ -11147,6 +11149,7 @@ declare namespace $ {
     class $hyoo_harp_demo extends $mol_example_large {
         sub(): readonly any[];
         tags(): readonly any[];
+        aspects(): readonly any[];
         title(): string;
         Sandbox(): $$.$hyoo_harp_app;
     }
