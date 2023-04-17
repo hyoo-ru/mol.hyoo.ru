@@ -119,6 +119,11 @@
 	include \/mol/import
 \/hyoo/crowd/app
 	deploy \/hyoo/crowd/logo/logo.svg
+\/mol/app/quine
+	deploy \/mol/app/quine/quine.view.tree
+	deploy \/mol/app/quine/quine.view.ts
+	deploy \/mol/app/quine/index.html
+	deploy \/mol/app/quine/quine.locale=ru.json
 \/hyoo/marked/app
 	deploy \/hyoo/marked/readme.md
 	deploy \/hyoo/marked/logo/logo.svg
@@ -131,6 +136,10 @@
 	include \/mol/offline/install
 	include \/mol/app/demo
 	include \/hyoo/crowd/text/demo
+	include \/mol/app/hello/demo
+	include \/mol/app/questions/demo
+	include \/mol/app/quine/demo
+	include \/mol/app/report/demo
 	include \/mol/array/chunks/demo
 	include \/mol/array/lottery/demo
 	include \/mol/array/trim/demo
