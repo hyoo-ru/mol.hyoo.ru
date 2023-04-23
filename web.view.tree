@@ -1437,7 +1437,7 @@ $hyoo_page_side_edit $mol_page
 		released => released
 	Title $mol_string_button
 		hint @ \Title
-		bring => bring
+		- bring => bring
 		value? <=> title?
 		enabled <= editable
 	export_sign @ \\\Current Original on $hyoo_page.\{link}\\
@@ -5723,6 +5723,7 @@ $hyoo_marked_app $mol_book2
 				<= Preview_close
 			body /
 				<= Html_text $mol_text_code
+					sidebar_showed true
 					text <= html \
 		<= View $mol_page
 			title \View

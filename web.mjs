@@ -18768,9 +18768,6 @@ var $;
             const obj = new this.$.$hyoo_page_side();
             return obj;
         }
-        bring() {
-            return this.Title().bring();
-        }
         Title() {
             const obj = new this.$.$mol_string_button();
             obj.hint = () => this.$.$mol_locale.text('$hyoo_page_side_edit_Title_hint');
@@ -46953,6 +46950,7 @@ var $;
         }
         Html_text() {
             const obj = new this.$.$mol_text_code();
+            obj.sidebar_showed = () => true;
             obj.text = () => this.html();
             return obj;
         }
