@@ -1614,6 +1614,14 @@ $hyoo_apps $mol_book2
 		develop @ \For Developers
 		preview @ \For Curious
 	apps *
+		studio *
+			target \develop
+			title @ \Online Studio
+			uri \https://studio.hyoo.ru/
+		marked *
+			target \release
+			title @ \MarkedText
+			uri \https://marked.hyoo.ru/
 		idea *
 			target \release
 			title @ \Fresh Ideas Network
@@ -6537,7 +6545,7 @@ $mol_stack_demo $mol_example_small
 	sub /
 		<= Collage $mol_stack
 			sub /
-				<= Back $mol_image uri \https://thiscatdoesnotexist.com/
+				<= Back $mol_image uri \https://cataas.com/cat
 				<= Front $mol_view sub / \❤🧡💛💚💙💜🤎🖤
 	aspects /
 		\Widget/Layout

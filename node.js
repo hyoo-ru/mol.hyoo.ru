@@ -20575,6 +20575,16 @@ var $;
         }
         apps() {
             return {
+                studio: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_studio_title'),
+                    uri: "https://studio.hyoo.ru/"
+                },
+                marked: {
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_marked_title'),
+                    uri: "https://marked.hyoo.ru/"
+                },
                 idea: {
                     target: "release",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_idea_title'),
@@ -50994,7 +51004,7 @@ var $;
         }
         Back() {
             const obj = new this.$.$mol_image();
-            obj.uri = () => "https://thiscatdoesnotexist.com/";
+            obj.uri = () => "https://cataas.com/cat";
             return obj;
         }
         Front() {
