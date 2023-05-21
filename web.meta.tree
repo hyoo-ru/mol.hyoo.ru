@@ -6,6 +6,7 @@
 	pack lib git \https://github.com/hyoo-ru/mam_lib.git
 	pack piterjs git \https://github.com/piterjs/piterjs.git
 	pack psb git \https://github.com/MolDevHack/psb.git
+	pack mpds git \https://github.com/mpds-io/mam_mpds
 \/hyoo
 	pack about git \https://github.com/hyoo-ru/about.hyoo.ru.git
 	pack artist git \https://github.com/hyoo-ru/artist.hyoo.ru.git
