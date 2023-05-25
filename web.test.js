@@ -5125,6 +5125,89 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
+    $mol_test({
+        'base64 decode string'() {
+            $mol_assert_like($mol_base64_decode('SGVsbG8sIM6nzqjOqdCr'), new TextEncoder().encode('Hello, ΧΨΩЫ'));
+        },
+        'base64 decode binary'() {
+            $mol_assert_like($mol_base64_decode('GgoASUh42g=='), png);
+        },
+    });
+})($ || ($ = {}));
+//mol/base64/decode/decode.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_crypto_salt() {
+        return $mol_crypto_native.getRandomValues(new Uint8Array(12));
+    }
+    $.$mol_crypto_salt = $mol_crypto_salt;
+})($ || ($ = {}));
+//mol/crypto/salt/salt.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        async 'sizes'() {
+            const cipher = await $mol_crypto_secret.generate();
+            const key = await cipher.serial();
+            $mol_assert_equal(key.byteLength, $mol_crypto_secret.size);
+            const data = new Uint8Array([1, 2, 3]);
+            const salt = $mol_crypto_salt();
+            const closed = await cipher.encrypt(data, salt);
+            $mol_assert_equal(closed.byteLength, data.byteLength + $mol_crypto_secret.extra);
+        },
+        async 'decrypt self encrypted with auto generated key'() {
+            const cipher = await $mol_crypto_secret.generate();
+            const data = new Uint8Array([1, 2, 3]);
+            const salt = $mol_crypto_salt();
+            const closed = await cipher.encrypt(data, salt);
+            const opened = await cipher.decrypt(closed, salt);
+            $mol_assert_like(data, new Uint8Array(opened));
+        },
+        async 'decrypt encrypted with exported auto generated key'() {
+            const data = new Uint8Array([1, 2, 3]);
+            const salt = $mol_crypto_salt();
+            const Alice = await $mol_crypto_secret.generate();
+            const closed = await Alice.encrypt(data, salt);
+            const Bob = await $mol_crypto_secret.from(await Alice.serial());
+            const opened = await Bob.decrypt(closed, salt);
+            $mol_assert_like(data, new Uint8Array(opened));
+        },
+    });
+})($ || ($ = {}));
+//mol/crypto/secret/secret.test.ts
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_after_work = $mol_after_mock_timeout;
+    });
+})($ || ($ = {}));
+//mol/after/work/work.test.ts
+;
+"use strict";
+var $;
+(function ($) {
+    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
+    $mol_test({
+        'base64 encode string'() {
+            $mol_assert_equal($mol_base64_encode('Hello, ΧΨΩЫ'), 'SGVsbG8sIM6nzqjOqdCr');
+        },
+        'base64 encode binary'() {
+            $mol_assert_equal($mol_base64_encode(png), 'GgoASUh42g==');
+        },
+    });
+})($ || ($ = {}));
+//mol/base64/encode/encode.test.ts
+;
+"use strict";
+var $;
+(function ($) {
     function create_sieve({ path = '', ids_tags }) {
         let bag = new $mol_tag_sieve;
         bag.ids_tags = () => ids_tags;
@@ -5889,15 +5972,6 @@ var $;
 "use strict";
 var $;
 (function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_after_work = $mol_after_mock_timeout;
-    });
-})($ || ($ = {}));
-//mol/after/work/work.test.ts
-;
-"use strict";
-var $;
-(function ($_1) {
     var $$;
     (function ($$) {
         const src = `
@@ -5937,42 +6011,6 @@ var $;
     })($$ = $_1.$$ || ($_1.$$ = {}));
 })($ || ($ = {}));
 //mol/view/tree2/class/props.test.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_decode(base64) {
-        throw new Error('Not implemented');
-    }
-    $.$mol_base64_decode = $mol_base64_decode;
-})($ || ($ = {}));
-//mol/base64/decode/decode.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_base64_decode_web(base64Str) {
-        return new Uint8Array($mol_dom_context.atob(base64Str).split('').map(c => c.charCodeAt(0)));
-    }
-    $.$mol_base64_decode_web = $mol_base64_decode_web;
-    $.$mol_base64_decode = $mol_base64_decode_web;
-})($ || ($ = {}));
-//mol/base64/decode/decode.web.ts
-;
-"use strict";
-var $;
-(function ($) {
-    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
-    $mol_test({
-        'base64 decode string'() {
-            $mol_assert_like($mol_base64_decode('SGVsbG8sIM6nzqjOqdCr'), new TextEncoder().encode('Hello, ΧΨΩЫ'));
-        },
-        'base64 decode binary'() {
-            $mol_assert_like($mol_base64_decode('GgoASUh42g=='), png);
-        },
-    });
-})($ || ($ = {}));
-//mol/base64/decode/decode.test.ts
 ;
 var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/simple.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3Rfc2ltcGxlICRtb2xfdmlldwoJc3RyIFxzb21lCgludW0gMTIzMTcKCWJvb2wgdHJ1ZQoJbnVsIG51bGwKCWxvY2FsaXplZCBAIFxsb2NhbGl6ZWQgdmFsdWUKCW11bHRpX3N0ciBcCgkJXG9uZQoJCVx0d28KCXNhbWU/dmFsIFwKCS0gY29tbWVudGVkX25vZGUgLwoJCTw9IE5vdGVzX3BhZ2VfdGl0bGUhdGFnCg=="
 
@@ -7302,21 +7340,6 @@ var $;
     $.$mol_tree2_wasm_to_module = $mol_data_pipe($mol_tree2_wasm_to_bytes, $mol_wasm_module);
 })($ || ($ = {}));
 //mol/tree2/wasm/to/module/module.ts
-;
-"use strict";
-var $;
-(function ($) {
-    const png = new Uint8Array([0x1a, 0x0a, 0x00, 0x49, 0x48, 0x78, 0xda]);
-    $mol_test({
-        'base64 encode string'() {
-            $mol_assert_equal($mol_base64_encode('Hello, ΧΨΩЫ'), 'SGVsbG8sIM6nzqjOqdCr');
-        },
-        'base64 encode binary'() {
-            $mol_assert_equal($mol_base64_encode(png), 'GgoASUh42g==');
-        },
-    });
-})($ || ($ = {}));
-//mol/base64/encode/encode.test.ts
 ;
 "use strict";
 var $;

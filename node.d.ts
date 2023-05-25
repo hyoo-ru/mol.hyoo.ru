@@ -2574,7 +2574,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $hyoo_sync_peer(path: string): Promise<$hyoo_crowd_peer>;
+    function $hyoo_sync_peer(path: string, next?: string): Promise<$hyoo_crowd_peer>;
 }
 
 declare namespace $ {
@@ -2791,7 +2791,7 @@ declare namespace $ {
     class $hyoo_sync_yard<Line> extends $mol_object2 {
         db_unit_persisted: WeakSet<$hyoo_crowd_unit>;
         log_pack(data: any): any;
-        peer(): $hyoo_crowd_peer;
+        peer(next?: string): $hyoo_crowd_peer;
         world(): $hyoo_crowd_world;
         land_init(land: $hyoo_crowd_land): void;
         land(id: $mol_int62_string): $hyoo_crowd_land;
@@ -3214,6 +3214,57 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $hyoo_meta_link extends $mol_link {
+        minimal_height(): number;
+        id(): `${string}_${string}`;
+        title(): string;
+        meta(): $hyoo_meta_model;
+        param(): string;
+        all_title(): string;
+        sub(): readonly any[];
+        Avatar(): $$.$mol_avatar;
+        highlight(): string;
+        Title(): $$.$mol_dimmer;
+    }
+}
+
+declare namespace $.$$ {
+    class $hyoo_meta_link extends $.$hyoo_meta_link {
+        title(): string;
+        uri(): string;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $hyoo_page_side_news extends $mol_page {
+        news(): $$.$hyoo_page_side[];
+        side(): $$.$hyoo_page_side;
+        title(): string;
+        attr(): Record<string, any>;
+        body(): readonly any[];
+        item(id: any): $$.$hyoo_page_side;
+        item_title(id: any): string;
+        Item(id: any): $$.$hyoo_meta_link;
+        items(): readonly any[];
+        Section_list(): $$.$mol_list;
+    }
+}
+
+declare namespace $.$$ {
+    class $hyoo_page_side_news extends $.$hyoo_page_side_news {
+        items(): $hyoo_meta_link[];
+        item(side: $hyoo_page_side): $hyoo_page_side;
+        item_title(side: $hyoo_page_side): string;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
     class $mol_icon_magnify extends $mol_icon {
         path(): string;
     }
@@ -3260,31 +3311,6 @@ declare namespace $.$$ {
     class $mol_check_expand extends $.$mol_check_expand {
         level_style(): string;
         expandable(): boolean;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $hyoo_meta_link extends $mol_link {
-        minimal_height(): number;
-        id(): `${string}_${string}`;
-        title(): string;
-        meta(): $hyoo_meta_model;
-        param(): string;
-        all_title(): string;
-        sub(): readonly any[];
-        Avatar(): $$.$mol_avatar;
-        highlight(): string;
-        Title(): $$.$mol_dimmer;
-    }
-}
-
-declare namespace $.$$ {
-    class $hyoo_meta_link extends $.$hyoo_meta_link {
-        title(): string;
-        uri(): string;
     }
 }
 
@@ -3504,154 +3530,6 @@ declare namespace $.$$ {
         add(): any;
         transfer_adopt(transfer: DataTransfer): `${string}_${string}` | null | undefined;
         receive_end(dropped: $mol_int62_string): void;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_icon_sync extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_icon_sync_off extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $hyoo_sync_online extends $mol_link {
-        minimal_width(): number;
-        minimal_height(): number;
-        yard(): $hyoo_sync_yard<unknown>;
-        uri(): string;
-        sub(): readonly any[];
-        attr(): Record<string, any>;
-        master_link(): string;
-        Well(): $$.$mol_avatar;
-        Fail(): $mol_icon_sync_off;
-        hint(): string;
-        message(): string;
-    }
-}
-
-declare namespace $.$$ {
-    class $hyoo_sync_online extends $.$hyoo_sync_online {
-        message(): string;
-        sub(): $mol_icon_sync_off[];
-        hint(): string;
-        master_link(): string;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_image extends $mol_view {
-        dom_name(): string;
-        field(): Record<string, any>;
-        attr(): Record<string, any>;
-        event(): Record<string, any>;
-        minimal_width(): number;
-        minimal_height(): number;
-        uri(): string;
-        loading(): string;
-        decoding(): string;
-        cors(): any;
-        natural_width(next?: any): number;
-        natural_height(next?: any): number;
-        load(next?: any): any;
-    }
-}
-
-declare namespace $.$$ {
-    class $mol_image extends $.$mol_image {
-        natural_width(next?: null): number;
-        natural_height(next?: null): number;
-        load(): void;
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_link_iconed extends $mol_link {
-        sub(): readonly any[];
-        content(): readonly any[];
-        host(): string;
-        icon(): string;
-        Icon(): $$.$mol_image;
-        title(): string;
-    }
-}
-
-declare namespace $.$$ {
-    class $mol_link_iconed extends $.$mol_link_iconed {
-        icon(): string;
-        host(): string;
-        title(): string;
-        sub(): readonly any[];
-    }
-}
-
-declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_icon_image extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $hyoo_page_menu extends $hyoo_meta_menu {
-        title_default(): string;
-        attr(): Record<string, any>;
-        Title(): $$.$hyoo_meta_link;
-        foot(): readonly any[];
-        title(): string;
-        side(): $$.$hyoo_page_side;
-        Online(): $$.$hyoo_sync_online;
-        Source(): $mol_link_source;
-        About(): $$.$mol_link_iconed;
-        Aura_icon(): $mol_icon_image;
-        aura_showing(next?: any): boolean;
-        Aura_showing(): $mol_check_icon;
-        Lights(): $$.$mol_lights_toggle;
-    }
-}
-
-declare namespace $.$$ {
-    class $hyoo_page_menu extends $.$hyoo_page_menu {
-        title(): string;
-    }
-}
-
-declare namespace $ {
-    class $hyoo_page_side_news extends $mol_page {
-        news(): $$.$hyoo_page_side[];
-        side(): $$.$hyoo_page_side;
-        title(): string;
-        attr(): Record<string, any>;
-        body(): readonly any[];
-        item(id: any): $$.$hyoo_page_side;
-        item_title(id: any): string;
-        Item(id: any): $$.$hyoo_meta_link;
-        items(): readonly any[];
-        Section_list(): $$.$mol_list;
-    }
-}
-
-declare namespace $.$$ {
-    class $hyoo_page_side_news extends $.$hyoo_page_side_news {
-        items(): $hyoo_meta_link[];
-        item(side: $hyoo_page_side): $hyoo_page_side;
-        item_title(side: $hyoo_page_side): string;
     }
 }
 
@@ -4144,6 +4022,58 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_image extends $mol_view {
+        dom_name(): string;
+        field(): Record<string, any>;
+        attr(): Record<string, any>;
+        event(): Record<string, any>;
+        minimal_width(): number;
+        minimal_height(): number;
+        uri(): string;
+        loading(): string;
+        decoding(): string;
+        cors(): any;
+        natural_width(next?: any): number;
+        natural_height(next?: any): number;
+        load(next?: any): any;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_image extends $.$mol_image {
+        natural_width(next?: null): number;
+        natural_height(next?: null): number;
+        load(): void;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_link_iconed extends $mol_link {
+        sub(): readonly any[];
+        content(): readonly any[];
+        host(): string;
+        icon(): string;
+        Icon(): $$.$mol_image;
+        title(): string;
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_link_iconed extends $.$mol_link_iconed {
+        icon(): string;
+        host(): string;
+        title(): string;
+        sub(): readonly any[];
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
     class $mol_embed_native extends $mol_scroll {
         uri(val?: any): string;
         dom_name(): string;
@@ -4381,7 +4311,7 @@ declare namespace $.$$ {
             'code-punctuation': RegExp;
         }>;
         block_text(index: number): string;
-        block_content(index: number): ($mol_dimmer | $mol_link_iconed | $mol_text_code_row | $mol_embed_any | $mol_text_span)[];
+        block_content(index: number): ($mol_dimmer | $mol_text_code_row | $mol_link_iconed | $mol_embed_any | $mol_text_span)[];
         line_tokens(path: readonly number[]): readonly {
             name: string;
             found: string;
@@ -4394,7 +4324,7 @@ declare namespace $.$$ {
         };
         line_type(path: readonly number[]): string;
         line_text(path: readonly number[]): string;
-        line_content(path: readonly number[]): ($mol_dimmer | $mol_link_iconed | $mol_text_code_row | $mol_embed_any | $mol_text_span)[];
+        line_content(path: readonly number[]): ($mol_dimmer | $mol_text_code_row | $mol_link_iconed | $mol_embed_any | $mol_text_span)[];
         link_uri(path: readonly number[]): string;
         link_host(path: readonly number[]): string;
         auto_scroll(): void;
@@ -5325,6 +5255,224 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    class $mol_icon_eye extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_password extends $mol_view {
+        type(val?: any): string;
+        sub(): readonly any[];
+        hint(): string;
+        value(val?: any): string;
+        submit(event?: any): any;
+        enabled(): boolean;
+        Pass(): $$.$mol_string;
+        checked(val?: any): boolean;
+        Show_icon(): $mol_icon_eye;
+        Show(): $mol_check_icon;
+        content(): readonly any[];
+    }
+}
+
+declare namespace $.$$ {
+    class $mol_password extends $.$mol_password {
+        checked(next?: boolean): boolean;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_meta_safe extends $mol_page {
+        title(): string;
+        yard(): $hyoo_sync_yard<unknown>;
+        bid_pass_long(): string;
+        key_size(): number;
+        attr(): Record<string, any>;
+        body(): readonly any[];
+        Expot_bid(): $$.$mol_text;
+        password_bid(): string;
+        password(next?: any): string;
+        Password(): $$.$mol_password;
+        Password_field(): $$.$mol_form_field;
+        recall_enabled(): boolean;
+        recall(next?: any): string;
+        Recall(): $$.$mol_string;
+        Recall_field(): $$.$mol_form_field;
+        Export_pass(): $$.$mol_list;
+        export_link(): string;
+        Export_link(): $$.$mol_link;
+        export_rows(): readonly any[];
+        Export_block(): $$.$mol_list;
+        Iport_descr(): $$.$mol_text;
+        Import_pass(): $$.$mol_list;
+        import_switch(next?: any): any;
+        peer_new(): string;
+        Peer_new(): $$.$mol_avatar;
+        impot_switch_title(): string;
+        Import_switch(): $mol_button_minor;
+        import_rows(): readonly any[];
+        Import_block(): $$.$mol_list;
+        content(): readonly any[];
+        Content(): $$.$mol_list;
+    }
+}
+
+declare namespace $ {
+    function $mol_base64_decode(base64: string): Uint8Array;
+}
+
+declare namespace $ {
+    function $mol_base64_decode_node(base64Str: string): Uint8Array;
+}
+
+declare namespace $ {
+    class $mol_crypto_secret extends Object {
+        readonly native: CryptoKey & {
+            type: 'private';
+        };
+        static size: number;
+        static extra: number;
+        constructor(native: CryptoKey & {
+            type: 'private';
+        });
+        static generate(): Promise<$mol_crypto_secret>;
+        static from(serial: BufferSource | string): Promise<$mol_crypto_secret>;
+        serial(): Promise<ArrayBuffer>;
+        encrypt(open: BufferSource, salt: BufferSource): Promise<ArrayBuffer>;
+        decrypt(closed: BufferSource, salt: BufferSource): Promise<ArrayBuffer>;
+    }
+}
+
+declare namespace $ {
+    class $mol_after_work extends $mol_object2 {
+        delay: number;
+        task: () => void;
+        id: any;
+        constructor(delay: number, task: () => void);
+        destructor(): void;
+    }
+}
+
+declare namespace $ {
+    function $mol_wait_rest_async(this: $): Promise<unknown>;
+    function $mol_wait_rest(this: $): unknown;
+}
+
+declare namespace $ {
+    function $mol_base64_encode(src: string | Uint8Array): string;
+}
+
+declare namespace $ {
+    function $mol_base64_encode_node(str: string | Uint8Array): string;
+}
+
+declare namespace $.$$ {
+    class $hyoo_meta_safe extends $.$hyoo_meta_safe {
+        password_bid(): string;
+        content(): $mol_list[];
+        recall(next?: string): string;
+        recall_enabled(): boolean;
+        peer_current(): `${string}_${string}`;
+        peer_new(): `${string}_${string}`;
+        key_import(next?: string | null): string | null;
+        key_new(): string | null;
+        import_switch(): void;
+        key_export(): string;
+        export_rows(): ($mol_link | $mol_list | $mol_text)[];
+        import_rows(): ($mol_list | $mol_button_minor | $mol_text)[];
+        export_link(): string;
+    }
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $ {
+    class $mol_icon_sync extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_sync_off extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_sync_online extends $mol_link {
+        minimal_width(): number;
+        minimal_height(): number;
+        yard(): $hyoo_sync_yard<unknown>;
+        uri(): string;
+        sub(): readonly any[];
+        attr(): Record<string, any>;
+        master_link(): string;
+        Well(): $$.$mol_avatar;
+        Fail(): $mol_icon_sync_off;
+        hint(): string;
+        message(): string;
+    }
+}
+
+declare namespace $.$$ {
+    class $hyoo_sync_online extends $.$hyoo_sync_online {
+        message(): string;
+        sub(): $mol_icon_sync_off[];
+        hint(): string;
+        master_link(): string;
+    }
+}
+
+declare namespace $ {
+}
+
+declare namespace $ {
+    class $mol_icon_key extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_key_variant extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_image extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $hyoo_page_menu extends $hyoo_meta_menu {
+        title_default(): string;
+        attr(): Record<string, any>;
+        Title(): $$.$hyoo_meta_link;
+        foot(): readonly any[];
+        title(): string;
+        side(): $$.$hyoo_page_side;
+        Online(): $$.$hyoo_sync_online;
+        Safe_icon(): $mol_icon_key_variant;
+        safe_showing(next?: any): boolean;
+        Safe_showing(): $mol_check_icon;
+        About(): $$.$mol_link_iconed;
+        Aura_icon(): $mol_icon_image;
+        aura_showing(next?: any): boolean;
+        Aura_showing(): $mol_check_icon;
+        Lights(): $$.$mol_lights_toggle;
+    }
+}
+
+declare namespace $.$$ {
+    class $hyoo_page_menu extends $.$hyoo_page_menu {
+        title(): string;
+    }
+}
+
+declare namespace $ {
     class $hyoo_page extends $mol_book2 {
         side_main_id(): string;
         yard(): $hyoo_sync_client;
@@ -5337,20 +5485,16 @@ declare namespace $ {
         style(): Record<string, any>;
         plugins(): readonly any[];
         auto(): readonly any[];
-        Placeholder(): $$.$hyoo_page_menu;
         pages(): readonly any[];
+        Placeholder(): $$.$hyoo_page_menu;
         aura_image(): string;
         Theme(): $$.$mol_theme_auto;
         ref_track(): any;
-        side_uri(id: any): string;
-        page_add(next?: any): any;
-        side_add(id: any, next?: any): any;
-        aura_showing(next?: any): boolean;
-        search(): string;
-        Menu(): $$.$hyoo_page_menu;
         News(): $$.$hyoo_page_side_news;
         book_side(): $$.$hyoo_page_side;
         book_pages_node(): any;
+        side_uri(id: any): string;
+        side_add(id: any, next?: any): any;
         tools_ext(): readonly any[];
         Side_menu(): $$.$hyoo_page_side_menu;
         side_menu_showed(next?: any): boolean;
@@ -5367,6 +5511,15 @@ declare namespace $ {
         Сlose_icon(): $mol_icon_cross;
         Rights_close(): $mol_button_minor;
         Rights(id: any): $$.$hyoo_meta_rights;
+        safe_close(next?: any): any;
+        Safe_icon(): $mol_icon_cross;
+        Safe_close(): $mol_button_minor;
+        Safe(): $$.$hyoo_meta_safe;
+        page_add(next?: any): any;
+        aura_showing(next?: any): boolean;
+        safe(next?: any): boolean;
+        search(): string;
+        Menu(): $$.$hyoo_page_menu;
     }
 }
 
@@ -5390,9 +5543,11 @@ declare namespace $.$$ {
         editing(next?: boolean): boolean;
         rights(next?: boolean): boolean;
         info(next?: boolean): boolean;
+        safe(next?: boolean): boolean;
         edit_close(): void;
         rights_close(): void;
         info_close(): void;
+        safe_close(): void;
         side(id: $mol_int62_string): $hyoo_page_side;
         side_uri(id: $mol_int62_string): string;
         side_current_id(): `${string}_${string}`;
@@ -5402,7 +5557,7 @@ declare namespace $.$$ {
         book_side(): $hyoo_page_side;
         book_pages_node(): $hyoo_crowd_list;
         side_menu_showed(next?: boolean): boolean;
-        pages(): ($mol_view | $hyoo_page_side_menu | $hyoo_page_side_view | $hyoo_page_side_edit | $hyoo_page_side_info | $hyoo_meta_rights)[];
+        pages(): ($mol_view | $hyoo_page_side_menu | $hyoo_page_side_view | $hyoo_page_side_edit | $hyoo_page_side_info | $hyoo_meta_rights | $hyoo_meta_safe)[];
         page_add(): void;
         side_add(id: $mol_int62_string): void;
         ref_track(): void;
@@ -6709,21 +6864,6 @@ declare namespace $ {
     }
 }
 
-declare namespace $ {
-    class $mol_after_work extends $mol_object2 {
-        delay: number;
-        task: () => void;
-        id: any;
-        constructor(delay: number, task: () => void);
-        destructor(): void;
-    }
-}
-
-declare namespace $ {
-    function $mol_wait_rest_async(this: $): Promise<unknown>;
-    function $mol_wait_rest(this: $): unknown;
-}
-
 declare namespace $.$$ {
     class $hyoo_js_perf_stats extends $mol_object2 {
         elapsed: number;
@@ -7581,14 +7721,6 @@ declare namespace $ {
         Result_text(): $$.$mol_text_code;
         Result(): $mol_page;
     }
-}
-
-declare namespace $ {
-    function $mol_base64_encode(src: string | Uint8Array): string;
-}
-
-declare namespace $ {
-    function $mol_base64_encode_node(str: string | Uint8Array): string;
 }
 
 declare namespace $.$$ {
@@ -12300,34 +12432,6 @@ declare namespace $ {
 declare namespace $.$$ {
     class $mol_video_player_demo extends $.$mol_video_player_demo {
         uri(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_icon_eye extends $mol_icon {
-        path(): string;
-    }
-}
-
-declare namespace $ {
-    class $mol_password extends $mol_view {
-        type(val?: any): string;
-        sub(): readonly any[];
-        hint(): string;
-        value(val?: any): string;
-        submit(event?: any): any;
-        enabled(): boolean;
-        Pass(): $$.$mol_string;
-        checked(val?: any): boolean;
-        Show_icon(): $mol_icon_eye;
-        Show(): $mol_check_icon;
-        content(): readonly any[];
-    }
-}
-
-declare namespace $.$$ {
-    class $mol_password extends $.$mol_password {
-        checked(next?: boolean): boolean;
     }
 }
 
