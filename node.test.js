@@ -21297,8 +21297,8 @@ var $;
                     uri: "https://studio.hyoo.ru/"
                 },
                 marked: {
-                    target: "release",
-                    title: this.$.$mol_locale.text('$hyoo_apps_apps_marked_title'),
+                    target: "develop",
+                    title: "MarkedText",
                     uri: "https://marked.hyoo.ru/"
                 },
                 idea: {
@@ -21330,6 +21330,11 @@ var $;
                     target: "release",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_search_title'),
                     uri: "https://search.hyoo.ru/"
+                },
+                artist: {
+                    target: "release",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_artist_title'),
+                    uri: "https://artist.hyoo.ru/"
                 },
                 lingua: {
                     target: "release",
@@ -21395,11 +21400,6 @@ var $;
                     target: "preview",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_draw_title'),
                     uri: "https://draw.hyoo.ru/"
-                },
-                artist: {
-                    target: "preview",
-                    title: this.$.$mol_locale.text('$hyoo_apps_apps_artist_title'),
-                    uri: "https://artist.hyoo.ru/"
                 },
                 invest: {
                     target: "preview",
@@ -21541,7 +21541,7 @@ var $;
         group_expanded(id, next) {
             if (next !== undefined)
                 return next;
-            return true;
+            return false;
         }
         app_uri_default(id) {
             return "";

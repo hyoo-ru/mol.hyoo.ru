@@ -1661,7 +1661,7 @@ $hyoo_apps $mol_book2
 					rows <= group_list /
 						<= Group*id $mol_expander
 							title <= group_name* \
-							expanded? <=> group_expanded*? true
+							expanded? <=> group_expanded*? false
 							content <= group_items* /
 								<= Menu_item* $mol_view
 									sub /
@@ -1688,8 +1688,8 @@ $hyoo_apps $mol_book2
 			title @ \Online Studio
 			uri \https://studio.hyoo.ru/
 		marked *
-			target \release
-			title @ \MarkedText
+			target \develop
+			title \MarkedText
 			uri \https://marked.hyoo.ru/
 		idea *
 			target \release
@@ -1715,6 +1715,10 @@ $hyoo_apps $mol_book2
 			target \release
 			title @ \Web Search
 			uri \https://search.hyoo.ru/
+		artist *
+			target \release
+			title @ \Artificial Artist
+			uri \https://artist.hyoo.ru/
 		lingua *
 			target \release
 			title @ \Translator
@@ -1767,10 +1771,6 @@ $hyoo_apps $mol_book2
 			target \preview
 			title @ \Draw Tool
 			uri \https://draw.hyoo.ru/
-		artist *
-			target \preview
-			title @ \Artificial Artist
-			uri \https://artist.hyoo.ru/
 		invest *
 			target \preview
 			title @ \Private Investments
