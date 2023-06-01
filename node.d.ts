@@ -12498,6 +12498,7 @@ declare namespace $ {
         Temperature(): $$.$mol_number;
         Temperature_labeler(): $mol_labeler;
         Controls(): $mol_row;
+        Scroll(): $$.$mol_scroll;
     }
 }
 
