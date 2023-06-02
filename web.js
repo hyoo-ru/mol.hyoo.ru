@@ -9810,12 +9810,19 @@ var $;
         cut(seat) {
             return this.land.wipe(this.units()[seat]);
         }
-        has(val) {
-            for (const unit of this.units()) {
-                if (unit.data === val)
-                    return true;
+        has(val, next) {
+            if (next === undefined) {
+                for (const unit of this.units()) {
+                    if (unit.data === val)
+                        return true;
+                }
+                return false;
             }
-            return false;
+            if (next)
+                this.add(val);
+            else
+                this.drop(val);
+            return next;
         }
         add(val) {
             if (this.has(val))
@@ -53659,6 +53666,9 @@ var $;
                     }
                 }
                 return stream;
+            }
+            dom_node_actual() {
+                return super.dom_node_actual();
             }
         }
         __decorate([
