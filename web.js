@@ -54116,6 +54116,14 @@ var $;
     var $$;
     (function ($$) {
         class $hyoo_mol extends $.$hyoo_mol {
+            hubhabRedirect() {
+                if (this.$.$mol_state_arg.value('section') === 'articles') {
+                    document.location.assign('https://habhub.hyoo.ru/' + document.location.hash);
+                }
+            }
+            auto() {
+                this.hubhabRedirect();
+            }
             Placeholder() {
                 if (this.spread() === 'docs')
                     return this.Docs().Placeholder();
@@ -54124,6 +54132,9 @@ var $;
                 return null;
             }
         }
+        __decorate([
+            $mol_mem
+        ], $hyoo_mol.prototype, "hubhabRedirect", null);
         $$.$hyoo_mol = $hyoo_mol;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));

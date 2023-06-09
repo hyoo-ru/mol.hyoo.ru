@@ -12539,6 +12539,8 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $hyoo_mol extends $.$hyoo_mol {
+        hubhabRedirect(): void;
+        auto(): void;
         Placeholder(): any;
     }
 }
