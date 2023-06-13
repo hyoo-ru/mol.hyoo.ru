@@ -1723,6 +1723,10 @@ $hyoo_apps $mol_book2
 			target \release
 			title @ \Artificial Artist
 			uri \https://artist.hyoo.ru/
+		match *
+			target \release
+			title @ \Dating Service
+			uri \https://match.hyoo.ru/
 		lingua *
 			target \release
 			title @ \Translator
