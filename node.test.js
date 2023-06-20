@@ -2999,14 +2999,14 @@ var $;
 var $;
 (function ($) {
     class $mol_scroll extends $mol_view {
-        scroll_top(val) {
-            if (val !== undefined)
-                return val;
+        scroll_top(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
-        scroll_left(val) {
-            if (val !== undefined)
-                return val;
+        scroll_left(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         field() {
@@ -3720,9 +3720,9 @@ var $;
 var $;
 (function ($) {
     class $mol_pop extends $mol_view {
-        showed(val) {
-            if (val !== undefined)
-                return val;
+        showed(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         align_vert() {
@@ -4349,9 +4349,9 @@ var $;
 var $;
 (function ($) {
     class $mol_nav extends $mol_plugin {
-        cycle(val) {
-            if (val !== undefined)
-                return val;
+        cycle(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         mod_ctrl() {
@@ -4363,24 +4363,24 @@ var $;
         mod_alt() {
             return false;
         }
-        keys_x(val) {
-            if (val !== undefined)
-                return val;
+        keys_x(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
-        keys_y(val) {
-            if (val !== undefined)
-                return val;
+        keys_y(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
-        current_x(val) {
-            if (val !== undefined)
-                return val;
+        current_x(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        current_y(val) {
-            if (val !== undefined)
-                return val;
+        current_y(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         event_up(event) {
@@ -5334,9 +5334,9 @@ var $;
         autocomplete() {
             return false;
         }
-        selection(val) {
-            if (val !== undefined)
-                return val;
+        selection(next) {
+            if (next !== undefined)
+                return next;
             return [
                 0,
                 0
@@ -5385,13 +5385,13 @@ var $;
         disabled() {
             return false;
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
-        value_changed(val) {
-            return this.value(val);
+        value_changed(next) {
+            return this.value(next);
         }
         hint() {
             return "";
@@ -5420,9 +5420,9 @@ var $;
         length_max() {
             return +Infinity;
         }
-        type(val) {
-            if (val !== undefined)
-                return val;
+        type(next) {
+            if (next !== undefined)
+                return next;
             return "text";
         }
         event_change(event) {
@@ -6408,9 +6408,9 @@ var $;
 var $;
 (function ($) {
     class $mol_search extends $mol_pop {
-        query(val) {
-            if (val !== undefined)
-                return val;
+        query(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         suggests() {
@@ -6423,8 +6423,8 @@ var $;
                 this.Nav()
             ];
         }
-        showed(val) {
-            return this.suggests_showed(val);
+        showed(next) {
+            return this.suggests_showed(next);
         }
         align_hor() {
             return "right";
@@ -6445,15 +6445,15 @@ var $;
             obj.sub = () => this.suggest_content(id);
             return obj;
         }
-        clear(val) {
-            if (val !== undefined)
-                return val;
+        clear(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         Hotkey() {
             const obj = new this.$.$mol_hotkey();
             obj.key = () => ({
-                escape: (val) => this.clear(val)
+                escape: (next) => this.clear(next)
             });
             return obj;
         }
@@ -6471,9 +6471,9 @@ var $;
             obj.current_y = (component) => this.nav_focused(component);
             return obj;
         }
-        suggests_showed(val) {
-            if (val !== undefined)
-                return val;
+        suggests_showed(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         hint() {
@@ -6498,7 +6498,7 @@ var $;
         }
         Query() {
             const obj = new this.$.$mol_string();
-            obj.value = (val) => this.query(val);
+            obj.value = (next) => this.query(next);
             obj.hint = () => this.hint();
             obj.submit = (event) => this.submit(event);
             obj.enabled = () => this.enabled();
@@ -6749,8 +6749,8 @@ var $;
         body() {
             return [];
         }
-        body_scroll_top(val) {
-            return this.Body().scroll_top(val);
+        body_scroll_top(next) {
+            return this.Body().scroll_top(next);
         }
         Body() {
             const obj = new this.$.$mol_scroll();
@@ -6892,9 +6892,9 @@ var $;
         param() {
             return "";
         }
-        spread(val) {
-            if (val !== undefined)
-                return val;
+        spread(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         spreads() {
@@ -7371,16 +7371,16 @@ var $;
         hint() {
             return this.$.$mol_locale.text('$mol_lights_toggle_hint');
         }
-        checked(val) {
-            return this.lights(val);
+        checked(next) {
+            return this.lights(next);
         }
         Lights_icon() {
             const obj = new this.$.$mol_icon_brightness_6();
             return obj;
         }
-        lights(val) {
-            if (val !== undefined)
-                return val;
+        lights(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
     }
@@ -7443,7 +7443,7 @@ var $;
             obj.minimal_width = () => 40;
             obj.minimal_height = () => 40;
             obj.enabled = () => this.trigger_enabled();
-            obj.checked = (val) => this.showed(val);
+            obj.checked = (next) => this.showed(next);
             obj.sub = () => this.trigger_content();
             obj.hint = () => this.hint();
             return obj;
@@ -7506,17 +7506,17 @@ var $;
 var $;
 (function ($) {
     class $mol_select extends $mol_pick {
-        dictionary(val) {
-            if (val !== undefined)
-                return val;
+        dictionary(next) {
+            if (next !== undefined)
+                return next;
             return {};
         }
         options() {
             return [];
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         option_label_default() {
@@ -7552,7 +7552,7 @@ var $;
         }
         Filter() {
             const obj = new this.$.$mol_string();
-            obj.value = (val) => this.filter_pattern(val);
+            obj.value = (next) => this.filter_pattern(next);
             obj.hint = () => this.$.$mol_locale.text('$mol_select_Filter_hint');
             obj.submit = (event) => this.submit(event);
             obj.enabled = () => this.enabled();
@@ -7570,9 +7570,9 @@ var $;
         option_label(id) {
             return "";
         }
-        filter_pattern(val) {
-            if (val !== undefined)
-                return val;
+        filter_pattern(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Option_label(id) {
@@ -7597,16 +7597,16 @@ var $;
                 return component;
             return null;
         }
-        nav_cycle(val) {
-            if (val !== undefined)
-                return val;
+        nav_cycle(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Nav() {
             const obj = new this.$.$mol_nav();
             obj.keys_y = () => this.nav_components();
             obj.current_y = (component) => this.option_focused(component);
-            obj.cycle = (val) => this.nav_cycle(val);
+            obj.cycle = (next) => this.nav_cycle(next);
             return obj;
         }
         menu_content() {
@@ -11804,8 +11804,8 @@ var $;
                 paddingLeft: this.level_style()
             };
         }
-        checked(val) {
-            return this.expanded(val);
+        checked(next) {
+            return this.expanded(next);
         }
         enabled() {
             return this.expandable();
@@ -11813,9 +11813,9 @@ var $;
         level_style() {
             return "0px";
         }
-        expanded(val) {
-            if (val !== undefined)
-                return val;
+        expanded(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         expandable() {
@@ -11989,9 +11989,9 @@ var $;
         drag_end(event) {
             return this.end(event);
         }
-        status(val) {
-            if (val !== undefined)
-                return val;
+        status(next) {
+            if (next !== undefined)
+                return next;
             return "ready";
         }
     }
@@ -12110,9 +12110,9 @@ var $;
                 return event;
             return null;
         }
-        status(val) {
-            if (val !== undefined)
-                return val;
+        status(next) {
+            if (next !== undefined)
+                return next;
             return "ready";
         }
     }
@@ -13305,9 +13305,9 @@ var $;
             ];
             return obj;
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         Value() {
@@ -13414,7 +13414,7 @@ var $;
         }
         Index() {
             const obj = new this.$.$mol_paginator();
-            obj.value = (val) => this.index(val);
+            obj.value = (next) => this.index(next);
             return obj;
         }
         plugins() {
@@ -13424,9 +13424,9 @@ var $;
                 this.Forward()
             ];
         }
-        index(val) {
-            if (val !== undefined)
-                return val;
+        index(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         Backward() {
@@ -13437,16 +13437,16 @@ var $;
             });
             return obj;
         }
-        escape(val) {
-            if (val !== undefined)
-                return val;
+        escape(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         Forward() {
             const obj = new this.$.$mol_hotkey();
             obj.key = () => ({
                 enter: (event) => this.forward(event),
-                escape: (val) => this.escape(val)
+                escape: (next) => this.escape(next)
             });
             return obj;
         }
@@ -14448,7 +14448,7 @@ var $;
             const obj = new this.$.$mol_check_expand();
             obj.level = () => this.cell_level(id);
             obj.label = () => this.cell_content(id);
-            obj.expanded = (val) => this.cell_expanded(id, val);
+            obj.expanded = (next) => this.cell_expanded(id, next);
             return obj;
         }
         Cell_content(id) {
@@ -14485,9 +14485,9 @@ var $;
         cell_level(id) {
             return 0;
         }
-        cell_expanded(id, val) {
-            if (val !== undefined)
-                return val;
+        cell_expanded(id, next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         needle() {
@@ -14962,9 +14962,9 @@ var $;
 var $;
 (function ($) {
     class $mol_embed_native extends $mol_scroll {
-        uri(val) {
-            if (val !== undefined)
-                return val;
+        uri(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         dom_name() {
@@ -15149,9 +15149,9 @@ var $;
         clipboard_write() {
             return true;
         }
-        uri(val) {
-            if (val !== undefined)
-                return val;
+        uri(next) {
+            if (next !== undefined)
+                return next;
             return "about:config";
         }
         html() {
@@ -16487,14 +16487,14 @@ var $;
                 this.Calendar()
             ];
         }
-        value_number(val) {
-            if (val !== undefined)
-                return val;
+        value_number(next) {
+            if (next !== undefined)
+                return next;
             return +NaN;
         }
-        value_moment(val) {
-            if (val !== undefined)
-                return val;
+        value_moment(next) {
+            if (next !== undefined)
+                return next;
             const obj = new this.$.$mol_time_moment();
             return obj;
         }
@@ -16520,9 +16520,9 @@ var $;
             ];
             return obj;
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         input_mask(id) {
@@ -16533,7 +16533,7 @@ var $;
         }
         Input() {
             const obj = new this.$.$mol_format();
-            obj.value = (val) => this.value(val);
+            obj.value = (next) => this.value(next);
             obj.mask = (id) => this.input_mask(id);
             obj.enabled = () => this.enabled();
             return obj;
@@ -17758,9 +17758,9 @@ var $;
                 bracketClose: "}"
             };
         }
-        clickable(val) {
-            if (val !== undefined)
-                return val;
+        clickable(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         sidebar_showed() {
@@ -17776,9 +17776,9 @@ var $;
                 return event;
             return null;
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         hint() {
@@ -17793,9 +17793,9 @@ var $;
         length_max() {
             return +Infinity;
         }
-        selection(val) {
-            if (val !== undefined)
-                return val;
+        selection(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
         submit(next) {
@@ -17808,12 +17808,12 @@ var $;
         }
         Edit() {
             const obj = new this.$.$mol_textarea_edit();
-            obj.value = (val) => this.value(val);
+            obj.value = (next) => this.value(next);
             obj.hint = () => this.hint();
             obj.enabled = () => this.enabled();
             obj.spellcheck = () => this.spellcheck();
             obj.length_max = () => this.length_max();
-            obj.selection = (val) => this.selection(val);
+            obj.selection = (next) => this.selection(next);
             obj.submit = (next) => this.submit(next);
             obj.submit_with_ctrl = () => true;
             return obj;
@@ -18855,9 +18855,9 @@ var $;
                 this.Content()
             ];
         }
-        expanded(val) {
-            if (val !== undefined)
-                return val;
+        expanded(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         expandable() {
@@ -18870,7 +18870,7 @@ var $;
         }
         Trigger() {
             const obj = new this.$.$mol_check_expand();
-            obj.checked = (val) => this.expanded(val);
+            obj.checked = (next) => this.expanded(next);
             obj.expandable = () => this.expandable();
             obj.label = () => this.label();
             return obj;
@@ -19824,9 +19824,9 @@ var $;
 var $;
 (function ($) {
     class $mol_password extends $mol_view {
-        type(val) {
-            if (val !== undefined)
-                return val;
+        type(next) {
+            if (next !== undefined)
+                return next;
             return "password";
         }
         sub() {
@@ -19835,9 +19835,9 @@ var $;
         hint() {
             return "";
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         submit(event) {
@@ -19852,14 +19852,14 @@ var $;
             const obj = new this.$.$mol_string();
             obj.type = () => this.type();
             obj.hint = () => this.hint();
-            obj.value = (val) => this.value(val);
+            obj.value = (next) => this.value(next);
             obj.submit = (event) => this.submit(event);
             obj.enabled = () => this.enabled();
             return obj;
         }
-        checked(val) {
-            if (val !== undefined)
-                return val;
+        checked(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Show_icon() {
@@ -19868,7 +19868,7 @@ var $;
         }
         Show() {
             const obj = new this.$.$mol_check_icon();
-            obj.checked = (val) => this.checked(val);
+            obj.checked = (next) => this.checked(next);
             obj.Icon = () => this.Show_icon();
             return obj;
         }
@@ -22258,14 +22258,14 @@ var $;
             ];
             return obj;
         }
-        filter(val) {
-            if (val !== undefined)
-                return val;
+        filter(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Filter() {
             const obj = new this.$.$mol_search();
-            obj.query = (val) => this.filter(val);
+            obj.query = (next) => this.filter(next);
             return obj;
         }
         ids_tags() {
@@ -23613,14 +23613,14 @@ var $;
         records() {
             return this.result();
         }
-        col_sort(val) {
-            if (val !== undefined)
-                return val;
+        col_sort(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Col_head(id) {
             const obj = new this.$.$mol_bench_head();
-            obj.event_click = (val) => this.event_sort_toggle(id, val);
+            obj.event_click = (next) => this.event_sort_toggle(id, next);
             obj.sub = () => this.col_head_content(id);
             return obj;
         }
@@ -23633,9 +23633,9 @@ var $;
         result() {
             return {};
         }
-        event_sort_toggle(id, val) {
-            if (val !== undefined)
-                return val;
+        event_sort_toggle(id, next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         col_head_title(id) {
@@ -23686,7 +23686,7 @@ var $;
         event() {
             return {
                 ...super.event(),
-                click: (val) => this.event_click(val)
+                click: (next) => this.event_click(next)
             };
         }
         attr() {
@@ -23695,9 +23695,9 @@ var $;
                 title: this.hint()
             };
         }
-        event_click(val) {
-            if (val !== undefined)
-                return val;
+        event_click(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         hint() {
@@ -23851,9 +23851,9 @@ var $;
         type() {
             return "tel";
         }
-        value_string(val) {
-            if (val !== undefined)
-                return val;
+        value_string(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         hint() {
@@ -23870,7 +23870,7 @@ var $;
         String() {
             const obj = new this.$.$mol_string();
             obj.type = () => this.type();
-            obj.value = (val) => this.value_string(val);
+            obj.value = (next) => this.value_string(next);
             obj.hint = () => this.hint();
             obj.enabled = () => this.string_enabled();
             obj.submit = (next) => this.submit(next);
@@ -28247,7 +28247,7 @@ var $;
     class $mol_check_list extends $mol_view {
         Option(id) {
             const obj = new this.$.$mol_check();
-            obj.checked = (val) => this.option_checked(id, val);
+            obj.checked = (next) => this.option_checked(id, next);
             obj.label = () => this.option_label(id);
             obj.enabled = () => this.option_enabled(id);
             obj.hint = () => this.option_hint(id);
@@ -28263,9 +28263,9 @@ var $;
         sub() {
             return this.items();
         }
-        option_checked(id, val) {
-            if (val !== undefined)
-                return val;
+        option_checked(id, next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         option_title(id) {
@@ -28340,9 +28340,9 @@ var $;
 var $;
 (function ($) {
     class $mol_switch extends $mol_check_list {
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
     }
@@ -28387,9 +28387,9 @@ var $;
                 this.Content()
             ];
         }
-        current(val) {
-            if (val !== undefined)
-                return val;
+        current(next) {
+            if (next !== undefined)
+                return next;
             return "0";
         }
         switch_options() {
@@ -28397,7 +28397,7 @@ var $;
         }
         Switch() {
             const obj = new this.$.$mol_switch();
-            obj.value = (val) => this.current(val);
+            obj.value = (next) => this.current(next);
             obj.options = () => this.switch_options();
             return obj;
         }
@@ -31851,9 +31851,9 @@ var $;
 var $;
 (function ($) {
     class $mol_select_list extends $mol_view {
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
         dictionary() {
@@ -31905,9 +31905,9 @@ var $;
         options_pickable() {
             return this.options();
         }
-        pick(val) {
-            if (val !== undefined)
-                return val;
+        pick(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         option_title(id) {
@@ -31927,7 +31927,7 @@ var $;
             const obj = new this.$.$mol_select();
             obj.align_hor = () => this.align_hor();
             obj.options = () => this.options_pickable();
-            obj.value = (val) => this.pick(val);
+            obj.value = (next) => this.pick(next);
             obj.option_label = (id) => this.option_title(id);
             obj.trigger_enabled = () => this.pick_enabled();
             obj.hint = () => this.pick_hint();
@@ -33194,15 +33194,15 @@ var $;
         name_hint() {
             return "Name";
         }
-        name(val) {
-            if (val !== undefined)
-                return val;
+        name(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Name() {
             const obj = new this.$.$mol_string();
             obj.hint = () => this.name_hint();
-            obj.value = (val) => this.name(val);
+            obj.value = (next) => this.name(next);
             return obj;
         }
         greeting() {
@@ -33787,13 +33787,13 @@ var $;
         }
         select(id) {
             const obj = new this.$.$mol_select();
-            obj.value = (val) => this.cell_value(id, val);
+            obj.value = (next) => this.cell_value(id, next);
             obj.dictionary = () => this.cell_options(id);
             return obj;
         }
         number(id) {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.cell_value(id, val);
+            obj.value = (next) => this.cell_value(id, next);
             return obj;
         }
         description() {
@@ -33836,9 +33836,9 @@ var $;
         cellCols(id) {
             return 1;
         }
-        cell_value(id, val) {
-            if (val !== undefined)
-                return val;
+        cell_value(id, next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         cell_options(id) {
@@ -34565,9 +34565,9 @@ var $;
 var $;
 (function ($) {
     class $mol_attach extends $mol_view {
-        items(val) {
-            if (val !== undefined)
-                return val;
+        items(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
         sub() {
@@ -34578,7 +34578,7 @@ var $;
         Add() {
             const obj = new this.$.$mol_button_open();
             obj.title = () => this.attach_title();
-            obj.files = (val) => this.attach_new(val);
+            obj.files = (next) => this.attach_new(next);
             return obj;
         }
         Item(id) {
@@ -34600,9 +34600,9 @@ var $;
         attach_title() {
             return "";
         }
-        attach_new(val) {
-            if (val !== undefined)
-                return val;
+        attach_new(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         item_drop(id, event) {
@@ -34711,16 +34711,16 @@ var $;
                 "Type/File"
             ];
         }
-        filled_items(val) {
-            if (val !== undefined)
-                return val;
+        filled_items(next) {
+            if (next !== undefined)
+                return next;
             return [
                 "https://picsum.photos/200"
             ];
         }
         Filled() {
             const obj = new this.$.$mol_attach();
-            obj.items = (val) => this.filled_items(val);
+            obj.items = (next) => this.filled_items(next);
             return obj;
         }
     }
@@ -34855,15 +34855,15 @@ var $;
         mail_hint() {
             return "E-mail";
         }
-        mail(val) {
-            if (val !== undefined)
-                return val;
+        mail(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Two_mail() {
             const obj = new this.$.$mol_string();
             obj.hint = () => this.mail_hint();
-            obj.value = (val) => this.mail(val);
+            obj.value = (next) => this.mail(next);
             return obj;
         }
         submit_title() {
@@ -34885,21 +34885,21 @@ var $;
         Three_mail() {
             const obj = new this.$.$mol_string();
             obj.hint = () => this.mail_hint();
-            obj.value = (val) => this.mail(val);
+            obj.value = (next) => this.mail(next);
             return obj;
         }
         confirm_title() {
             return "Confirm";
         }
-        confirmed(val) {
-            if (val !== undefined)
-                return val;
+        confirmed(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Three_confirm() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.confirm_title();
-            obj.checked = (val) => this.confirmed(val);
+            obj.checked = (next) => this.confirmed(next);
             return obj;
         }
         Three() {
@@ -34962,9 +34962,9 @@ var $;
                 "Widget/Grid"
             ];
         }
-        col_sort(val) {
-            if (val !== undefined)
-                return val;
+        col_sort(next) {
+            if (next !== undefined)
+                return next;
             return "mid";
         }
         result() {
@@ -34972,7 +34972,7 @@ var $;
         }
         View() {
             const obj = new this.$.$mol_bench();
-            obj.col_sort = (val) => this.col_sort(val);
+            obj.col_sort = (next) => this.col_sort(next);
             obj.result = () => this.result();
             return obj;
         }
@@ -36731,19 +36731,19 @@ var $;
 var $;
 (function ($) {
     class $mol_touch extends $mol_plugin {
-        start_zoom(val) {
-            if (val !== undefined)
-                return val;
+        start_zoom(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
-        start_distance(val) {
-            if (val !== undefined)
-                return val;
+        start_distance(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
-        zoom(val) {
-            if (val !== undefined)
-                return val;
+        zoom(next) {
+            if (next !== undefined)
+                return next;
             return 1;
         }
         allow_draw() {
@@ -36755,28 +36755,28 @@ var $;
         allow_zoom() {
             return true;
         }
-        action_type(val) {
-            if (val !== undefined)
-                return val;
+        action_type(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
-        action_point(val) {
-            if (val !== undefined)
-                return val;
+        action_point(next) {
+            if (next !== undefined)
+                return next;
             const obj = new this.$.$mol_vector_2d(NaN, NaN);
             return obj;
         }
-        start_pan(val) {
-            if (val !== undefined)
-                return val;
+        start_pan(next) {
+            if (next !== undefined)
+                return next;
             return [
                 0,
                 0
             ];
         }
-        pan(val) {
-            if (val !== undefined)
-                return val;
+        pan(next) {
+            if (next !== undefined)
+                return next;
             const obj = new this.$.$mol_vector_2d(0, 0);
             return obj;
         }
@@ -36784,72 +36784,72 @@ var $;
             const obj = new this.$.$mol_vector_2d(NaN, NaN);
             return obj;
         }
-        start_pos(val) {
-            if (val !== undefined)
-                return val;
+        start_pos(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         swipe_precision() {
             return 16;
         }
-        swipe_right(val) {
-            if (val !== undefined)
-                return val;
+        swipe_right(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_bottom(val) {
-            if (val !== undefined)
-                return val;
+        swipe_bottom(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_left(val) {
-            if (val !== undefined)
-                return val;
+        swipe_left(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_top(val) {
-            if (val !== undefined)
-                return val;
+        swipe_top(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_from_right(val) {
-            if (val !== undefined)
-                return val;
+        swipe_from_right(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_from_bottom(val) {
-            if (val !== undefined)
-                return val;
+        swipe_from_bottom(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_from_left(val) {
-            if (val !== undefined)
-                return val;
+        swipe_from_left(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_from_top(val) {
-            if (val !== undefined)
-                return val;
+        swipe_from_top(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_to_right(val) {
-            if (val !== undefined)
-                return val;
+        swipe_to_right(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_to_bottom(val) {
-            if (val !== undefined)
-                return val;
+        swipe_to_bottom(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_to_left(val) {
-            if (val !== undefined)
-                return val;
+        swipe_to_left(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        swipe_to_top(val) {
-            if (val !== undefined)
-                return val;
+        swipe_to_top(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         draw_start(event) {
@@ -37254,14 +37254,14 @@ var $;
         aspect() {
             return "none";
         }
-        hue_base(val) {
-            if (val !== undefined)
-                return val;
+        hue_base(next) {
+            if (next !== undefined)
+                return next;
             return +NaN;
         }
-        hue_shift(val) {
-            if (val !== undefined)
-                return val;
+        hue_shift(next) {
+            if (next !== undefined)
+                return next;
             return 111;
         }
         gap_hor() {
@@ -37294,9 +37294,9 @@ var $;
             const obj = new this.$.$mol_vector_2d(0, 0);
             return obj;
         }
-        shift(val) {
-            if (val !== undefined)
-                return val;
+        shift(next) {
+            if (next !== undefined)
+                return next;
             const obj = new this.$.$mol_vector_2d(0, 0);
             return obj;
         }
@@ -37308,20 +37308,20 @@ var $;
             const obj = new this.$.$mol_vector_2d(0, 0);
             return obj;
         }
-        scale(val) {
-            if (val !== undefined)
-                return val;
+        scale(next) {
+            if (next !== undefined)
+                return next;
             const obj = new this.$.$mol_vector_2d(1, -1);
             return obj;
         }
-        scale_x(val) {
-            if (val !== undefined)
-                return val;
+        scale_x(next) {
+            if (next !== undefined)
+                return next;
             return 1;
         }
-        scale_y(val) {
-            if (val !== undefined)
-                return val;
+        scale_y(next) {
+            if (next !== undefined)
+                return next;
             return -1;
         }
         size() {
@@ -37404,9 +37404,9 @@ var $;
         graphs_visible() {
             return this.graphs_positioned();
         }
-        zoom(val) {
-            if (val !== undefined)
-                return val;
+        zoom(next) {
+            if (next !== undefined)
+                return next;
             return 1;
         }
         allow_draw() {
@@ -37444,8 +37444,8 @@ var $;
         }
         Touch() {
             const obj = new this.$.$mol_touch();
-            obj.zoom = (val) => this.zoom(val);
-            obj.pan = (val) => this.shift(val);
+            obj.zoom = (next) => this.zoom(next);
+            obj.pan = (next) => this.shift(next);
             obj.allow_draw = () => this.allow_draw();
             obj.allow_pan = () => this.allow_pan();
             obj.allow_zoom = () => this.allow_zoom();
@@ -37800,15 +37800,15 @@ var $;
         hue_shift() {
             return 111;
         }
-        zoom(val) {
-            return this.Plot().scale_x(val);
+        zoom(next) {
+            return this.Plot().scale_x(next);
         }
         graphs_colored() {
             return this.Plot().graphs_colored();
         }
         Plot() {
             const obj = new this.$.$mol_plot_pane();
-            obj.zoom = (val) => this.zoom(val);
+            obj.zoom = (next) => this.zoom(next);
             obj.gap_left = () => this.gap_left();
             obj.gap_right = () => this.gap_right();
             obj.gap_bottom = () => this.gap_bottom();
@@ -38478,9 +38478,9 @@ var $;
         axis_points() {
             return [];
         }
-        normalize(val) {
-            if (val !== undefined)
-                return val;
+        normalize(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         precision() {
@@ -40039,9 +40039,9 @@ var $;
                 "Type/Boolean"
             ];
         }
-        base_checked(val) {
-            if (val !== undefined)
-                return val;
+        base_checked(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         c1Label() {
@@ -40049,22 +40049,22 @@ var $;
         }
         Labeled_base() {
             const obj = new this.$.$mol_check_box();
-            obj.checked = (val) => this.base_checked(val);
+            obj.checked = (next) => this.base_checked(next);
             obj.title = () => this.c1Label();
             return obj;
         }
         c2Label() {
             return "Checked";
         }
-        checked_checked(val) {
-            if (val !== undefined)
-                return val;
+        checked_checked(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Labeled_checked() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.c2Label();
-            obj.checked = (val) => this.checked_checked(val);
+            obj.checked = (next) => this.checked_checked(next);
             return obj;
         }
         c6Label() {
@@ -40079,12 +40079,12 @@ var $;
         }
         Alone_base() {
             const obj = new this.$.$mol_check_box();
-            obj.checked = (val) => this.base_checked(val);
+            obj.checked = (next) => this.base_checked(next);
             return obj;
         }
         Alone_checked() {
             const obj = new this.$.$mol_check_box();
-            obj.checked = (val) => this.checked_checked(val);
+            obj.checked = (next) => this.checked_checked(next);
             return obj;
         }
         Alone_disabled() {
@@ -40161,14 +40161,14 @@ var $;
                 "Widget/Control/Button"
             ];
         }
-        right(id, val) {
-            if (val !== undefined)
-                return val;
+        right(id, next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Rights() {
             const obj = new this.$.$mol_check_list();
-            obj.option_checked = (id, val) => this.right(id, val);
+            obj.option_checked = (id, next) => this.right(id, next);
             obj.options = () => ({
                 read: "Allow Read",
                 write: "Allow Write",
@@ -40215,9 +40215,9 @@ var $;
                 "Type/Boolean"
             ];
         }
-        base_expanded(val) {
-            if (val !== undefined)
-                return val;
+        base_expanded(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         c1Label() {
@@ -40225,22 +40225,22 @@ var $;
         }
         Labeled_base() {
             const obj = new this.$.$mol_check_expand();
-            obj.checked = (val) => this.base_expanded(val);
+            obj.checked = (next) => this.base_expanded(next);
             obj.title = () => this.c1Label();
             return obj;
         }
         c2Label() {
             return "Expanded";
         }
-        expanded_expanded(val) {
-            if (val !== undefined)
-                return val;
+        expanded_expanded(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Labeled_expanded() {
             const obj = new this.$.$mol_check_expand();
             obj.title = () => this.c2Label();
-            obj.checked = (val) => this.expanded_expanded(val);
+            obj.checked = (next) => this.expanded_expanded(next);
             return obj;
         }
         c5Label() {
@@ -40254,12 +40254,12 @@ var $;
         }
         Empty_base() {
             const obj = new this.$.$mol_check_expand();
-            obj.checked = (val) => this.base_expanded(val);
+            obj.checked = (next) => this.base_expanded(next);
             return obj;
         }
         Empty_expanded() {
             const obj = new this.$.$mol_check_expand();
-            obj.checked = (val) => this.expanded_expanded(val);
+            obj.checked = (next) => this.expanded_expanded(next);
             return obj;
         }
         Demo_items() {
@@ -40342,99 +40342,99 @@ var $;
         strength_title() {
             return "Strength";
         }
-        strength(val) {
-            if (val !== undefined)
-                return val;
+        strength(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Strength() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.strength_title();
-            obj.checked = (val) => this.strength(val);
+            obj.checked = (next) => this.strength(next);
             return obj;
         }
         perception_title() {
             return "Perception";
         }
-        perception(val) {
-            if (val !== undefined)
-                return val;
+        perception(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Perception() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.perception_title();
-            obj.checked = (val) => this.perception(val);
+            obj.checked = (next) => this.perception(next);
             return obj;
         }
         endurance_title() {
             return "Endurance";
         }
-        endurance(val) {
-            if (val !== undefined)
-                return val;
+        endurance(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Endurance() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.endurance_title();
-            obj.checked = (val) => this.endurance(val);
+            obj.checked = (next) => this.endurance(next);
             return obj;
         }
         charisma_title() {
             return "Charisma";
         }
-        charisma(val) {
-            if (val !== undefined)
-                return val;
+        charisma(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Charisma() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.charisma_title();
-            obj.checked = (val) => this.charisma(val);
+            obj.checked = (next) => this.charisma(next);
             return obj;
         }
         intelligence_title() {
             return "Intelligence";
         }
-        intelligence(val) {
-            if (val !== undefined)
-                return val;
+        intelligence(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Intelligence() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.intelligence_title();
-            obj.checked = (val) => this.intelligence(val);
+            obj.checked = (next) => this.intelligence(next);
             return obj;
         }
         agility_title() {
             return "Agility";
         }
-        agility(val) {
-            if (val !== undefined)
-                return val;
+        agility(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Agility() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.agility_title();
-            obj.checked = (val) => this.agility(val);
+            obj.checked = (next) => this.agility(next);
             return obj;
         }
         luck_title() {
             return "Luck";
         }
-        luck(val) {
-            if (val !== undefined)
-                return val;
+        luck(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Luck() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.luck_title();
-            obj.checked = (val) => this.luck(val);
+            obj.checked = (next) => this.luck(next);
             return obj;
         }
         Partial() {
@@ -40562,30 +40562,30 @@ var $;
             const obj = new this.$.$mol_icon_microphone();
             return obj;
         }
-        base_checked(val) {
-            if (val !== undefined)
-                return val;
+        base_checked(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Base() {
             const obj = new this.$.$mol_check_icon();
             obj.Icon = () => this.Base_icon();
-            obj.checked = (val) => this.base_checked(val);
+            obj.checked = (next) => this.base_checked(next);
             return obj;
         }
         Checked_icon() {
             const obj = new this.$.$mol_icon_microphone();
             return obj;
         }
-        checked_checked(val) {
-            if (val !== undefined)
-                return val;
+        checked_checked(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Checked() {
             const obj = new this.$.$mol_check_icon();
             obj.Icon = () => this.Checked_icon();
-            obj.checked = (val) => this.checked_checked(val);
+            obj.checked = (next) => this.checked_checked(next);
             return obj;
         }
         Disabled_icon() {
@@ -40638,9 +40638,9 @@ var $;
                 this.Scan()
             ];
         }
-        value(val) {
-            if (val !== undefined)
-                return val;
+        value(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         format() {
@@ -40651,13 +40651,13 @@ var $;
         }
         Manual() {
             const obj = new this.$.$mol_search();
-            obj.query = (val) => this.value(val);
+            obj.query = (next) => this.value(next);
             obj.hint = () => this.hint();
             return obj;
         }
-        event_scan(val) {
-            if (val !== undefined)
-                return val;
+        event_scan(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         scan_label() {
@@ -40665,7 +40665,7 @@ var $;
         }
         Scan() {
             const obj = new this.$.$mol_button();
-            obj.event_click = (val) => this.event_scan(val);
+            obj.event_click = (next) => this.event_scan(next);
             obj.sub = () => [
                 this.scan_label()
             ];
@@ -41819,15 +41819,15 @@ var $;
                 "Type/Date"
             ];
         }
-        date(val) {
-            if (val !== undefined)
-                return val;
+        date(next) {
+            if (next !== undefined)
+                return next;
             const obj = new this.$.$mol_time_moment();
             return obj;
         }
         Date() {
             const obj = new this.$.$mol_date();
-            obj.value_moment = (val) => this.date(val);
+            obj.value_moment = (next) => this.date(next);
             return obj;
         }
         formatted() {
@@ -42831,14 +42831,14 @@ var $;
         avatars_bid() {
             return "";
         }
-        avatars(val) {
-            if (val !== undefined)
-                return val;
+        avatars(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
         Avatars_control() {
             const obj = new this.$.$mol_attach();
-            obj.items = (val) => this.avatars(val);
+            obj.items = (next) => this.avatars(next);
             return obj;
         }
         Avatars_field() {
@@ -42851,15 +42851,15 @@ var $;
         name_first_bid() {
             return "";
         }
-        name_first(val) {
-            if (val !== undefined)
-                return val;
+        name_first(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Name_first_control() {
             const obj = new this.$.$mol_string();
             obj.hint = () => "Jack";
-            obj.value = (val) => this.name_first(val);
+            obj.value = (next) => this.name_first(next);
             return obj;
         }
         Name_first_field() {
@@ -42872,15 +42872,15 @@ var $;
         name_nick_bid() {
             return "";
         }
-        name_nick(val) {
-            if (val !== undefined)
-                return val;
+        name_nick(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Name_nick_control() {
             const obj = new this.$.$mol_string();
             obj.hint = () => "Capitan";
-            obj.value = (val) => this.name_nick(val);
+            obj.value = (next) => this.name_nick(next);
             return obj;
         }
         Name_nick_field() {
@@ -42893,15 +42893,15 @@ var $;
         name_second_bid() {
             return "";
         }
-        name_second(val) {
-            if (val !== undefined)
-                return val;
+        name_second(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Name_second_control() {
             const obj = new this.$.$mol_string();
             obj.hint = () => "Sparrow";
-            obj.value = (val) => this.name_second(val);
+            obj.value = (next) => this.name_second(next);
             return obj;
         }
         Name_second_field() {
@@ -42923,14 +42923,14 @@ var $;
         age_bid() {
             return "";
         }
-        age(val) {
-            if (val !== undefined)
-                return val;
+        age(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         Age_control() {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.age(val);
+            obj.value = (next) => this.age(next);
             return obj;
         }
         Age_field() {
@@ -42946,9 +42946,9 @@ var $;
         sex_bid() {
             return "";
         }
-        sex(val) {
-            if (val !== undefined)
-                return val;
+        sex(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         sex_options() {
@@ -42960,7 +42960,7 @@ var $;
         }
         Sex_control() {
             const obj = new this.$.$mol_switch();
-            obj.value = (val) => this.sex(val);
+            obj.value = (next) => this.sex(next);
             obj.options = () => this.sex_options();
             return obj;
         }
@@ -42974,14 +42974,14 @@ var $;
         color_bid() {
             return "";
         }
-        color(val) {
-            if (val !== undefined)
-                return val;
+        color(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Color_control() {
             const obj = new this.$.$mol_select();
-            obj.value = (val) => this.color(val);
+            obj.value = (next) => this.color(next);
             obj.dictionary = () => ({
                 "": "❔",
                 white: "⬜ White",
@@ -43010,15 +43010,15 @@ var $;
         mail_bid() {
             return "";
         }
-        mail(val) {
-            if (val !== undefined)
-                return val;
+        mail(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Mail_control() {
             const obj = new this.$.$mol_string();
             obj.hint = () => "name@domain.com";
-            obj.value = (val) => this.mail(val);
+            obj.value = (next) => this.mail(next);
             return obj;
         }
         Mail_field() {
@@ -43028,21 +43028,21 @@ var $;
             obj.Content = () => this.Mail_control();
             return obj;
         }
-        signup(val) {
-            if (val !== undefined)
-                return val;
+        signup(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         Signup() {
             const obj = new this.$.$mol_button_major();
             obj.title = () => "Sign Up";
-            obj.click = (val) => this.signup(val);
+            obj.click = (next) => this.signup(next);
             obj.enabled = () => this.signup_allowed();
             return obj;
         }
-        result(val) {
-            if (val !== undefined)
-                return val;
+        result(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Result() {
@@ -43061,7 +43061,7 @@ var $;
                 this.Parameters(),
                 this.Mail_field()
             ];
-            obj.submit = (val) => this.signup(val);
+            obj.submit = (next) => this.signup(next);
             obj.buttons = () => [
                 this.Signup(),
                 this.Result()
@@ -45005,15 +45005,15 @@ var $;
             ];
             return obj;
         }
-        user_name(val) {
-            if (val !== undefined)
-                return val;
+        user_name(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Name_control() {
             const obj = new this.$.$mol_string();
             obj.hint = () => "Jack Sparrow";
-            obj.value = (val) => this.user_name(val);
+            obj.value = (next) => this.user_name(next);
             return obj;
         }
         Name() {
@@ -45744,14 +45744,14 @@ var $;
                 "Widget/Button"
             ];
         }
-        uri(val) {
-            if (val !== undefined)
-                return val;
+        uri(next) {
+            if (next !== undefined)
+                return next;
             return "https://www.google.com/search?q=%24mol";
         }
         Input() {
             const obj = new this.$.$mol_string();
-            obj.value = (val) => this.uri(val);
+            obj.value = (next) => this.uri(next);
             return obj;
         }
         Output() {
@@ -45795,9 +45795,9 @@ var $;
 var $;
 (function ($) {
     class $mol_link_lazy extends $mol_link {
-        uri(val) {
-            if (val !== undefined)
-                return val;
+        uri(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         uri_generated() {
@@ -46177,15 +46177,15 @@ var $;
             obj.Content = () => this.Quantity(id);
             return obj;
         }
-        row_moment(id, val) {
-            if (val !== undefined)
-                return val;
+        row_moment(id, next) {
+            if (next !== undefined)
+                return next;
             const obj = new this.$.$mol_time_moment();
             return obj;
         }
         Date(id) {
             const obj = new this.$.$mol_date();
-            obj.value_moment = (val) => this.row_moment(id, val);
+            obj.value_moment = (next) => this.row_moment(id, next);
             return obj;
         }
         Date_labeler(id) {
@@ -46582,7 +46582,7 @@ var $;
             obj.label = () => [
                 this.Row_title(id)
             ];
-            obj.expanded = (val) => this.row_expanded(id, val);
+            obj.expanded = (next) => this.row_expanded(id, next);
             obj.Content = () => this.Row_content(id);
             return obj;
         }
@@ -46618,9 +46618,9 @@ var $;
             ];
             return obj;
         }
-        row_expanded(id, val) {
-            if (val !== undefined)
-                return val;
+        row_expanded(id, next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         row_content(id) {
@@ -46817,14 +46817,14 @@ var $;
 var $;
 (function ($) {
     class $mol_map_yandex extends $mol_view {
-        zoom(val) {
-            if (val !== undefined)
-                return val;
+        zoom(next) {
+            if (next !== undefined)
+                return next;
             return 2;
         }
-        center(val) {
-            if (val !== undefined)
-                return val;
+        center(next) {
+            if (next !== undefined)
+                return next;
             return [
                 0,
                 0
@@ -47630,14 +47630,14 @@ var $;
         Nav() {
             const obj = new this.$.$mol_nav();
             obj.keys_x = () => this.tab_list();
-            obj.current_x = (val) => this.tab_current(val);
+            obj.current_x = (next) => this.tab_current(next);
             obj.keys_y = () => this.row_list();
-            obj.current_y = (val) => this.row_current(val);
+            obj.current_y = (next) => this.row_current(next);
             return obj;
         }
-        tab_current(val) {
-            if (val !== undefined)
-                return val;
+        tab_current(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         tab_list() {
@@ -47645,7 +47645,7 @@ var $;
         }
         Tab_list() {
             const obj = new this.$.$mol_switch();
-            obj.value = (val) => this.tab_current(val);
+            obj.value = (next) => this.tab_current(next);
             obj.options = () => ({
                 first: "First",
                 second: "Second",
@@ -47653,9 +47653,9 @@ var $;
             });
             return obj;
         }
-        row_current(val) {
-            if (val !== undefined)
-                return val;
+        row_current(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         row_list() {
@@ -47663,7 +47663,7 @@ var $;
         }
         Row_list() {
             const obj = new this.$.$mol_switch();
-            obj.value = (val) => this.row_current(val);
+            obj.value = (next) => this.row_current(next);
             obj.options = () => ({
                 first: "First",
                 second: "Second",
@@ -48628,14 +48628,14 @@ var $;
                 "Type/Number/Integer"
             ];
         }
-        page(val) {
-            if (val !== undefined)
-                return val;
+        page(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         Pages() {
             const obj = new this.$.$mol_paginator();
-            obj.value = (val) => this.page(val);
+            obj.value = (next) => this.page(next);
             return obj;
         }
     }
@@ -48656,9 +48656,9 @@ var $;
         title() {
             return "Dynamic lightweight graphs";
         }
-        count(val) {
-            if (val !== undefined)
-                return val;
+        count(next) {
+            if (next !== undefined)
+                return next;
             return 20;
         }
         frequency() {
@@ -49037,12 +49037,12 @@ var $;
             obj.series_z = () => this.terrain_z();
             return obj;
         }
-        zoom(val) {
-            return this.Plot().scale_y(val);
+        zoom(next) {
+            return this.Plot().scale_y(next);
         }
         Plot() {
             const obj = new this.$.$mol_plot_pane();
-            obj.zoom = (val) => this.zoom(val);
+            obj.zoom = (next) => this.zoom(next);
             obj.graphs = () => [
                 this.Terrain()
             ];
@@ -49141,15 +49141,15 @@ var $;
         pop_showed_check_hint() {
             return "$mol_pop showed";
         }
-        pop_showed(val) {
-            if (val !== undefined)
-                return val;
+        pop_showed(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         Show_check() {
             const obj = new this.$.$mol_check_box();
             obj.hint = () => this.pop_showed_check_hint();
-            obj.checked = (val) => this.pop_showed(val);
+            obj.checked = (next) => this.pop_showed(next);
             return obj;
         }
         Showed() {
@@ -49163,9 +49163,9 @@ var $;
         align_title() {
             return "Align";
         }
-        pop_align(val) {
-            if (val !== undefined)
-                return val;
+        pop_align(next) {
+            if (next !== undefined)
+                return next;
             return "bottom_right";
         }
         aligins() {
@@ -49187,7 +49187,7 @@ var $;
         }
         Align_select() {
             const obj = new this.$.$mol_switch();
-            obj.value = (val) => this.pop_align(val);
+            obj.value = (next) => this.pop_align(next);
             obj.options = () => this.aligins();
             return obj;
         }
@@ -49336,9 +49336,9 @@ var $;
                 mouseleave: (event) => this.event_hide(event)
             };
         }
-        hovered(val) {
-            if (val !== undefined)
-                return val;
+        hovered(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         event_show(event) {
@@ -50110,9 +50110,9 @@ var $;
         name_hint() {
             return "Jack Sparrow";
         }
-        name(val) {
-            if (val !== undefined)
-                return val;
+        name(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         suggest1() {
@@ -50124,7 +50124,7 @@ var $;
         Name() {
             const obj = new this.$.$mol_search();
             obj.hint = () => this.name_hint();
-            obj.query = (val) => this.name(val);
+            obj.query = (next) => this.name(next);
             obj.suggests = () => [
                 this.suggest1(),
                 this.suggest2()
@@ -50134,15 +50134,15 @@ var $;
         count_hint() {
             return "Count";
         }
-        count(val) {
-            if (val !== undefined)
-                return val;
+        count(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         Count() {
             const obj = new this.$.$mol_number();
             obj.hint = () => this.count_hint();
-            obj.value = (val) => this.count(val);
+            obj.value = (next) => this.count(next);
             return obj;
         }
         progress() {
@@ -50156,15 +50156,15 @@ var $;
         publish_label() {
             return "Shared";
         }
-        publish(val) {
-            if (val !== undefined)
-                return val;
+        publish(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Publish() {
             const obj = new this.$.$mol_check_box();
             obj.title = () => this.publish_label();
-            obj.checked = (val) => this.publish(val);
+            obj.checked = (next) => this.publish(next);
             return obj;
         }
         drop_title() {
@@ -50745,9 +50745,9 @@ var $;
                 "Widget/Control"
             ];
         }
-        color(val) {
-            if (val !== undefined)
-                return val;
+        color(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         colors() {
@@ -50789,7 +50789,7 @@ var $;
         }
         Color() {
             const obj = new this.$.$mol_select();
-            obj.value = (val) => this.color(val);
+            obj.value = (next) => this.color(next);
             obj.dictionary = () => this.colors();
             obj.option_label = (id) => this.color_name(id);
             obj.option_content = (id) => this.option_content(id);
@@ -50878,9 +50878,9 @@ var $;
                 "Widget/Control"
             ];
         }
-        month(val) {
-            if (val !== undefined)
-                return val;
+        month(next) {
+            if (next !== undefined)
+                return next;
             return "jan";
         }
         months() {
@@ -50902,7 +50902,7 @@ var $;
         Month() {
             const obj = new this.$.$mol_select();
             obj.no_options_message = () => "Not found";
-            obj.value = (val) => this.month(val);
+            obj.value = (next) => this.month(next);
             obj.dictionary = () => this.months();
             return obj;
         }
@@ -50940,15 +50940,15 @@ var $;
                 "Widget/Control"
             ];
         }
-        priority(val) {
-            if (val !== undefined)
-                return val;
+        priority(next) {
+            if (next !== undefined)
+                return next;
             return "Lowest";
         }
         Priority() {
             const obj = new this.$.$mol_select();
             obj.Filter = () => null;
-            obj.value = (val) => this.priority(val);
+            obj.value = (next) => this.priority(next);
             obj.options = () => [
                 "Highest ",
                 "High",
@@ -50994,9 +50994,9 @@ var $;
                 "Type/List"
             ];
         }
-        friends(val) {
-            if (val !== undefined)
-                return val;
+        friends(next) {
+            if (next !== undefined)
+                return next;
             return [];
         }
         suggestions() {
@@ -51013,13 +51013,13 @@ var $;
         }
         Friends() {
             const obj = new this.$.$mol_select_list();
-            obj.value = (val) => this.friends(val);
+            obj.value = (next) => this.friends(next);
             obj.dictionary = () => this.suggestions();
             return obj;
         }
         Friends_disabled() {
             const obj = new this.$.$mol_select_list();
-            obj.value = (val) => this.friends(val);
+            obj.value = (next) => this.friends(next);
             obj.dictionary = () => this.suggestions();
             obj.enabled = () => false;
             return obj;
@@ -51434,15 +51434,15 @@ var $;
             const obj = new this.$.$mol_icon_microphone();
             return obj;
         }
-        hearing(val) {
-            if (val !== undefined)
-                return val;
+        hearing(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Toggle() {
             const obj = new this.$.$mol_check_icon();
             obj.Icon = () => this.Toggle_icon();
-            obj.checked = (val) => this.hearing(val);
+            obj.checked = (next) => this.hearing(next);
             return obj;
         }
         message() {
@@ -51455,14 +51455,14 @@ var $;
             ];
             return obj;
         }
-        speak(val) {
-            if (val !== undefined)
-                return val;
+        speak(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
         Speak() {
             const obj = new this.$.$mol_button_major();
-            obj.click = (val) => this.speak(val);
+            obj.click = (next) => this.speak(next);
             obj.sub = () => [
                 "Speak"
             ];
@@ -51815,41 +51815,41 @@ var $;
                 "Type/String"
             ];
         }
-        name(val) {
-            if (val !== undefined)
-                return val;
+        name(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Simple() {
             const obj = new this.$.$mol_string();
-            obj.value = (val) => this.name(val);
+            obj.value = (next) => this.name(next);
             return obj;
         }
         Hint() {
             const obj = new this.$.$mol_string();
             obj.hint = () => "Batman";
-            obj.value = (val) => this.name(val);
+            obj.value = (next) => this.name(next);
             return obj;
         }
-        name2(val) {
-            if (val !== undefined)
-                return val;
+        name2(next) {
+            if (next !== undefined)
+                return next;
             return "Jocker";
         }
         Filled() {
             const obj = new this.$.$mol_string();
-            obj.value = (val) => this.name2(val);
+            obj.value = (next) => this.name2(next);
             return obj;
         }
         Disabled() {
             const obj = new this.$.$mol_string();
             obj.disabled = () => true;
-            obj.value = (val) => this.name2(val);
+            obj.value = (next) => this.name2(next);
             return obj;
         }
         Button() {
             const obj = new this.$.$mol_string_button();
-            obj.value = (val) => this.name2(val);
+            obj.value = (next) => this.name2(next);
             return obj;
         }
     }
@@ -51902,9 +51902,9 @@ var $;
                 "Widget/Control"
             ];
         }
-        color(val) {
-            if (val !== undefined)
-                return val;
+        color(next) {
+            if (next !== undefined)
+                return next;
             return "red";
         }
         option_red() {
@@ -51921,7 +51921,7 @@ var $;
         }
         Enabled() {
             const obj = new this.$.$mol_switch();
-            obj.value = (val) => this.color(val);
+            obj.value = (next) => this.color(next);
             obj.options = () => ({
                 red: this.option_red(),
                 green: this.option_green(),
@@ -51938,7 +51938,7 @@ var $;
         }
         Disabled() {
             const obj = new this.$.$mol_switch();
-            obj.value = (val) => this.color(val);
+            obj.value = (next) => this.color(next);
             obj.enabled = () => false;
             obj.options = () => ({
                 red: this.option_red(),
@@ -52602,14 +52602,14 @@ var $;
             obj.sub = () => this.items();
             return obj;
         }
-        expanded(val) {
-            if (val !== undefined)
-                return val;
+        expanded(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
         Expand() {
             const obj = new this.$.$mol_check_expand();
-            obj.checked = (val) => this.expanded(val);
+            obj.checked = (next) => this.expanded(next);
             return obj;
         }
     }
@@ -52914,19 +52914,19 @@ var $;
         dom_name() {
             return "video";
         }
-        playing(val) {
-            if (val !== undefined)
-                return val;
+        playing(next) {
+            if (next !== undefined)
+                return next;
             return false;
         }
-        volume(val) {
-            if (val !== undefined)
-                return val;
+        volume(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
-        time(val) {
-            if (val !== undefined)
-                return val;
+        time(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
         duration() {
@@ -53152,7 +53152,7 @@ var $;
         }
         Playing() {
             const obj = new this.$.$mol_check_icon();
-            obj.checked = (val) => this.playing(val);
+            obj.checked = (next) => this.playing(next);
             obj.Icon = () => this.Playing_icon();
             return obj;
         }
@@ -53173,7 +53173,7 @@ var $;
         }
         Time() {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.time(val);
+            obj.value = (next) => this.time(next);
             obj.precision_view = () => 0.001;
             return obj;
         }
@@ -53187,7 +53187,7 @@ var $;
         }
         Volume() {
             const obj = new this.$.$mol_number();
-            obj.value = (val) => this.volume(val);
+            obj.value = (next) => this.volume(next);
             obj.precision = () => 0.001;
             return obj;
         }
@@ -53213,14 +53213,14 @@ var $;
         uri() {
             return "";
         }
-        playing(val) {
-            return this.Player().playing(val);
+        playing(next) {
+            return this.Player().playing(next);
         }
-        volume(val) {
-            return this.Player().volume(val);
+        volume(next) {
+            return this.Player().volume(next);
         }
-        time(val) {
-            return this.Player().time(val);
+        time(next) {
+            return this.Player().time(next);
         }
         duration() {
             return this.Player().duration();
@@ -53712,24 +53712,24 @@ var $;
                 "Type/String"
             ];
         }
-        pass(val) {
-            if (val !== undefined)
-                return val;
+        pass(next) {
+            if (next !== undefined)
+                return next;
             return "Hello world";
         }
         Simple() {
             const obj = new this.$.$mol_password();
-            obj.value = (val) => this.pass(val);
+            obj.value = (next) => this.pass(next);
             return obj;
         }
-        pass2(val) {
-            if (val !== undefined)
-                return val;
+        pass2(next) {
+            if (next !== undefined)
+                return next;
             return "";
         }
         Hint() {
             const obj = new this.$.$mol_password();
-            obj.value = (val) => this.pass2(val);
+            obj.value = (next) => this.pass2(next);
             obj.hint = () => "Top secret";
             return obj;
         }
@@ -55497,15 +55497,15 @@ var $;
 var $;
 (function ($) {
     class $mol_view_tree_test_binding extends $mol_view {
-        value(val) {
-            return this.task_title_new(val);
+        value(next) {
+            return this.task_title_new(next);
         }
         enabled() {
             return this.head_complete_enabled();
         }
-        task_title_new(val) {
-            if (val !== undefined)
-                return val;
+        task_title_new(next) {
+            if (next !== undefined)
+                return next;
             return "123";
         }
         head_complete_enabled() {
@@ -55586,9 +55586,9 @@ var $;
     ], $mol_view_tree_test_binding_right.prototype, "Test", null);
     $.$mol_view_tree_test_binding_right = $mol_view_tree_test_binding_right;
     class $mol_view_tree_test_binding_right_test extends $mol_view {
-        width(val) {
-            if (val !== undefined)
-                return val;
+        width(next) {
+            if (next !== undefined)
+                return next;
             return 0;
         }
     }
@@ -59809,10 +59809,10 @@ var $;
 })($ || ($ = {}));
 //mol/view/tree2/class/props.test.ts
 ;
-var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/simple.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3Rfc2ltcGxlICRtb2xfdmlldwoJc3RyIFxzb21lCgludW0gMTIzMTcKCWJvb2wgdHJ1ZQoJbnVsIG51bGwKCWxvY2FsaXplZCBAIFxsb2NhbGl6ZWQgdmFsdWUKCW11bHRpX3N0ciBcCgkJXG9uZQoJCVx0d28KCXNhbWU/dmFsIFwKCS0gY29tbWVudGVkX25vZGUgLwoJCTw9IE5vdGVzX3BhZ2VfdGl0bGUhdGFnCg=="
+var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/simple.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3Rfc2ltcGxlICRtb2xfdmlldwoJc3RyIFxzb21lCgludW0gMTIzMTcKCWJvb2wgdHJ1ZQoJbnVsIG51bGwKCWxvY2FsaXplZCBAIFxsb2NhbGl6ZWQgdmFsdWUKCW11bHRpX3N0ciBcCgkJXG9uZQoJCVx0d28KCXNhbWU/IFwKCS0gY29tbWVudGVkX25vZGUgLwoJCTw9IE5vdGVzX3BhZ2VfdGl0bGUhdGFnCg=="
 
 ;
-var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/simple.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X3NpbXBsZSBleHRlbmRzICRtb2xfdmlldyB7CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHN0ciBcc29tZQoJCSAqIGBgYAoJCSAqLwoJCXN0cigpIHsKCQkJcmV0dXJuICJzb21lIgoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogbnVtIDEyMzE3CgkJICogYGBgCgkJICovCgkJbnVtKCkgewoJCQlyZXR1cm4gMTIzMTcKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGJvb2wgdHJ1ZQoJCSAqIGBgYAoJCSAqLwoJCWJvb2woKSB7CgkJCXJldHVybiB0cnVlCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBudWwgbnVsbAoJCSAqIGBgYAoJCSAqLwoJCW51bCgpIHsKCQkJcmV0dXJuIG51bGwgYXMgYW55CgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBsb2NhbGl6ZWQgQCBcbG9jYWxpemVkIHZhbHVlCgkJICogYGBgCgkJICovCgkJbG9jYWxpemVkKCkgewoJCQlyZXR1cm4gdGhpcy4kLiRtb2xfbG9jYWxlLnRleHQoICckbW9sX3ZpZXdfdHJlZTJfdHNfdGVzdF9zaW1wbGVfbG9jYWxpemVkJyApCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBtdWx0aV9zdHIgXAoJCSAqIAlcb25lCgkJICogCVx0d28KCQkgKiBgYGAKCQkgKi8KCQltdWx0aV9zdHIoKSB7CgkJCXJldHVybiAib25lXG50d28iCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBzYW1lP3ZhbCBcCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCXNhbWUodmFsPzogYW55KSB7CgkJCWlmICggdmFsICE9PSB1bmRlZmluZWQgKSByZXR1cm4gdmFsIGFzIG5ldmVyCgkJCXJldHVybiAiIgoJCX0KCX0KCQp9Cgo="
+var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/simple.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X3NpbXBsZSBleHRlbmRzICRtb2xfdmlldyB7CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHN0ciBcc29tZQoJCSAqIGBgYAoJCSAqLwoJCXN0cigpIHsKCQkJcmV0dXJuICJzb21lIgoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogbnVtIDEyMzE3CgkJICogYGBgCgkJICovCgkJbnVtKCkgewoJCQlyZXR1cm4gMTIzMTcKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGJvb2wgdHJ1ZQoJCSAqIGBgYAoJCSAqLwoJCWJvb2woKSB7CgkJCXJldHVybiB0cnVlCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBudWwgbnVsbAoJCSAqIGBgYAoJCSAqLwoJCW51bCgpIHsKCQkJcmV0dXJuIG51bGwgYXMgYW55CgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBsb2NhbGl6ZWQgQCBcbG9jYWxpemVkIHZhbHVlCgkJICogYGBgCgkJICovCgkJbG9jYWxpemVkKCkgewoJCQlyZXR1cm4gdGhpcy4kLiRtb2xfbG9jYWxlLnRleHQoICckbW9sX3ZpZXdfdHJlZTJfdHNfdGVzdF9zaW1wbGVfbG9jYWxpemVkJyApCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBtdWx0aV9zdHIgXAoJCSAqIAlcb25lCgkJICogCVx0d28KCQkgKiBgYGAKCQkgKi8KCQltdWx0aV9zdHIoKSB7CgkJCXJldHVybiAib25lXG50d28iCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBzYW1lPyBcCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCXNhbWUobmV4dD86IGFueSkgewoJCQlpZiAoIG5leHQgIT09IHVuZGVmaW5lZCApIHJldHVybiBuZXh0IGFzIG5ldmVyCgkJCXJldHVybiAiIgoJCX0KCX0KCQp9Cgo="
 
 ;
 var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/array.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X2FycmF5IGV4dGVuZHMgJG1vbF92aWV3IHsKCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogdHlwZWQgL3N0cmluZwoJCSAqIAlcc29tZTEKCQkgKiAJXHNvbWUyCgkJICogYGBgCgkJICovCgkJdHlwZWQoKSB7CgkJCXJldHVybiBbCgkJCQkic29tZTEiLAoJCQkJInNvbWUyIgoJCQldIGFzIHJlYWRvbmx5IHN0cmluZ1tdCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBjb25zdCAvY29uc3QKCQkgKiAJXHNvbWUxCgkJICogCVxzb21lMgoJCSAqIGBgYAoJCSAqLwoJCWNvbnN0KCkgewoJCQlyZXR1cm4gWwoJCQkJInNvbWUxIiwKCQkJCSJzb21lMiIKCQkJXSBhcyBjb25zdAoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogc3VwZXJfcHJvcCAvCgkJICogCVxzb21lMQoJCSAqIAleCgkJICogCVxzb21lMgoJCSAqIAleIHRlc3QKCQkgKiBgYGAKCQkgKi8KCQlzdXBlcl9wcm9wKCkgewoJCQlyZXR1cm4gWwoJCQkJInNvbWUxIiwKCQkJCS4uLnN1cGVyLnN1cGVyX3Byb3AoKSwKCQkJCSJzb21lMiIsCgkJCQkuLi50aGlzLnRlc3QoKQoJCQldIGFzIHJlYWRvbmx5IGFueVtdCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBzaW1wbGUgLwoJCSAqIAlcc29tZQoJCSAqIAkxMjMxNwoJCSAqIAl0cnVlCgkJICogCW51bGwKCQkgKiBgYGAKCQkgKi8KCQlzaW1wbGUoKSB7CgkJCXJldHVybiBbCgkJCQkic29tZSIsCgkJCQkxMjMxNywKCQkJCXRydWUsCgkJCQludWxsIGFzIGFueQoJCQldIGFzIHJlYWRvbmx5IGFueVtdCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBhcnIgL3JlYWRvbmx5KG51bWJlcilbXQoJCSAqIGBgYAoJCSAqLwoJCWFycigpIHsKCQkJcmV0dXJuIFsKCQkJXSBhcyByZWFkb25seSAocmVhZG9ubHkobnVtYmVyKVtdKVtdCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBjb21wbGV4IC8KCQkgKiAJLwoJCSAqIAkJXHRlc3QxCgkJICogCQlcdGVzdDIKCQkgKiAJKgoJCSAqIAkJc3RyIFxzb21lCgkJICogCQludWwgbnVsbAoJCSAqIGBgYAoJCSAqLwoJCWNvbXBsZXgoKSB7CgkJCXJldHVybiBbCgkJCQlbCgkJCQkJInRlc3QxIiwKCQkJCQkidGVzdDIiCgkJCQldIGFzIHJlYWRvbmx5IGFueVtdLAoJCQkJewoJCQkJCXN0cjogInNvbWUiLAoJCQkJCW51bDogbnVsbCBhcyBhbnkKCQkJCX0gYXMgUmVjb3JkPCBzdHJpbmcsIGFueSA+CgkJCV0gYXMgcmVhZG9ubHkgYW55W10KCQl9Cgl9CgkKfQoK"
@@ -59839,22 +59839,22 @@ var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/multiple_class.view.ts
 var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/multiple_class.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfbXVsdGlwbGVfY2xhc3NfYSAkbW9sX3ZpZXcKCXN0ciBcc29tZQoKJG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfbXVsdGlwbGVfY2xhc3NfYiAkbW9sX3ZpZXdfdHJlZTJfdHNfdGVzdF9tdWx0aXBsZV9jbGFzc19hCglzdHIgXHNvbWUyCg=="
 
 ;
-var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/left.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9sZWZ0ICRtb2xfdmlldwoJZGVmYXVsdCA8PSBkZWZhdWx0X293bmVyIFx0ZXN0CgllbXB0eSA8PSBlbXB0eV9vd25lcgoJaW5kZXhlZCFrZXkgPD0gaW5kZXhlZF9vd25lciFrZXkKCWluZGV4ZWRfZGVmYXVsdCFrZXkgPD0gaW5kZXhlZF9kZWZhdWx0X293bmVyIWtleSBudWxsCgljbGFzcyA8PSBjbGFzc19vd25lciAkbW9sX3ZpZXcKCXR3aWNlIG51bGwKCXdyaXRhYmxlIDw9IHdyaXRhYmxlX293bmVyP3ZhbCBcCgljbGFzc19pbmRleGVkIWtleSA8PSBjbGFzc19pbmRleGVkX293bmVyIWtleSAkbW9sX3ZpZXcKCQl0aXRsZSBAIFxzb21lMQoJCXNhbWUgPD0gc2FtZT92YWwgXAoJCXNvbWUgPD0gdHdpY2UKCQlsb2NhbGl6ZWQgPD0gbG9jYWxpemVkX293bmVyIWtleSBAIFxzb21lMQoJCWNoYWluIDw9IGNoYWluMSA8PSBjaGFpbjIgbnVsbAoJYXJyIC8KCQk8PSBEZXRhaWxfbGlzdCAkbW9sX2xpc3QKCQkJcm93cyA8PSBtYWluX2NvbnRlbnQgLwoJCSoKCQkJbG9jIDw9IGxvY19vdXRlciBAIFx0ZXN0IGxvY2FsaXplCgkJKgoJCQlsb2MgPD0gbG9jX291dGVyIEAgXHRlc3QgbG9jYWxpemUKCXNhbWUyIEAgXFNvbWUKCVNhbWUKCQk8PSBTdWIgJG1vbF92aWV3CgkJCXNhbWUgPD0gc2FtZTIgLQo="
+var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/left.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9sZWZ0ICRtb2xfdmlldwoJZGVmYXVsdCA8PSBkZWZhdWx0X293bmVyIFx0ZXN0CgllbXB0eSA8PSBlbXB0eV9vd25lcgoJaW5kZXhlZCFrZXkgPD0gaW5kZXhlZF9vd25lciFrZXkKCWluZGV4ZWRfZGVmYXVsdCFrZXkgPD0gaW5kZXhlZF9kZWZhdWx0X293bmVyIWtleSBudWxsCgljbGFzcyA8PSBjbGFzc19vd25lciAkbW9sX3ZpZXcKCXR3aWNlIG51bGwKCXdyaXRhYmxlIDw9IHdyaXRhYmxlX293bmVyPyBcCgljbGFzc19pbmRleGVkIWtleSA8PSBjbGFzc19pbmRleGVkX293bmVyIWtleSAkbW9sX3ZpZXcKCQl0aXRsZSBAIFxzb21lMQoJCXNhbWUgPD0gc2FtZT8gXAoJCXNvbWUgPD0gdHdpY2UKCQlsb2NhbGl6ZWQgPD0gbG9jYWxpemVkX293bmVyIWtleSBAIFxzb21lMQoJCWNoYWluIDw9IGNoYWluMSA8PSBjaGFpbjIgbnVsbAoJYXJyIC8KCQk8PSBEZXRhaWxfbGlzdCAkbW9sX2xpc3QKCQkJcm93cyA8PSBtYWluX2NvbnRlbnQgLwoJCSoKCQkJbG9jIDw9IGxvY19vdXRlciBAIFx0ZXN0IGxvY2FsaXplCgkJKgoJCQlsb2MgPD0gbG9jX291dGVyIEAgXHRlc3QgbG9jYWxpemUKCXNhbWUyIEAgXFNvbWUKCVNhbWUKCQk8PSBTdWIgJG1vbF92aWV3CgkJCXNhbWUgPD0gc2FtZTIgLQo="
 
 ;
-var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/left.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X2JpbmRfbGVmdCBleHRlbmRzICRtb2xfdmlldyB7CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGRlZmF1bHQgPD0gZGVmYXVsdF9vd25lcgoJCSAqIGBgYAoJCSAqLwoJCWRlZmF1bHQoKSB7CgkJCXJldHVybiB0aGlzLmRlZmF1bHRfb3duZXIoKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogZW1wdHkgPD0gZW1wdHlfb3duZXIKCQkgKiBgYGAKCQkgKi8KCQllbXB0eSgpIHsKCQkJcmV0dXJuIHRoaXMuZW1wdHlfb3duZXIoKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZCogPD0gaW5kZXhlZF9vd25lcioKCQkgKiBgYGAKCQkgKi8KCQlpbmRleGVkKGlkOiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuaW5kZXhlZF9vd25lcihpZCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGluZGV4ZWRfZGVmYXVsdCogPD0gaW5kZXhlZF9kZWZhdWx0X293bmVyKgoJCSAqIGBgYAoJCSAqLwoJCWluZGV4ZWRfZGVmYXVsdChpZDogYW55KSB7CgkJCXJldHVybiB0aGlzLmluZGV4ZWRfZGVmYXVsdF9vd25lcihpZCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzIDw9IGNsYXNzX293bmVyCgkJICogYGBgCgkJICovCgkJY2xhc3MoKSB7CgkJCXJldHVybiB0aGlzLmNsYXNzX293bmVyKCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHR3aWNlIG51bGwKCQkgKiBgYGAKCQkgKi8KCQl0d2ljZSgpIHsKCQkJcmV0dXJuIG51bGwgYXMgYW55CgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiB3cml0YWJsZSA8PSB3cml0YWJsZV9vd25lcj92YWwKCQkgKiBgYGAKCQkgKi8KCQl3cml0YWJsZSgpIHsKCQkJcmV0dXJuIHRoaXMud3JpdGFibGVfb3duZXIoKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2xhc3NfaW5kZXhlZCogPD0gY2xhc3NfaW5kZXhlZF9vd25lcioKCQkgKiBgYGAKCQkgKi8KCQljbGFzc19pbmRleGVkKGlkOiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuY2xhc3NfaW5kZXhlZF9vd25lcihpZCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGFyciAvCgkJICogCTw9IERldGFpbF9saXN0CgkJICogCSogbG9jIDw9IGxvY19vdXRlcgoJCSAqIAkqIGxvYyA8PSBsb2Nfb3V0ZXIKCQkgKiBgYGAKCQkgKi8KCQlhcnIoKSB7CgkJCXJldHVybiBbCgkJCQl0aGlzLkRldGFpbF9saXN0KCksCgkJCQl7CgkJCQkJbG9jOiB0aGlzLmxvY19vdXRlcigpCgkJCQl9IGFzIFJlY29yZDwgc3RyaW5nLCBhbnkgPiwKCQkJCXsKCQkJCQlsb2M6IHRoaXMubG9jX291dGVyKCkKCQkJCX0gYXMgUmVjb3JkPCBzdHJpbmcsIGFueSA+CgkJCV0gYXMgcmVhZG9ubHkgYW55W10KCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHNhbWUyIEAgXFNvbWUKCQkgKiBgYGAKCQkgKi8KCQlzYW1lMigpIHsKCQkJcmV0dXJuIHRoaXMuJC4kbW9sX2xvY2FsZS50ZXh0KCAnJG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9sZWZ0X3NhbWUyJyApCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBTYW1lIDw9IFN1YgoJCSAqIGBgYAoJCSAqLwoJCVNhbWUoKSB7CgkJCXJldHVybiB0aGlzLlN1YigpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBkZWZhdWx0X293bmVyIFx0ZXN0CgkJICogYGBgCgkJICovCgkJZGVmYXVsdF9vd25lcigpIHsKCQkJcmV0dXJuICJ0ZXN0IgoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZF9kZWZhdWx0X293bmVyKiBudWxsCgkJICogYGBgCgkJICovCgkJaW5kZXhlZF9kZWZhdWx0X293bmVyKGlkOiBhbnkpIHsKCQkJcmV0dXJuIG51bGwgYXMgYW55CgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBjbGFzc19vd25lciAkbW9sX3ZpZXcKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJY2xhc3Nfb3duZXIoKSB7CgkJCWNvbnN0IG9iaiA9IG5ldyB0aGlzLiQuJG1vbF92aWV3KCkKCQkJCgkJCXJldHVybiBvYmoKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHdyaXRhYmxlX293bmVyP3ZhbCBcCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCXdyaXRhYmxlX293bmVyKHZhbD86IGFueSkgewoJCQlpZiAoIHZhbCAhPT0gdW5kZWZpbmVkICkgcmV0dXJuIHZhbCBhcyBuZXZlcgoJCQlyZXR1cm4gIiIKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHNhbWU/dmFsIFwKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJc2FtZSh2YWw/OiBhbnkpIHsKCQkJaWYgKCB2YWwgIT09IHVuZGVmaW5lZCApIHJldHVybiB2YWwgYXMgbmV2ZXIKCQkJcmV0dXJuICIiCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBsb2NhbGl6ZWRfb3duZXIqIEAgXHNvbWUxCgkJICogYGBgCgkJICovCgkJbG9jYWxpemVkX293bmVyKGlkOiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuJC4kbW9sX2xvY2FsZS50ZXh0KCAnJG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9sZWZ0X2xvY2FsaXplZF9vd25lcicgKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2hhaW4yIG51bGwKCQkgKiBgYGAKCQkgKi8KCQljaGFpbjIoKSB7CgkJCXJldHVybiBudWxsIGFzIGFueQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2hhaW4xIDw9IGNoYWluMgoJCSAqIGBgYAoJCSAqLwoJCWNoYWluMSgpIHsKCQkJcmV0dXJuIHRoaXMuY2hhaW4yKCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzX2luZGV4ZWRfb3duZXIqICRtb2xfdmlldwoJCSAqIAl0aXRsZSBAIFxzb21lMQoJCSAqIAlzYW1lIDw9IHNhbWU/dmFsCgkJICogCXNvbWUgPD0gdHdpY2UKCQkgKiAJbG9jYWxpemVkIDw9IGxvY2FsaXplZF9vd25lcioKCQkgKiAJY2hhaW4gPD0gY2hhaW4xCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbV9rZXkKCQljbGFzc19pbmRleGVkX293bmVyKGlkOiBhbnkpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX3ZpZXcoKQoJCQkKCQkJb2JqLnRpdGxlID0gKCkgPT4gdGhpcy4kLiRtb2xfbG9jYWxlLnRleHQoICckbW9sX3ZpZXdfdHJlZTJfdHNfdGVzdF9iaW5kX2xlZnRfY2xhc3NfaW5kZXhlZF9vd25lcl90aXRsZScgKQoJCQlvYmouc2FtZSA9ICgpID0+IHRoaXMuc2FtZSgpCgkJCW9iai5zb21lID0gKCkgPT4gdGhpcy50d2ljZSgpCgkJCW9iai5sb2NhbGl6ZWQgPSAoKSA9PiB0aGlzLmxvY2FsaXplZF9vd25lcihpZCkKCQkJb2JqLmNoYWluID0gKCkgPT4gdGhpcy5jaGFpbjEoKQoJCQkKCQkJcmV0dXJuIG9iagoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogbWFpbl9jb250ZW50IC8KCQkgKiBgYGAKCQkgKi8KCQltYWluX2NvbnRlbnQoKSB7CgkJCXJldHVybiBbCgkJCV0gYXMgcmVhZG9ubHkgYW55W10KCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIERldGFpbF9saXN0ICRtb2xfbGlzdCByb3dzIDw9IG1haW5fY29udGVudAoJCSAqIGBgYAoJCSAqLwoJCUAgJG1vbF9tZW0KCQlEZXRhaWxfbGlzdCgpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX2xpc3QoKQoJCQkKCQkJb2JqLnJvd3MgPSAoKSA9PiB0aGlzLm1haW5fY29udGVudCgpCgkJCQoJCQlyZXR1cm4gb2JqCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBsb2Nfb3V0ZXIgQCBcdGVzdCBsb2NhbGl6ZQoJCSAqIGBgYAoJCSAqLwoJCWxvY19vdXRlcigpIHsKCQkJcmV0dXJuIHRoaXMuJC4kbW9sX2xvY2FsZS50ZXh0KCAnJG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9sZWZ0X2xvY19vdXRlcicgKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogU3ViICRtb2xfdmlldyBzYW1lIDw9IHNhbWUyCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCVN1YigpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX3ZpZXcoKQoJCQkKCQkJb2JqLnNhbWUgPSAoKSA9PiB0aGlzLnNhbWUyKCkKCQkJCgkJCXJldHVybiBvYmoKCQl9Cgl9CgkKfQoK"
+var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/left.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X2JpbmRfbGVmdCBleHRlbmRzICRtb2xfdmlldyB7CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGRlZmF1bHQgPD0gZGVmYXVsdF9vd25lcgoJCSAqIGBgYAoJCSAqLwoJCWRlZmF1bHQoKSB7CgkJCXJldHVybiB0aGlzLmRlZmF1bHRfb3duZXIoKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogZW1wdHkgPD0gZW1wdHlfb3duZXIKCQkgKiBgYGAKCQkgKi8KCQllbXB0eSgpIHsKCQkJcmV0dXJuIHRoaXMuZW1wdHlfb3duZXIoKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZCogPD0gaW5kZXhlZF9vd25lcioKCQkgKiBgYGAKCQkgKi8KCQlpbmRleGVkKGlkOiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuaW5kZXhlZF9vd25lcihpZCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGluZGV4ZWRfZGVmYXVsdCogPD0gaW5kZXhlZF9kZWZhdWx0X293bmVyKgoJCSAqIGBgYAoJCSAqLwoJCWluZGV4ZWRfZGVmYXVsdChpZDogYW55KSB7CgkJCXJldHVybiB0aGlzLmluZGV4ZWRfZGVmYXVsdF9vd25lcihpZCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzIDw9IGNsYXNzX293bmVyCgkJICogYGBgCgkJICovCgkJY2xhc3MoKSB7CgkJCXJldHVybiB0aGlzLmNsYXNzX293bmVyKCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHR3aWNlIG51bGwKCQkgKiBgYGAKCQkgKi8KCQl0d2ljZSgpIHsKCQkJcmV0dXJuIG51bGwgYXMgYW55CgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiB3cml0YWJsZSA8PSB3cml0YWJsZV9vd25lcj8KCQkgKiBgYGAKCQkgKi8KCQl3cml0YWJsZSgpIHsKCQkJcmV0dXJuIHRoaXMud3JpdGFibGVfb3duZXIoKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2xhc3NfaW5kZXhlZCogPD0gY2xhc3NfaW5kZXhlZF9vd25lcioKCQkgKiBgYGAKCQkgKi8KCQljbGFzc19pbmRleGVkKGlkOiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuY2xhc3NfaW5kZXhlZF9vd25lcihpZCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGFyciAvCgkJICogCTw9IERldGFpbF9saXN0CgkJICogCSogbG9jIDw9IGxvY19vdXRlcgoJCSAqIAkqIGxvYyA8PSBsb2Nfb3V0ZXIKCQkgKiBgYGAKCQkgKi8KCQlhcnIoKSB7CgkJCXJldHVybiBbCgkJCQl0aGlzLkRldGFpbF9saXN0KCksCgkJCQl7CgkJCQkJbG9jOiB0aGlzLmxvY19vdXRlcigpCgkJCQl9IGFzIFJlY29yZDwgc3RyaW5nLCBhbnkgPiwKCQkJCXsKCQkJCQlsb2M6IHRoaXMubG9jX291dGVyKCkKCQkJCX0gYXMgUmVjb3JkPCBzdHJpbmcsIGFueSA+CgkJCV0gYXMgcmVhZG9ubHkgYW55W10KCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHNhbWUyIEAgXFNvbWUKCQkgKiBgYGAKCQkgKi8KCQlzYW1lMigpIHsKCQkJcmV0dXJuIHRoaXMuJC4kbW9sX2xvY2FsZS50ZXh0KCAnJG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9sZWZ0X3NhbWUyJyApCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBTYW1lIDw9IFN1YgoJCSAqIGBgYAoJCSAqLwoJCVNhbWUoKSB7CgkJCXJldHVybiB0aGlzLlN1YigpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBkZWZhdWx0X293bmVyIFx0ZXN0CgkJICogYGBgCgkJICovCgkJZGVmYXVsdF9vd25lcigpIHsKCQkJcmV0dXJuICJ0ZXN0IgoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZF9kZWZhdWx0X293bmVyKiBudWxsCgkJICogYGBgCgkJICovCgkJaW5kZXhlZF9kZWZhdWx0X293bmVyKGlkOiBhbnkpIHsKCQkJcmV0dXJuIG51bGwgYXMgYW55CgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBjbGFzc19vd25lciAkbW9sX3ZpZXcKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJY2xhc3Nfb3duZXIoKSB7CgkJCWNvbnN0IG9iaiA9IG5ldyB0aGlzLiQuJG1vbF92aWV3KCkKCQkJCgkJCXJldHVybiBvYmoKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHdyaXRhYmxlX293bmVyPyBcCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCXdyaXRhYmxlX293bmVyKG5leHQ/OiBhbnkpIHsKCQkJaWYgKCBuZXh0ICE9PSB1bmRlZmluZWQgKSByZXR1cm4gbmV4dCBhcyBuZXZlcgoJCQlyZXR1cm4gIiIKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHNhbWU/IFwKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJc2FtZShuZXh0PzogYW55KSB7CgkJCWlmICggbmV4dCAhPT0gdW5kZWZpbmVkICkgcmV0dXJuIG5leHQgYXMgbmV2ZXIKCQkJcmV0dXJuICIiCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBsb2NhbGl6ZWRfb3duZXIqIEAgXHNvbWUxCgkJICogYGBgCgkJICovCgkJbG9jYWxpemVkX293bmVyKGlkOiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuJC4kbW9sX2xvY2FsZS50ZXh0KCAnJG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9sZWZ0X2xvY2FsaXplZF9vd25lcicgKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2hhaW4yIG51bGwKCQkgKiBgYGAKCQkgKi8KCQljaGFpbjIoKSB7CgkJCXJldHVybiBudWxsIGFzIGFueQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2hhaW4xIDw9IGNoYWluMgoJCSAqIGBgYAoJCSAqLwoJCWNoYWluMSgpIHsKCQkJcmV0dXJuIHRoaXMuY2hhaW4yKCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzX2luZGV4ZWRfb3duZXIqICRtb2xfdmlldwoJCSAqIAl0aXRsZSBAIFxzb21lMQoJCSAqIAlzYW1lIDw9IHNhbWU/CgkJICogCXNvbWUgPD0gdHdpY2UKCQkgKiAJbG9jYWxpemVkIDw9IGxvY2FsaXplZF9vd25lcioKCQkgKiAJY2hhaW4gPD0gY2hhaW4xCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbV9rZXkKCQljbGFzc19pbmRleGVkX293bmVyKGlkOiBhbnkpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX3ZpZXcoKQoJCQkKCQkJb2JqLnRpdGxlID0gKCkgPT4gdGhpcy4kLiRtb2xfbG9jYWxlLnRleHQoICckbW9sX3ZpZXdfdHJlZTJfdHNfdGVzdF9iaW5kX2xlZnRfY2xhc3NfaW5kZXhlZF9vd25lcl90aXRsZScgKQoJCQlvYmouc2FtZSA9ICgpID0+IHRoaXMuc2FtZSgpCgkJCW9iai5zb21lID0gKCkgPT4gdGhpcy50d2ljZSgpCgkJCW9iai5sb2NhbGl6ZWQgPSAoKSA9PiB0aGlzLmxvY2FsaXplZF9vd25lcihpZCkKCQkJb2JqLmNoYWluID0gKCkgPT4gdGhpcy5jaGFpbjEoKQoJCQkKCQkJcmV0dXJuIG9iagoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogbWFpbl9jb250ZW50IC8KCQkgKiBgYGAKCQkgKi8KCQltYWluX2NvbnRlbnQoKSB7CgkJCXJldHVybiBbCgkJCV0gYXMgcmVhZG9ubHkgYW55W10KCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIERldGFpbF9saXN0ICRtb2xfbGlzdCByb3dzIDw9IG1haW5fY29udGVudAoJCSAqIGBgYAoJCSAqLwoJCUAgJG1vbF9tZW0KCQlEZXRhaWxfbGlzdCgpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX2xpc3QoKQoJCQkKCQkJb2JqLnJvd3MgPSAoKSA9PiB0aGlzLm1haW5fY29udGVudCgpCgkJCQoJCQlyZXR1cm4gb2JqCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBsb2Nfb3V0ZXIgQCBcdGVzdCBsb2NhbGl6ZQoJCSAqIGBgYAoJCSAqLwoJCWxvY19vdXRlcigpIHsKCQkJcmV0dXJuIHRoaXMuJC4kbW9sX2xvY2FsZS50ZXh0KCAnJG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9sZWZ0X2xvY19vdXRlcicgKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogU3ViICRtb2xfdmlldyBzYW1lIDw9IHNhbWUyCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCVN1YigpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX3ZpZXcoKQoJCQkKCQkJb2JqLnNhbWUgPSAoKSA9PiB0aGlzLnNhbWUyKCkKCQkJCgkJCXJldHVybiBvYmoKCQl9Cgl9CgkKfQoK"
 
 ;
-var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/right.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9yaWdodCAkbW9sX3ZpZXcKCUNscyAkbW9sX3ZpZXcKCQlpbm5lciA9PiBvdXRlcgoJCXdyaXRhYmxlP3ZhbCA9PiB3cml0YWJsZV9vdXRlcj92YWwKCQlpbmRleGVkIWtleSA9PiBpbmRleGVkX291dGVyIWtleQoJCWluZGV4ZWRfd3JpdGFibGUha2V5P3ZhbCA9PiBpbmRleGVkX3dyaXRhYmxlX291dGVyIWtleT92YWwKCXEgPD0gQ2xzMiAkbW9sX3ZpZXcKCQlpbm5lciA9PiBvdXRlclEKCUluZGV4ZWQhaW5kZXggJG1vbF92aWV3CgkJVGl0bGUgPT4gT3V0ZXJfdGl0bGUhaW5kZXgK"
+var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/right.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9yaWdodCAkbW9sX3ZpZXcKCUNscyAkbW9sX3ZpZXcKCQlpbm5lciA9PiBvdXRlcgoJCXdyaXRhYmxlPyA9PiB3cml0YWJsZV9vdXRlcj8KCQlpbmRleGVkIWtleSA9PiBpbmRleGVkX291dGVyIWtleQoJCWluZGV4ZWRfd3JpdGFibGUha2V5PyA9PiBpbmRleGVkX3dyaXRhYmxlX291dGVyIWtleT8KCXEgPD0gQ2xzMiAkbW9sX3ZpZXcKCQlpbm5lciA9PiBvdXRlclEKCUluZGV4ZWQhaW5kZXggJG1vbF92aWV3CgkJVGl0bGUgPT4gT3V0ZXJfdGl0bGUhaW5kZXgK"
 
 ;
-var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/right.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X2JpbmRfcmlnaHQgZXh0ZW5kcyAkbW9sX3ZpZXcgewoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBvdXRlcgoJCSAqIGBgYAoJCSAqLwoJCW91dGVyKCkgewoJCQlyZXR1cm4gdGhpcy5DbHMoKS5pbm5lcigpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiB3cml0YWJsZV9vdXRlcj92YWwKCQkgKiBgYGAKCQkgKi8KCQl3cml0YWJsZV9vdXRlcih2YWw/OiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuQ2xzKCkud3JpdGFibGUodmFsKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZF9vdXRlcioKCQkgKiBgYGAKCQkgKi8KCQlpbmRleGVkX291dGVyKGlkOiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuQ2xzKCkuaW5kZXhlZChpZCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGluZGV4ZWRfd3JpdGFibGVfb3V0ZXIqP3ZhbAoJCSAqIGBgYAoJCSAqLwoJCWluZGV4ZWRfd3JpdGFibGVfb3V0ZXIoaWQ6IGFueSwgdmFsPzogYW55KSB7CgkJCXJldHVybiB0aGlzLkNscygpLmluZGV4ZWRfd3JpdGFibGUoaWQsIHZhbCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIENscyAkbW9sX3ZpZXcKCQkgKiAJaW5uZXIgPT4gb3V0ZXIKCQkgKiAJd3JpdGFibGU/dmFsID0+IHdyaXRhYmxlX291dGVyP3ZhbAoJCSAqIAlpbmRleGVkKiA9PiBpbmRleGVkX291dGVyKgoJCSAqIAlpbmRleGVkX3dyaXRhYmxlKj92YWwgPT4gaW5kZXhlZF93cml0YWJsZV9vdXRlcio/dmFsCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCUNscygpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX3ZpZXcoKQoJCQkKCQkJcmV0dXJuIG9iagoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogcSA8PSBDbHMyCgkJICogYGBgCgkJICovCgkJcSgpIHsKCQkJcmV0dXJuIHRoaXMuQ2xzMigpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBPdXRlcl90aXRsZSoKCQkgKiBgYGAKCQkgKi8KCQlPdXRlcl90aXRsZShpZDogYW55KSB7CgkJCXJldHVybiB0aGlzLkluZGV4ZWQoaWQpLlRpdGxlKCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIEluZGV4ZWQqICRtb2xfdmlldyBUaXRsZSA9PiBPdXRlcl90aXRsZSoKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtX2tleQoJCUluZGV4ZWQoaWQ6IGFueSkgewoJCQljb25zdCBvYmogPSBuZXcgdGhpcy4kLiRtb2xfdmlldygpCgkJCQoJCQlyZXR1cm4gb2JqCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBvdXRlclEKCQkgKiBgYGAKCQkgKi8KCQlvdXRlclEoKSB7CgkJCXJldHVybiB0aGlzLkNsczIoKS5pbm5lcigpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBDbHMyICRtb2xfdmlldyBpbm5lciA9PiBvdXRlclEKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJQ2xzMigpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX3ZpZXcoKQoJCQkKCQkJcmV0dXJuIG9iagoJCX0KCX0KCQp9Cgo="
+var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/right.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X2JpbmRfcmlnaHQgZXh0ZW5kcyAkbW9sX3ZpZXcgewoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBvdXRlcgoJCSAqIGBgYAoJCSAqLwoJCW91dGVyKCkgewoJCQlyZXR1cm4gdGhpcy5DbHMoKS5pbm5lcigpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiB3cml0YWJsZV9vdXRlcj8KCQkgKiBgYGAKCQkgKi8KCQl3cml0YWJsZV9vdXRlcihuZXh0PzogYW55KSB7CgkJCXJldHVybiB0aGlzLkNscygpLndyaXRhYmxlKG5leHQpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBpbmRleGVkX291dGVyKgoJCSAqIGBgYAoJCSAqLwoJCWluZGV4ZWRfb3V0ZXIoaWQ6IGFueSkgewoJCQlyZXR1cm4gdGhpcy5DbHMoKS5pbmRleGVkKGlkKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZF93cml0YWJsZV9vdXRlcio/CgkJICogYGBgCgkJICovCgkJaW5kZXhlZF93cml0YWJsZV9vdXRlcihpZDogYW55LCBuZXh0PzogYW55KSB7CgkJCXJldHVybiB0aGlzLkNscygpLmluZGV4ZWRfd3JpdGFibGUoaWQsIG5leHQpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBDbHMgJG1vbF92aWV3CgkJICogCWlubmVyID0+IG91dGVyCgkJICogCXdyaXRhYmxlPyA9PiB3cml0YWJsZV9vdXRlcj8KCQkgKiAJaW5kZXhlZCogPT4gaW5kZXhlZF9vdXRlcioKCQkgKiAJaW5kZXhlZF93cml0YWJsZSo/ID0+IGluZGV4ZWRfd3JpdGFibGVfb3V0ZXIqPwoJCSAqIGBgYAoJCSAqLwoJCUAgJG1vbF9tZW0KCQlDbHMoKSB7CgkJCWNvbnN0IG9iaiA9IG5ldyB0aGlzLiQuJG1vbF92aWV3KCkKCQkJCgkJCXJldHVybiBvYmoKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHEgPD0gQ2xzMgoJCSAqIGBgYAoJCSAqLwoJCXEoKSB7CgkJCXJldHVybiB0aGlzLkNsczIoKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogT3V0ZXJfdGl0bGUqCgkJICogYGBgCgkJICovCgkJT3V0ZXJfdGl0bGUoaWQ6IGFueSkgewoJCQlyZXR1cm4gdGhpcy5JbmRleGVkKGlkKS5UaXRsZSgpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBJbmRleGVkKiAkbW9sX3ZpZXcgVGl0bGUgPT4gT3V0ZXJfdGl0bGUqCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbV9rZXkKCQlJbmRleGVkKGlkOiBhbnkpIHsKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX3ZpZXcoKQoJCQkKCQkJcmV0dXJuIG9iagoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogb3V0ZXJRCgkJICogYGBgCgkJICovCgkJb3V0ZXJRKCkgewoJCQlyZXR1cm4gdGhpcy5DbHMyKCkuaW5uZXIoKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogQ2xzMiAkbW9sX3ZpZXcgaW5uZXIgPT4gb3V0ZXJRCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCUNsczIoKSB7CgkJCWNvbnN0IG9iaiA9IG5ldyB0aGlzLiQuJG1vbF92aWV3KCkKCQkJCgkJCXJldHVybiBvYmoKCQl9Cgl9CgkKfQoK"
 
 ;
-var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/both.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9ib3RoICRtb2xfdmlldwoJd3JpdGFibGU/dmFsIDw9PiB3cml0YWJsZV9vd25lcj92YWwKCXdyaXRhYmxlX2RlZmF1bHQ/dmFsIDw9PiB3cml0YWJsZV9kZWZhdWx0X293bmVyP3ZhbCBudWxsCgljbGFzcz92YWwgPD0+IGNsYXNzX293bmVyP3ZhbCAkbW9sX3ZpZXcKCWluZGV4ZWQha2V5P3ZhbCA8PT4gaW5kZXhlZF9vd25lciFrZXk/dmFsIG51bGwKCXR3aWNlIG51bGwKCWNsYXNzX2luZGV4ZWQha2V5P3ZhbCAkbW9sX3ZpZXcKCQlleHBhbmRlZCA8PT4gY2VsbF9leHBhbmRlZCFrZXk/dmFsCgljbGFzc193cml0YWJsZT92YWwgPD0+IGNsYXNzX3dyaXRhYmxlX293bmVyP3ZhbCAkbW9sX3ZpZXcKCQlzb21lP3ZhbCA8PT4gdHdpY2U/dmFsCgkJbG9jYWxpemVkP3ZhbCA8PT4gbG9jYWxpemVkX293bmVyP3ZhbCBAIFxzb21lMQoJCWNoYWluP3YgPD0+IGNoYWluMT92IDw9PiBjaGFpbjI/diBudWxsCglhcnIgLwoJCSoKCQkJbG9jP3YgPD0+IGxvY19vdXRlcj92IEAgXHRlc3QgbG9jYWxpemUKCQkqCgkJCWxvYz92IDw9PiBsb2Nfb3V0ZXI/diBAIFx0ZXN0IGxvY2FsaXplCglzd2lwZV90b19sZWZ0P2V2ZW50IDw9PiBldmVudF9uZXh0P2V2ZW50IG51bGwKCWV2ZW50X2NhdGNoP3ZhbCA8PT4gZXZlbnRfbmV4dD92YWwgbnVsbAo="
+var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/both.view.tree.bin" ] = "data:application/octet-stream;base64,JG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9ib3RoICRtb2xfdmlldwoJd3JpdGFibGU/IDw9PiB3cml0YWJsZV9vd25lcj8KCXdyaXRhYmxlX2RlZmF1bHQ/IDw9PiB3cml0YWJsZV9kZWZhdWx0X293bmVyPyBudWxsCgljbGFzcz8gPD0+IGNsYXNzX293bmVyPyAkbW9sX3ZpZXcKCWluZGV4ZWQha2V5PyA8PT4gaW5kZXhlZF9vd25lciFrZXk/IG51bGwKCXR3aWNlIG51bGwKCWNsYXNzX2luZGV4ZWQha2V5PyAkbW9sX3ZpZXcKCQlleHBhbmRlZCA8PT4gY2VsbF9leHBhbmRlZCFrZXk/CgljbGFzc193cml0YWJsZT8gPD0+IGNsYXNzX3dyaXRhYmxlX293bmVyPyAkbW9sX3ZpZXcKCQlzb21lPyA8PT4gdHdpY2U/CgkJbG9jYWxpemVkPyA8PT4gbG9jYWxpemVkX293bmVyPyBAIFxzb21lMQoJCWNoYWluP3YgPD0+IGNoYWluMT92IDw9PiBjaGFpbjI/diBudWxsCglhcnIgLwoJCSoKCQkJbG9jP3YgPD0+IGxvY19vdXRlcj92IEAgXHRlc3QgbG9jYWxpemUKCQkqCgkJCWxvYz92IDw9PiBsb2Nfb3V0ZXI/diBAIFx0ZXN0IGxvY2FsaXplCglzd2lwZV90b19sZWZ0P2V2ZW50IDw9PiBldmVudF9uZXh0P2V2ZW50IG51bGwKCWV2ZW50X2NhdGNoPyA8PT4gZXZlbnRfbmV4dD8gbnVsbAo="
 
 ;
-var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/both.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X2JpbmRfYm90aCBleHRlbmRzICRtb2xfdmlldyB7CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHdyaXRhYmxlP3ZhbCA8PT4gd3JpdGFibGVfb3duZXI/dmFsCgkJICogYGBgCgkJICovCgkJd3JpdGFibGUodmFsPzogYW55KSB7CgkJCXJldHVybiB0aGlzLndyaXRhYmxlX293bmVyKHZhbCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHdyaXRhYmxlX2RlZmF1bHQ/dmFsIDw9PiB3cml0YWJsZV9kZWZhdWx0X293bmVyP3ZhbAoJCSAqIGBgYAoJCSAqLwoJCXdyaXRhYmxlX2RlZmF1bHQodmFsPzogYW55KSB7CgkJCXJldHVybiB0aGlzLndyaXRhYmxlX2RlZmF1bHRfb3duZXIodmFsKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2xhc3M/dmFsIDw9PiBjbGFzc19vd25lcj92YWwKCQkgKiBgYGAKCQkgKi8KCQljbGFzcyh2YWw/OiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuY2xhc3Nfb3duZXIodmFsKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZCo/dmFsIDw9PiBpbmRleGVkX293bmVyKj92YWwKCQkgKiBgYGAKCQkgKi8KCQlpbmRleGVkKGlkOiBhbnksIHZhbD86IGFueSkgewoJCQlyZXR1cm4gdGhpcy5pbmRleGVkX293bmVyKGlkLCB2YWwpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiB0d2ljZSBudWxsCgkJICogYGBgCgkJICovCgkJdHdpY2UoKSB7CgkJCXJldHVybiBudWxsIGFzIGFueQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2xhc3NfaW5kZXhlZCo/dmFsICRtb2xfdmlldyBleHBhbmRlZCA8PT4gY2VsbF9leHBhbmRlZCo/dmFsCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbV9rZXkKCQljbGFzc19pbmRleGVkKGlkOiBhbnksIHZhbD86IGFueSkgewoJCQlpZiAoIHZhbCAhPT0gdW5kZWZpbmVkICkgcmV0dXJuIHZhbCBhcyBuZXZlcgoJCQljb25zdCBvYmogPSBuZXcgdGhpcy4kLiRtb2xfdmlldygpCgkJCQoJCQlvYmouZXhwYW5kZWQgPSAoKSA9PiB0aGlzLmNlbGxfZXhwYW5kZWQoaWQsIHZhbCkKCQkJCgkJCXJldHVybiBvYmoKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzX3dyaXRhYmxlP3ZhbCA8PT4gY2xhc3Nfd3JpdGFibGVfb3duZXI/dmFsCgkJICogYGBgCgkJICovCgkJY2xhc3Nfd3JpdGFibGUodmFsPzogYW55KSB7CgkJCXJldHVybiB0aGlzLmNsYXNzX3dyaXRhYmxlX293bmVyKHZhbCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGFyciAvCgkJICogCSogbG9jP3YgPD0+IGxvY19vdXRlcj92CgkJICogCSogbG9jP3YgPD0+IGxvY19vdXRlcj92CgkJICogYGBgCgkJICovCgkJYXJyKCkgewoJCQlyZXR1cm4gWwoJCQkJewoJCQkJCWxvYzogKHY/OiBhbnkpID0+IHRoaXMubG9jX291dGVyKHYpCgkJCQl9IGFzIFJlY29yZDwgc3RyaW5nLCBhbnkgPiwKCQkJCXsKCQkJCQlsb2M6ICh2PzogYW55KSA9PiB0aGlzLmxvY19vdXRlcih2KQoJCQkJfSBhcyBSZWNvcmQ8IHN0cmluZywgYW55ID4KCQkJXSBhcyByZWFkb25seSBhbnlbXQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogc3dpcGVfdG9fbGVmdD9ldmVudCA8PT4gZXZlbnRfbmV4dD9ldmVudAoJCSAqIGBgYAoJCSAqLwoJCXN3aXBlX3RvX2xlZnQoZXZlbnQ/OiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuZXZlbnRfbmV4dChldmVudCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGV2ZW50X2NhdGNoP3ZhbCA8PT4gZXZlbnRfbmV4dD92YWwKCQkgKiBgYGAKCQkgKi8KCQlldmVudF9jYXRjaCh2YWw/OiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuZXZlbnRfbmV4dCh2YWwpCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiB3cml0YWJsZV9kZWZhdWx0X293bmVyP3ZhbCBudWxsCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCXdyaXRhYmxlX2RlZmF1bHRfb3duZXIodmFsPzogYW55KSB7CgkJCWlmICggdmFsICE9PSB1bmRlZmluZWQgKSByZXR1cm4gdmFsIGFzIG5ldmVyCgkJCXJldHVybiBudWxsIGFzIGFueQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2xhc3Nfb3duZXI/dmFsICRtb2xfdmlldwoJCSAqIGBgYAoJCSAqLwoJCUAgJG1vbF9tZW0KCQljbGFzc19vd25lcih2YWw/OiBhbnkpIHsKCQkJaWYgKCB2YWwgIT09IHVuZGVmaW5lZCApIHJldHVybiB2YWwgYXMgbmV2ZXIKCQkJY29uc3Qgb2JqID0gbmV3IHRoaXMuJC4kbW9sX3ZpZXcoKQoJCQkKCQkJcmV0dXJuIG9iagoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZF9vd25lcio/dmFsIG51bGwKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtX2tleQoJCWluZGV4ZWRfb3duZXIoaWQ6IGFueSwgdmFsPzogYW55KSB7CgkJCWlmICggdmFsICE9PSB1bmRlZmluZWQgKSByZXR1cm4gdmFsIGFzIG5ldmVyCgkJCXJldHVybiBudWxsIGFzIGFueQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogbG9jYWxpemVkX293bmVyP3ZhbCBAIFxzb21lMQoJCSAqIGBgYAoJCSAqLwoJCUAgJG1vbF9tZW0KCQlsb2NhbGl6ZWRfb3duZXIodmFsPzogYW55KSB7CgkJCWlmICggdmFsICE9PSB1bmRlZmluZWQgKSByZXR1cm4gdmFsIGFzIG5ldmVyCgkJCXJldHVybiB0aGlzLiQuJG1vbF9sb2NhbGUudGV4dCggJyRtb2xfdmlld190cmVlMl90c190ZXN0X2JpbmRfYm90aF9sb2NhbGl6ZWRfb3duZXInICkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNoYWluMj92IG51bGwKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJY2hhaW4yKHY/OiBhbnkpIHsKCQkJaWYgKCB2ICE9PSB1bmRlZmluZWQgKSByZXR1cm4gdiBhcyBuZXZlcgoJCQlyZXR1cm4gbnVsbCBhcyBhbnkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNoYWluMT92IDw9PiBjaGFpbjI/dgoJCSAqIGBgYAoJCSAqLwoJCWNoYWluMSh2PzogYW55KSB7CgkJCXJldHVybiB0aGlzLmNoYWluMih2KQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogY2xhc3Nfd3JpdGFibGVfb3duZXI/dmFsICRtb2xfdmlldwoJCSAqIAlzb21lP3ZhbCA8PT4gdHdpY2U/dmFsCgkJICogCWxvY2FsaXplZD92YWwgPD0+IGxvY2FsaXplZF9vd25lcj92YWwKCQkgKiAJY2hhaW4/diA8PT4gY2hhaW4xP3YKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJY2xhc3Nfd3JpdGFibGVfb3duZXIodmFsPzogYW55KSB7CgkJCWlmICggdmFsICE9PSB1bmRlZmluZWQgKSByZXR1cm4gdmFsIGFzIG5ldmVyCgkJCWNvbnN0IG9iaiA9IG5ldyB0aGlzLiQuJG1vbF92aWV3KCkKCQkJCgkJCW9iai5zb21lID0gKHZhbD86IGFueSkgPT4gdGhpcy50d2ljZSh2YWwpCgkJCW9iai5sb2NhbGl6ZWQgPSAodmFsPzogYW55KSA9PiB0aGlzLmxvY2FsaXplZF9vd25lcih2YWwpCgkJCW9iai5jaGFpbiA9ICh2PzogYW55KSA9PiB0aGlzLmNoYWluMSh2KQoJCQkKCQkJcmV0dXJuIG9iagoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogbG9jX291dGVyP3YgQCBcdGVzdCBsb2NhbGl6ZQoJCSAqIGBgYAoJCSAqLwoJCUAgJG1vbF9tZW0KCQlsb2Nfb3V0ZXIodj86IGFueSkgewoJCQlpZiAoIHYgIT09IHVuZGVmaW5lZCApIHJldHVybiB2IGFzIG5ldmVyCgkJCXJldHVybiB0aGlzLiQuJG1vbF9sb2NhbGUudGV4dCggJyRtb2xfdmlld190cmVlMl90c190ZXN0X2JpbmRfYm90aF9sb2Nfb3V0ZXInICkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGV2ZW50X25leHQ/ZXZlbnQgbnVsbAoJCSAqIGBgYAoJCSAqLwoJCUAgJG1vbF9tZW0KCQlldmVudF9uZXh0KGV2ZW50PzogYW55KSB7CgkJCWlmICggZXZlbnQgIT09IHVuZGVmaW5lZCApIHJldHVybiBldmVudCBhcyBuZXZlcgoJCQlyZXR1cm4gbnVsbCBhcyBhbnkKCQl9Cgl9CgkKfQoK"
+var $node = $node || {} ; $node[ "/mol/view/tree2/ts/test/bind/both.view.ts.bin" ] = "data:application/octet-stream;base64,bmFtZXNwYWNlICQgewoJZXhwb3J0IGNsYXNzICRtb2xfdmlld190cmVlMl90c190ZXN0X2JpbmRfYm90aCBleHRlbmRzICRtb2xfdmlldyB7CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHdyaXRhYmxlPyA8PT4gd3JpdGFibGVfb3duZXI/CgkJICogYGBgCgkJICovCgkJd3JpdGFibGUobmV4dD86IGFueSkgewoJCQlyZXR1cm4gdGhpcy53cml0YWJsZV9vd25lcihuZXh0KQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogd3JpdGFibGVfZGVmYXVsdD8gPD0+IHdyaXRhYmxlX2RlZmF1bHRfb3duZXI/CgkJICogYGBgCgkJICovCgkJd3JpdGFibGVfZGVmYXVsdChuZXh0PzogYW55KSB7CgkJCXJldHVybiB0aGlzLndyaXRhYmxlX2RlZmF1bHRfb3duZXIobmV4dCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzPyA8PT4gY2xhc3Nfb3duZXI/CgkJICogYGBgCgkJICovCgkJY2xhc3MobmV4dD86IGFueSkgewoJCQlyZXR1cm4gdGhpcy5jbGFzc19vd25lcihuZXh0KQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogaW5kZXhlZCo/IDw9PiBpbmRleGVkX293bmVyKj8KCQkgKiBgYGAKCQkgKi8KCQlpbmRleGVkKGlkOiBhbnksIG5leHQ/OiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuaW5kZXhlZF9vd25lcihpZCwgbmV4dCkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIHR3aWNlIG51bGwKCQkgKiBgYGAKCQkgKi8KCQl0d2ljZSgpIHsKCQkJcmV0dXJuIG51bGwgYXMgYW55CgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBjbGFzc19pbmRleGVkKj8gJG1vbF92aWV3IGV4cGFuZGVkIDw9PiBjZWxsX2V4cGFuZGVkKj8KCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtX2tleQoJCWNsYXNzX2luZGV4ZWQoaWQ6IGFueSwgbmV4dD86IGFueSkgewoJCQlpZiAoIG5leHQgIT09IHVuZGVmaW5lZCApIHJldHVybiBuZXh0IGFzIG5ldmVyCgkJCWNvbnN0IG9iaiA9IG5ldyB0aGlzLiQuJG1vbF92aWV3KCkKCQkJCgkJCW9iai5leHBhbmRlZCA9ICgpID0+IHRoaXMuY2VsbF9leHBhbmRlZChpZCwgbmV4dCkKCQkJCgkJCXJldHVybiBvYmoKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzX3dyaXRhYmxlPyA8PT4gY2xhc3Nfd3JpdGFibGVfb3duZXI/CgkJICogYGBgCgkJICovCgkJY2xhc3Nfd3JpdGFibGUobmV4dD86IGFueSkgewoJCQlyZXR1cm4gdGhpcy5jbGFzc193cml0YWJsZV9vd25lcihuZXh0KQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogYXJyIC8KCQkgKiAJKiBsb2M/diA8PT4gbG9jX291dGVyP3YKCQkgKiAJKiBsb2M/diA8PT4gbG9jX291dGVyP3YKCQkgKiBgYGAKCQkgKi8KCQlhcnIoKSB7CgkJCXJldHVybiBbCgkJCQl7CgkJCQkJbG9jOiAodj86IGFueSkgPT4gdGhpcy5sb2Nfb3V0ZXIodikKCQkJCX0gYXMgUmVjb3JkPCBzdHJpbmcsIGFueSA+LAoJCQkJewoJCQkJCWxvYzogKHY/OiBhbnkpID0+IHRoaXMubG9jX291dGVyKHYpCgkJCQl9IGFzIFJlY29yZDwgc3RyaW5nLCBhbnkgPgoJCQldIGFzIHJlYWRvbmx5IGFueVtdCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBzd2lwZV90b19sZWZ0P2V2ZW50IDw9PiBldmVudF9uZXh0P2V2ZW50CgkJICogYGBgCgkJICovCgkJc3dpcGVfdG9fbGVmdChldmVudD86IGFueSkgewoJCQlyZXR1cm4gdGhpcy5ldmVudF9uZXh0KGV2ZW50KQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogZXZlbnRfY2F0Y2g/IDw9PiBldmVudF9uZXh0PwoJCSAqIGBgYAoJCSAqLwoJCWV2ZW50X2NhdGNoKG5leHQ/OiBhbnkpIHsKCQkJcmV0dXJuIHRoaXMuZXZlbnRfbmV4dChuZXh0KQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogd3JpdGFibGVfZGVmYXVsdF9vd25lcj8gbnVsbAoJCSAqIGBgYAoJCSAqLwoJCUAgJG1vbF9tZW0KCQl3cml0YWJsZV9kZWZhdWx0X293bmVyKG5leHQ/OiBhbnkpIHsKCQkJaWYgKCBuZXh0ICE9PSB1bmRlZmluZWQgKSByZXR1cm4gbmV4dCBhcyBuZXZlcgoJCQlyZXR1cm4gbnVsbCBhcyBhbnkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzX293bmVyPyAkbW9sX3ZpZXcKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJY2xhc3Nfb3duZXIobmV4dD86IGFueSkgewoJCQlpZiAoIG5leHQgIT09IHVuZGVmaW5lZCApIHJldHVybiBuZXh0IGFzIG5ldmVyCgkJCWNvbnN0IG9iaiA9IG5ldyB0aGlzLiQuJG1vbF92aWV3KCkKCQkJCgkJCXJldHVybiBvYmoKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGluZGV4ZWRfb3duZXIqPyBudWxsCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbV9rZXkKCQlpbmRleGVkX293bmVyKGlkOiBhbnksIG5leHQ/OiBhbnkpIHsKCQkJaWYgKCBuZXh0ICE9PSB1bmRlZmluZWQgKSByZXR1cm4gbmV4dCBhcyBuZXZlcgoJCQlyZXR1cm4gbnVsbCBhcyBhbnkKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGxvY2FsaXplZF9vd25lcj8gQCBcc29tZTEKCQkgKiBgYGAKCQkgKi8KCQlAICRtb2xfbWVtCgkJbG9jYWxpemVkX293bmVyKG5leHQ/OiBhbnkpIHsKCQkJaWYgKCBuZXh0ICE9PSB1bmRlZmluZWQgKSByZXR1cm4gbmV4dCBhcyBuZXZlcgoJCQlyZXR1cm4gdGhpcy4kLiRtb2xfbG9jYWxlLnRleHQoICckbW9sX3ZpZXdfdHJlZTJfdHNfdGVzdF9iaW5kX2JvdGhfbG9jYWxpemVkX293bmVyJyApCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBjaGFpbjI/diBudWxsCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCWNoYWluMih2PzogYW55KSB7CgkJCWlmICggdiAhPT0gdW5kZWZpbmVkICkgcmV0dXJuIHYgYXMgbmV2ZXIKCQkJcmV0dXJuIG51bGwgYXMgYW55CgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBjaGFpbjE/diA8PT4gY2hhaW4yP3YKCQkgKiBgYGAKCQkgKi8KCQljaGFpbjEodj86IGFueSkgewoJCQlyZXR1cm4gdGhpcy5jaGFpbjIodikKCQl9CgkJCgkJLyoqCgkJICogYGBgdHJlZQoJCSAqIGNsYXNzX3dyaXRhYmxlX293bmVyPyAkbW9sX3ZpZXcKCQkgKiAJc29tZT8gPD0+IHR3aWNlPwoJCSAqIAlsb2NhbGl6ZWQ/IDw9PiBsb2NhbGl6ZWRfb3duZXI/CgkJICogCWNoYWluP3YgPD0+IGNoYWluMT92CgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCWNsYXNzX3dyaXRhYmxlX293bmVyKG5leHQ/OiBhbnkpIHsKCQkJaWYgKCBuZXh0ICE9PSB1bmRlZmluZWQgKSByZXR1cm4gbmV4dCBhcyBuZXZlcgoJCQljb25zdCBvYmogPSBuZXcgdGhpcy4kLiRtb2xfdmlldygpCgkJCQoJCQlvYmouc29tZSA9IChuZXh0PzogYW55KSA9PiB0aGlzLnR3aWNlKG5leHQpCgkJCW9iai5sb2NhbGl6ZWQgPSAobmV4dD86IGFueSkgPT4gdGhpcy5sb2NhbGl6ZWRfb3duZXIobmV4dCkKCQkJb2JqLmNoYWluID0gKHY/OiBhbnkpID0+IHRoaXMuY2hhaW4xKHYpCgkJCQoJCQlyZXR1cm4gb2JqCgkJfQoJCQoJCS8qKgoJCSAqIGBgYHRyZWUKCQkgKiBsb2Nfb3V0ZXI/diBAIFx0ZXN0IGxvY2FsaXplCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCWxvY19vdXRlcih2PzogYW55KSB7CgkJCWlmICggdiAhPT0gdW5kZWZpbmVkICkgcmV0dXJuIHYgYXMgbmV2ZXIKCQkJcmV0dXJuIHRoaXMuJC4kbW9sX2xvY2FsZS50ZXh0KCAnJG1vbF92aWV3X3RyZWUyX3RzX3Rlc3RfYmluZF9ib3RoX2xvY19vdXRlcicgKQoJCX0KCQkKCQkvKioKCQkgKiBgYGB0cmVlCgkJICogZXZlbnRfbmV4dD9ldmVudCBudWxsCgkJICogYGBgCgkJICovCgkJQCAkbW9sX21lbQoJCWV2ZW50X25leHQoZXZlbnQ/OiBhbnkpIHsKCQkJaWYgKCBldmVudCAhPT0gdW5kZWZpbmVkICkgcmV0dXJuIGV2ZW50IGFzIG5ldmVyCgkJCXJldHVybiBudWxsIGFzIGFueQoJCX0KCX0KCQp9Cgo="
 
 ;
 "use strict";
@@ -60579,7 +60579,7 @@ var $;
         'Bidi bind with default object'($) {
             const { Foo } = run(`
 				Foo $mol_object
-					class?val <=> owner?val $mol_object
+					class? <=> owner? $mol_object
 			`);
             const foo = Foo.make({ $ });
             const view = new $mol_object;
