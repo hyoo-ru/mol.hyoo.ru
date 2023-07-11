@@ -25071,7 +25071,7 @@ var $;
                 const res = [];
                 if (value instanceof Map) {
                     for (const [key, val] of value) {
-                        res.push([key, '➡', val]);
+                        res.push([key, '▶', val]);
                     }
                 }
                 if (value instanceof Set) {
