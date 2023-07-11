@@ -24880,10 +24880,14 @@ var $;
 var $;
 (function ($) {
     class $mol_dump_value extends $mol_view {
-        value() {
+        value(next) {
+            if (next !== undefined)
+                return next;
             return null;
         }
-        preview_show() {
+        preview_show(next) {
+            if (next !== undefined)
+                return next;
             return true;
         }
         sub() {
@@ -24979,6 +24983,12 @@ var $;
             return obj;
         }
     }
+    __decorate([
+        $mol_mem
+    ], $mol_dump_value.prototype, "value", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dump_value.prototype, "preview_show", null);
     __decorate([
         $mol_mem
     ], $mol_dump_value.prototype, "Simple", null);
