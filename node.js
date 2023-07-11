@@ -2836,8 +2836,8 @@ var $;
             }
             return names;
         }
-        theme() {
-            return null;
+        theme(next = null) {
+            return next;
         }
         attr_static() {
             let attrs = {};
@@ -2964,6 +2964,9 @@ var $;
     __decorate([
         $mol_memo.method
     ], $mol_view.prototype, "view_names", null);
+    __decorate([
+        $mol_mem
+    ], $mol_view.prototype, "theme", null);
     __decorate([
         $mol_mem_key
     ], $mol_view, "Root", null);
