@@ -24942,7 +24942,7 @@ var $;
                 const res = [];
                 if (value instanceof Map) {
                     for (const [key, val] of value) {
-                        res.push([key, '🡒', val]);
+                        res.push([key, '➡', val]);
                     }
                 }
                 if (value instanceof Set) {
@@ -42764,8 +42764,7 @@ var $;
         }
         sub() {
             return [
-                this.Dump_short(),
-                this.Dump_long()
+                this.Dump_list()
             ];
         }
         tags() {
@@ -42795,6 +42794,14 @@ var $;
             obj.prototypes = () => true;
             return obj;
         }
+        Dump_list() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => [
+                this.Dump_short(),
+                this.Dump_long()
+            ];
+            return obj;
+        }
     }
     __decorate([
         $mol_mem
@@ -42802,6 +42809,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_dump_demo.prototype, "Dump_long", null);
+    __decorate([
+        $mol_mem
+    ], $mol_dump_demo.prototype, "Dump_list", null);
     $.$mol_dump_demo = $mol_dump_demo;
 })($ || ($ = {}));
 //mol/dump/demo/-view.tree/demo.view.tree.ts
