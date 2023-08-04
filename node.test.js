@@ -21589,6 +21589,11 @@ var $;
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_icons_title'),
                     uri: "https://nin-jin.github.io/mol_icon/"
                 },
+                visavis: {
+                    target: "develop",
+                    title: this.$.$mol_locale.text('$hyoo_apps_apps_visavis_title'),
+                    uri: "https://visavis.mpds.io/#!section=examples"
+                },
                 rdf: {
                     target: "develop",
                     title: this.$.$mol_locale.text('$hyoo_apps_apps_rdf_title'),

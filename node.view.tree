@@ -1684,7 +1684,7 @@ $hyoo_apps $mol_book2
 			uri? <=> app_uri_embed*? \
 	groups *
 		release @ \For All
-		develop @ \For Developers
+		develop @ \For Experts
 		preview @ \For Curious
 	apps *
 		studio *
@@ -1859,6 +1859,10 @@ $hyoo_apps $mol_book2
 			target \develop
 			title @ \Icons Gallery
 			uri \https://nin-jin.github.io/mol_icon/
+		visavis *
+			target \develop
+			title @ \Chemistry Plots
+			uri \https://visavis.mpds.io/#!section=examples
 		rdf *
 			target \develop
 			title @ \RDF Browser
