@@ -8582,7 +8582,7 @@ declare namespace $ {
 
 declare namespace $.$$ {
     class $mol_card extends $.$mol_card {
-        rows(): $mol_view[];
+        rows(): readonly $mol_view[];
     }
 }
 
