@@ -2649,6 +2649,10 @@ $hyoo_mol_bench $mol_book2_catalog
 			analysis_uri \https://t.me/mol_bench/27
 			Close <= Close_item
 			bench_id \egbl19_e5ljht
+		runtype <= Runtype $hyoo_mol_bench_perf
+			bench_title \Runtime typing
+			Close <= Close_item
+			bench_id \y4n9yl_ug1hdz
 		rope <= Rope $hyoo_mol_bench_bench
 			title \Rope Charts
 			analysis_uri \https://t.me/mol_bench/24

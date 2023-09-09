@@ -26974,7 +26974,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/perf/case/row/row.view.css", "[hyoo_js_perf_case_row] {\n\tflex: 0 1 auto;\n\tflex-wrap: wrap;\n\tbackground: var(--mol_theme_card);\n\tborder-radius: var(--mol_gap_round);\n}\n\n[hyoo_js_perf_case_row_prefix] ,\n[hyoo_js_perf_case_row_source] {\n\tflex: 1 1 40rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_row_source_tools] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_row_eval_labeler] {\n\tflex: 1 1 26rem;\n}\n[hyoo_js_perf_case_row_results] {\n\tflex: 1 1 26rem;\n\tflex-wrap: wrap;\n\talign-content: flex-start;\n}\n\n[hyoo_js_perf_case_row_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n");
+    $mol_style_attach("hyoo/js/perf/case/row/row.view.css", "[hyoo_js_perf_case_row] {\n\tflex: 0 1 auto;\n\tflex-wrap: wrap;\n\tbackground: var(--mol_theme_card);\n\tborder-radius: var(--mol_gap_round);\n}\n\n[hyoo_js_perf_case_row_prefix] ,\n[hyoo_js_perf_case_row_source] {\n\tflex: 1 1 40rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_row_source_tools] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_row_eval_labeler] {\n\tflex: 1 1 26rem;\n}\n[hyoo_js_perf_case_row_results] {\n\tflex: 1 1 26rem;\n\tflex-wrap: wrap;\n\talign-content: flex-start;\n}\n\n[hyoo_js_perf_case_row_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_row_title] {\n\ttext-shadow: 0 0;\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/case/row/-css/row.view.css.ts
 ;
@@ -28575,6 +28575,7 @@ var $;
                 equals: this.equals(),
                 moment: this.moment(),
                 markdown: this.Markdown(),
+                runtype: this.Runtype(),
                 rope: this.Rope(),
                 todomvc: this.Todomvc(),
                 changelog: this.Chanelog(),
@@ -28618,6 +28619,13 @@ var $;
             obj.analysis_uri = () => "https://t.me/mol_bench/27";
             obj.Close = () => this.Close_item();
             obj.bench_id = () => "egbl19_e5ljht";
+            return obj;
+        }
+        Runtype() {
+            const obj = new this.$.$hyoo_mol_bench_perf();
+            obj.bench_title = () => "Runtime typing";
+            obj.Close = () => this.Close_item();
+            obj.bench_id = () => "y4n9yl_ug1hdz";
             return obj;
         }
         Rope() {
@@ -28798,6 +28806,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Markdown", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench.prototype, "Runtype", null);
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Rope", null);
