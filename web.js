@@ -26513,6 +26513,85 @@ var $;
                 return next;
             return true;
         }
+        measurable(next) {
+            if (next !== undefined)
+                return next;
+            return true;
+        }
+        Measurable_icon() {
+            const obj = new this.$.$mol_icon_play();
+            return obj;
+        }
+        Measurable() {
+            const obj = new this.$.$mol_check_icon();
+            obj.checked = (next) => this.measurable(next);
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Measurable_hint');
+            obj.Icon = () => this.Measurable_icon();
+            return obj;
+        }
+        changable() {
+            return true;
+        }
+        title(next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        Title() {
+            const obj = new this.$.$mol_string_button();
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Title_hint');
+            obj.enabled = () => this.changable();
+            obj.value = (next) => this.title(next);
+            return obj;
+        }
+        eval_standalone() {
+            return "";
+        }
+        Eval_sandalone() {
+            const obj = new this.$.$mol_link_iconed();
+            obj.title = () => "";
+            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Eval_sandalone_hint');
+            obj.uri = () => this.eval_standalone();
+            return obj;
+        }
+        Prefix_tools() {
+            const obj = new this.$.$mol_bar();
+            obj.sub = () => [
+                this.Measurable(),
+                this.Title(),
+                this.Eval_sandalone()
+            ];
+            return obj;
+        }
+        prefix(val) {
+            if (val !== undefined)
+                return val;
+            return "";
+        }
+        Prefix_code() {
+            const obj = new this.$.$mol_textarea();
+            obj.enabled = () => this.changable();
+            obj.spellcheck = () => false;
+            obj.value = (val) => this.prefix(val);
+            obj.hint = () => "let count = {#}";
+            return obj;
+        }
+        Prefix() {
+            const obj = new this.$.$mol_expander();
+            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Prefix_title');
+            obj.expanded = (next) => this.prefix_showed(next);
+            obj.minimal_width = () => 150;
+            obj.Tools = () => this.Prefix_tools();
+            obj.content = () => [
+                this.Prefix_code()
+            ];
+            return obj;
+        }
+        source_showed(next) {
+            if (next !== undefined)
+                return next;
+            return true;
+        }
         drop(next) {
             if (next !== undefined)
                 return next;
@@ -26567,90 +26646,16 @@ var $;
             ];
             return obj;
         }
-        prefix_tools() {
+        edit_tools() {
             return [
                 this.Drop(),
                 this.Dupe(),
                 this.Swap()
             ];
         }
-        Prefix_tools() {
-            const obj = new this.$.$mol_bar();
-            obj.sub = () => this.prefix_tools();
-            return obj;
-        }
-        changable() {
-            return true;
-        }
-        prefix(val) {
-            if (val !== undefined)
-                return val;
-            return "";
-        }
-        Prefix_code() {
-            const obj = new this.$.$mol_textarea();
-            obj.enabled = () => this.changable();
-            obj.spellcheck = () => false;
-            obj.value = (val) => this.prefix(val);
-            obj.hint = () => "let count = {#}";
-            return obj;
-        }
-        Prefix() {
-            const obj = new this.$.$mol_expander();
-            obj.title = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Prefix_title');
-            obj.expanded = (next) => this.prefix_showed(next);
-            obj.minimal_width = () => 150;
-            obj.Tools = () => this.Prefix_tools();
-            obj.content = () => [
-                this.Prefix_code()
-            ];
-            return obj;
-        }
-        source_showed(next) {
-            if (next !== undefined)
-                return next;
-            return true;
-        }
-        measurable(next) {
-            if (next !== undefined)
-                return next;
-            return true;
-        }
-        Measurable() {
-            const obj = new this.$.$mol_check_box();
-            obj.checked = (next) => this.measurable(next);
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Measurable_hint');
-            return obj;
-        }
-        title(next) {
-            if (next !== undefined)
-                return next;
-            return "";
-        }
-        Title() {
-            const obj = new this.$.$mol_string_button();
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Title_hint');
-            obj.enabled = () => this.changable();
-            obj.value = (next) => this.title(next);
-            return obj;
-        }
-        eval_standalone() {
-            return "";
-        }
-        Eval_sandalone() {
-            const obj = new this.$.$mol_link_iconed();
-            obj.title = () => "";
-            obj.hint = () => this.$.$mol_locale.text('$hyoo_js_perf_case_row_Eval_sandalone_hint');
-            obj.uri = () => this.eval_standalone();
-            return obj;
-        }
         Source_tools() {
             const obj = new this.$.$mol_view();
-            obj.sub = () => [
-                this.Measurable(),
-                this.Title(),
-                this.Eval_sandalone()
-            ];
+            obj.sub = () => this.edit_tools();
             return obj;
         }
         source(val) {
@@ -26733,6 +26738,39 @@ var $;
     ], $hyoo_js_perf_case_row.prototype, "prefix_showed", null);
     __decorate([
         $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "measurable", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Measurable_icon", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Measurable", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Eval_sandalone", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Prefix_tools", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "prefix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Prefix_code", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "Prefix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case_row.prototype, "source_showed", null);
+    __decorate([
+        $mol_mem
     ], $hyoo_js_perf_case_row.prototype, "drop", null);
     __decorate([
         $mol_mem
@@ -26758,36 +26796,6 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_js_perf_case_row.prototype, "Swap", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "Prefix_tools", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "prefix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "Prefix_code", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "Prefix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "source_showed", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "measurable", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "Measurable", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "title", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "Title", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case_row.prototype, "Eval_sandalone", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf_case_row.prototype, "Source_tools", null);
@@ -26846,13 +26854,29 @@ var $;
                 const code = this.sample();
                 return `https://eval.js.hyoo.ru/#!code=${encodeURIComponent(code)}/run=true`;
             }
-            prefix_tools() {
-                return this.changable() ? super.prefix_tools() : [];
+            edit_tools() {
+                return this.changable() ? super.edit_tools() : [];
+            }
+            prefix_showed(next) {
+                return next
+                    ?? $mol_wire_probe(() => this.prefix_showed())
+                    ?? this.prefix().split('\n').length <= 2;
+            }
+            source_showed(next) {
+                return next
+                    ?? $mol_wire_probe(() => this.source_showed())
+                    ?? this.source().split('\n').length <= 2;
             }
         }
         __decorate([
             $mol_mem
         ], $hyoo_js_perf_case_row.prototype, "columns", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf_case_row.prototype, "prefix_showed", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf_case_row.prototype, "source_showed", null);
         $$.$hyoo_js_perf_case_row = $hyoo_js_perf_case_row;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -26861,7 +26885,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/js/perf/case/row/row.view.css", "[hyoo_js_perf_case_row] {\n\tflex: 0 1 auto;\n\tflex-wrap: wrap;\n\tbackground: var(--mol_theme_card);\n\tborder-radius: var(--mol_gap_round);\n}\n\n[hyoo_js_perf_case_row_prefix] ,\n[hyoo_js_perf_case_row_source] {\n\tflex: 1 1 40rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_row_source_tools] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_row_eval_labeler] {\n\tflex: 1 1 26rem;\n}\n[hyoo_js_perf_case_row_results] {\n\tflex: 1 1 26rem;\n\tflex-wrap: wrap;\n\talign-content: flex-start;\n}\n\n[hyoo_js_perf_case_row_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_row_title] {\n\ttext-shadow: 0 0;\n}\n");
+    $mol_style_attach("hyoo/js/perf/case/row/row.view.css", "[hyoo_js_perf_case_row] {\n\tflex: 0 1 auto;\n\tflex-wrap: wrap;\n\tbackground: var(--mol_theme_card);\n\tborder-radius: var(--mol_gap_round);\n}\n\n[hyoo_js_perf_case_row_prefix] ,\n[hyoo_js_perf_case_row_source] {\n\tflex: 1 1 40rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_row_prefix_tools] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_row_eval_labeler] {\n\tflex: 1 1 26rem;\n}\n[hyoo_js_perf_case_row_results] {\n\tflex: 1 1 26rem;\n\tflex-wrap: wrap;\n\talign-content: flex-start;\n}\n\n[hyoo_js_perf_case_row_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_row_title] {\n\ttext-shadow: 0 0;\n}\n");
 })($ || ($ = {}));
 //hyoo/js/perf/case/row/-css/row.view.css.ts
 ;
@@ -27173,7 +27197,7 @@ var $;
             return [];
         }
         menu_title() {
-            return this.bench_title();
+            return this.$.$mol_locale.text('$hyoo_js_perf_menu_title');
         }
         permalink() {
             return "";
@@ -27454,6 +27478,17 @@ var $;
             ];
             return obj;
         }
+        Tool_buttons() {
+            const obj = new this.$.$mol_view();
+            obj.sub = () => [
+                this.Measurable_all(),
+                this.Run(),
+                this.Share(),
+                this.Fork(),
+                this.New()
+            ];
+            return obj;
+        }
         Cases_pane() {
             const obj = new this.$.$mol_page();
             obj.title = () => this.bench_title();
@@ -27462,11 +27497,7 @@ var $;
                 this.Cases()
             ];
             obj.tools = () => [
-                this.Measurable_all(),
-                this.Run(),
-                this.Share(),
-                this.Fork(),
-                this.New()
+                this.Tool_buttons()
             ];
             return obj;
         }
@@ -27594,6 +27625,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "New", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf.prototype, "Tool_buttons", null);
     __decorate([
         $mol_mem
     ], $hyoo_js_perf.prototype, "Cases_pane", null);
@@ -27802,6 +27836,9 @@ var $;
                 else {
                     return this.bench_changable().title(next);
                 }
+            }
+            menu_title() {
+                return this.bench_title() || super.menu_title();
             }
             prefix(next) {
                 if (next === undefined) {

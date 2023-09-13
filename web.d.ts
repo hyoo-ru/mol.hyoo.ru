@@ -6690,6 +6690,19 @@ declare namespace $ {
         sub(): readonly any[];
         sample(): string;
         prefix_showed(next?: any): boolean;
+        measurable(next?: any): boolean;
+        Measurable_icon(): $mol_icon_play;
+        Measurable(): $mol_check_icon;
+        changable(): boolean;
+        title(next?: any): string;
+        Title(): $mol_string_button;
+        eval_standalone(): string;
+        Eval_sandalone(): $$.$mol_link_iconed;
+        Prefix_tools(): $mol_bar;
+        prefix(val?: any): string;
+        Prefix_code(): $$.$mol_textarea;
+        Prefix(): $$.$mol_expander;
+        source_showed(next?: any): boolean;
         drop(next?: any): any;
         Drop_icon(): $mol_icon_cross;
         Drop(): $mol_button_minor;
@@ -6699,19 +6712,7 @@ declare namespace $ {
         swap(next?: any): any;
         Swap_icon(): $mol_icon_unfold_more_horizontal;
         Swap(): $mol_button_minor;
-        prefix_tools(): readonly any[];
-        Prefix_tools(): $mol_bar;
-        changable(): boolean;
-        prefix(val?: any): string;
-        Prefix_code(): $$.$mol_textarea;
-        Prefix(): $$.$mol_expander;
-        source_showed(next?: any): boolean;
-        measurable(next?: any): boolean;
-        Measurable(): $mol_check_box;
-        title(next?: any): string;
-        Title(): $mol_string_button;
-        eval_standalone(): string;
-        Eval_sandalone(): $$.$mol_link_iconed;
+        edit_tools(): readonly any[];
         Source_tools(): $mol_view;
         source(val?: any): string;
         Source_code(): $$.$mol_textarea;
@@ -6733,7 +6734,9 @@ declare namespace $.$$ {
         result(level: number): any;
         result_title(level: number): string;
         eval_standalone(): string;
-        prefix_tools(): readonly any[];
+        edit_tools(): readonly any[];
+        prefix_showed(next?: boolean): boolean;
+        source_showed(next?: boolean): boolean;
     }
 }
 
@@ -6864,7 +6867,7 @@ declare namespace $ {
         case_drop(id: any, next?: any): any;
         case_dupe(id: any, next?: any): any;
         case_swap(id: any, next?: any): any;
-        Case_measurable(id: any): $mol_check_box;
+        Case_measurable(id: any): $mol_check_icon;
         Case(id: any): $$.$hyoo_js_perf_case_row;
         cases(): readonly any[];
         Cases(): $$.$mol_list;
@@ -6879,6 +6882,7 @@ declare namespace $ {
         bench_new(next?: any): any;
         New_icon(): $mol_icon_plus_box;
         New(): $mol_button_minor;
+        Tool_buttons(): $mol_view;
         Cases_pane(): $mol_page;
     }
 }
@@ -6926,6 +6930,7 @@ declare namespace $.$$ {
         prefixes(next?: string[]): string[];
         sources(next?: string[]): string[];
         bench_title(next?: string): string;
+        menu_title(): string;
         prefix(next?: string): string;
         postfix(next?: string): string;
         case_drop(index: number): void;
@@ -6959,7 +6964,7 @@ declare namespace $.$$ {
         measure_safe(index: number, prefix: string, inner: string, postfix: string): $hyoo_js_perf_stats;
         _run_iteration: number;
         iterations_reset(): void;
-        measurable_all(): $mol_check_box[];
+        measurable_all(): $mol_check_icon[];
         run(): void;
     }
 }
