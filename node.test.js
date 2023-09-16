@@ -11350,6 +11350,19 @@ var $;
                 const Fund = this.world().Fund($hyoo_page_side);
                 return ids.map(id => Fund.Item(id));
             }
+            following() {
+                return this.following_in() ?? this.following_out();
+            }
+            following_in() {
+                return this.pages().at(-1) ?? null;
+            }
+            following_out() {
+                const book = this.book();
+                if (!book)
+                    return null;
+                const pages = book.pages();
+                return pages[pages.indexOf(this) - 1] ?? book.following_out();
+            }
             bookmarked(id, next) {
                 const node = this.bookmarks_node();
                 if (!node)
@@ -11486,6 +11499,12 @@ var $;
         __decorate([
             $mol_mem
         ], $hyoo_page_side.prototype, "pages", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_page_side.prototype, "following_in", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_page_side.prototype, "following_out", null);
         __decorate([
             $mol_mem_key
         ], $hyoo_page_side.prototype, "bookmarked", null);
@@ -17047,6 +17066,9 @@ var $;
         authors() {
             return this.side().authors();
         }
+        following() {
+            return this.side().following();
+        }
         side() {
             const obj = new this.$.$hyoo_page_side();
             return obj;
@@ -17247,11 +17269,17 @@ var $;
             obj.sub = () => this.author_list();
             return obj;
         }
+        Following() {
+            const obj = new this.$.$hyoo_meta_link();
+            obj.meta = () => this.following();
+            return obj;
+        }
         Signature() {
             const obj = new this.$.$mol_view();
             obj.sub = () => [
                 this.Changed(),
-                this.Author_list()
+                this.Author_list(),
+                this.Following()
             ];
             return obj;
         }
@@ -17343,6 +17371,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_page_side_view.prototype, "Author_list", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_page_side_view.prototype, "Following", null);
     __decorate([
         $mol_mem
     ], $hyoo_page_side_view.prototype, "Signature", null);
@@ -17437,6 +17468,9 @@ var $;
             details() {
                 return this.editing() ? this.side_details() : this.side_release();
             }
+            Following() {
+                return this.following() ? super.Following() : null;
+            }
             author_list() {
                 return [...this.authors()].map(peer => this.Author_link(peer));
             }
@@ -17509,6 +17543,13 @@ var $;
                 direction: 'row-reverse',
                 wrap: 'wrap',
             },
+        },
+        Following: {
+            flex: {
+                grow: 1,
+                shrink: 1,
+            },
+            color: $mol_theme.special,
         },
     });
 })($ || ($ = {}));
