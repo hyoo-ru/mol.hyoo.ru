@@ -7968,7 +7968,7 @@ var $;
 //mol/locale/select/select.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "6efc2c3";
+let $hyoo_sync_revision = "9765699";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -9619,12 +9619,11 @@ var $;
             return next;
         }
         master_list() {
-            return this.$.$hyoo_sync_masters;
+            const scheme = this.$.$mol_dom_context.document.location.protocol.replace(/^http/, 'ws');
+            return this.$.$hyoo_sync_masters.map(host => `${scheme}//${host}`);
         }
         master_link() {
-            const scheme = this.$.$mol_dom_context.document.location.protocol.replace(/^http/, 'ws');
-            const host = this.master_list()[this.master_cursor()];
-            return `${scheme}//${host}`;
+            return this.master_list()[this.master_cursor()];
         }
         master() {
             return null;
@@ -20599,31 +20598,44 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $hyoo_sync_online extends $mol_link {
+    class $hyoo_sync_online extends $mol_select {
         minimal_width() {
             return 40;
         }
         minimal_height() {
             return 40;
         }
+        dictionary() {
+            return this.yard().master_list();
+        }
+        master_cursor(next) {
+            return this.yard().master_cursor(next);
+        }
         yard() {
             const obj = new this.$.$hyoo_sync_yard();
             return obj;
         }
-        uri() {
-            return this.master_link();
+        Filter() {
+            return null;
         }
-        sub() {
+        option_content(id) {
             return [
-                this.Well(),
-                this.Fail()
+                this.Option_logo(id),
+                this.option_label(id)
             ];
         }
-        attr() {
-            return {
-                ...super.attr(),
-                title: this.message()
-            };
+        trigger_content() {
+            return [
+                this.Link()
+            ];
+        }
+        master_id(id) {
+            return "";
+        }
+        Option_logo(id) {
+            const obj = new this.$.$mol_avatar();
+            obj.id = () => this.master_id(id);
+            return obj;
         }
         master_link() {
             return "";
@@ -20637,22 +20649,41 @@ var $;
             const obj = new this.$.$mol_icon_sync_off();
             return obj;
         }
+        link_content() {
+            return [
+                this.Well(),
+                this.Fail()
+            ];
+        }
         hint() {
             return "$hyoo_sync";
         }
         message() {
             return this.hint();
         }
+        Link() {
+            const obj = new this.$.$mol_link();
+            obj.uri = () => this.master_link();
+            obj.sub = () => this.link_content();
+            obj.hint = () => this.message();
+            return obj;
+        }
     }
     __decorate([
         $mol_mem
     ], $hyoo_sync_online.prototype, "yard", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_online.prototype, "Option_logo", null);
     __decorate([
         $mol_mem
     ], $hyoo_sync_online.prototype, "Well", null);
     __decorate([
         $mol_mem
     ], $hyoo_sync_online.prototype, "Fail", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_online.prototype, "Link", null);
     $.$hyoo_sync_online = $hyoo_sync_online;
 })($ || ($ = {}));
 //hyoo/sync/online/-view.tree/online.view.tree.ts
@@ -20675,7 +20706,7 @@ var $;
                     return String(error);
                 }
             }
-            sub() {
+            link_content() {
                 try {
                     this.yard().sync();
                     return [this.Well()];
@@ -20693,13 +20724,22 @@ var $;
             master_link() {
                 return this.yard().master_link().replace(/^ws(s?):/, 'http$1:');
             }
+            master_id(index) {
+                return this.dictionary()[index].replace(/^ws:/, 'http:');
+            }
+            option_label(index) {
+                return this.dictionary()[index].replace(/^ws:\/\//, '');
+            }
+            value(next) {
+                return String(this.master_cursor(next == undefined ? undefined : Number(next)));
+            }
         }
         __decorate([
             $mol_mem
         ], $hyoo_sync_online.prototype, "message", null);
         __decorate([
             $mol_mem
-        ], $hyoo_sync_online.prototype, "sub", null);
+        ], $hyoo_sync_online.prototype, "link_content", null);
         __decorate([
             $mol_mem
         ], $hyoo_sync_online.prototype, "hint", null);
@@ -20714,7 +20754,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/sync/online/online.view.css", "[hyoo_sync_online] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_sync_online_well] {\n\tcolor: var(--mol_theme_current);\n}\n\n[hyoo_sync_online_fail] {\n\tcolor: var(--mol_theme_focus);\n}\n\n[hyoo_sync_online][mol_view_error=\"Promise\"] {\n\tanimation: hyoo_sync_online_wait 1s linear infinite;\n}\n\n@keyframes hyoo_sync_online_wait {\n\tfrom {\n\t\topacity: 1;\n\t}\n\tto {\n\t\topacity: .5;\n\t}\n}\n");
+    $mol_style_attach("hyoo/sync/online/online.view.css", "[hyoo_sync_online_option_row] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_sync_online_well] {\n\tcolor: var(--mol_theme_current);\n}\n\n[hyoo_sync_online_fail] {\n\tcolor: var(--mol_theme_focus);\n}\n\n[hyoo_sync_online][mol_view_error=\"Promise\"] {\n\tanimation: hyoo_sync_online_wait 1s linear infinite;\n}\n\n@keyframes hyoo_sync_online_wait {\n\tfrom {\n\t\topacity: 1;\n\t}\n\tto {\n\t\topacity: .5;\n\t}\n}\n");
 })($ || ($ = {}));
 //hyoo/sync/online/-css/online.view.css.ts
 ;
