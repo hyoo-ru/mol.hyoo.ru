@@ -7976,7 +7976,7 @@ var $;
 //mol/locale/select/select.view.ts
 ;
 "use strict";
-let $hyoo_sync_revision = "9765699";
+let $hyoo_sync_revision = "f0a9d10";
 //hyoo/sync/-meta.tree/revision.meta.tree.ts
 ;
 "use strict";
@@ -20733,10 +20733,10 @@ var $;
                 return this.yard().master_link().replace(/^ws(s?):/, 'http$1:');
             }
             master_id(index) {
-                return this.dictionary()[index].replace(/^ws:/, 'http:');
+                return this.dictionary()[index].replace(/^ws(s?):/, 'http$1:');
             }
             option_label(index) {
-                return this.dictionary()[index].replace(/^ws:\/\//, '');
+                return this.dictionary()[index].replace(/^ws(s?):\/\//, '');
             }
             value(next) {
                 return String(this.master_cursor(next == undefined ? undefined : Number(next)));
