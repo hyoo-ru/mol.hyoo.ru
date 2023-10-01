@@ -5975,7 +5975,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\tmax-width: 100%;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\tmin-height: .5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n");
+    $mol_style_attach("mol/list/list.view.css", "[mol_list] {\n\twill-change: contents;\n\tdisplay: flex;\n\tflex-direction: column;\n\tflex-shrink: 0;\n\tmax-width: 100%;\n\t/* display: flex;\n\talign-items: stretch;\n\talign-content: stretch; */\n\ttransition: none;\n\tmin-height: 1.5rem;\n}\n\n[mol_list_gap_before] ,\n[mol_list_gap_after] {\n\tdisplay: block !important;\n\tflex: none;\n\ttransition: none;\n\toverflow-anchor: none;\n}\n");
 })($ || ($ = {}));
 //mol/list/-css/list.view.css.ts
 ;
@@ -7615,9 +7615,9 @@ var $;
             ];
         }
         Filter() {
-            const obj = new this.$.$mol_string();
-            obj.value = (next) => this.filter_pattern(next);
-            obj.hint = () => this.$.$mol_locale.text('$mol_select_Filter_hint');
+            const obj = new this.$.$mol_search();
+            obj.query = (next) => this.filter_pattern(next);
+            obj.hint = () => this.filter_hint();
             obj.submit = (event) => this.submit(event);
             obj.enabled = () => this.enabled();
             return obj;
@@ -7687,6 +7687,9 @@ var $;
                 this.Menu()
             ];
             return obj;
+        }
+        filter_hint() {
+            return this.$.$mol_locale.text('$mol_select_filter_hint');
         }
         submit(event) {
             if (event !== undefined)
@@ -28493,6 +28496,9 @@ var $;
 var $;
 (function ($) {
     class $mol_check_list extends $mol_view {
+        dictionary() {
+            return {};
+        }
         Option(id) {
             const obj = new this.$.$mol_check();
             obj.checked = (next) => this.option_checked(id, next);
@@ -28555,6 +28561,18 @@ var $;
         class $mol_check_list extends $.$mol_check_list {
             options() {
                 return {};
+            }
+            dictionary(next) {
+                return next ?? {};
+            }
+            option_checked(id, next) {
+                const prev = this.dictionary();
+                if (next === undefined)
+                    return prev[id] ?? null;
+                const next_rec = { ...prev, [id]: next };
+                if (next === null)
+                    delete next_rec[id];
+                return this.dictionary(next_rec)[id] ?? null;
             }
             keys() {
                 return Object.keys(this.options());
@@ -32155,6 +32173,11 @@ var $;
         drop_enabled() {
             return this.enabled();
         }
+        event_select(id, next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
         align_hor() {
             return "right";
         }
@@ -32182,8 +32205,12 @@ var $;
             const obj = new this.$.$mol_icon_plus();
             return obj;
         }
+        filter_pattern(next) {
+            return this.Pick().filter_pattern(next);
+        }
         Pick() {
             const obj = new this.$.$mol_select();
+            obj.event_select = (id, next) => this.event_select(id, next);
             obj.align_hor = () => this.align_hor();
             obj.options = () => this.options_pickable();
             obj.value = (next) => this.pick(next);
@@ -32203,6 +32230,9 @@ var $;
     __decorate([
         $mol_mem_key
     ], $mol_select_list.prototype, "remove", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_select_list.prototype, "event_select", null);
     __decorate([
         $mol_mem
     ], $mol_select_list.prototype, "pick", null);
@@ -32229,14 +32259,11 @@ var $;
                 if (!key)
                     return '';
                 this.value([...this.value(), key]);
-                new $mol_after_frame(() => {
-                    if (!this.pick_enabled())
-                        return;
-                    this.Pick().filter_pattern('');
-                    this.Pick().Trigger().focused(true);
-                    this.Pick().open();
-                });
                 return '';
+            }
+            event_select(id, event) {
+                event?.preventDefault();
+                this.pick(id);
             }
             options() {
                 return Object.keys(this.dictionary());
@@ -32251,26 +32278,22 @@ var $;
                 const value = this.dictionary()[key];
                 return value == null ? key : value;
             }
-            badge_title(index) {
-                return this.option_title(this.value()[index]);
+            badge_title(key) {
+                return this.option_title(key);
             }
             pick_enabled() {
                 return this.options_pickable().length > 0;
             }
             Badges() {
                 return this.value()
-                    .map((_, index) => this.Badge(index))
+                    .map(id => this.Badge(id))
                     .reverse();
             }
             title() {
                 return this.value().map(key => this.option_title(key)).join(' + ');
             }
-            remove(index) {
-                const value = this.value();
-                this.value([
-                    ...value.slice(0, index),
-                    ...value.slice(index + 1),
-                ]);
+            remove(key) {
+                this.value(this.value().filter(id => id !== key));
             }
         }
         __decorate([
@@ -43541,50 +43564,96 @@ var $;
 (function ($) {
     var $$;
     (function ($$) {
+        function norm_string(val) {
+            return String(val ?? '');
+        }
+        function norm_number(val) {
+            return Number(val ?? 0);
+        }
+        function norm_bool(val) {
+            return Boolean(val ?? false);
+        }
+        function normalize_val(prev, next) {
+            switch (typeof prev) {
+                case 'boolean': return String(next) === 'true';
+                case 'number': return Number(next);
+                case 'string': return String(next);
+            }
+            return next;
+        }
         class $mol_form_draft extends $.$mol_form_draft {
+            list_string(field, next) {
+                return this.value(field, next)?.map(norm_string) ?? [];
+            }
+            dictionary_bool(field, next) {
+                if (next) {
+                    const prev = this.model_pick(field);
+                    const normalized = {};
+                    for (const key in next) {
+                        if (next[key] || key in prev)
+                            normalized[key] = next[key];
+                    }
+                    return this.value(field, normalized) ?? {};
+                }
+                return this.value(field) ?? {};
+            }
             value_str(field, next) {
-                return String(this.value(field, next) ?? '');
+                return norm_string(this.value(field, next));
             }
             value_numb(field, next) {
-                return Number(this.value(field, next) ?? 0);
+                return norm_number(this.value(field, next));
             }
             value_bool(field, next) {
-                return Boolean(this.value(field, next) ?? false);
+                return norm_bool(this.value(field, next));
+            }
+            model_pick(field, next) {
+                return this.model()[field](next);
+            }
+            state_pick(field, next) {
+                return this.state(next === undefined ? next : { ...this.state(), [field]: next })[field];
             }
             value(field, next) {
-                return this.state(next?.valueOf && { ...this.state(), [field]: next })[field]
-                    ?? this.model()[field]();
+                if (Array.isArray(next) && next.length === 0 && !this.model_pick(field))
+                    next = null;
+                return this.state_pick(field, next) ?? this.model_pick(field);
+            }
+            value_changed(field) {
+                const next = this.state_pick(field);
+                const prev = this.model_pick(field);
+                const next_norm = normalize_val(prev, next);
+                return !$mol_compare_deep(next_norm, prev);
             }
             state(next) {
                 return $mol_state_local.value(`${this}.state()`, next) ?? {};
             }
             changed() {
-                return Object.keys(this.state()).length > 0;
+                return Object.keys(this.state()).some(field => this.value_changed(field));
             }
             submit_allowed() {
                 return this.changed() && super.submit_allowed();
             }
-            submit(next) {
-                const model = this.model();
-                for (let [field, next] of Object.entries(this.state())) {
-                    const prev = model[field]();
-                    switch (typeof prev) {
-                        case 'boolean':
-                            next = String(next) === 'true';
-                            break;
-                        case 'number':
-                            next = Number(next);
-                            break;
-                        case 'string':
-                            next = String(next);
-                            break;
-                    }
-                    ;
-                    model[field](next);
-                }
+            reset(next) {
                 this.state(null);
             }
+            submit(next) {
+                const tasks = Object.entries(this.state()).map(([field, next]) => () => {
+                    const prev = this.model_pick(field);
+                    return {
+                        field,
+                        next: normalize_val(prev, next)
+                    };
+                });
+                const normalized = $mol_wire_race(...tasks);
+                $mol_wire_race(...normalized.map(({ field, next }) => () => this.model_pick(field, next)));
+                this.reset();
+            }
         }
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft.prototype, "list_string", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft.prototype, "dictionary_bool", null);
         __decorate([
             $mol_mem_key
         ], $mol_form_draft.prototype, "value_str", null);
@@ -43597,6 +43666,9 @@ var $;
         __decorate([
             $mol_mem_key
         ], $mol_form_draft.prototype, "value", null);
+        __decorate([
+            $mol_mem_key
+        ], $mol_form_draft.prototype, "value_changed", null);
         __decorate([
             $mol_mem
         ], $mol_form_draft.prototype, "state", null);
@@ -43642,6 +43714,16 @@ var $;
                 return next;
             return "";
         }
+        friends(next) {
+            if (next !== undefined)
+                return next;
+            return [];
+        }
+        hobbies(next) {
+            if (next !== undefined)
+                return next;
+            return {};
+        }
     }
     __decorate([
         $mol_mem
@@ -43655,6 +43737,12 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_form_draft_demo_article.prototype, "content", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo_article.prototype, "friends", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo_article.prototype, "hobbies", null);
     $.$mol_form_draft_demo_article = $mol_form_draft_demo_article;
     class $mol_form_draft_demo extends $mol_example {
         title() {
@@ -43767,6 +43855,43 @@ var $;
             obj.Content = () => this.Content();
             return obj;
         }
+        Hobbies() {
+            const obj = new this.$.$mol_check_list();
+            obj.dictionary = (next) => this.dictionary_bool("hobbies", next);
+            obj.options = () => ({
+                programming: "Programming",
+                bikinkg: "Biking",
+                fishing: "Fishing"
+            });
+            return obj;
+        }
+        Hobbies_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Hobbies";
+            obj.Content = () => this.Hobbies();
+            return obj;
+        }
+        Friends() {
+            const obj = new this.$.$mol_select_list();
+            obj.dictionary = () => ({
+                jocker: "Jocker",
+                harley: "Harley Quinn",
+                penguin: "Penguin",
+                riddler: "Riddler",
+                bane: "Bane",
+                freeze: "Mister Freeze",
+                clay: "Clayface",
+                mask: "Black Mask"
+            });
+            obj.value = (next) => this.list_string("friends", next);
+            return obj;
+        }
+        Friends_field() {
+            const obj = new this.$.$mol_form_field();
+            obj.name = () => "Friends";
+            obj.Content = () => this.Friends();
+            return obj;
+        }
         Config() {
             const obj = new this.$.$mol_form_group();
             obj.sub = () => [
@@ -43779,7 +43904,8 @@ var $;
             return [
                 this.Title_field(),
                 this.Config(),
-                this.Content_field()
+                this.Content_field(),
+                this.Friends_field()
             ];
         }
         Publish() {
@@ -43799,6 +43925,13 @@ var $;
             obj.message = () => this.result();
             return obj;
         }
+        Reset() {
+            const obj = new this.$.$mol_button_minor();
+            obj.title = () => "Сбросить";
+            obj.click = (next) => this.reset(next);
+            obj.enabled = () => this.changed();
+            return obj;
+        }
         publish(next) {
             return this.Form().submit(next);
         }
@@ -43808,8 +43941,17 @@ var $;
         value_str(id, next) {
             return this.Form().value_str(id, next);
         }
+        list_string(id, next) {
+            return this.Form().list_string(id, next);
+        }
+        dictionary_bool(id, next) {
+            return this.Form().dictionary_bool(id, next);
+        }
         changed() {
             return this.Form().changed();
+        }
+        reset(next) {
+            return this.Form().reset(next);
         }
         Form() {
             const obj = new this.$.$mol_form_draft();
@@ -43818,12 +43960,15 @@ var $;
                 this.Title_field(),
                 this.Type_field(),
                 this.Adult_field(),
-                this.Content_field()
+                this.Content_field(),
+                this.Hobbies_field(),
+                this.Friends_field()
             ];
             obj.body = () => this.form_body();
             obj.buttons = () => [
                 this.Publish(),
-                this.Result()
+                this.Result(),
+                this.Reset()
             ];
             return obj;
         }
@@ -43857,6 +44002,18 @@ var $;
     ], $mol_form_draft_demo.prototype, "Content_field", null);
     __decorate([
         $mol_mem
+    ], $mol_form_draft_demo.prototype, "Hobbies", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Hobbies_field", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Friends", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Friends_field", null);
+    __decorate([
+        $mol_mem
     ], $mol_form_draft_demo.prototype, "Config", null);
     __decorate([
         $mol_mem
@@ -43867,6 +44024,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_form_draft_demo.prototype, "Result", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft_demo.prototype, "Reset", null);
     __decorate([
         $mol_mem
     ], $mol_form_draft_demo.prototype, "Form", null);
@@ -43884,7 +44044,9 @@ var $;
                 return [
                     this.Title_field(),
                     this.Config(),
+                    this.Hobbies_field(),
                     ...this.value_str('type') ? [this.Content_field()] : [],
+                    this.Friends_field(),
                 ];
             }
             bid_required(field) {
@@ -51279,11 +51441,34 @@ var $;
             obj.enabled = () => false;
             return obj;
         }
+        friends_lazy(next) {
+            if (next !== undefined)
+                return next;
+            return [];
+        }
+        option_title(id) {
+            return "";
+        }
+        suggestions_lazy() {
+            return this.suggestions();
+        }
+        filter_pattern(next) {
+            return this.Friends_lazy().filter_pattern(next);
+        }
+        Friends_lazy() {
+            const obj = new this.$.$mol_select_list();
+            obj.value = (next) => this.friends_lazy(next);
+            obj.option_title = (id) => this.option_title(id);
+            obj.pick_enabled = () => true;
+            obj.dictionary = () => this.suggestions_lazy();
+            return obj;
+        }
         Demo_items() {
             const obj = new this.$.$mol_list();
             obj.rows = () => [
                 this.Friends(),
-                this.Friends_disabled()
+                this.Friends_disabled(),
+                this.Friends_lazy()
             ];
             return obj;
         }
@@ -51299,10 +51484,41 @@ var $;
     ], $mol_select_list_demo.prototype, "Friends_disabled", null);
     __decorate([
         $mol_mem
+    ], $mol_select_list_demo.prototype, "friends_lazy", null);
+    __decorate([
+        $mol_mem
+    ], $mol_select_list_demo.prototype, "Friends_lazy", null);
+    __decorate([
+        $mol_mem
     ], $mol_select_list_demo.prototype, "Demo_items", null);
     $.$mol_select_list_demo = $mol_select_list_demo;
 })($ || ($ = {}));
 //mol/select/list/demo/-view.tree/demo.view.tree.ts
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_select_list_demo extends $.$mol_select_list_demo {
+            suggestions_lazy() {
+                this.$.$mol_wait_timeout(500);
+                this.filter_pattern();
+                return super.suggestions();
+            }
+            option_title(id) {
+                if (!id)
+                    return '';
+                return this.suggestions_lazy()[id];
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_select_list_demo.prototype, "suggestions_lazy", null);
+        $$.$mol_select_list_demo = $mol_select_list_demo;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+//mol/select/list/demo/demo.view.ts
 ;
 "use strict";
 var $;
