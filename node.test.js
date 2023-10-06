@@ -5540,6 +5540,9 @@ var $;
                 ]);
                 el.selectionEnd = to;
                 el.selectionStart = from;
+                if (to !== from && el.selectionEnd === el.selectionStart) {
+                    el.selectionEnd = to;
+                }
             }
             selection_start() {
                 const el = this.dom_node();
@@ -27282,7 +27285,7 @@ var $;
             const styles = $mol_dom_context.getComputedStyle(el);
             restyle(re, styles);
             const before = $mol_dom_context.getComputedStyle(el, ':before');
-            if (before.content !== 'none') {
+            if (before.content[0] === '"') {
                 const kid = $mol_jsx("span", null, JSON.parse(before.content));
                 restyle(kid, before);
                 re.appendChild(kid);
@@ -27294,7 +27297,7 @@ var $;
                 re.appendChild(dup);
             }
             const after = $mol_dom_context.getComputedStyle(el, ':after');
-            if (after.content !== 'none') {
+            if (after.content[0] === '"') {
                 const kid = $mol_jsx("span", null, JSON.parse(after.content));
                 restyle(kid, after);
                 re.appendChild(kid);
@@ -43542,10 +43545,64 @@ var $;
             const obj = new this.$.$mol_object2();
             return obj;
         }
+        changed() {
+            return false;
+        }
+        value_str(id, next) {
+            if (next !== undefined)
+                return next;
+            return "";
+        }
+        value_bool(id, next) {
+            if (next !== undefined)
+                return next;
+            return false;
+        }
+        value_number(id, next) {
+            if (next !== undefined)
+                return next;
+            return 0;
+        }
+        dictionary_bool(id, next) {
+            if (next !== undefined)
+                return next;
+            return {};
+        }
+        list_string(id, next) {
+            if (next !== undefined)
+                return next;
+            return [];
+        }
+        value_changed(id) {
+            return false;
+        }
+        reset(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
     }
     __decorate([
         $mol_mem
     ], $mol_form_draft.prototype, "model", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_form_draft.prototype, "value_str", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_form_draft.prototype, "value_bool", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_form_draft.prototype, "value_number", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_form_draft.prototype, "dictionary_bool", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_form_draft.prototype, "list_string", null);
+    __decorate([
+        $mol_mem
+    ], $mol_form_draft.prototype, "reset", null);
     $.$mol_form_draft = $mol_form_draft;
 })($ || ($ = {}));
 //mol/form/draft/-view.tree/draft.view.tree.ts
@@ -43591,7 +43648,7 @@ var $;
             value_str(field, next) {
                 return norm_string(this.value(field, next));
             }
-            value_numb(field, next) {
+            value_number(field, next) {
                 return norm_number(this.value(field, next));
             }
             value_bool(field, next) {
@@ -43650,7 +43707,7 @@ var $;
         ], $mol_form_draft.prototype, "value_str", null);
         __decorate([
             $mol_mem_key
-        ], $mol_form_draft.prototype, "value_numb", null);
+        ], $mol_form_draft.prototype, "value_number", null);
         __decorate([
             $mol_mem_key
         ], $mol_form_draft.prototype, "value_bool", null);
