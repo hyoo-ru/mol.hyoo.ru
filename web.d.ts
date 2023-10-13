@@ -12695,7 +12695,7 @@ declare namespace $.$$ {
             destructor: () => void;
         };
         dom_node_actual(): HTMLVideoElement;
-        transform(): "" | "scaleX(-1)";
+        transform(): string;
     }
 }
 
