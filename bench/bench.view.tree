@@ -26,7 +26,10 @@ $hyoo_mol_bench $mol_book2_catalog
 			analysis_uri \https://t.me/mol_bench/27
 			Close <= Close_item
 			bench_id \egbl19_e5ljht
-		imutable <= Immutable $hyoo_mol_bench_perf
+		runtype <= Runtype $hyoo_mol_bench_perf
+			bench_title \Runtime typing
+			Close <= Close_item
+			bench_id \y4n9yl_ug1hdz		imutable <= Immutable $hyoo_mol_bench_perf
 			bench_title \Immutable Patches
 			analysis_uri \https://t.me/mam_mol/108985
 			Close <= Close_item
