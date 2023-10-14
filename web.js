@@ -28646,6 +28646,7 @@ var $;
                 moment: this.moment(),
                 markdown: this.Markdown(),
                 runtype: this.Runtype(),
+                imutable: this.Immutable(),
                 rope: this.Rope(),
                 todomvc: this.Todomvc(),
                 changelog: this.Chanelog(),
@@ -28695,7 +28696,11 @@ var $;
             const obj = new this.$.$hyoo_mol_bench_perf();
             obj.bench_title = () => "Runtime typing";
             obj.Close = () => this.Close_item();
-            obj.bench_id = () => "y4n9yl_ug1hdz\t\timutable <= Immutable $hyoo_mol_bench_perf";
+            obj.bench_id = () => "y4n9yl_ug1hdz";
+            return obj;
+        }
+        Immutable() {
+            const obj = new this.$.$hyoo_mol_bench_perf();
             obj.bench_title = () => "Immutable Patches";
             obj.analysis_uri = () => "https://t.me/mam_mol/108985";
             obj.Close = () => this.Close_item();
@@ -28883,6 +28888,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Runtype", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_mol_bench.prototype, "Immutable", null);
     __decorate([
         $mol_mem
     ], $hyoo_mol_bench.prototype, "Rope", null);

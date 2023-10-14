@@ -7097,6 +7097,7 @@ declare namespace $ {
         moment(): $hyoo_mol_bench_perf;
         Markdown(): $hyoo_mol_bench_perf;
         Runtype(): $hyoo_mol_bench_perf;
+        Immutable(): $hyoo_mol_bench_perf;
         Rope(): $hyoo_mol_bench_bench;
         Todomvc(): $hyoo_mol_bench_bench;
         Chanelog_mol(): $$.$mol_embed_native;
