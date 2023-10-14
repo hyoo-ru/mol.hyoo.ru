@@ -2674,7 +2674,11 @@ $hyoo_mol_bench $mol_book2_catalog
 		runtype <= Runtype $hyoo_mol_bench_perf
 			bench_title \Runtime typing
 			Close <= Close_item
-			bench_id \y4n9yl_ug1hdz
+			bench_id \y4n9yl_ug1hdz		imutable <= Immutable $hyoo_mol_bench_perf
+			bench_title \Immutable Patches
+			analysis_uri \https://t.me/mam_mol/108985
+			Close <= Close_item
+			bench_id \wqcgji_pkdto1
 		rope <= Rope $hyoo_mol_bench_bench
 			title \Rope Charts
 			analysis_uri \https://t.me/mol_bench/24

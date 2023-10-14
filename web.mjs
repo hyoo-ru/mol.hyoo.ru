@@ -28695,7 +28695,11 @@ var $;
             const obj = new this.$.$hyoo_mol_bench_perf();
             obj.bench_title = () => "Runtime typing";
             obj.Close = () => this.Close_item();
-            obj.bench_id = () => "y4n9yl_ug1hdz";
+            obj.bench_id = () => "y4n9yl_ug1hdz\t\timutable <= Immutable $hyoo_mol_bench_perf";
+            obj.bench_title = () => "Immutable Patches";
+            obj.analysis_uri = () => "https://t.me/mam_mol/108985";
+            obj.Close = () => this.Close_item();
+            obj.bench_id = () => "wqcgji_pkdto1";
             return obj;
         }
         Rope() {
