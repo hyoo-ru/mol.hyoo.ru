@@ -33218,6 +33218,17 @@ var $;
         sync() {
             return 0;
         }
+        sync_clocks(next) {
+            if (next !== undefined)
+                return next;
+            return [];
+        }
+        changes() {
+            return 0;
+        }
+        delta() {
+            return [];
+        }
         body() {
             return [
                 this.Text(),
@@ -33268,6 +33279,9 @@ var $;
     __decorate([
         $mol_mem
     ], $hyoo_crowd_app_peer.prototype, "store", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_app_peer.prototype, "sync_clocks", null);
     __decorate([
         $mol_mem
     ], $hyoo_crowd_app_peer.prototype, "text", null);
