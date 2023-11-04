@@ -24924,7 +24924,7 @@ var $;
                     if ('outerHTML' in val)
                         return val.outerHTML;
                     try {
-                        return JSON.stringify(val);
+                        return JSON.stringify(val, null, '\t');
                     }
                     catch (error) {
                         console.error(error);
@@ -34766,7 +34766,7 @@ var $;
         code(next) {
             if (next !== undefined)
                 return next;
-            return "$mol_assert_unique( 1 , 2 , 3 )\n$mol_assert_equal( 1 , 1 , 1 )\n$mol_assert_like( [1] , [1] , [1] )";
+            return "$mol_assert_unique( 1 , 2 , 3 )\n$mol_assert_equal( 1 , 1 , 1 )\n$mol_assert_like( [1] , [1] , [1] )\n$mol_assert_like( { a: 1 } , { a: 1 } , { a: 1 } )";
         }
         aspects() {
             return [
