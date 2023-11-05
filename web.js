@@ -25263,17 +25263,14 @@ var $;
             row_values(index) {
                 return this.rows_values()[index];
             }
-            expand_all(event, blacklist = new Set) {
-                if (blacklist.has(this.value()))
-                    return;
-                blacklist.add(this.value());
+            expand_all(event) {
                 this.expanded(true);
                 for (const row of this.expand_content()) {
                     if (!(row instanceof $mol_dump_list))
                         continue;
                     if (row.values()[0] === '__proto__:')
                         continue;
-                    row.expand_all(event, blacklist);
+                    row.expand_all(event);
                 }
             }
         }
@@ -25364,8 +25361,8 @@ var $;
             dump_value(index) {
                 return this.values()[index];
             }
-            expand_all(event, blacklist = new Set) {
-                this.Dump(1).expand_all(event, blacklist);
+            expand_all(event) {
+                this.Dump(1).expanded(true);
             }
         }
         __decorate([

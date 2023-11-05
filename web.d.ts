@@ -6461,7 +6461,7 @@ declare namespace $.$$ {
         expand_content(): ($mol_view | $mol_dump_list)[];
         expandable(): boolean;
         row_values(index: number): any[];
-        expand_all(event?: Event, blacklist?: Set<unknown>): void;
+        expand_all(event?: Event): void;
     }
 }
 
@@ -6484,7 +6484,7 @@ declare namespace $.$$ {
     class $mol_dump_list extends $.$mol_dump_list {
         sub(): $mol_dump_value[];
         dump_value(index: number): any;
-        expand_all(event?: Event, blacklist?: Set<unknown>): void;
+        expand_all(event?: Event): void;
     }
 }
 
