@@ -4080,6 +4080,71 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_wire_sync(obj) {
+        return new Proxy(obj, {
+            get(obj, field) {
+                const val = obj[field];
+                if (typeof val !== 'function')
+                    return val;
+                const temp = $mol_wire_task.getter(val);
+                return function $mol_wire_sync(...args) {
+                    const fiber = temp(obj, args);
+                    return fiber.sync();
+                };
+            },
+            apply(obj, self, args) {
+                const temp = $mol_wire_task.getter(obj);
+                const fiber = temp(self, args);
+                return fiber.sync();
+            },
+        });
+    }
+    $.$mol_wire_sync = $mol_wire_sync;
+})($ || ($ = {}));
+//mol/wire/sync/sync.ts
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_mem_persist = $mol_wire_solid;
+})($ || ($ = {}));
+//mol/mem/persist/persist.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_storage extends $mol_object2 {
+        static native() {
+            return $mol_wire_sync(this.$.$mol_dom_context.navigator.storage);
+        }
+        static persisted(next) {
+            $mol_mem_persist();
+            const native = this.native();
+            const prev = $mol_mem_cached(() => this.persisted()) ?? native.persisted();
+            if (next && !prev)
+                native.persist();
+            return next ?? prev;
+        }
+        static estimate() {
+            return this.native().estimate();
+        }
+        static dir() {
+            return this.native().getDirectory();
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_storage, "native", null);
+    __decorate([
+        $mol_mem
+    ], $mol_storage, "persisted", null);
+    $.$mol_storage = $mol_storage;
+})($ || ($ = {}));
+//mol/storage/storage.web.ts
+;
+"use strict";
+var $;
+(function ($) {
     class $mol_state_local extends $mol_object {
         static 'native()';
         static native() {
@@ -4113,10 +4178,13 @@ var $;
             this.changes();
             if (next === void 0)
                 return JSON.parse(this.native().getItem(key) || 'null');
-            if (next === null)
+            if (next === null) {
                 this.native().removeItem(key);
-            else
+            }
+            else {
                 this.native().setItem(key, JSON.stringify(next));
+                this.$.$mol_storage.persisted(true);
+            }
             return next;
         }
         prefix() { return ''; }
@@ -4295,32 +4363,6 @@ var $;
     $.$mol_file = $mol_file;
 })($ || ($ = {}));
 //mol/file/file.ts
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_sync(obj) {
-        return new Proxy(obj, {
-            get(obj, field) {
-                const val = obj[field];
-                if (typeof val !== 'function')
-                    return val;
-                const temp = $mol_wire_task.getter(val);
-                return function $mol_wire_sync(...args) {
-                    const fiber = temp(obj, args);
-                    return fiber.sync();
-                };
-            },
-            apply(obj, self, args) {
-                const temp = $mol_wire_task.getter(obj);
-                const fiber = temp(self, args);
-                return fiber.sync();
-            },
-        });
-    }
-    $.$mol_wire_sync = $mol_wire_sync;
-})($ || ($ = {}));
-//mol/wire/sync/sync.ts
 ;
 "use strict";
 var $;
@@ -9723,6 +9765,7 @@ var $;
                 Unit.put(unit, [unit.land, unit.head, unit.self]);
             }
             await trans.commit();
+            this.$.$mol_storage.persisted(true);
         }
         reconnects(reset) {
             return ($mol_wire_probe(() => this.reconnects()) ?? 0) + 1;
@@ -12250,7 +12293,8 @@ var $;
                 return this.item(id).land.allowed_mod();
             }
             ids() {
-                return super.ids().slice().reverse();
+                const self = this.id();
+                return super.ids().filter(id => id !== self).reverse();
             }
             items() {
                 return this.ids().map(id => this.Item(id));
@@ -12897,6 +12941,8 @@ var $;
         class $hyoo_page_side_menu extends $.$hyoo_page_side_menu {
             item_expanded(id, next) {
                 const cur = this.side_current();
+                if (id === cur.id())
+                    return false;
                 const path = [...cur.books()];
                 if (cur.pages().length)
                     path.unshift(cur);
@@ -17029,45 +17075,6 @@ var $;
     $.$hyoo_page_side_view = $hyoo_page_side_view;
 })($ || ($ = {}));
 //hyoo/page/side/view/-view.tree/view.view.tree.ts
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_mem_persist = $mol_wire_solid;
-})($ || ($ = {}));
-//mol/mem/persist/persist.ts
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_storage extends $mol_object2 {
-        static native() {
-            return $mol_wire_sync(this.$.$mol_dom_context.navigator.storage);
-        }
-        static persisted(next) {
-            $mol_mem_persist();
-            const native = this.native();
-            const prev = $mol_mem_cached(() => this.persisted()) ?? native.persisted();
-            if (next && !prev)
-                native.persist();
-            return next ?? prev;
-        }
-        static estimate() {
-            return this.native().estimate();
-        }
-        static dir() {
-            return this.native().getDirectory();
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_storage, "native", null);
-    __decorate([
-        $mol_mem
-    ], $mol_storage, "persisted", null);
-    $.$mol_storage = $mol_storage;
-})($ || ($ = {}));
-//mol/storage/storage.ts
 ;
 "use strict";
 var $;
