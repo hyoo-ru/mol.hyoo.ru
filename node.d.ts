@@ -4673,6 +4673,7 @@ declare namespace $ {
         details(): string;
         Details(): $$.$mol_text;
         Changed(): $$.$mol_date;
+        author_link(id: any): string;
         Author_link(id: any): $$.$hyoo_meta_link;
         author_list(): readonly any[];
         Author_list(): $mol_view;
@@ -4697,6 +4698,7 @@ declare namespace $.$$ {
         slides_content(): string;
         slides_send(): void;
         history_mark(): void;
+        author_link(id: $mol_int62_string): string;
     }
 }
 
@@ -12490,8 +12492,14 @@ declare namespace $ {
         tags(): readonly any[];
         aspects(): readonly any[];
         hue_deg(): string;
+        hue_spread_deg(): string;
         hue(next?: any): number;
         Hue(): $$.$mol_number;
+        Hue_field(): $$.$mol_form_field;
+        hue_spread(next?: any): number;
+        Hue_spread(): $$.$mol_number;
+        Hue_spread_field(): $$.$mol_form_field;
+        Config(): $mol_row;
         Base(): $mol_theme_demo_case;
         Accent(): $mol_theme_demo_case;
         Current(): $mol_theme_demo_case;
@@ -12525,6 +12533,7 @@ declare namespace $ {
 declare namespace $.$$ {
     class $mol_theme_demo extends $.$mol_theme_demo {
         hue_deg(): string;
+        hue_spread_deg(): string;
     }
 }
 
