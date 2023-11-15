@@ -3319,7 +3319,7 @@ var $;
     (function ($$) {
         const { per, rem, px } = $mol_style_unit;
         $mol_style_define($mol_scroll, {
-            display: 'flex',
+            display: 'grid',
             overflow: 'auto',
             flex: {
                 direction: 'column',
@@ -3340,6 +3340,7 @@ var $;
             '>': {
                 $mol_view: {
                     transform: 'translateZ(0)',
+                    gridArea: '1/1',
                 },
             },
             '::before': {
@@ -6868,12 +6869,22 @@ var $;
         body() {
             return [];
         }
+        Body_content() {
+            const obj = new this.$.$mol_list();
+            obj.rows = () => this.body();
+            return obj;
+        }
+        body_content() {
+            return [
+                this.Body_content()
+            ];
+        }
         body_scroll_top(next) {
             return this.Body().scroll_top(next);
         }
         Body() {
             const obj = new this.$.$mol_scroll();
-            obj.sub = () => this.body();
+            obj.sub = () => this.body_content();
             return obj;
         }
         foot() {
@@ -6895,6 +6906,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_page.prototype, "Head", null);
+    __decorate([
+        $mol_mem
+    ], $mol_page.prototype, "Body_content", null);
     __decorate([
         $mol_mem
     ], $mol_page.prototype, "Body", null);
@@ -22721,7 +22735,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/app/demo/menu/menu.view.css", "[mol_app_demo_menu] {\n\tflex: 0 0 18rem;\n}\n\n[mol_app_demo_menu_selector] {\n\tdisplay: flex;\n\tflex-wrap: nowrap;\n\tgap: 0;\n}\n\n[mol_app_demo_menu_tools] {\n\tpadding: 0;\n}\n\n[mol_app_demo_menu_themes] {\n\tflex: none;\n}\n\n[mol_app_demo_menu_filter] {\n\talign-self: stretch;\n\tflex-grow: 1;\n\tflex-shrink: 1;\n}\n");
+    $mol_style_attach("mol/app/demo/menu/menu.view.css", "[mol_app_demo_menu] {\n\tflex: 0 0 18rem;\n}\n\n[mol_app_demo_menu_selector] {\n\tdisplay: flex;\n\tflex-wrap: nowrap;\n\tgap: 0;\n}\n\n[mol_app_demo_menu_tools] {\n\tpadding: 0;\n}\n\n[mol_app_demo_menu_themes] {\n\tflex: none;\n}\n\n[mol_app_demo_menu_filter] {\n\talign-self: stretch;\n\tflex-grow: 0;\n\tflex-shrink: 0;\n}\n");
 })($ || ($ = {}));
 //mol/app/demo/menu/-css/menu.view.css.ts
 ;
