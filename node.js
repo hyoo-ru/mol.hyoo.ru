@@ -403,7 +403,6 @@ var $;
     $.$mol_dev_format_element = $mol_dev_format_element;
     function $mol_dev_format_span(style, ...content) {
         return $mol_dev_format_element('span', {
-            'vertical-align': '8%',
             ...style,
         }, ...content);
     }
@@ -25007,7 +25006,7 @@ var $;
                     if ('outerHTML' in val)
                         return val.outerHTML;
                     try {
-                        return JSON.stringify(val, null, '\t');
+                        return JSON.stringify(val, (k, v) => typeof v === 'bigint' ? String(v) : v, '\t');
                     }
                     catch (error) {
                         console.error(error);
@@ -26127,7 +26126,7 @@ var $;
             if (super.get(key) === value)
                 return this;
             super.set(key, value);
-            this.pub.emit();
+            this.pub?.emit();
             return this;
         }
         delete(key) {
