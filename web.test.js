@@ -5532,9 +5532,9 @@ var $;
         static from(serial) {
             if (typeof serial === 'string') {
                 serial = new Uint8Array([
-                    ...$mol_base64_decode_safe(serial.slice(0, 43)),
-                    ...$mol_base64_decode_safe(serial.slice(43, 86)),
-                    ...$mol_base64_decode_safe(serial.slice(86, 129)),
+                    ...$mol_base64_url_decode(serial.slice(0, 43)),
+                    ...$mol_base64_url_decode(serial.slice(43, 86)),
+                    ...$mol_base64_url_decode(serial.slice(86, 129)),
                 ]);
             }
             return new this(serial.buffer, serial.byteOffset, serial.byteLength);
@@ -5544,9 +5544,9 @@ var $;
         }
         toString() {
             const arr = this.asArray();
-            return $mol_base64_encode_safe(arr.subarray(0, 32))
-                + $mol_base64_encode_safe(arr.subarray(32, 64))
-                + $mol_base64_encode_safe(arr.subarray(64));
+            return $mol_base64_url_encode(arr.subarray(0, 32))
+                + $mol_base64_url_encode(arr.subarray(32, 64))
+                + $mol_base64_url_encode(arr.subarray(64));
         }
     }
     __decorate([
