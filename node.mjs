@@ -31147,13 +31147,13 @@ var $;
         return Uint8Array.from(tree.kids, kid => parseInt(kid.value, 16));
     }
     $.$mol_tree2_bin_to_bytes = $mol_tree2_bin_to_bytes;
-    function $mol_tree2_bin_from_bytes(bytes, span) {
+    function $mol_tree2_bin_from_bytes(bytes, span = $mol_span.unknown) {
         return $mol_tree2.list(Array.from(bytes, code => {
             return $mol_tree2.data(code.toString(16).padStart(2, '0'), [], span);
         }), span);
     }
     $.$mol_tree2_bin_from_bytes = $mol_tree2_bin_from_bytes;
-    function $mol_tree2_bin_from_string(str, span) {
+    function $mol_tree2_bin_from_string(str, span = $mol_span.unknown) {
         return $mol_tree2_bin_from_bytes([...new TextEncoder().encode(str)], span);
     }
     $.$mol_tree2_bin_from_string = $mol_tree2_bin_from_string;

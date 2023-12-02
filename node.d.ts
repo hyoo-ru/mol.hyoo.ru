@@ -7544,8 +7544,8 @@ declare namespace $ {
 
 declare namespace $ {
     function $mol_tree2_bin_to_bytes(tree: $mol_tree2): Uint8Array;
-    function $mol_tree2_bin_from_bytes(bytes: ArrayLike<number>, span: $mol_span): $mol_tree2;
-    function $mol_tree2_bin_from_string(str: string, span: $mol_span): $mol_tree2;
+    function $mol_tree2_bin_from_bytes(bytes: ArrayLike<number>, span?: $mol_span): $mol_tree2;
+    function $mol_tree2_bin_from_string(str: string, span?: $mol_span): $mol_tree2;
 }
 
 declare namespace $ {
