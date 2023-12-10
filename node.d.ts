@@ -2130,7 +2130,13 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-    class $mol_icon_github_circle extends $mol_icon {
+    class $mol_icon_script extends $mol_icon {
+        path(): string;
+    }
+}
+
+declare namespace $ {
+    class $mol_icon_script_text extends $mol_icon {
         path(): string;
     }
 }
@@ -2139,7 +2145,7 @@ declare namespace $ {
     class $mol_link_source extends $mol_link {
         hint(): string;
         sub(): readonly any[];
-        Icon(): $mol_icon_github_circle;
+        Icon(): $mol_icon_script_text;
     }
 }
 
