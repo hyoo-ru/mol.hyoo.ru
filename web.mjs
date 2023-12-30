@@ -35056,14 +35056,37 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_audio_node extends $mol_object2 {
+    class $mol_audio_context extends $mol_object2 {
         static context() {
-            return new AudioContext;
+            const AudioContext = this.$.$mol_dom_context.AudioContext || this.$.$node['web-audio-api'].AudioContext;
+            return new AudioContext();
         }
-        node() { return $mol_audio_node.context().destination; }
+    }
+    __decorate([
+        $mol_memo.method
+    ], $mol_audio_context, "context", null);
+    $.$mol_audio_context = $mol_audio_context;
+})($ || ($ = {}));
+//mol/audio/context/context.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_audio_node extends $mol_object2 {
+        context() { return this.$.$mol_audio_context.context(); }
+        node_raw() { return this.context().destination; }
+        node() {
+            return this.node_raw();
+        }
+        duration() {
+            let duration = 0;
+            for (const input of this.input_connected())
+                duration = Math.max(duration, input.duration());
+            return duration;
+        }
         input(next = []) { return next; }
         input_connected() {
-            const node = this.node();
+            const node = this.node_raw();
             const prev = $mol_mem_cached(() => this.input_connected()) ?? [];
             const next = this.input();
             for (const src of prev) {
@@ -35078,11 +35101,11 @@ var $;
         }
         output() {
             this.input_connected();
-            return this.node();
+            return this.node_raw();
         }
-        time() { return $mol_audio_node.context().currentTime; }
+        time() { return this.context().currentTime; }
         destructor() {
-            const node = this.node();
+            const node = this.node_raw();
             for (const src of this.input()) {
                 src.output().disconnect(node);
             }
@@ -35090,7 +35113,10 @@ var $;
     }
     __decorate([
         $mol_mem
-    ], $mol_audio_node.prototype, "node", null);
+    ], $mol_audio_node.prototype, "node_raw", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_node.prototype, "duration", null);
     __decorate([
         $mol_mem
     ], $mol_audio_node.prototype, "input", null);
@@ -35100,23 +35126,17 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_audio_node.prototype, "output", null);
-    __decorate([
-        $mol_memo.method
-    ], $mol_audio_node, "context", null);
     $.$mol_audio_node = $mol_audio_node;
 })($ || ($ = {}));
-//mol/audio/node/node.web.ts
+//mol/audio/node/node.ts
 ;
 "use strict";
 var $;
 (function ($) {
     class $mol_audio_room extends $mol_audio_node {
-        duration() {
-            return 1000;
-        }
         play() {
             this.output();
-            this.$.$mol_wait_timeout(this.duration());
+            this.$.$mol_wait_timeout(this.duration() * 1000);
         }
     }
     __decorate([
@@ -35124,41 +35144,88 @@ var $;
     ], $mol_audio_room.prototype, "play", null);
     $.$mol_audio_room = $mol_audio_room;
 })($ || ($ = {}));
-//mol/audio/room/room.web.ts
+//mol/audio/room/room.ts
 ;
 "use strict";
 var $;
 (function ($) {
-    class $mol_audio_vibe extends $mol_audio_node {
-        node() { return $mol_audio_node.context().createOscillator(); }
-        freq(next = 440) { return next; }
-        shape(next = 'sine') { return next; }
+    class $mol_audio_instrument extends $mol_audio_node {
+        node_raw() {
+            throw new Error('implement');
+        }
+        node() {
+            const node = super.node();
+            node.onended = $mol_wire_async((e) => this.end(e));
+            return node;
+        }
+        promise = $mol_promise();
+        wait() {
+            return this.promise;
+        }
+        end(e) {
+            this.active(false);
+        }
         active(next) {
             $mol_wire_solid();
+            const node = next === false ? this.node_raw() : this.node();
             const prev = $mol_wire_probe(() => this.active());
             if (prev === next)
                 return next ?? false;
-            if (next === true)
-                this.node().start();
-            else if (prev === true)
-                this.node().stop();
+            if (next === true) {
+                node.start();
+            }
+            else if (prev === true) {
+                node.stop();
+                this.promise.done();
+                this.promise = $mol_promise();
+            }
             return next ?? false;
-        }
-        output() {
-            const node = this.node();
-            node.frequency.setValueAtTime(this.freq(), this.time());
-            node.type = this.shape();
-            this.active(true);
-            return super.output();
         }
         destructor() {
             this.active(false);
             super.destructor();
         }
+        output() {
+            this.active(true);
+            return super.output();
+        }
     }
     __decorate([
         $mol_mem
-    ], $mol_audio_vibe.prototype, "node", null);
+    ], $mol_audio_instrument.prototype, "node", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_instrument.prototype, "wait", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_instrument.prototype, "active", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_instrument.prototype, "output", null);
+    $.$mol_audio_instrument = $mol_audio_instrument;
+})($ || ($ = {}));
+//mol/audio/instrument/instrument.ts
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_audio_vibe extends $mol_audio_instrument {
+        node_raw() { return this.context().createOscillator(); }
+        freq(next = 440) { return next; }
+        shape(next = 'sine') { return next; }
+        duration() {
+            return 0.5;
+        }
+        node() {
+            const node = super.node();
+            node.frequency.setValueAtTime(this.freq(), this.time());
+            node.type = this.shape();
+            return node;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_audio_vibe.prototype, "node_raw", null);
     __decorate([
         $mol_mem
     ], $mol_audio_vibe.prototype, "freq", null);
@@ -35167,13 +35234,10 @@ var $;
     ], $mol_audio_vibe.prototype, "shape", null);
     __decorate([
         $mol_mem
-    ], $mol_audio_vibe.prototype, "active", null);
-    __decorate([
-        $mol_mem
-    ], $mol_audio_vibe.prototype, "output", null);
+    ], $mol_audio_vibe.prototype, "node", null);
     $.$mol_audio_vibe = $mol_audio_vibe;
 })($ || ($ = {}));
-//mol/audio/vibe/vibe.web.ts
+//mol/audio/vibe/vibe.ts
 ;
 "use strict";
 var $;
@@ -35187,7 +35251,7 @@ var $;
         }
         Beep() {
             const obj = new this.$.$mol_audio_room();
-            obj.duration = () => 100;
+            obj.duration = () => 0.1;
             obj.input = () => [
                 this.Beep_vibe()
             ];
@@ -35198,7 +35262,7 @@ var $;
         }
         Noise() {
             const obj = new this.$.$mol_audio_room();
-            obj.duration = () => 1000;
+            obj.duration = () => 1;
             obj.input = () => [
                 this.Noise_vibe()
             ];
@@ -35266,7 +35330,7 @@ var $;
     ], $mol_audio_demo.prototype, "Noise_play", null);
     $.$mol_audio_demo = $mol_audio_demo;
 })($ || ($ = {}));
-//mol/audio/demo/-view.tree/demo.web.view.tree.ts
+//mol/audio/demo/-view.tree/demo.view.tree.ts
 ;
 "use strict";
 var $;
@@ -35282,7 +35346,7 @@ var $;
         $$.$mol_audio_demo = $mol_audio_demo;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-//mol/audio/demo/demo.web.view.ts
+//mol/audio/demo/demo.view.ts
 ;
 "use strict";
 var $;
@@ -35324,16 +35388,16 @@ var $;
             return obj;
         }
         duration_label() {
-            return "Duration, ms";
+            return "Duration, s";
         }
         duration(next) {
             if (next !== undefined)
                 return next;
-            return 500;
+            return 0.5;
         }
         Duration_num() {
             const obj = new this.$.$mol_number();
-            obj.precision_change = () => 50;
+            obj.precision_change = () => 0.05;
             obj.value = (next) => this.duration(next);
             return obj;
         }
@@ -35380,7 +35444,7 @@ var $;
             obj.Filter = () => null;
             obj.value = (next) => this.shape(next);
             obj.options = () => [
-                "sine ",
+                "sine",
                 "square",
                 "sawtooth",
                 "triangle"
@@ -35473,7 +35537,7 @@ var $;
     ], $mol_audio_demo_vibe.prototype, "List", null);
     $.$mol_audio_demo_vibe = $mol_audio_demo_vibe;
 })($ || ($ = {}));
-//mol/audio/demo/vibe/-view.tree/vibe.web.view.tree.ts
+//mol/audio/demo/vibe/-view.tree/vibe.view.tree.ts
 ;
 "use strict";
 var $;
@@ -35491,7 +35555,7 @@ var $;
         $$.$mol_audio_demo_vibe = $mol_audio_demo_vibe;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-//mol/audio/demo/vibe/vibe.web.view.ts
+//mol/audio/demo/vibe/vibe.view.ts
 ;
 "use strict";
 var $;

@@ -527,6 +527,11 @@
     "$mol_icon_upload",
     "$mol_audio_demo",
     "$mol_audio",
+    "$mol_audio_room",
+    "$mol_audio_node",
+    "$mol_audio_context",
+    "$mol_audio_vibe",
+    "$mol_audio_instrument",
     "$mol_audio_demo_vibe",
     "$mol_avatar_demo",
     "$mol_bar_demo",
@@ -767,6 +772,7 @@
     "jsdom": "*",
     "chokidar": "*",
     "fake-indexeddb": "*",
-    "undici": "*"
+    "undici": "*",
+    "web-audio-api": "*"
   }
 }
