@@ -7415,6 +7415,11 @@ var $;
         trigger_enabled() {
             return true;
         }
+        clicks(next) {
+            if (next !== undefined)
+                return next;
+            return null;
+        }
         trigger_content() {
             return [
                 this.title()
@@ -7429,6 +7434,7 @@ var $;
             obj.minimal_height = () => 40;
             obj.enabled = () => this.trigger_enabled();
             obj.checked = (next) => this.showed(next);
+            obj.clicks = (next) => this.clicks(next);
             obj.sub = () => this.trigger_content();
             obj.hint = () => this.hint();
             return obj;
@@ -7437,6 +7443,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_pick.prototype, "keydown", null);
+    __decorate([
+        $mol_mem
+    ], $mol_pick.prototype, "clicks", null);
     __decorate([
         $mol_mem
     ], $mol_pick.prototype, "Trigger", null);
