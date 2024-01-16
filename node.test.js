@@ -25822,7 +25822,7 @@ var $;
                 this.Bookmark(),
                 this.Run()
             ];
-            obj.body_content = () => [
+            obj.body = () => [
                 this.Code(),
                 this.Error_mark()
             ];
