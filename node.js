@@ -28054,7 +28054,12 @@ var $;
 var $;
 (function ($) {
     function $mol_range2(item = index => index, size = () => Number.POSITIVE_INFINITY) {
-        return new Proxy(new $mol_range2_array(), {
+        const source = typeof item === 'function' ? new $mol_range2_array() : item;
+        if (typeof item !== 'function') {
+            item = index => source[index];
+            size = () => source.length;
+        }
+        return new Proxy(source, {
             get(target, field) {
                 if (typeof field === 'string') {
                     if (field === 'length')
@@ -28067,7 +28072,7 @@ var $;
                     if (index === Math.trunc(index))
                         return item(index);
                 }
-                return target[field];
+                return $mol_range2_array.prototype[field];
             },
             set(target, field) {
                 return $mol_fail(new TypeError(`Lazy range is read only (trying to set field ${JSON.stringify(field)})`));
