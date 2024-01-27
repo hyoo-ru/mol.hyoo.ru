@@ -20378,14 +20378,13 @@ var $;
 var $;
 (function ($) {
     const algorithm = {
-        name: 'AES-GCM',
+        name: 'AES-CBC',
         length: 128,
         tagLength: 32,
     };
     class $mol_crypto_secret extends Object {
         native;
         static size = 16;
-        static extra = 4;
         constructor(native) {
             super();
             this.native = native;
@@ -61221,7 +61220,7 @@ var $;
 var $;
 (function ($) {
     function $mol_crypto_salt() {
-        return $mol_crypto_native.getRandomValues(new Uint8Array(12));
+        return $mol_crypto_native.getRandomValues(new Uint8Array(16));
     }
     $.$mol_crypto_salt = $mol_crypto_salt;
 })($ || ($ = {}));
@@ -61246,6 +61245,8 @@ var $;
 (function ($) {
     class $mol_buffer extends DataView {
         static from(array) {
+            if (typeof array === 'number')
+                array = new Uint8Array(array);
             if (typeof array === 'string')
                 array = $mol_base64_ae_decode(array);
             return new this(array.buffer, array.byteOffset, array.byteLength);
@@ -61372,7 +61373,7 @@ var $;
                     ...$mol_base64_url_decode(serial.slice(86, 129)),
                 ]);
             }
-            return new this(serial.buffer, serial.byteOffset, serial.byteLength);
+            return super.from(serial);
         }
         asArray() {
             return new Uint8Array(this.buffer, this.byteOffset, this.byteLength);
@@ -61459,7 +61460,7 @@ var $;
             const data = new Uint8Array([1, 2, 3]);
             const salt = $mol_crypto_salt();
             const closed = await cipher.encrypt(data, salt);
-            $mol_assert_equal(closed.byteLength, data.byteLength + $mol_crypto_secret.extra);
+            $mol_assert_equal(closed.byteLength, 16);
         },
         async 'decrypt self encrypted with auto generated key'() {
             const cipher = await $mol_crypto_secret.generate();
