@@ -8010,7 +8010,7 @@ var $;
 var $;
 (function ($) {
     class $mol_error_mix extends AggregateError {
-        name = '$mol_data_error';
+        name = '$mol_error_mix';
         constructor(message, ...errors) {
             super(errors, [message, ...errors.map(e => '  ' + e.message)].join('\n'));
         }
