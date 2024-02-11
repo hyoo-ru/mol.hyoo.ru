@@ -124,6 +124,8 @@
 	include \/mol/offline/install
 	include \/mol/import
 	deploy \/hyoo/js/perf/logo/logo.svg
+\/mol/view/tree2/to/js
+	include \/mol/view/tree2/to/js/test
 \/hyoo/tree
 	include \/mol/offline/install
 	include \/mol/import
