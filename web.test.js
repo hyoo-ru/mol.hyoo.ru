@@ -5528,51 +5528,51 @@ var $;
 ;
 "use strict";
 var $;
-(function ($) {
-    $mol_test({
-        'fromJSON'() {
-            $mol_assert_equal($mol_tree2_from_json([]).toString(), '/\n');
-            $mol_assert_equal($mol_tree2_from_json([false, true]).toString(), '/\n\tfalse\n\ttrue\n');
-            $mol_assert_equal($mol_tree2_from_json([0, 1, 2.3]).toString(), '/\n\t0\n\t1\n\t2.3\n');
-            $mol_assert_equal($mol_tree2_from_json(new Uint16Array([1, 10, 256])).toString(), '\\\x01\x00\n\\\x00\x00\x01\n');
-            $mol_assert_equal($mol_tree2_from_json(['', 'foo', 'bar\nbaz']).toString(), '/\n\t\\\n\t\\foo\n\t\\\n\t\t\\bar\n\t\t\\baz\n');
-            $mol_assert_equal($mol_tree2_from_json({ 'foo': false, 'bar\nbaz': 'lol' }).toString(), '*\n\tfoo false\n\t\\\n\t\t\\bar\n\t\t\\baz\n\t\t\\lol\n');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
 (function ($_1) {
+    function get_parts(str) {
+        return $$.$mol_view_tree2_prop_parts($mol_tree2.struct(str));
+    }
     $mol_test({
-        'atoms'($) {
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("null\n").kids[0]), null);
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("true\n").kids[0]), true);
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("false\n").kids[0]), false);
+        'wrong order'($) {
+            $mol_assert_fail(() => {
+                get_parts('some_bla?*');
+            }, 'Required prop like some*? at `?#1:1/0`');
         },
-        'numbers'($) {
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("1\n").kids[0]), 1);
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("1.2\n").kids[0]), 1.2);
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("1.2e+2\n").kids[0]), 120);
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("NaN\n").kids[0]), Number.NaN);
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("+Infinity\n").kids[0]), Number.POSITIVE_INFINITY);
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("-Infinity\n").kids[0]), Number.NEGATIVE_INFINITY);
+        'empty'($) {
+            $mol_assert_fail(() => {
+                get_parts('');
+            }, 'Required prop like some*? at `?#1:1/0`');
         },
-        'string'($) {
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("\\foo\n").kids[0]), 'foo');
-            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("\\\n\t\\foo\n\t\\bar\n").kids[0]), 'foo\nbar');
+        'prop in upper case'($) {
+            const parts = get_parts('Close_icon');
+            $mol_assert_equal(parts.name, 'Close_icon');
+            $mol_assert_equal(parts.key, '');
+            $mol_assert_equal(parts.next, '');
         },
-        'array'($) {
-            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("/\n").kids[0]), []);
-            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("/\n\t\\foo\n\t\\bar\n").kids[0]), ['foo', 'bar']);
-            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("/\n\t- \\foo\n\t\\bar\n").kids[0]), ['bar']);
+        'prop with index'($) {
+            const parts = get_parts('some_bla*');
+            $mol_assert_equal(parts.name, 'some_bla');
+            $mol_assert_equal(parts.key, '*');
+            $mol_assert_equal(parts.next, '');
         },
-        'object'($) {
-            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("*\n").kids[0]), {});
-            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("*\n\t\\foo\n\t\t\\bar\n").kids[0]), { foo: 'bar' });
-            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("*\n\t\\\n\t\t\\foo\n\t\t\\bar\n\t\t\\lol\n").kids[0]), { 'foo\nbar': 'lol' });
+        'prop with index and value'($) {
+            const parts = get_parts('some_bla*?');
+            $mol_assert_equal(parts.name, 'some_bla');
+            $mol_assert_equal(parts.key, '*');
+            $mol_assert_equal(parts.next, '?');
         },
+        'legacy indexed'($) {
+            const parts = get_parts('Some*default');
+            $mol_assert_equal(parts.name, 'Some');
+            $mol_assert_equal(parts.key, '*default');
+            $mol_assert_equal(parts.next, '');
+        },
+        'legacy indexed value'($) {
+            const parts = get_parts('Some*k?v');
+            $mol_assert_equal(parts.name, 'Some');
+            $mol_assert_equal(parts.key, '*k');
+            $mol_assert_equal(parts.next, '?');
+        }
     });
 })($ || ($ = {}));
 
@@ -5889,6 +5889,57 @@ var $;
 var $;
 (function ($) {
     $mol_test({
+        'fromJSON'() {
+            $mol_assert_equal($mol_tree2_from_json([]).toString(), '/\n');
+            $mol_assert_equal($mol_tree2_from_json([false, true]).toString(), '/\n\tfalse\n\ttrue\n');
+            $mol_assert_equal($mol_tree2_from_json([0, 1, 2.3]).toString(), '/\n\t0\n\t1\n\t2.3\n');
+            $mol_assert_equal($mol_tree2_from_json(new Uint16Array([1, 10, 256])).toString(), '\\\x01\x00\n\\\x00\x00\x01\n');
+            $mol_assert_equal($mol_tree2_from_json(['', 'foo', 'bar\nbaz']).toString(), '/\n\t\\\n\t\\foo\n\t\\\n\t\t\\bar\n\t\t\\baz\n');
+            $mol_assert_equal($mol_tree2_from_json({ 'foo': false, 'bar\nbaz': 'lol' }).toString(), '*\n\tfoo false\n\t\\\n\t\t\\bar\n\t\t\\baz\n\t\t\\lol\n');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test({
+        'atoms'($) {
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("null\n").kids[0]), null);
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("true\n").kids[0]), true);
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("false\n").kids[0]), false);
+        },
+        'numbers'($) {
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("1\n").kids[0]), 1);
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("1.2\n").kids[0]), 1.2);
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("1.2e+2\n").kids[0]), 120);
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("NaN\n").kids[0]), Number.NaN);
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("+Infinity\n").kids[0]), Number.POSITIVE_INFINITY);
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("-Infinity\n").kids[0]), Number.NEGATIVE_INFINITY);
+        },
+        'string'($) {
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("\\foo\n").kids[0]), 'foo');
+            $mol_assert_equal($.$mol_tree2_to_json($.$mol_tree2_from_string("\\\n\t\\foo\n\t\\bar\n").kids[0]), 'foo\nbar');
+        },
+        'array'($) {
+            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("/\n").kids[0]), []);
+            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("/\n\t\\foo\n\t\\bar\n").kids[0]), ['foo', 'bar']);
+            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("/\n\t- \\foo\n\t\\bar\n").kids[0]), ['bar']);
+        },
+        'object'($) {
+            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("*\n").kids[0]), {});
+            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("*\n\t\\foo\n\t\t\\bar\n").kids[0]), { foo: 'bar' });
+            $mol_assert_like($.$mol_tree2_to_json($.$mol_tree2_from_string("*\n\t\\\n\t\t\\foo\n\t\t\\bar\n\t\t\\lol\n").kids[0]), { 'foo\nbar': 'lol' });
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
         'min'() {
             $mol_assert_equal($mol_vlq_encode(Number.MIN_SAFE_INTEGER), '//////H');
         },
@@ -6065,57 +6116,6 @@ var $;
             const pair = instance.get('pair');
             $mol_assert_like(pair(), [1, 2]);
         },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    function get_parts(str) {
-        return $$.$mol_view_tree2_prop_parts($mol_tree2.struct(str));
-    }
-    $mol_test({
-        'wrong order'($) {
-            $mol_assert_fail(() => {
-                get_parts('some_bla?*');
-            }, 'Required prop like some*? at `?#1:1/0`');
-        },
-        'empty'($) {
-            $mol_assert_fail(() => {
-                get_parts('');
-            }, 'Required prop like some*? at `?#1:1/0`');
-        },
-        'prop in upper case'($) {
-            const parts = get_parts('Close_icon');
-            $mol_assert_equal(parts.name, 'Close_icon');
-            $mol_assert_equal(parts.key, '');
-            $mol_assert_equal(parts.next, '');
-        },
-        'prop with index'($) {
-            const parts = get_parts('some_bla*');
-            $mol_assert_equal(parts.name, 'some_bla');
-            $mol_assert_equal(parts.key, '*');
-            $mol_assert_equal(parts.next, '');
-        },
-        'prop with index and value'($) {
-            const parts = get_parts('some_bla*?');
-            $mol_assert_equal(parts.name, 'some_bla');
-            $mol_assert_equal(parts.key, '*');
-            $mol_assert_equal(parts.next, '?');
-        },
-        'legacy indexed'($) {
-            const parts = get_parts('Some*default');
-            $mol_assert_equal(parts.name, 'Some');
-            $mol_assert_equal(parts.key, '*default');
-            $mol_assert_equal(parts.next, '');
-        },
-        'legacy indexed value'($) {
-            const parts = get_parts('Some*k?v');
-            $mol_assert_equal(parts.name, 'Some');
-            $mol_assert_equal(parts.key, '*k');
-            $mol_assert_equal(parts.next, '?');
-        }
     });
 })($ || ($ = {}));
 
@@ -6303,6 +6303,42 @@ var $;
 var $;
 (function ($) {
     $.$mol_tree2_wasm_to_module = $mol_data_pipe($mol_tree2_wasm_to_bytes, $mol_wasm_module);
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'equal paths'() {
+            const diff = $mol_diff_path([1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]);
+            $mol_assert_like(diff, {
+                prefix: [1, 2, 3, 4],
+                suffix: [[], [], []],
+            });
+        },
+        'different suffix'() {
+            const diff = $mol_diff_path([1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 5, 4]);
+            $mol_assert_like(diff, {
+                prefix: [1, 2],
+                suffix: [[3, 4], [3, 5], [5, 4]],
+            });
+        },
+        'one contains other'() {
+            const diff = $mol_diff_path([1, 2, 3, 4], [1, 2], [1, 2, 3]);
+            $mol_assert_like(diff, {
+                prefix: [1, 2],
+                suffix: [[3, 4], [], [3]],
+            });
+        },
+        'fully different'() {
+            const diff = $mol_diff_path([1, 2], [3, 4], [5, 6]);
+            $mol_assert_like(diff, {
+                prefix: [],
+                suffix: [[1, 2], [3, 4], [5, 6]],
+            });
+        },
+    });
 })($ || ($ = {}));
 
 ;
@@ -7621,42 +7657,6 @@ var $;
                 'key3': '3'
             });
         }
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'equal paths'() {
-            const diff = $mol_diff_path([1, 2, 3, 4], [1, 2, 3, 4], [1, 2, 3, 4]);
-            $mol_assert_like(diff, {
-                prefix: [1, 2, 3, 4],
-                suffix: [[], [], []],
-            });
-        },
-        'different suffix'() {
-            const diff = $mol_diff_path([1, 2, 3, 4], [1, 2, 3, 5], [1, 2, 5, 4]);
-            $mol_assert_like(diff, {
-                prefix: [1, 2],
-                suffix: [[3, 4], [3, 5], [5, 4]],
-            });
-        },
-        'one contains other'() {
-            const diff = $mol_diff_path([1, 2, 3, 4], [1, 2], [1, 2, 3]);
-            $mol_assert_like(diff, {
-                prefix: [1, 2],
-                suffix: [[3, 4], [], [3]],
-            });
-        },
-        'fully different'() {
-            const diff = $mol_diff_path([1, 2], [3, 4], [5, 6]);
-            $mol_assert_like(diff, {
-                prefix: [],
-                suffix: [[1, 2], [3, 4], [5, 6]],
-            });
-        },
     });
 })($ || ($ = {}));
 
