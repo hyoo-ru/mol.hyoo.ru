@@ -273,6 +273,7 @@
 	include \/mol/video/camera/demo
 	include \/mol/password/demo
 	include \/mol/lights/demo
+	include \/mol/locale/demo
 \/hyoo/mol
 	deploy \/mol/logo/logo.svg
 	include \/mol/offline/install

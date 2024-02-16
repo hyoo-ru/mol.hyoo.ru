@@ -2623,7 +2623,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/theme/theme.css", ":root {\n\t--mol_theme_hue: 210deg;\n\t--mol_theme_hue_spread: 90deg;\n}\n\n:where([mol_theme]) {\n\tcolor: var(--mol_theme_text);\n\tfill: var(--mol_theme_text);\n\tbackground-color: var(--mol_theme_back);\n}\n\t\n:root, [mol_theme=\"$mol_theme_dark\"], :where([mol_theme=\"$mol_theme_dark\"]) [mol_theme]  {\n\n\t--mol_theme_luma: -1;\n\t--mol_theme_image: invert(1) hue-rotate( 180deg );\n\n\t--mol_theme_back: hsl( var(--mol_theme_hue), 20%, 10% );\n\t--mol_theme_card: hsl( var(--mol_theme_hue), 50%, 20%, .25 );\n\t--mol_theme_field: hsl( var(--mol_theme_hue), 50%, 8%, .25 );\n\t--mol_theme_hover: hsl( var(--mol_theme_hue), 0%, 50%, .1 );\n\t\n\t--mol_theme_text: hsl( var(--mol_theme_hue), 0%, 80% );\n\t--mol_theme_shade: hsl( var(--mol_theme_hue), 0%, 60%, 1 );\n\t--mol_theme_line: hsl( var(--mol_theme_hue), 0%, 50%, .2 );\n\t--mol_theme_focus: hsl( calc( var(--mol_theme_hue) + 180deg ), 100%, 65% );\n\t\n\t--mol_theme_control: hsl( var(--mol_theme_hue), 60%, 65% );\n\t--mol_theme_current: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 60%, 65% );\n\t--mol_theme_special: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 60%, 65% );\n\n\t/* --mol_theme_back: oklch( 20% .03 var(--mol_theme_hue) );\n\t--mol_theme_card: oklch( 35% .05 var(--mol_theme_hue) / .25 );\n\t--mol_theme_field: oklch( 0% 0 var(--mol_theme_hue) / .25 );\n\t--mol_theme_hover: oklch( 70% 0 var(--mol_theme_hue) / .1 );\n\t\n\t--mol_theme_text: oklch( 80% 0 var(--mol_theme_hue) );\n\t--mol_theme_shade: oklch( 60% 0 var(--mol_theme_hue) );\n\t--mol_theme_line: oklch( 50% 0 var(--mol_theme_hue) / .2 );\n\t--mol_theme_focus: oklch( 80% .2 calc( var(--mol_theme_hue) + 120deg ) );\n\t\n\t--mol_theme_control: oklch( 70% .1 var(--mol_theme_hue) );\n\t--mol_theme_current: oklch( 80% .2 calc( var(--mol_theme_hue) - 60deg ) );\n\t--mol_theme_special: oklch( 80% .3 calc( var(--mol_theme_hue) + 60deg ) ); */\n\n}\n\n[mol_theme=\"$mol_theme_light\"], :where([mol_theme=\"$mol_theme_light\"]) [mol_theme] {\n\t\n\t--mol_theme_luma: 1;\n\t--mol_theme_image: none;\n\t\n\t--mol_theme_back: hsl( var(--mol_theme_hue), 20%, 85% );\n\t--mol_theme_card: hsl( var(--mol_theme_hue), 50%, 100%, .25 );\n\t--mol_theme_field: hsl( var(--mol_theme_hue), 50%, 100%, .25 );\n\t--mol_theme_hover: hsl( var(--mol_theme_hue), 0%, 50%, .1 );\n\t\n\t--mol_theme_text: hsl( var(--mol_theme_hue), 0%, 0% );\n\t--mol_theme_shade: hsl( var(--mol_theme_hue), 0%, 40%, 1 );\n\t--mol_theme_line: hsl( var(--mol_theme_hue), 0%, 50%, .2 );\n\t--mol_theme_focus: hsl( calc( var(--mol_theme_hue) + 180deg ), 100%, 40% );\n\t\n\t--mol_theme_control: hsl( var(--mol_theme_hue), 80%, 30% );\n\t--mol_theme_current: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 80%, 30% );\n\t--mol_theme_special: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 80%, 30% );\n\t\n\t/* --mol_theme_back: oklch( 93% .01 var(--mol_theme_hue) );\n\t--mol_theme_card: oklch( 100% .02 var(--mol_theme_hue) / .25 );\n\t--mol_theme_field: oklch( 100% 0 var(--mol_theme_hue) / .5 );\n\t--mol_theme_hover: oklch( 70% 0 var(--mol_theme_hue) / .1 );\n\t\n\t--mol_theme_text: oklch( 20% 0 var(--mol_theme_hue) );\n\t--mol_theme_shade: oklch( 60% 0 var(--mol_theme_hue) );\n\t--mol_theme_line: oklch( 70% 0 var(--mol_theme_hue) / .2 );\n\t--mol_theme_focus: oklch( 20% .8 calc( var(--mol_theme_hue) + 120deg ) );\n\t\n\t--mol_theme_control: oklch( 45% .25 var(--mol_theme_hue) );\n\t--mol_theme_current: oklch( 45% .5 calc( var(--mol_theme_hue) - 60deg ) );\n\t--mol_theme_special: oklch( 45% .5 calc( var(--mol_theme_hue) + 60deg ) ); */\n\n}\n\n:where( :root, [mol_theme=\"$mol_theme_dark\"] ) [mol_theme=\"$mol_theme_base\"] {\n\t--mol_theme_back: hsl( var(--mol_theme_hue), 50%, 30% );\n\t--mol_theme_card: hsl( var(--mol_theme_hue), 40%, 20%, .25 );\n\t/* --mol_theme_back: oklch( 25% .05 var(--mol_theme_hue) );\n\t--mol_theme_card: oklch( 35% .1 var(--mol_theme_hue) / .25 ); */\n}\n:where( [mol_theme=\"$mol_theme_light\"] ) [mol_theme=\"$mol_theme_base\"] {\n\t--mol_theme_back: hsl( var(--mol_theme_hue), 50%, 80% );\n\t--mol_theme_card: hsl( var(--mol_theme_hue), 80%, 95%, .25 );\n\t/* --mol_theme_back: oklch( 95% .02 var(--mol_theme_hue) );\n\t--mol_theme_card: oklch( 80% .05 var(--mol_theme_hue) / .25 ); */\n}\n\n:where( :root, [mol_theme=\"$mol_theme_dark\"] ) [mol_theme=\"$mol_theme_accent\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) + 180deg ), 90%, 30% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) + 180deg ), 80%, 20%, .25 );\n\t/* --mol_theme_back: oklch( 40% .2 calc( var(--mol_theme_hue) + 120deg ) );\n\t--mol_theme_card: oklch( 50% .3 calc( var(--mol_theme_hue) + 120deg ) / .25 ); */\n}\n:where( [mol_theme=\"$mol_theme_light\"] ) [mol_theme=\"$mol_theme_accent\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) + 180deg ), 90%, 75% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) + 180deg ), 80%, 90%, .25 );\n\t/* --mol_theme_back: oklch( 90% .03 calc( var(--mol_theme_hue) + 120deg ) );\n\t--mol_theme_card: oklch( 80% .05 calc( var(--mol_theme_hue) + 120deg ) / .25 ); */\n}\n\n:where( :root, [mol_theme=\"$mol_theme_dark\"] ) [mol_theme=\"$mol_theme_current\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 50%, 30% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 40%, 20%, .25 );\n\t/* --mol_theme_back: oklch( 25% .05 calc( var(--mol_theme_hue) - 60deg ) );\n\t--mol_theme_card: oklch( 35% .1 calc( var(--mol_theme_hue) - 60deg ) / .25 ); */\n}\n:where( [mol_theme=\"$mol_theme_light\"] ) [mol_theme=\"$mol_theme_current\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 50%, 80% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 80%, 95%, .25 );\n\t/* --mol_theme_back: oklch( 95% .02 calc( var(--mol_theme_hue) - 60deg ) );\n\t--mol_theme_card: oklch( 80% .05 calc( var(--mol_theme_hue) - 60deg ) / .25 ); */\n}\n\n:where( :root, [mol_theme=\"$mol_theme_dark\"] ) [mol_theme=\"$mol_theme_special\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 50%, 30% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 40%, 20%, .25 );\n\t/* --mol_theme_back: oklch( 25% .05 calc( var(--mol_theme_hue) + 60deg ) );\n\t--mol_theme_card: oklch( 35% .1 calc( var(--mol_theme_hue) + 60deg ) / .25 ); */\n}\n:where( [mol_theme=\"$mol_theme_light\"] ) [mol_theme=\"$mol_theme_special\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 50%, 80% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 80%, 95%, .25 );\n\t/* --mol_theme_back: oklch( 95% .02 calc( var(--mol_theme_hue) + 60deg ) );\n\t--mol_theme_card: oklch( 80% .05 calc( var(--mol_theme_hue) + 60deg ) / .25 ); */\n}\n");
+    $mol_style_attach("mol/theme/theme.css", ":root {\n\t--mol_theme_hue: 210deg;\n\t--mol_theme_hue_spread: 90deg;\n}\n\n:where([mol_theme]) {\n\tcolor: var(--mol_theme_text);\n\tfill: var(--mol_theme_text);\n\tbackground-color: var(--mol_theme_back);\n}\n\t\n:root, [mol_theme=\"$mol_theme_dark\"], :where([mol_theme=\"$mol_theme_dark\"]) [mol_theme]  {\n\n\t--mol_theme_luma: -1;\n\t--mol_theme_image: invert(1) hue-rotate( 180deg );\n\n\t--mol_theme_back: hsl( var(--mol_theme_hue), 20%, 10% );\n\t--mol_theme_card: hsl( var(--mol_theme_hue), 50%, 20%, .25 );\n\t--mol_theme_field: hsl( var(--mol_theme_hue), 50%, 8%, .25 );\n\t--mol_theme_hover: hsl( var(--mol_theme_hue), 0%, 50%, .1 );\n\t\n\t--mol_theme_text: hsl( var(--mol_theme_hue), 0%, 80% );\n\t--mol_theme_shade: hsl( var(--mol_theme_hue), 0%, 60%, 1 );\n\t--mol_theme_line: hsl( var(--mol_theme_hue), 0%, 50%, .2 );\n\t--mol_theme_focus: hsl( calc( var(--mol_theme_hue) + 180deg ), 100%, 65% );\n\t\n\t--mol_theme_control: hsl( var(--mol_theme_hue), 60%, 65% );\n\t--mol_theme_current: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 60%, 65% );\n\t--mol_theme_special: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 60%, 65% );\n\n\t/* --mol_theme_back: oklch( 20% .03 var(--mol_theme_hue) );\n\t--mol_theme_card: oklch( 35% .05 var(--mol_theme_hue) / .25 );\n\t--mol_theme_field: oklch( 0% 0 var(--mol_theme_hue) / .25 );\n\t--mol_theme_hover: oklch( 70% 0 var(--mol_theme_hue) / .1 );\n\t\n\t--mol_theme_text: oklch( 80% 0 var(--mol_theme_hue) );\n\t--mol_theme_shade: oklch( 60% 0 var(--mol_theme_hue) );\n\t--mol_theme_line: oklch( 50% 0 var(--mol_theme_hue) / .2 );\n\t--mol_theme_focus: oklch( 80% .2 calc( var(--mol_theme_hue) + 120deg ) );\n\t\n\t--mol_theme_control: oklch( 70% .1 var(--mol_theme_hue) );\n\t--mol_theme_current: oklch( 80% .2 calc( var(--mol_theme_hue) - 60deg ) );\n\t--mol_theme_special: oklch( 80% .3 calc( var(--mol_theme_hue) + 60deg ) ); */\n\n}\n\n[mol_theme=\"$mol_theme_light\"], :where([mol_theme=\"$mol_theme_light\"]) [mol_theme] {\n\t\n\t--mol_theme_luma: 1;\n\t--mol_theme_image: none;\n\t\n\t--mol_theme_back: hsl( var(--mol_theme_hue), 20%, 92% );\n\t--mol_theme_card: hsl( var(--mol_theme_hue), 50%, 100%, .5 );\n\t--mol_theme_field: hsl( var(--mol_theme_hue), 50%, 100%, .75 );\n\t--mol_theme_hover: hsl( var(--mol_theme_hue), 0%, 50%, .1 );\n\t\n\t--mol_theme_text: hsl( var(--mol_theme_hue), 0%, 0% );\n\t--mol_theme_shade: hsl( var(--mol_theme_hue), 0%, 40%, 1 );\n\t--mol_theme_line: hsl( var(--mol_theme_hue), 0%, 50%, .2 );\n\t--mol_theme_focus: hsl( calc( var(--mol_theme_hue) + 180deg ), 100%, 40% );\n\t\n\t--mol_theme_control: hsl( var(--mol_theme_hue), 80%, 30% );\n\t--mol_theme_current: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 80%, 30% );\n\t--mol_theme_special: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 80%, 30% );\n\t\n\t/* --mol_theme_back: oklch( 93% .01 var(--mol_theme_hue) );\n\t--mol_theme_card: oklch( 100% .02 var(--mol_theme_hue) / .25 );\n\t--mol_theme_field: oklch( 100% 0 var(--mol_theme_hue) / .5 );\n\t--mol_theme_hover: oklch( 70% 0 var(--mol_theme_hue) / .1 );\n\t\n\t--mol_theme_text: oklch( 20% 0 var(--mol_theme_hue) );\n\t--mol_theme_shade: oklch( 60% 0 var(--mol_theme_hue) );\n\t--mol_theme_line: oklch( 70% 0 var(--mol_theme_hue) / .2 );\n\t--mol_theme_focus: oklch( 20% .8 calc( var(--mol_theme_hue) + 120deg ) );\n\t\n\t--mol_theme_control: oklch( 45% .25 var(--mol_theme_hue) );\n\t--mol_theme_current: oklch( 45% .5 calc( var(--mol_theme_hue) - 60deg ) );\n\t--mol_theme_special: oklch( 45% .5 calc( var(--mol_theme_hue) + 60deg ) ); */\n\n}\n\n:where( :root, [mol_theme=\"$mol_theme_dark\"] ) [mol_theme=\"$mol_theme_base\"] {\n\t--mol_theme_back: hsl( var(--mol_theme_hue), 50%, 30% );\n\t--mol_theme_card: hsl( var(--mol_theme_hue), 40%, 20%, .25 );\n\t/* --mol_theme_back: oklch( 25% .05 var(--mol_theme_hue) );\n\t--mol_theme_card: oklch( 35% .1 var(--mol_theme_hue) / .25 ); */\n}\n:where( [mol_theme=\"$mol_theme_light\"] ) [mol_theme=\"$mol_theme_base\"] {\n\t--mol_theme_back: hsl( var(--mol_theme_hue), 50%, 80% );\n\t--mol_theme_card: hsl( var(--mol_theme_hue), 80%, 95%, .25 );\n\t/* --mol_theme_back: oklch( 95% .02 var(--mol_theme_hue) );\n\t--mol_theme_card: oklch( 80% .05 var(--mol_theme_hue) / .25 ); */\n}\n\n:where( :root, [mol_theme=\"$mol_theme_dark\"] ) [mol_theme=\"$mol_theme_accent\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) + 180deg ), 90%, 30% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) + 180deg ), 80%, 20%, .25 );\n\t/* --mol_theme_back: oklch( 40% .2 calc( var(--mol_theme_hue) + 120deg ) );\n\t--mol_theme_card: oklch( 50% .3 calc( var(--mol_theme_hue) + 120deg ) / .25 ); */\n}\n:where( [mol_theme=\"$mol_theme_light\"] ) [mol_theme=\"$mol_theme_accent\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) + 180deg ), 90%, 75% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) + 180deg ), 80%, 90%, .25 );\n\t/* --mol_theme_back: oklch( 90% .03 calc( var(--mol_theme_hue) + 120deg ) );\n\t--mol_theme_card: oklch( 80% .05 calc( var(--mol_theme_hue) + 120deg ) / .25 ); */\n}\n\n:where( :root, [mol_theme=\"$mol_theme_dark\"] ) [mol_theme=\"$mol_theme_current\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 50%, 30% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 40%, 20%, .25 );\n\t/* --mol_theme_back: oklch( 25% .05 calc( var(--mol_theme_hue) - 60deg ) );\n\t--mol_theme_card: oklch( 35% .1 calc( var(--mol_theme_hue) - 60deg ) / .25 ); */\n}\n:where( [mol_theme=\"$mol_theme_light\"] ) [mol_theme=\"$mol_theme_current\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 50%, 92% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) - var(--mol_theme_hue_spread) ), 80%, 100%, .5 );\n\t/* --mol_theme_back: oklch( 95% .02 calc( var(--mol_theme_hue) - 60deg ) );\n\t--mol_theme_card: oklch( 80% .05 calc( var(--mol_theme_hue) - 60deg ) / .25 ); */\n}\n\n:where( :root, [mol_theme=\"$mol_theme_dark\"] ) [mol_theme=\"$mol_theme_special\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 50%, 30% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 40%, 20%, .25 );\n\t/* --mol_theme_back: oklch( 25% .05 calc( var(--mol_theme_hue) + 60deg ) );\n\t--mol_theme_card: oklch( 35% .1 calc( var(--mol_theme_hue) + 60deg ) / .25 ); */\n}\n:where( [mol_theme=\"$mol_theme_light\"] ) [mol_theme=\"$mol_theme_special\"] {\n\t--mol_theme_back: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 50%, 92% );\n\t--mol_theme_card: hsl( calc( var(--mol_theme_hue) + var(--mol_theme_hue_spread) ), 80%, 100%, .5 );\n\t/* --mol_theme_back: oklch( 95% .02 calc( var(--mol_theme_hue) + 60deg ) );\n\t--mol_theme_card: oklch( 80% .05 calc( var(--mol_theme_hue) + 60deg ) / .25 ); */\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -3441,6 +3441,26 @@ var $;
 
 ;
 "use strict";
+var $;
+(function ($) {
+    $.$mol_layer = $mol_style_prop('mol_layer', [
+        'hover',
+        'focus',
+        'speck',
+        'float',
+        'popup',
+    ]);
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/layer/layer.css", ":root {\n\t--mol_layer_hover: 1;\n\t--mol_layer_focus: 2;\n\t--mol_layer_speck: 3;\n\t--mol_layer_float: 4;\n\t--mol_layer_popup: 5;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
 
 ;
 "use strict";
@@ -3499,7 +3519,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/book2/book2.view.css", "[mol_book2] {\n\tdisplay: flex;\n\tflex-flow: row nowrap;\n\talign-items: stretch;\n\tflex: 1 1 auto;\n\talign-self: stretch;\n\tmargin: 0;\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_line); */\n\t/* transform: translateZ(0); */\n\ttransition: none;\n\toverflow: overlay;\n\tscroll-snap-type: x mandatory;\n\tpadding: 0 1px;\n\tscroll-padding: 0 1px;\n\tgap: 1px;\n}\n\n[mol_book2] > * {\n/* \tflex: none; */\n\tscroll-snap-stop: always;\n\tscroll-snap-align: end;\n\tposition: relative;\n\tmin-height: 100%;\n\tmax-height: 100%;\n\tmax-width: 100%;\n\tflex-shrink: 0;\n}\n\n[mol_book2] > *:not(:first-of-type):before,\n[mol_book2] > *:not(:last-of-type)::after {\n\tcontent: '';\n\tposition: absolute;\n\ttop: 1.5rem;\n\twidth: 3px;\n\theight: 1rem;\n\tbackground: linear-gradient(\n\t\tto bottom,\n\t\tvar(--mol_theme_focus) 0%,\n\t\tvar(--mol_theme_focus) 15%,\n\t\ttransparent 15%,\n\t\ttransparent 42%,\n\t\tvar(--mol_theme_focus) 42%,\n\t\tvar(--mol_theme_focus) 58%,\n\t\ttransparent 58%,\n\t\ttransparent 85%,\n\t\tvar(--mol_theme_focus) 85%,\n\t\tvar(--mol_theme_focus) 100%\n\t);\n\topacity: .5;\n}\n[mol_book2] > *:not(:first-of-type):before {\n\tleft: -2px;\n}\n[mol_book2] > *:not(:last-of-type)::after {\n\tright: -2px;\n}\n\n:where([mol_book2]) > * {\n\tbackground-color: var(--mol_theme_card);\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_back); */\n}\n\n[mol_book2] > [mol_book2] {\n\tdisplay: contents;\n}\n\n[mol_book2] > *:first-child {\n\tscroll-snap-align: start;\n}\n\n[mol_book2] > [mol_view] {\n\ttransform: none; /* prevent content clipping */\n}\n\n[mol_book2_placeholder] {\n\tflex: 1 1 0;\n\tbackground: none;\n}\n\n[mol_book2_gap] {\n\tbackground: none;\n\tflex-grow: 1;\n\tscroll-snap-align: none;\n\tmargin-right: -1px;\n\tbox-shadow: none;\n}\n\n[mol_book2_gap]::before,\n[mol_book2_gap]::after {\n\tdisplay: none;\n}\n");
+    $mol_style_attach("mol/book2/book2.view.css", "[mol_book2] {\n\tdisplay: flex;\n\tflex-flow: row nowrap;\n\talign-items: stretch;\n\tflex: 1 1 auto;\n\talign-self: stretch;\n\tmargin: 0;\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_line); */\n\t/* transform: translateZ(0); */\n\ttransition: none;\n\toverflow: overlay;\n\tscroll-snap-type: x mandatory;\n\t/* padding: 0 1px;\n\tscroll-padding: 0 1px;\n\tgap: 1px; */\n}\n\n[mol_book2] > * {\n/* \tflex: none; */\n\tscroll-snap-stop: always;\n\tscroll-snap-align: end;\n\tposition: relative;\n\tmin-height: 100%;\n\tmax-height: 100%;\n\tmax-width: 100%;\n\tflex-shrink: 0;\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_field);\n}\n\n[mol_book2] > *:not(:first-of-type):before,\n[mol_book2] > *:not(:last-of-type)::after {\n\tcontent: '';\n\tposition: absolute;\n\ttop: 1.5rem;\n\twidth: 2px;\n\theight: 1rem;\n\tbackground: linear-gradient(\n\t\tto bottom,\n\t\tvar(--mol_theme_focus) 0%,\n\t\tvar(--mol_theme_focus) 14%,\n\t\ttransparent 15%,\n\t\ttransparent 42%,\n\t\tvar(--mol_theme_focus) 43%,\n\t\tvar(--mol_theme_focus) 57%,\n\t\ttransparent 58%,\n\t\ttransparent 85%,\n\t\tvar(--mol_theme_focus) 86%,\n\t\tvar(--mol_theme_focus) 100%\n\t);\n\topacity: .5;\n\tz-index: var(--mol_layer_speck);\n}\n[mol_book2] > *:not(:first-of-type):before {\n\tleft: -1px;\n}\n[mol_book2] > *:not(:last-of-type)::after {\n\tright: -1px;\n}\n\n:where([mol_book2]) > * {\n\tbackground-color: var(--mol_theme_card);\n\t/* box-shadow: 0 0 0 1px var(--mol_theme_back); */\n}\n\n[mol_book2] > [mol_book2] {\n\tdisplay: contents;\n}\n\n[mol_book2] > *:first-child {\n\tscroll-snap-align: start;\n}\n\n[mol_book2] > [mol_view] {\n\ttransform: none; /* prevent content clipping */\n}\n\n[mol_book2_placeholder] {\n\tflex: 1 1 0;\n\tbackground: none;\n}\n\n[mol_book2_gap] {\n\tbackground: none;\n\tflex-grow: 1;\n\tscroll-snap-align: none;\n\tmargin-right: -1px;\n\tbox-shadow: none;\n}\n\n[mol_book2_gap]::before,\n[mol_book2_gap]::after {\n\tdisplay: none;\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -3868,26 +3888,6 @@ var $;
 		}
 	};
 
-
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_layer = $mol_style_prop('mol_layer', [
-        'hover',
-        'focus',
-        'speck',
-        'float',
-        'popup',
-    ]);
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/layer/layer.css", ":root {\n\t--mol_layer_hover: 1;\n\t--mol_layer_focus: 2;\n\t--mol_layer_speck: 3;\n\t--mol_layer_float: 4;\n\t--mol_layer_popup: 5;\n}\n");
-})($ || ($ = {}));
 
 ;
 "use strict";
@@ -6260,7 +6260,7 @@ var $;
 		}
 		Clear(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$mol_search_Clear_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_search_Clear_hint")));
 			(obj.click) = (next) => ((this.clear(next)));
 			(obj.sub) = () => ([(this.Clear_icon())]);
 			return obj;
@@ -7635,12 +7635,28 @@ var $;
 var $;
 (function ($) {
     class $mol_error_mix extends AggregateError {
-        name = '$mol_error_mix';
+        name = $$.$mol_func_name(this.constructor);
         constructor(message, ...errors) {
-            super(errors, [message, ...errors.map(e => '  ' + e.message)].join('\n'));
+            super(errors, [message, ...errors.map(e => e.message.replace(/^/gm, '  '))].join('\n'));
+        }
+        get cause() {
+            return [].concat(...this.errors.map(e => e.cause).filter(Boolean));
         }
         toJSON() {
-            return this.message;
+            return this.errors.map(e => e.message);
+        }
+        pick(Class) {
+            if (this instanceof Class)
+                return this;
+            for (const e of this.errors) {
+                if (e instanceof Class)
+                    return e;
+            }
+            for (const e of this.cause) {
+                if (e && e instanceof Class)
+                    return e;
+            }
+            return null;
         }
     }
     $.$mol_error_mix = $mol_error_mix;
@@ -11953,7 +11969,7 @@ var $;
 		}
 		Item_remove(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_remove_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_remove_hint")));
 			(obj.click) = (next) => ((this.item_remove(id, next)));
 			(obj.sub) = () => ([(this.Item_remove_icon(id))]);
 			return obj;
@@ -11968,7 +11984,7 @@ var $;
 		}
 		Item_pin(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_pin_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_pin_hint")));
 			(obj.click) = (next) => ((this.item_pin(id, next)));
 			(obj.sub) = () => ([(this.Item_pin_icon(id))]);
 			return obj;
@@ -11987,7 +12003,7 @@ var $;
 		}
 		Item_add(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_add_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_add_hint")));
 			(obj.click) = (next) => ((this.item_add(id, next)));
 			(obj.sub) = () => ([(this.Item_add_icon(id))]);
 			return obj;
@@ -12375,7 +12391,7 @@ var $;
 		}
 		Search_toggle(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_meta_menu_Search_toggle_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_Search_toggle_hint")));
 			(obj.checked) = (next) => ((this.search_show(next)));
 			(obj.Icon) = () => ((this.Search_icon()));
 			return obj;
@@ -12390,7 +12406,7 @@ var $;
 		}
 		Editing(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_meta_menu_Editing_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_Editing_hint")));
 			(obj.checked) = (next) => ((this.editing(next)));
 			(obj.Icon) = () => ((this.Editing_icon()));
 			return obj;
@@ -12405,7 +12421,7 @@ var $;
 		}
 		Add(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_meta_menu_Add_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_Add_hint")));
 			(obj.click) = (next) => ((this.add(next)));
 			(obj.sub) = () => ([(this.Add_icon())]);
 			return obj;
@@ -13574,7 +13590,7 @@ var $;
 		}
 		Copy(){
 			const obj = new this.$.$mol_button_copy();
-			(obj.hint) = () => (this.$.$mol_locale.text("$mol_text_code_Copy_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_text_code_Copy_hint")));
 			(obj.text) = () => ((this.text_export()));
 			return obj;
 		}
@@ -14922,7 +14938,7 @@ var $;
 		Link(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ((this.arg()));
-			(obj.hint) = () => (this.$.$mol_locale.text("$mol_text_header_Link_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_text_header_Link_hint")));
 			(obj.sub) = () => ((this.content()));
 			return obj;
 		}
@@ -15732,7 +15748,7 @@ var $;
 		}
 		Today(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$mol_date_Today_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_date_Today_hint")));
 			(obj.enabled) = () => ((this.enabled()));
 			(obj.click) = (next) => ((this.today_click(next)));
 			(obj.sub) = () => ([(this.Today_icon())]);
@@ -15765,7 +15781,7 @@ var $;
 		}
 		Clear(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$mol_date_Clear_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_date_Clear_hint")));
 			(obj.enabled) = () => ((this.enabled()));
 			(obj.click) = (next) => ((this.clear(next)));
 			(obj.sub) = () => ([(this.Clear_icon())]);
@@ -16176,7 +16192,7 @@ var $;
 		Menu_toggle(){
 			const obj = new this.$.$mol_check();
 			(obj.checked) = (next) => ((this.menu_showed(next)));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_view_Menu_toggle_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Menu_toggle_hint")));
 			(obj.sub) = () => ([(this.Avatar())]);
 			return obj;
 		}
@@ -16212,7 +16228,7 @@ var $;
 		}
 		Edit_toggle(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_view_Edit_toggle_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Edit_toggle_hint")));
 			(obj.checked) = (next) => ((this.editing(next)));
 			(obj.Icon) = () => ((this.Edit_icon()));
 			(obj.label) = () => ((this.edit_toggle_label()));
@@ -16228,7 +16244,7 @@ var $;
 		}
 		Search_toggle(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_view_Search_toggle_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Search_toggle_hint")));
 			(obj.checked) = (next) => ((this.search_show(next)));
 			(obj.Icon) = () => ((this.Search_icon()));
 			return obj;
@@ -16243,7 +16259,7 @@ var $;
 		}
 		Info_toggle(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_view_Info_toggle_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Info_toggle_hint")));
 			(obj.checked) = (next) => ((this.info(next)));
 			(obj.Icon) = () => ((this.Info_icon()));
 			return obj;
@@ -16258,7 +16274,7 @@ var $;
 		}
 		Bookmark_toggle(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_view_Bookmark_toggle_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Bookmark_toggle_hint")));
 			(obj.checked) = (next) => ((this.bookmark(next)));
 			(obj.Icon) = () => ((this.Bookmark_icon()));
 			return obj;
@@ -17193,7 +17209,7 @@ var $;
 		}
 		Title(){
 			const obj = new this.$.$mol_string_button();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Title_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Title_hint")));
 			(obj.value) = (next) => ((this.title(next)));
 			(obj.enabled) = () => ((this.editable()));
 			return obj;
@@ -17233,7 +17249,7 @@ var $;
 		}
 		Syntax(){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Syntax_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Syntax_hint")));
 			(obj.uri) = () => ("https://marked.hyoo.ru/");
 			(obj.icon) = () => ("https://marked.hyoo.ru/hyoo/marked/logo/logo.svg");
 			(obj.title) = () => ("");
@@ -17251,7 +17267,7 @@ var $;
 			const obj = new this.$.$mol_button_minor();
 			(obj.click) = (next) => ((this.publish(next)));
 			(obj.disabled) = () => ((this.released()));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Publish_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Publish_hint")));
 			(obj.sub) = () => ([(this.Publish_icon())]);
 			return obj;
 		}
@@ -17268,7 +17284,7 @@ var $;
 		}
 		Download(){
 			const obj = new this.$.$mol_button_download();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Download_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Download_title")));
 			(obj.file_name) = () => ((this.download_name()));
 			(obj.blob) = () => ((this.download_blob()));
 			return obj;
@@ -17281,14 +17297,14 @@ var $;
 		}
 		Copy_html(){
 			const obj = new this.$.$mol_button_copy();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Copy_html_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Copy_html_title")));
 			(obj.text) = () => ((this.copy_text()));
 			(obj.html) = () => ((this.copy_html()));
 			return obj;
 		}
 		Export(){
 			const obj = new this.$.$mol_pick();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Export_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Export_hint")));
 			(obj.trigger_content) = () => ([(this.Export_icon())]);
 			(obj.bubble_content) = () => ([(this.Download()), (this.Copy_html())]);
 			return obj;
@@ -17303,7 +17319,7 @@ var $;
 		}
 		Rights_toggle(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Rights_toggle_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Rights_toggle_hint")));
 			(obj.checked) = (next) => ((this.rights(next)));
 			(obj.Icon) = () => ((this.Rights_icon()));
 			return obj;
@@ -17324,7 +17340,7 @@ var $;
 		}
 		Details_edit(){
 			const obj = new this.$.$mol_textarea();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Details_edit_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Details_edit_hint")));
 			(obj.value) = (next) => ((this.details(next)));
 			(obj.selection) = (next) => ((this.details_selection(next)));
 			(obj.enabled) = () => ((this.editable()));
@@ -17332,14 +17348,14 @@ var $;
 		}
 		Aura(){
 			const obj = new this.$.$mol_string_button();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Aura_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Aura_hint")));
 			(obj.value) = (next) => ((this.aura(next)));
 			(obj.enabled) = () => ((this.editable()));
 			return obj;
 		}
 		Aura_field(){
 			const obj = new this.$.$mol_form_field();
-			(obj.name) = () => (this.$.$mol_locale.text("$hyoo_page_side_edit_Aura_field_name"));
+			(obj.name) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Aura_field_name")));
 			(obj.Content) = () => ((this.Aura()));
 			return obj;
 		}
@@ -17898,7 +17914,7 @@ var $;
 		}
 		Slides(){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_side_info_Slides_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Slides_hint")));
 			(obj.uri) = () => ((this.slides_uri()));
 			(obj.title) = () => ("");
 			return obj;
@@ -17922,7 +17938,7 @@ var $;
 		}
 		Size(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_info_Size_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Size_title")));
 			(obj.content) = () => ([(this.size())]);
 			return obj;
 		}
@@ -17931,7 +17947,7 @@ var $;
 		}
 		Chars(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_info_Chars_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Chars_title")));
 			(obj.content) = () => ([(this.chars())]);
 			return obj;
 		}
@@ -17940,7 +17956,7 @@ var $;
 		}
 		Words(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_info_Words_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Words_title")));
 			(obj.content) = () => ([(this.words())]);
 			return obj;
 		}
@@ -17949,7 +17965,7 @@ var $;
 		}
 		Weight(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_info_Weight_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Weight_title")));
 			(obj.content) = () => ([(this.weight())]);
 			return obj;
 		}
@@ -17981,7 +17997,7 @@ var $;
 		}
 		Section_list(){
 			const obj = new this.$.$mol_expander();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_info_Section_list_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Section_list_title")));
 			(obj.expanded) = (next) => ((this.section_expanded(next)));
 			(obj.content) = () => ((this.section_list()));
 			return obj;
@@ -18016,7 +18032,7 @@ var $;
 		}
 		Ref_list(){
 			const obj = new this.$.$mol_expander();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_info_Ref_list_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Ref_list_title")));
 			(obj.expanded) = (next) => ((this.ref_expanded(next)));
 			(obj.content) = () => ((this.ref_list()));
 			return obj;
@@ -18053,7 +18069,7 @@ var $;
 		}
 		Word_list(){
 			const obj = new this.$.$mol_expander();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_page_side_info_Word_list_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Word_list_title")));
 			(obj.content) = () => ([(this.Word_list_items())]);
 			return obj;
 		}
@@ -18390,7 +18406,7 @@ var $;
 		}
 		Editor_add_id(){
 			const obj = new this.$.$mol_string();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_meta_rights_Editor_add_id_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_rights_Editor_add_id_hint")));
 			(obj.value) = (next) => ((this.editor_add_id(next)));
 			(obj.enabled) = () => ((this.editable()));
 			return obj;
@@ -18433,7 +18449,7 @@ var $;
 		}
 		Editor_fill_all(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_meta_rights_Editor_fill_all_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_meta_rights_Editor_fill_all_title")));
 			(obj.click) = (next) => ((this.editor_fill_all(next)));
 			return obj;
 		}
@@ -18451,7 +18467,7 @@ var $;
 		}
 		Editor_add(){
 			const obj = new this.$.$mol_form_field();
-			(obj.name) = () => (this.$.$mol_locale.text("$hyoo_meta_rights_Editor_add_name"));
+			(obj.name) = () => ((this.$.$mol_locale.text("$hyoo_meta_rights_Editor_add_name")));
 			(obj.bid) = () => ((this.editor_add_bid()));
 			(obj.Content) = () => ((this.Editor_add_form()));
 			return obj;
@@ -18689,7 +18705,7 @@ var $;
 		}
 		Expot_bid(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => (this.$.$mol_locale.text("$hyoo_meta_safe_Expot_bid_text"));
+			(obj.text) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Expot_bid_text")));
 			return obj;
 		}
 		password_bid(){
@@ -18706,7 +18722,7 @@ var $;
 		}
 		Password_field(){
 			const obj = new this.$.$mol_form_field();
-			(obj.name) = () => (this.$.$mol_locale.text("$hyoo_meta_safe_Password_field_name"));
+			(obj.name) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Password_field_name")));
 			(obj.bids) = () => ([(this.password_bid())]);
 			(obj.Content) = () => ((this.Password()));
 			return obj;
@@ -18726,7 +18742,7 @@ var $;
 		}
 		Recall_field(){
 			const obj = new this.$.$mol_form_field();
-			(obj.name) = () => (this.$.$mol_locale.text("$hyoo_meta_safe_Recall_field_name"));
+			(obj.name) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Recall_field_name")));
 			(obj.Content) = () => ((this.Recall()));
 			return obj;
 		}
@@ -18741,7 +18757,7 @@ var $;
 		Export_link(){
 			const obj = new this.$.$mol_link();
 			(obj.uri) = () => ((this.export_link()));
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_meta_safe_Export_link_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Export_link_title")));
 			return obj;
 		}
 		export_rows(){
@@ -18758,7 +18774,7 @@ var $;
 		}
 		Iport_descr(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => (this.$.$mol_locale.text("$hyoo_meta_safe_Iport_descr_text"));
+			(obj.text) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Iport_descr_text")));
 			return obj;
 		}
 		Import_pass(){
@@ -19390,7 +19406,7 @@ var $;
 		Profile(){
 			const obj = new this.$.$hyoo_meta_link();
 			(obj.meta) = () => ((this.side()));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_menu_Profile_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_menu_Profile_hint")));
 			(obj.Title) = () => (null);
 			(obj.relation) = () => ("nofollow");
 			return obj;
@@ -19410,14 +19426,14 @@ var $;
 		}
 		Safe_showing(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_menu_Safe_showing_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_menu_Safe_showing_hint")));
 			(obj.Icon) = () => ((this.Safe_icon()));
 			(obj.checked) = (next) => ((this.safe_showing(next)));
 			return obj;
 		}
 		About(){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_menu_About_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_menu_About_hint")));
 			(obj.title) = () => ("");
 			(obj.uri) = () => ("http://page.hyoo.ru/");
 			return obj;
@@ -19432,7 +19448,7 @@ var $;
 		}
 		Aura_showing(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_page_menu_Aura_showing_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_menu_Aura_showing_hint")));
 			(obj.Icon) = () => ((this.Aura_icon()));
 			(obj.checked) = (next) => ((this.aura_showing(next)));
 			return obj;
@@ -21167,7 +21183,7 @@ var $;
 		Readme(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.checked) = (next) => ((this.readme(next)));
-			(obj.hint) = () => (this.$.$mol_locale.text("$mol_app_demo_detail_Readme_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_app_demo_detail_Readme_hint")));
 			(obj.Icon) = () => ((this.readme_icon()));
 			return obj;
 		}
@@ -21298,7 +21314,7 @@ var $;
 		}
 		Close(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$mol_app_demo_readme_Close_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_app_demo_readme_Close_hint")));
 			(obj.sub) = () => ([(this.Close_icon())]);
 			(obj.click) = (next) => ((this.close(next)));
 			return obj;
@@ -23662,7 +23678,7 @@ var $;
 		}
 		Menu_page(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_js_eval_Menu_page_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_eval_Menu_page_title")));
 			(obj.tools) = () => ([
 				(this.Clear()), 
 				(this.Source()), 
@@ -23677,7 +23693,7 @@ var $;
 		Perf(){
 			const obj = new this.$.$mol_link_iconed();
 			(obj.title) = () => ("");
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_eval_Perf_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_eval_Perf_hint")));
 			(obj.uri) = () => ((this.perf()));
 			return obj;
 		}
@@ -23693,7 +23709,7 @@ var $;
 			const obj = new this.$.$mol_check_icon();
 			(obj.Icon) = () => ((this.Bookmark_icon()));
 			(obj.checked) = (next) => ((this.bookmark(next)));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_eval_Bookmark_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_eval_Bookmark_hint")));
 			return obj;
 		}
 		Run_icon(){
@@ -23754,7 +23770,7 @@ var $;
 		}
 		Code_page(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_js_eval_Code_page_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_eval_Code_page_title")));
 			(obj.bring) = () => ((this.bring()));
 			(obj.tools) = () => ([
 				(this.Perf()), 
@@ -24365,6 +24381,28 @@ var $;
 "use strict";
 
 ;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_js_perf_stats extends $mol_object2 {
+        elapsed;
+        iterations;
+        frequency_portion;
+        error;
+        memory;
+        memory_portion;
+        size;
+        size_portion;
+        deps;
+        deps_portion;
+        get time() { return this.elapsed / this.iterations; }
+        get frequency() { return this.iterations * 1000 / this.elapsed; }
+        get memory_per_iteration() { return this.memory / this.iterations; }
+    }
+    $.$hyoo_js_perf_stats = $hyoo_js_perf_stats;
+})($ || ($ = {}));
+
+;
 	($.$hyoo_js_perf_case_result) = class $hyoo_js_perf_case_result extends ($.$mol_view) {
 		result(){
 			const obj = new this.$.$hyoo_js_perf_stats();
@@ -24706,7 +24744,7 @@ var $;
 		Measurable(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.checked) = (next) => ((this.measurable(next)));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Measurable_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Measurable_hint")));
 			(obj.Icon) = () => ((this.Measurable_icon()));
 			return obj;
 		}
@@ -24719,7 +24757,7 @@ var $;
 		}
 		Title(){
 			const obj = new this.$.$mol_string_button();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Title_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Title_hint")));
 			(obj.enabled) = () => ((this.changable()));
 			(obj.value) = (next) => ((this.title(next)));
 			return obj;
@@ -24730,7 +24768,7 @@ var $;
 		Eval_sandalone(){
 			const obj = new this.$.$mol_link_iconed();
 			(obj.title) = () => ("");
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Eval_sandalone_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Eval_sandalone_hint")));
 			(obj.uri) = () => ((this.eval_standalone()));
 			return obj;
 		}
@@ -24757,7 +24795,7 @@ var $;
 		}
 		Prefix(){
 			const obj = new this.$.$mol_expander();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Prefix_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Prefix_title")));
 			(obj.expanded) = (next) => ((this.prefix_showed(next)));
 			(obj.minimal_width) = () => (150);
 			(obj.Tools) = () => ((this.Prefix_tools()));
@@ -24779,7 +24817,7 @@ var $;
 		Drop(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.click) = (next) => ((this.drop(next)));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Drop_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Drop_hint")));
 			(obj.sub) = () => ([(this.Drop_icon())]);
 			return obj;
 		}
@@ -24794,7 +24832,7 @@ var $;
 		Dupe(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.click) = (next) => ((this.dupe(next)));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Dupe_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Dupe_hint")));
 			(obj.sub) = () => ([(this.Dupe_icon())]);
 			return obj;
 		}
@@ -24809,7 +24847,7 @@ var $;
 		Swap(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.click) = (next) => ((this.swap(next)));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Swap_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Swap_hint")));
 			(obj.sub) = () => ([(this.Swap_icon())]);
 			return obj;
 		}
@@ -24839,7 +24877,7 @@ var $;
 		}
 		Source(){
 			const obj = new this.$.$mol_expander();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Source_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Source_title")));
 			(obj.expanded) = (next) => ((this.source_showed(next)));
 			(obj.minimal_width) = () => (150);
 			(obj.Tools) = () => ((this.Source_tools()));
@@ -24853,7 +24891,7 @@ var $;
 		Eval_labeler(){
 			const obj = new this.$.$mol_expander();
 			(obj.expanded) = (next) => ((this.eval_showed(next)));
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_js_perf_case_row_Eval_labeler_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Eval_labeler_title")));
 			(obj.content) = () => ([(this.Eval_result())]);
 			return obj;
 		}
@@ -25364,7 +25402,7 @@ var $;
 		}
 		Prefix(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_js_perf_Prefix_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Prefix_title")));
 			(obj.Content) = () => ((this.Prefix_code()));
 			return obj;
 		}
@@ -25382,7 +25420,7 @@ var $;
 		}
 		Postfix(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_js_perf_Postfix_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Postfix_title")));
 			(obj.Content) = () => ((this.Postfix_code()));
 			return obj;
 		}
@@ -25405,7 +25443,7 @@ var $;
 		}
 		Common(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_js_perf_Common_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Common_title")));
 			(obj.tools) = () => ((this.menu_tools()));
 			(obj.foot) = () => ([
 				(this.Online()), 
@@ -25493,7 +25531,7 @@ var $;
 		Measurable_all(){
 			const obj = new this.$.$mol_check_group();
 			(obj.checks) = () => ((this.measurable_all()));
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_Measurable_all_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Measurable_all_hint")));
 			return obj;
 		}
 		Run_icon(){
@@ -25502,7 +25540,7 @@ var $;
 		}
 		Run(){
 			const obj = new this.$.$mol_button_major();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_Run_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Run_hint")));
 			(obj.click) = (next) => ((this.run(next)));
 			(obj.sub) = () => ([(this.Run_icon())]);
 			return obj;
@@ -25522,7 +25560,7 @@ var $;
 		}
 		Fork(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_Fork_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Fork_hint")));
 			(obj.click) = (next) => ((this.bench_fork(next)));
 			(obj.sub) = () => ([(this.Fork_icon())]);
 			return obj;
@@ -25537,7 +25575,7 @@ var $;
 		}
 		New(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_js_perf_New_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_New_hint")));
 			(obj.click) = (next) => ((this.bench_new(next)));
 			(obj.sub) = () => ([(this.New_icon())]);
 			return obj;
@@ -25738,22 +25776,6 @@ var $;
 (function ($) {
     var $$;
     (function ($$) {
-        class $hyoo_js_perf_stats extends $mol_object2 {
-            elapsed;
-            iterations;
-            frequency_portion;
-            error;
-            memory;
-            memory_portion;
-            size;
-            size_portion;
-            deps;
-            deps_portion;
-            get time() { return this.elapsed / this.iterations; }
-            get frequency() { return this.iterations * 1000 / this.elapsed; }
-            get memory_per_iteration() { return this.memory / this.iterations; }
-        }
-        $$.$hyoo_js_perf_stats = $hyoo_js_perf_stats;
         class $hyoo_js_perf extends $.$hyoo_js_perf {
             bench_fund() {
                 return this.yard().world().Fund($hyoo_js_perf_bench);
@@ -26770,7 +26792,7 @@ var $;
 		Permalink(){
 			const obj = new this.$.$mol_link_iconed();
 			(obj.title) = () => ("");
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_mol_bench_perf_Permalink_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_mol_bench_perf_Permalink_hint")));
 			(obj.uri) = () => ((this.permalink()));
 			return obj;
 		}
@@ -27327,14 +27349,9 @@ var $;
                         if (bind.type === '=>')
                             continue;
                         const over_name = name_of.call(this, over);
-                        const body = bind.type === '@' ? [
+                        const body = [
                             args_of.call(this, over),
-                            ...localized_string.hack({
-                                '#key': key => [bind.data(`${klass.type}_${name}_${over_name}`)],
-                            }),
-                        ] : [
-                            args_of.call(this, over),
-                            over.struct('()', over.hack(belt)),
+                            over.struct('()', over.hack(belt, { chain: [over.type] })),
                         ];
                         overrides.push(over.struct('=', [
                             over.struct('()', [
@@ -28614,11 +28631,7 @@ var $;
                                 if (over.type === '/')
                                     continue;
                                 const oname = this.$mol_view_tree2_prop_parts(over).name;
-                                const bind = over.kids[0];
-                                if (bind.type === '@') {
-                                    const path = `${klass.type}_${name}_${oname}`;
-                                    locales[path] = bind.kids[0].value;
-                                }
+                                over.hack(belt, { ...context, chain: [oname] });
                             }
                         }
                         return [input];
@@ -29519,7 +29532,7 @@ var $;
 		}
 		Presets(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_tree_Presets_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_tree_Presets_title")));
 			(obj.tools) = () => ([(this.Lights()), (this.Github())]);
 			(obj.body) = () => ([(this.Presets_list())]);
 			return obj;
@@ -29546,7 +29559,7 @@ var $;
 		}
 		Source(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_tree_Source_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_tree_Source_title")));
 			(obj.tools) = () => ((this.source_tools()));
 			(obj.body) = () => ([(this.Source_text())]);
 			return obj;
@@ -29802,20 +29815,20 @@ var $;
 		Docs(){
 			const obj = new this.$.$hyoo_page();
 			(obj.side_main_id) = () => ("j0mafl_shvwnd");
-			(obj.menu_title) = () => (this.$.$mol_locale.text("$hyoo_mol_Docs_menu_title"));
+			(obj.menu_title) = () => ((this.$.$mol_locale.text("$hyoo_mol_Docs_menu_title")));
 			(obj.News) = () => (null);
 			(obj.tools_ext) = () => ([(this.Spread_close())]);
 			return obj;
 		}
 		Apps(){
 			const obj = new this.$.$hyoo_apps();
-			(obj.menu_title) = () => (this.$.$mol_locale.text("$hyoo_mol_Apps_menu_title"));
+			(obj.menu_title) = () => ((this.$.$mol_locale.text("$hyoo_mol_Apps_menu_title")));
 			(obj.tools) = () => ([(this.Spread_close())]);
 			return obj;
 		}
 		Demos(){
 			const obj = new this.$.$mol_app_demo();
-			(obj.menu_title) = () => (this.$.$mol_locale.text("$hyoo_mol_Demos_menu_title"));
+			(obj.menu_title) = () => ((this.$.$mol_locale.text("$hyoo_mol_Demos_menu_title")));
 			(obj.tools) = () => ([(this.Spread_close())]);
 			return obj;
 		}
@@ -29830,7 +29843,7 @@ var $;
 		}
 		View_tree_syntax(){
 			const obj = new this.$.$mol_link();
-			(obj.hint) = () => (this.$.$mol_locale.text("$hyoo_mol_View_tree_syntax_hint"));
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_mol_View_tree_syntax_hint")));
 			(obj.uri) = () => ("#!section=docs/=vv2nig_s5zr0f");
 			(obj.sub) = () => ([(this.View_tree_syntax_icon())]);
 			return obj;
@@ -29848,7 +29861,7 @@ var $;
 		}
 		View_tree(){
 			const obj = new this.$.$hyoo_tree();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_mol_View_tree_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_mol_View_tree_title")));
 			(obj.Presets) = () => (null);
 			(obj.source_tools) = () => ([(this.View_tree_syntax()), (this.Spread_close())]);
 			(obj.pipeline_default) = () => ((this.tree_pipeline()));
@@ -29857,7 +29870,7 @@ var $;
 		}
 		Icons(){
 			const obj = new this.$.$mol_frame();
-			(obj.title) = () => (this.$.$mol_locale.text("$hyoo_mol_Icons_title"));
+			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_mol_Icons_title")));
 			(obj.uri) = () => ("https://nin-jin.github.io/mol_icon/");
 			return obj;
 		}
@@ -33161,7 +33174,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/card/card.view.css", "[mol_card] {\n\tbackground: var(--mol_theme_card);\n\tcolor: var(--mol_theme_text);\n\tborder-radius: var(--mol_gap_round);\n\tdisplay: flex;\n\tflex: 0 1 auto;\n\tflex-direction: column;\n\tposition: relative;\n\t/* overflow: hidden; */\n}\n\n[mol_card_content] {\n\tflex: 1 1 auto;\n\tborder-radius: var(--mol_gap_round);\n\tmargin: 0;\n\tpadding: var(--mol_gap_block);\n}\n\n[mol_card_status] {\n\tbackground: var(--mol_theme_line);\n\ttext-transform: capitalize;\n\tpadding: var(--mol_gap_text);\n\tmargin: 0;\n}\n\n[mol_card_status] {\n\tbackground: var(--mol_theme_line);\n}\n");
+    $mol_style_attach("mol/card/card.view.css", "[mol_card] {\n\tbackground: var(--mol_theme_card);\n\tcolor: var(--mol_theme_text);\n\tborder-radius: var(--mol_gap_round);\n\tdisplay: flex;\n\tflex: 0 1 auto;\n\tflex-direction: column;\n\tposition: relative;\n\tbox-shadow: 0 0 0.5rem 0rem hsla(0,0%,0%,.125);\n\t/* overflow: hidden; */\n}\n\n[mol_card_content] {\n\tflex: 1 1 auto;\n\tborder-radius: var(--mol_gap_round);\n\tmargin: 0;\n\tpadding: var(--mol_gap_block);\n}\n\n[mol_card_status] {\n\tbackground: var(--mol_theme_line);\n\ttext-transform: capitalize;\n\tpadding: var(--mol_gap_text);\n\tmargin: 0;\n}\n\n[mol_card_status] {\n\tbackground: var(--mol_theme_line);\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -39232,8 +39245,6 @@ var $;
             }
             name_second_bid() {
                 const value = this.name_second();
-                if (!value)
-                    return this.message().required;
                 if (value.indexOf(' ') !== -1)
                     return this.message().no_spaces;
                 if (value.length < 3)
@@ -46877,15 +46888,15 @@ var $;
 			(obj.Item) = (id) => ((this.Item(id)));
 			(obj.levels_expanded) = () => (0);
 			(obj.tag_names) = () => ({
-				"side": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_side")), 
-				"good": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_good")), 
-				"bad": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_bad")), 
-				"sex": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_sex")), 
-				"male": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_male")), 
-				"female": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_female")), 
-				"universe": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_universe")), 
-				"marvel": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_marvel")), 
-				"dc": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_dc"))
+				"side": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_side")), 
+				"good": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_good")), 
+				"bad": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_bad")), 
+				"sex": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_sex")), 
+				"male": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_male")), 
+				"female": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_female")), 
+				"universe": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_universe")), 
+				"marvel": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_marvel")), 
+				"dc": (this.$.$mol_locale.text("$mol_tag_tree_demo_Tree_tag_names_dc"))
 			});
 			(obj.ids_tags) = () => ({
 				"batman": [
@@ -48651,6 +48662,51 @@ var $;
 	($mol_mem(($.$mol_lights_demo.prototype), "Theme"));
 	($mol_mem(($.$mol_lights_demo.prototype), "Lighter"));
 	($mol_mem(($.$mol_lights_demo.prototype), "Sample"));
+
+
+;
+"use strict";
+
+;
+	($.$mol_locale_demo) = class $mol_locale_demo extends ($.$mol_example_small) {
+		title(){
+			return "Example usages of $mol_locale component";
+		}
+		sub(){
+			return [(this.All_languages_labeler()), (this.List_of_languages_labeler())];
+		}
+		tags(){
+			return ["language", "l10n"];
+		}
+		aspects(){
+			return ["Widget/Control"];
+		}
+		All_languages(){
+			const obj = new this.$.$mol_locale_select();
+			return obj;
+		}
+		All_languages_labeler(){
+			const obj = new this.$.$mol_labeler();
+			(obj.title) = () => ("All languages example");
+			(obj.content) = () => ([(this.All_languages())]);
+			return obj;
+		}
+		List_of_languages(){
+			const obj = new this.$.$mol_locale_select();
+			(obj.dictionary) = () => ({"ru": "Russian", "en": "English"});
+			return obj;
+		}
+		List_of_languages_labeler(){
+			const obj = new this.$.$mol_labeler();
+			(obj.title) = () => ("Or you can give user select from your list");
+			(obj.content) = () => ([(this.List_of_languages())]);
+			return obj;
+		}
+	};
+	($mol_mem(($.$mol_locale_demo.prototype), "All_languages"));
+	($mol_mem(($.$mol_locale_demo.prototype), "All_languages_labeler"));
+	($mol_mem(($.$mol_locale_demo.prototype), "List_of_languages"));
+	($mol_mem(($.$mol_locale_demo.prototype), "List_of_languages_labeler"));
 
 
 ;
