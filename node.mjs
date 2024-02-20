@@ -3102,6 +3102,13 @@ var $;
 
 ;
 	($.$mol_scroll) = class $mol_scroll extends ($.$mol_view) {
+		tabindex(){
+			return -1;
+		}
+		event_scroll(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		scroll_top(next){
 			if(next !== undefined) return next;
 			return 0;
@@ -3116,17 +3123,10 @@ var $;
 		event(){
 			return {...(super.event()), "scroll": (next) => (this.event_scroll(next))};
 		}
-		tabindex(){
-			return -1;
-		}
-		event_scroll(next){
-			if(next !== undefined) return next;
-			return null;
-		}
 	};
+	($mol_mem(($.$mol_scroll.prototype), "event_scroll"));
 	($mol_mem(($.$mol_scroll.prototype), "scroll_top"));
 	($mol_mem(($.$mol_scroll.prototype), "scroll_left"));
-	($mol_mem(($.$mol_scroll.prototype), "event_scroll"));
 
 
 ;
@@ -3406,6 +3406,9 @@ var $;
 
 ;
 	($.$mol_book2) = class $mol_book2 extends ($.$mol_scroll) {
+		pages(){
+			return [];
+		}
 		menu_title(){
 			return "";
 		}
@@ -3423,9 +3426,6 @@ var $;
 			const obj = new this.$.$mol_view();
 			(obj.title) = () => ("");
 			return obj;
-		}
-		pages(){
-			return [];
 		}
 	};
 	($mol_mem(($.$mol_book2.prototype), "Placeholder"));
@@ -3523,324 +3523,7 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_link) = class $mol_link extends ($.$mol_view) {
-		uri(){
-			return "";
-		}
-		dom_name(){
-			return "a";
-		}
-		uri_off(){
-			return "";
-		}
-		uri_native(){
-			return null;
-		}
-		external(){
-			return false;
-		}
-		attr(){
-			return {
-				...(super.attr()), 
-				"href": (this.uri_toggle()), 
-				"title": (this.hint_safe()), 
-				"target": (this.target()), 
-				"download": (this.file_name()), 
-				"mol_link_current": (this.current()), 
-				"rel": (this.relation())
-			};
-		}
-		sub(){
-			return [(this.title())];
-		}
-		arg(){
-			return {};
-		}
-		event(){
-			return {...(super.event()), "click": (next) => (this.click(next))};
-		}
-		uri_toggle(){
-			return "";
-		}
-		hint(){
-			return "";
-		}
-		hint_safe(){
-			return (this.hint());
-		}
-		target(){
-			return "_self";
-		}
-		file_name(){
-			return "";
-		}
-		current(){
-			return false;
-		}
-		relation(){
-			return "";
-		}
-		event_click(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		click(next){
-			return (this.event_click(next));
-		}
-	};
-	($mol_mem(($.$mol_link.prototype), "event_click"));
-
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_action = $mol_wire_method;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_state_arg extends $mol_object {
-        prefix;
-        static prolog = '';
-        static separator = ' ';
-        static href(next) {
-            return next || process.argv.slice(2).join(' ');
-        }
-        static href_normal() {
-            return this.link({});
-        }
-        static dict(next) {
-            if (next !== void 0)
-                this.href(this.make_link(next));
-            var href = this.href();
-            var chunks = href.split(' ');
-            var params = {};
-            chunks.forEach(chunk => {
-                if (!chunk)
-                    return;
-                var vals = chunk.split('=').map(decodeURIComponent);
-                params[vals.shift()] = vals.join('=');
-            });
-            return params;
-        }
-        static value(key, next) {
-            if (next === void 0)
-                return this.dict()[key] ?? null;
-            this.href(this.link({ [key]: next }));
-            return next;
-        }
-        static link(next) {
-            const params = {};
-            var prev = this.dict();
-            for (var key in prev) {
-                params[key] = prev[key];
-            }
-            for (var key in next) {
-                params[key] = next[key];
-            }
-            return this.make_link(params);
-        }
-        static make_link(next) {
-            const chunks = [];
-            for (const key in next) {
-                if (next[key] !== null) {
-                    chunks.push([key, next[key]].map(encodeURIComponent).join('='));
-                }
-            }
-            return chunks.join(' ');
-        }
-        static go(next) {
-            this.href(this.make_link(next));
-        }
-        constructor(prefix = '') {
-            super();
-            this.prefix = prefix;
-        }
-        value(key, next) {
-            return this.constructor.value(this.prefix + key, next);
-        }
-        sub(postfix) {
-            return new this.constructor(this.prefix + postfix + '.');
-        }
-        link(next) {
-            const prefix = this.prefix;
-            const dict = {};
-            for (var key in next) {
-                dict[prefix + key] = next[key];
-            }
-            return this.constructor.link(dict);
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $mol_state_arg, "href", null);
-    __decorate([
-        $mol_mem
-    ], $mol_state_arg, "href_normal", null);
-    __decorate([
-        $mol_mem
-    ], $mol_state_arg, "dict", null);
-    __decorate([
-        $mol_mem_key
-    ], $mol_state_arg, "value", null);
-    __decorate([
-        $mol_action
-    ], $mol_state_arg, "go", null);
-    $.$mol_state_arg = $mol_state_arg;
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_link extends $.$mol_link {
-            uri_toggle() {
-                return this.current() ? this.uri_off() : this.uri();
-            }
-            uri() {
-                return new this.$.$mol_state_arg(this.state_key()).link(this.arg());
-            }
-            uri_off() {
-                const arg2 = {};
-                for (let i in this.arg())
-                    arg2[i] = null;
-                return new this.$.$mol_state_arg(this.state_key()).link(arg2);
-            }
-            uri_native() {
-                const base = this.$.$mol_state_arg.href();
-                return new URL(this.uri(), base);
-            }
-            current() {
-                const base = this.$.$mol_state_arg.href_normal();
-                const target = this.uri_native().toString();
-                if (base === target)
-                    return true;
-                const args = this.arg();
-                const keys = Object.keys(args).filter(key => args[key] != null);
-                if (keys.length === 0)
-                    return false;
-                for (const key of keys) {
-                    if (this.$.$mol_state_arg.value(key) != args[key])
-                        return false;
-                }
-                return true;
-            }
-            file_name() {
-                return null;
-            }
-            minimal_height() {
-                return Math.max(super.minimal_height(), 24);
-            }
-            external() {
-                return this.uri_native().origin !== $mol_dom_context.location.origin;
-            }
-            target() {
-                return this.external() ? '_blank' : '_self';
-            }
-            hint_safe() {
-                try {
-                    return this.hint();
-                }
-                catch (error) {
-                    $mol_fail_log(error);
-                    return '';
-                }
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $mol_link.prototype, "uri_toggle", null);
-        __decorate([
-            $mol_mem
-        ], $mol_link.prototype, "uri", null);
-        __decorate([
-            $mol_mem
-        ], $mol_link.prototype, "uri_off", null);
-        __decorate([
-            $mol_mem
-        ], $mol_link.prototype, "uri_native", null);
-        __decorate([
-            $mol_mem
-        ], $mol_link.prototype, "current", null);
-        $$.$mol_link = $mol_link;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const { rem } = $mol_style_unit;
-    $mol_style_define($mol_link, {
-        textDecoration: 'none',
-        color: $mol_theme.control,
-        stroke: 'currentcolor',
-        cursor: 'pointer',
-        padding: $mol_gap.text,
-        boxSizing: 'border-box',
-        position: 'relative',
-        minWidth: rem(2.5),
-        gap: $mol_gap.space,
-        border: {
-            radius: $mol_gap.round,
-        },
-        ':hover': {
-            background: {
-                color: $mol_theme.hover,
-            },
-        },
-        ':focus-visible': {
-            outline: 'none',
-            background: {
-                color: $mol_theme.hover,
-            },
-        },
-        ':active': {
-            color: $mol_theme.focus,
-        },
-        '@': {
-            mol_link_current: {
-                'true': {
-                    color: $mol_theme.current,
-                    textShadow: '0 0',
-                }
-            }
-        },
-    });
-})($ || ($ = {}));
-
-;
 	($.$mol_pop) = class $mol_pop extends ($.$mol_view) {
-		showed(next){
-			if(next !== undefined) return next;
-			return false;
-		}
-		align_vert(){
-			return "";
-		}
-		align_hor(){
-			return "";
-		}
-		prefer(){
-			return "vert";
-		}
-		sub(){
-			return [(this.Anchor())];
-		}
-		sub_visible(){
-			return [(this.Anchor()), (this.Bubble())];
-		}
 		Anchor(){
 			return null;
 		}
@@ -3860,10 +3543,38 @@ var $;
 			(obj.height_max) = () => ((this.height_max()));
 			return obj;
 		}
+		showed(next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		align_vert(){
+			return "";
+		}
+		align_hor(){
+			return "";
+		}
+		prefer(){
+			return "vert";
+		}
+		sub(){
+			return [(this.Anchor())];
+		}
+		sub_visible(){
+			return [(this.Anchor()), (this.Bubble())];
+		}
 	};
-	($mol_mem(($.$mol_pop.prototype), "showed"));
 	($mol_mem(($.$mol_pop.prototype), "Bubble"));
+	($mol_mem(($.$mol_pop.prototype), "showed"));
 	($.$mol_pop_bubble) = class $mol_pop_bubble extends ($.$mol_view) {
+		content(){
+			return [];
+		}
+		height_max(){
+			return 9999;
+		}
+		align(){
+			return "";
+		}
 		sub(){
 			return (this.content());
 		}
@@ -3876,15 +3587,6 @@ var $;
 				"mol_pop_align": (this.align()), 
 				"tabindex": 0
 			};
-		}
-		content(){
-			return [];
-		}
-		height_max(){
-			return 9999;
-		}
-		align(){
-			return "";
 		}
 	};
 
@@ -3992,107 +3694,28 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_speck) = class $mol_speck extends ($.$mol_view) {
-		attr(){
-			return {...(super.attr()), "mol_theme": (this.theme())};
-		}
-		style(){
-			return {...(super.style()), "minHeight": "1em"};
-		}
-		sub(){
-			return [(this.value())];
-		}
-		theme(){
-			return "$mol_theme_accent";
-		}
-		value(){
-			return null;
-		}
-	};
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/speck/speck.view.css", "[mol_speck] {\n\tfont-size: .625rem;\n\tborder-radius: 1rem;\n\tmargin: -0.5rem -0.25rem;\n\talign-self: flex-start;\n\tmin-height: 1em;\n\tmin-width: .5em;\n\tvertical-align: sub;\n\tpadding: .25em .5em;\n\tposition: absolute;\n\tz-index: var(--mol_layer_speck);\n\ttext-align: center;\n\tline-height: 1;\n\tdisplay: inline-block;\n\twhite-space: nowrap;\n\ttext-overflow: ellipsis;\n\tuser-select: none;\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-	($.$mol_button) = class $mol_button extends ($.$mol_view) {
-		enabled(){
-			return true;
-		}
-		click(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		event_click(next){
+	($.$mol_hotkey) = class $mol_hotkey extends ($.$mol_plugin) {
+		keydown(next){
 			if(next !== undefined) return next;
 			return null;
 		}
 		event(){
-			return {
-				...(super.event()), 
-				"click": (next) => (this.event_activate(next)), 
-				"dblclick": (next) => (this.clicks(next)), 
-				"keydown": (next) => (this.event_key_press(next))
-			};
+			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
 		}
-		attr(){
-			return {
-				...(super.attr()), 
-				"disabled": (this.disabled()), 
-				"role": "button", 
-				"tabindex": (this.tab_index()), 
-				"title": (this.hint_safe())
-			};
+		key(){
+			return {};
 		}
-		sub(){
-			return [(this.title())];
-		}
-		Speck(){
-			const obj = new this.$.$mol_speck();
-			(obj.value) = () => ((this.error()));
-			return obj;
-		}
-		event_activate(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		clicks(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		event_key_press(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		disabled(){
+		mod_ctrl(){
 			return false;
 		}
-		tab_index(){
-			return 0;
+		mod_alt(){
+			return false;
 		}
-		hint(){
-			return "";
-		}
-		hint_safe(){
-			return (this.hint());
-		}
-		error(){
-			return "";
+		mod_shift(){
+			return false;
 		}
 	};
-	($mol_mem(($.$mol_button.prototype), "click"));
-	($mol_mem(($.$mol_button.prototype), "event_click"));
-	($mol_mem(($.$mol_button.prototype), "Speck"));
-	($mol_mem(($.$mol_button.prototype), "event_activate"));
-	($mol_mem(($.$mol_button.prototype), "clicks"));
-	($mol_mem(($.$mol_button.prototype), "event_key_press"));
+	($mol_mem(($.$mol_hotkey.prototype), "keydown"));
 
 
 ;
@@ -4213,142 +3836,6 @@ var $;
 (function ($) {
     var $$;
     (function ($$) {
-        class $mol_button extends $.$mol_button {
-            status(next = [null]) { return next; }
-            disabled() {
-                return !this.enabled();
-            }
-            event_activate(next) {
-                if (!next)
-                    return;
-                if (!this.enabled())
-                    return;
-                try {
-                    this.event_click(next);
-                    this.click(next);
-                    this.status([null]);
-                }
-                catch (error) {
-                    Promise.resolve().then(() => this.status([error]));
-                    $mol_fail_hidden(error);
-                }
-            }
-            event_key_press(event) {
-                if (event.keyCode === $mol_keyboard_code.enter) {
-                    return this.event_activate(event);
-                }
-            }
-            tab_index() {
-                return this.enabled() ? super.tab_index() : -1;
-            }
-            error() {
-                const [error] = this.status();
-                if (!error)
-                    return '';
-                if (error instanceof Promise) {
-                    return $mol_fail_hidden(error);
-                }
-                return String(error.message ?? error);
-            }
-            hint_safe() {
-                try {
-                    return this.hint();
-                }
-                catch (error) {
-                    $mol_fail_log(error);
-                    return '';
-                }
-            }
-            sub_visible() {
-                return [
-                    ...this.error() ? [this.Speck()] : [],
-                    ...this.sub(),
-                ];
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $mol_button.prototype, "status", null);
-        $$.$mol_button = $mol_button;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/button/button.view.css", "[mol_button] {\n\tborder: none;\n\tfont: inherit;\n\tdisplay: inline-flex;\n\tflex-shrink: 0;\n\ttext-decoration: inherit;\n\tcursor: inherit;\n\tposition: relative;\n\tbox-sizing: border-box;\n\tword-break: normal;\n\tcursor: default;\n\tuser-select: none;\n\tborder-radius: var(--mol_gap_round);\n}\n\n[mol_button]:where(:not(:disabled)):hover {\n\tz-index: var(--mol_layer_hover);\n}\n\n[mol_button]:focus-visible {\n\toutline: none;\n\tz-index: var(--mol_layer_focus);\n}\n");
-})($ || ($ = {}));
-
-;
-	($.$mol_button_typed) = class $mol_button_typed extends ($.$mol_button) {
-		minimal_height(){
-			return 40;
-		}
-		minimal_width(){
-			return 40;
-		}
-	};
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/button/typed/typed.view.css", "[mol_button_typed] {\n\talign-content: center;\n\talign-items: center;\n\tpadding: var(--mol_gap_text);\n\tborder-radius: var(--mol_gap_round);\n\tgap: var(--mol_gap_space);\n\tuser-select: none;\n\tcursor: pointer;\n}\n\n[mol_button_typed][disabled] {\n\tpointer-events: none;\n}\n\n[mol_button_typed]:hover ,\n[mol_button_typed]:focus-visible {\n\tbackground-color: var(--mol_theme_hover);\n}\n\n[mol_button_typed]:active {\n\tcolor: var(--mol_theme_focus);\n}\n\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-	($.$mol_button_minor) = class $mol_button_minor extends ($.$mol_button_typed) {};
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/button/minor/minor.view.css", "[mol_button_minor] {\n\tcolor: var(--mol_theme_control);\n}\n\n[mol_button_minor][disabled] {\n\tcolor: var(--mol_theme_shade);\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-	($.$mol_hotkey) = class $mol_hotkey extends ($.$mol_plugin) {
-		event(){
-			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
-		}
-		key(){
-			return {};
-		}
-		mod_ctrl(){
-			return false;
-		}
-		mod_alt(){
-			return false;
-		}
-		mod_shift(){
-			return false;
-		}
-		keydown(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-	};
-	($mol_mem(($.$mol_hotkey.prototype), "keydown"));
-
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
         class $mol_hotkey extends $.$mol_hotkey {
             key() {
                 return super.key();
@@ -4376,6 +3863,10 @@ var $;
 
 ;
 	($.$mol_nav) = class $mol_nav extends ($.$mol_plugin) {
+		event_key(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		cycle(next){
 			if(next !== undefined) return next;
 			return false;
@@ -4424,11 +3915,8 @@ var $;
 		event(){
 			return {...(super.event()), "keydown": (next) => (this.event_key(next))};
 		}
-		event_key(next){
-			if(next !== undefined) return next;
-			return null;
-		}
 	};
+	($mol_mem(($.$mol_nav.prototype), "event_key"));
 	($mol_mem(($.$mol_nav.prototype), "cycle"));
 	($mol_mem(($.$mol_nav.prototype), "keys_x"));
 	($mol_mem(($.$mol_nav.prototype), "keys_y"));
@@ -4438,7 +3926,6 @@ var $;
 	($mol_mem(($.$mol_nav.prototype), "event_down"));
 	($mol_mem(($.$mol_nav.prototype), "event_left"));
 	($mol_mem(($.$mol_nav.prototype), "event_right"));
-	($mol_mem(($.$mol_nav.prototype), "event_key"));
 
 
 ;
@@ -5104,52 +4591,6 @@ var $;
 
 ;
 	($.$mol_string) = class $mol_string extends ($.$mol_view) {
-		dom_name(){
-			return "input";
-		}
-		enabled(){
-			return true;
-		}
-		minimal_height(){
-			return 40;
-		}
-		autocomplete(){
-			return false;
-		}
-		selection(next){
-			if(next !== undefined) return next;
-			return [0, 0];
-		}
-		auto(){
-			return [(this.selection_watcher()), (this.error_report())];
-		}
-		field(){
-			return {
-				...(super.field()), 
-				"disabled": (this.disabled()), 
-				"value": (this.value_changed()), 
-				"placeholder": (this.hint_visible()), 
-				"spellcheck": (this.spellcheck()), 
-				"autocomplete": (this.autocomplete_native()), 
-				"selectionEnd": (this.selection_end()), 
-				"selectionStart": (this.selection_start()), 
-				"inputMode": (this.keyboard()), 
-				"enterkeyhint": (this.enter())
-			};
-		}
-		attr(){
-			return {
-				...(super.attr()), 
-				"maxlength": (this.length_max()), 
-				"type": (this.type())
-			};
-		}
-		event(){
-			return {...(super.event()), "input": (next) => (this.event_change(next))};
-		}
-		plugins(){
-			return [(this.Submit())];
-		}
 		selection_watcher(){
 			return null;
 		}
@@ -5214,14 +4655,67 @@ var $;
 			(obj.key) = () => ({"enter": (next) => (this.submit(next))});
 			return obj;
 		}
+		dom_name(){
+			return "input";
+		}
+		enabled(){
+			return true;
+		}
+		minimal_height(){
+			return 40;
+		}
+		autocomplete(){
+			return false;
+		}
+		selection(next){
+			if(next !== undefined) return next;
+			return [0, 0];
+		}
+		auto(){
+			return [(this.selection_watcher()), (this.error_report())];
+		}
+		field(){
+			return {
+				...(super.field()), 
+				"disabled": (this.disabled()), 
+				"value": (this.value_changed()), 
+				"placeholder": (this.hint_visible()), 
+				"spellcheck": (this.spellcheck()), 
+				"autocomplete": (this.autocomplete_native()), 
+				"selectionEnd": (this.selection_end()), 
+				"selectionStart": (this.selection_start()), 
+				"inputMode": (this.keyboard()), 
+				"enterkeyhint": (this.enter())
+			};
+		}
+		attr(){
+			return {
+				...(super.attr()), 
+				"maxlength": (this.length_max()), 
+				"type": (this.type())
+			};
+		}
+		event(){
+			return {...(super.event()), "input": (next) => (this.event_change(next))};
+		}
+		plugins(){
+			return [(this.Submit())];
+		}
 	};
-	($mol_mem(($.$mol_string.prototype), "selection"));
 	($mol_mem(($.$mol_string.prototype), "value"));
 	($mol_mem(($.$mol_string.prototype), "type"));
 	($mol_mem(($.$mol_string.prototype), "event_change"));
 	($mol_mem(($.$mol_string.prototype), "submit"));
 	($mol_mem(($.$mol_string.prototype), "Submit"));
+	($mol_mem(($.$mol_string.prototype), "selection"));
 
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_action = $mol_wire_method;
+})($ || ($ = {}));
 
 ;
 "use strict";
@@ -5414,6 +4908,12 @@ var $;
 
 ;
 	($.$mol_svg_root) = class $mol_svg_root extends ($.$mol_svg) {
+		view_box(){
+			return "0 0 100 100";
+		}
+		aspect(){
+			return "xMidYMid";
+		}
 		dom_name(){
 			return "svg";
 		}
@@ -5423,12 +4923,6 @@ var $;
 				"viewBox": (this.view_box()), 
 				"preserveAspectRatio": (this.aspect())
 			};
-		}
-		view_box(){
-			return "0 0 100 100";
-		}
-		aspect(){
-			return "xMidYMid";
 		}
 	};
 
@@ -5445,14 +4939,14 @@ var $;
 
 ;
 	($.$mol_svg_path) = class $mol_svg_path extends ($.$mol_svg) {
+		geometry(){
+			return "";
+		}
 		dom_name(){
 			return "path";
 		}
 		attr(){
 			return {...(super.attr()), "d": (this.geometry())};
-		}
-		geometry(){
-			return "";
 		}
 	};
 
@@ -5462,6 +4956,14 @@ var $;
 
 ;
 	($.$mol_icon) = class $mol_icon extends ($.$mol_svg_root) {
+		path(){
+			return "";
+		}
+		Path(){
+			const obj = new this.$.$mol_svg_path();
+			(obj.geometry) = () => ((this.path()));
+			return obj;
+		}
 		view_box(){
 			return "0 0 24 24";
 		}
@@ -5473,14 +4975,6 @@ var $;
 		}
 		sub(){
 			return [(this.Path())];
-		}
-		path(){
-			return "";
-		}
-		Path(){
-			const obj = new this.$.$mol_svg_path();
-			(obj.geometry) = () => ((this.path()));
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_icon.prototype), "Path"));
@@ -5508,7 +5002,231 @@ var $;
 "use strict";
 
 ;
+	($.$mol_speck) = class $mol_speck extends ($.$mol_view) {
+		theme(){
+			return "$mol_theme_accent";
+		}
+		value(){
+			return null;
+		}
+		attr(){
+			return {...(super.attr()), "mol_theme": (this.theme())};
+		}
+		style(){
+			return {...(super.style()), "minHeight": "1em"};
+		}
+		sub(){
+			return [(this.value())];
+		}
+	};
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/speck/speck.view.css", "[mol_speck] {\n\tfont-size: .625rem;\n\tborder-radius: 1rem;\n\tmargin: -0.5rem -0.25rem;\n\talign-self: flex-start;\n\tmin-height: 1em;\n\tmin-width: .5em;\n\tvertical-align: sub;\n\tpadding: .25em .5em;\n\tposition: absolute;\n\tz-index: var(--mol_layer_speck);\n\ttext-align: center;\n\tline-height: 1;\n\tdisplay: inline-block;\n\twhite-space: nowrap;\n\ttext-overflow: ellipsis;\n\tuser-select: none;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+	($.$mol_button) = class $mol_button extends ($.$mol_view) {
+		event_activate(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		clicks(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		event_key_press(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		disabled(){
+			return false;
+		}
+		tab_index(){
+			return 0;
+		}
+		hint(){
+			return "";
+		}
+		hint_safe(){
+			return (this.hint());
+		}
+		error(){
+			return "";
+		}
+		enabled(){
+			return true;
+		}
+		click(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		event_click(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		event(){
+			return {
+				...(super.event()), 
+				"click": (next) => (this.event_activate(next)), 
+				"dblclick": (next) => (this.clicks(next)), 
+				"keydown": (next) => (this.event_key_press(next))
+			};
+		}
+		attr(){
+			return {
+				...(super.attr()), 
+				"disabled": (this.disabled()), 
+				"role": "button", 
+				"tabindex": (this.tab_index()), 
+				"title": (this.hint_safe())
+			};
+		}
+		sub(){
+			return [(this.title())];
+		}
+		Speck(){
+			const obj = new this.$.$mol_speck();
+			(obj.value) = () => ((this.error()));
+			return obj;
+		}
+	};
+	($mol_mem(($.$mol_button.prototype), "event_activate"));
+	($mol_mem(($.$mol_button.prototype), "clicks"));
+	($mol_mem(($.$mol_button.prototype), "event_key_press"));
+	($mol_mem(($.$mol_button.prototype), "click"));
+	($mol_mem(($.$mol_button.prototype), "event_click"));
+	($mol_mem(($.$mol_button.prototype), "Speck"));
+
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_button extends $.$mol_button {
+            status(next = [null]) { return next; }
+            disabled() {
+                return !this.enabled();
+            }
+            event_activate(next) {
+                if (!next)
+                    return;
+                if (!this.enabled())
+                    return;
+                try {
+                    this.event_click(next);
+                    this.click(next);
+                    this.status([null]);
+                }
+                catch (error) {
+                    Promise.resolve().then(() => this.status([error]));
+                    $mol_fail_hidden(error);
+                }
+            }
+            event_key_press(event) {
+                if (event.keyCode === $mol_keyboard_code.enter) {
+                    return this.event_activate(event);
+                }
+            }
+            tab_index() {
+                return this.enabled() ? super.tab_index() : -1;
+            }
+            error() {
+                const [error] = this.status();
+                if (!error)
+                    return '';
+                if (error instanceof Promise) {
+                    return $mol_fail_hidden(error);
+                }
+                return String(error.message ?? error);
+            }
+            hint_safe() {
+                try {
+                    return this.hint();
+                }
+                catch (error) {
+                    $mol_fail_log(error);
+                    return '';
+                }
+            }
+            sub_visible() {
+                return [
+                    ...this.error() ? [this.Speck()] : [],
+                    ...this.sub(),
+                ];
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_button.prototype, "status", null);
+        $$.$mol_button = $mol_button;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/button/button.view.css", "[mol_button] {\n\tborder: none;\n\tfont: inherit;\n\tdisplay: inline-flex;\n\tflex-shrink: 0;\n\ttext-decoration: inherit;\n\tcursor: inherit;\n\tposition: relative;\n\tbox-sizing: border-box;\n\tword-break: normal;\n\tcursor: default;\n\tuser-select: none;\n\tborder-radius: var(--mol_gap_round);\n}\n\n[mol_button]:where(:not(:disabled)):hover {\n\tz-index: var(--mol_layer_hover);\n}\n\n[mol_button]:focus-visible {\n\toutline: none;\n\tz-index: var(--mol_layer_focus);\n}\n");
+})($ || ($ = {}));
+
+;
+	($.$mol_button_typed) = class $mol_button_typed extends ($.$mol_button) {
+		minimal_height(){
+			return 40;
+		}
+		minimal_width(){
+			return 40;
+		}
+	};
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/button/typed/typed.view.css", "[mol_button_typed] {\n\talign-content: center;\n\talign-items: center;\n\tpadding: var(--mol_gap_text);\n\tborder-radius: var(--mol_gap_round);\n\tgap: var(--mol_gap_space);\n\tuser-select: none;\n\tcursor: pointer;\n}\n\n[mol_button_typed][disabled] {\n\tpointer-events: none;\n}\n\n[mol_button_typed]:hover ,\n[mol_button_typed]:focus-visible {\n\tbackground-color: var(--mol_theme_hover);\n}\n\n[mol_button_typed]:active {\n\tcolor: var(--mol_theme_focus);\n}\n\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+	($.$mol_button_minor) = class $mol_button_minor extends ($.$mol_button_typed) {};
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/button/minor/minor.view.css", "[mol_button_minor] {\n\tcolor: var(--mol_theme_control);\n}\n\n[mol_button_minor][disabled] {\n\tcolor: var(--mol_theme_shade);\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
 	($.$mol_list) = class $mol_list extends ($.$mol_view) {
+		rows(){
+			return [];
+		}
+		gap_before(){
+			return 0;
+		}
+		gap_after(){
+			return 0;
+		}
 		render_visible_only(){
 			return true;
 		}
@@ -5534,15 +5252,6 @@ var $;
 		}
 		view_window(){
 			return [0, 0];
-		}
-		rows(){
-			return [];
-		}
-		gap_before(){
-			return 0;
-		}
-		gap_after(){
-			return 0;
 		}
 	};
 	($mol_mem(($.$mol_list.prototype), "Empty"));
@@ -5784,6 +5493,12 @@ var $;
 
 ;
 	($.$mol_dimmer) = class $mol_dimmer extends ($.$mol_paragraph) {
+		parts(){
+			return [];
+		}
+		string(id){
+			return "";
+		}
 		haystack(){
 			return "";
 		}
@@ -5802,12 +5517,6 @@ var $;
 			const obj = new this.$.$mol_paragraph();
 			(obj.sub) = () => ([(this.string(id))]);
 			return obj;
-		}
-		parts(){
-			return [];
-		}
-		string(id){
-			return "";
 		}
 	};
 	($mol_mem_key(($.$mol_dimmer.prototype), "Low"));
@@ -6157,40 +5866,6 @@ var $;
 
 ;
 	($.$mol_search) = class $mol_search extends ($.$mol_pop) {
-		query(next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		suggests(){
-			return [];
-		}
-		plugins(){
-			return [
-				...(super.plugins()), 
-				(this.Hotkey()), 
-				(this.Nav())
-			];
-		}
-		showed(next){
-			return (this.suggests_showed(next));
-		}
-		align_hor(){
-			return "right";
-		}
-		Anchor(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this.anchor_content()));
-			return obj;
-		}
-		bubble_content(){
-			return [(this.Menu())];
-		}
-		Suggest(id){
-			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this.suggest_select(id, next)));
-			(obj.sub) = () => ((this.suggest_content(id)));
-			return obj;
-		}
 		clear(next){
 			if(next !== undefined) return next;
 			return null;
@@ -6250,10 +5925,6 @@ var $;
 			(obj.enter) = () => ((this.enter()));
 			return obj;
 		}
-		clear(next){
-			if(next !== undefined) return next;
-			return null;
-		}
 		Clear_icon(){
 			const obj = new this.$.$mol_icon_cross();
 			return obj;
@@ -6292,10 +5963,37 @@ var $;
 		suggest_content(id){
 			return [(this.Suggest_label(id))];
 		}
+		suggests(){
+			return [];
+		}
+		plugins(){
+			return [
+				...(super.plugins()), 
+				(this.Hotkey()), 
+				(this.Nav())
+			];
+		}
+		showed(next){
+			return (this.suggests_showed(next));
+		}
+		align_hor(){
+			return "right";
+		}
+		Anchor(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ((this.anchor_content()));
+			return obj;
+		}
+		bubble_content(){
+			return [(this.Menu())];
+		}
+		Suggest(id){
+			const obj = new this.$.$mol_button_minor();
+			(obj.click) = (next) => ((this.suggest_select(id, next)));
+			(obj.sub) = () => ((this.suggest_content(id)));
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_search.prototype), "query"));
-	($mol_mem(($.$mol_search.prototype), "Anchor"));
-	($mol_mem_key(($.$mol_search.prototype), "Suggest"));
 	($mol_mem(($.$mol_search.prototype), "clear"));
 	($mol_mem(($.$mol_search.prototype), "Hotkey"));
 	($mol_mem(($.$mol_search.prototype), "nav_focused"));
@@ -6304,12 +6002,13 @@ var $;
 	($mol_mem(($.$mol_search.prototype), "query"));
 	($mol_mem(($.$mol_search.prototype), "submit"));
 	($mol_mem(($.$mol_search.prototype), "Query"));
-	($mol_mem(($.$mol_search.prototype), "clear"));
 	($mol_mem(($.$mol_search.prototype), "Clear_icon"));
 	($mol_mem(($.$mol_search.prototype), "Clear"));
 	($mol_mem(($.$mol_search.prototype), "Menu"));
 	($mol_mem_key(($.$mol_search.prototype), "suggest_select"));
 	($mol_mem_key(($.$mol_search.prototype), "Suggest_label"));
+	($mol_mem(($.$mol_search.prototype), "Anchor"));
+	($mol_mem_key(($.$mol_search.prototype), "Suggest"));
 
 
 ;
@@ -6401,20 +6100,298 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_page) = class $mol_page extends ($.$mol_view) {
-		dom_name(){
-			return "article";
+	($.$mol_link) = class $mol_link extends ($.$mol_view) {
+		uri_toggle(){
+			return "";
 		}
-		field(){
-			return {...(super.field()), "tabIndex": (this.tabindex())};
+		hint(){
+			return "";
+		}
+		hint_safe(){
+			return (this.hint());
+		}
+		target(){
+			return "_self";
+		}
+		file_name(){
+			return "";
+		}
+		current(){
+			return false;
+		}
+		relation(){
+			return "";
+		}
+		event_click(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		click(next){
+			return (this.event_click(next));
+		}
+		uri(){
+			return "";
+		}
+		dom_name(){
+			return "a";
+		}
+		uri_off(){
+			return "";
+		}
+		uri_native(){
+			return null;
+		}
+		external(){
+			return false;
+		}
+		attr(){
+			return {
+				...(super.attr()), 
+				"href": (this.uri_toggle()), 
+				"title": (this.hint_safe()), 
+				"target": (this.target()), 
+				"download": (this.file_name()), 
+				"mol_link_current": (this.current()), 
+				"rel": (this.relation())
+			};
 		}
 		sub(){
-			return [
-				(this.Head()), 
-				(this.Body()), 
-				(this.Foot())
-			];
+			return [(this.title())];
 		}
+		arg(){
+			return {};
+		}
+		event(){
+			return {...(super.event()), "click": (next) => (this.click(next))};
+		}
+	};
+	($mol_mem(($.$mol_link.prototype), "event_click"));
+
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_state_arg extends $mol_object {
+        prefix;
+        static prolog = '';
+        static separator = ' ';
+        static href(next) {
+            return next || process.argv.slice(2).join(' ');
+        }
+        static href_normal() {
+            return this.link({});
+        }
+        static dict(next) {
+            if (next !== void 0)
+                this.href(this.make_link(next));
+            var href = this.href();
+            var chunks = href.split(' ');
+            var params = {};
+            chunks.forEach(chunk => {
+                if (!chunk)
+                    return;
+                var vals = chunk.split('=').map(decodeURIComponent);
+                params[vals.shift()] = vals.join('=');
+            });
+            return params;
+        }
+        static value(key, next) {
+            if (next === void 0)
+                return this.dict()[key] ?? null;
+            this.href(this.link({ [key]: next }));
+            return next;
+        }
+        static link(next) {
+            const params = {};
+            var prev = this.dict();
+            for (var key in prev) {
+                params[key] = prev[key];
+            }
+            for (var key in next) {
+                params[key] = next[key];
+            }
+            return this.make_link(params);
+        }
+        static make_link(next) {
+            const chunks = [];
+            for (const key in next) {
+                if (next[key] !== null) {
+                    chunks.push([key, next[key]].map(encodeURIComponent).join('='));
+                }
+            }
+            return chunks.join(' ');
+        }
+        static go(next) {
+            this.href(this.make_link(next));
+        }
+        constructor(prefix = '') {
+            super();
+            this.prefix = prefix;
+        }
+        value(key, next) {
+            return this.constructor.value(this.prefix + key, next);
+        }
+        sub(postfix) {
+            return new this.constructor(this.prefix + postfix + '.');
+        }
+        link(next) {
+            const prefix = this.prefix;
+            const dict = {};
+            for (var key in next) {
+                dict[prefix + key] = next[key];
+            }
+            return this.constructor.link(dict);
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_state_arg, "href", null);
+    __decorate([
+        $mol_mem
+    ], $mol_state_arg, "href_normal", null);
+    __decorate([
+        $mol_mem
+    ], $mol_state_arg, "dict", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_state_arg, "value", null);
+    __decorate([
+        $mol_action
+    ], $mol_state_arg, "go", null);
+    $.$mol_state_arg = $mol_state_arg;
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_link extends $.$mol_link {
+            uri_toggle() {
+                return this.current() ? this.uri_off() : this.uri();
+            }
+            uri() {
+                return new this.$.$mol_state_arg(this.state_key()).link(this.arg());
+            }
+            uri_off() {
+                const arg2 = {};
+                for (let i in this.arg())
+                    arg2[i] = null;
+                return new this.$.$mol_state_arg(this.state_key()).link(arg2);
+            }
+            uri_native() {
+                const base = this.$.$mol_state_arg.href();
+                return new URL(this.uri(), base);
+            }
+            current() {
+                const base = this.$.$mol_state_arg.href_normal();
+                const target = this.uri_native().toString();
+                if (base === target)
+                    return true;
+                const args = this.arg();
+                const keys = Object.keys(args).filter(key => args[key] != null);
+                if (keys.length === 0)
+                    return false;
+                for (const key of keys) {
+                    if (this.$.$mol_state_arg.value(key) != args[key])
+                        return false;
+                }
+                return true;
+            }
+            file_name() {
+                return null;
+            }
+            minimal_height() {
+                return Math.max(super.minimal_height(), 24);
+            }
+            external() {
+                return this.uri_native().origin !== $mol_dom_context.location.origin;
+            }
+            target() {
+                return this.external() ? '_blank' : '_self';
+            }
+            hint_safe() {
+                try {
+                    return this.hint();
+                }
+                catch (error) {
+                    $mol_fail_log(error);
+                    return '';
+                }
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_link.prototype, "uri_toggle", null);
+        __decorate([
+            $mol_mem
+        ], $mol_link.prototype, "uri", null);
+        __decorate([
+            $mol_mem
+        ], $mol_link.prototype, "uri_off", null);
+        __decorate([
+            $mol_mem
+        ], $mol_link.prototype, "uri_native", null);
+        __decorate([
+            $mol_mem
+        ], $mol_link.prototype, "current", null);
+        $$.$mol_link = $mol_link;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const { rem } = $mol_style_unit;
+    $mol_style_define($mol_link, {
+        textDecoration: 'none',
+        color: $mol_theme.control,
+        stroke: 'currentcolor',
+        cursor: 'pointer',
+        padding: $mol_gap.text,
+        boxSizing: 'border-box',
+        position: 'relative',
+        minWidth: rem(2.5),
+        gap: $mol_gap.space,
+        border: {
+            radius: $mol_gap.round,
+        },
+        ':hover': {
+            background: {
+                color: $mol_theme.hover,
+            },
+        },
+        ':focus-visible': {
+            outline: 'none',
+            background: {
+                color: $mol_theme.hover,
+            },
+        },
+        ':active': {
+            color: $mol_theme.focus,
+        },
+        '@': {
+            mol_link_current: {
+                'true': {
+                    color: $mol_theme.current,
+                    textShadow: '0 0',
+                }
+            }
+        },
+    });
+})($ || ($ = {}));
+
+;
+	($.$mol_page) = class $mol_page extends ($.$mol_view) {
 		tabindex(){
 			return -1;
 		}
@@ -6475,6 +6452,19 @@ var $;
 			(obj.dom_name) = () => ("footer");
 			(obj.sub) = () => ((this.foot()));
 			return obj;
+		}
+		dom_name(){
+			return "article";
+		}
+		field(){
+			return {...(super.field()), "tabIndex": (this.tabindex())};
+		}
+		sub(){
+			return [
+				(this.Head()), 
+				(this.Body()), 
+				(this.Foot())
+			];
 		}
 	};
 	($mol_mem(($.$mol_page.prototype), "Title"));
@@ -6599,47 +6589,6 @@ var $;
 
 ;
 	($.$mol_book2_catalog) = class $mol_book2_catalog extends ($.$mol_book2) {
-		param(){
-			return "";
-		}
-		spread(next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		spreads(){
-			return {};
-		}
-		Spread(id){
-			const obj = new this.$.$mol_view();
-			return obj;
-		}
-		Spread_default(){
-			return null;
-		}
-		spread_ids(){
-			return [];
-		}
-		menu_filter_enabled(){
-			return false;
-		}
-		spread_ids_filtered(){
-			return [];
-		}
-		menu_tools(){
-			return [];
-		}
-		addon_tools(){
-			return [];
-		}
-		pages(){
-			return [(this.Menu())];
-		}
-		Spread_close(){
-			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this.spread_close_arg()));
-			(obj.sub) = () => ([(this.Spread_close_icon())]);
-			return obj;
-		}
 		Menu_title(){
 			return (this.Menu().Title());
 		}
@@ -6712,10 +6661,48 @@ var $;
 			const obj = new this.$.$mol_icon_cross();
 			return obj;
 		}
+		param(){
+			return "";
+		}
+		spread(next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		spreads(){
+			return {};
+		}
+		Spread(id){
+			const obj = new this.$.$mol_view();
+			return obj;
+		}
+		Spread_default(){
+			return null;
+		}
+		spread_ids(){
+			return [];
+		}
+		menu_filter_enabled(){
+			return false;
+		}
+		spread_ids_filtered(){
+			return [];
+		}
+		menu_tools(){
+			return [];
+		}
+		addon_tools(){
+			return [];
+		}
+		pages(){
+			return [(this.Menu())];
+		}
+		Spread_close(){
+			const obj = new this.$.$mol_link();
+			(obj.arg) = () => ((this.spread_close_arg()));
+			(obj.sub) = () => ([(this.Spread_close_icon())]);
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_book2_catalog.prototype), "spread"));
-	($mol_mem_key(($.$mol_book2_catalog.prototype), "Spread"));
-	($mol_mem(($.$mol_book2_catalog.prototype), "Spread_close"));
 	($mol_mem(($.$mol_book2_catalog.prototype), "menu_filter"));
 	($mol_mem(($.$mol_book2_catalog.prototype), "Menu_filter"));
 	($mol_mem_key(($.$mol_book2_catalog.prototype), "Menu_link_title"));
@@ -6723,6 +6710,9 @@ var $;
 	($mol_mem(($.$mol_book2_catalog.prototype), "Menu_links"));
 	($mol_mem(($.$mol_book2_catalog.prototype), "Menu"));
 	($mol_mem(($.$mol_book2_catalog.prototype), "Spread_close_icon"));
+	($mol_mem(($.$mol_book2_catalog.prototype), "spread"));
+	($mol_mem_key(($.$mol_book2_catalog.prototype), "Spread"));
+	($mol_mem(($.$mol_book2_catalog.prototype), "Spread_close"));
 
 
 ;
@@ -6835,11 +6825,11 @@ var $;
 
 ;
 	($.$mol_theme_auto) = class $mol_theme_auto extends ($.$mol_plugin) {
-		attr(){
-			return {"mol_theme": (this.theme())};
-		}
 		theme(){
 			return "";
+		}
+		attr(){
+			return {"mol_theme": (this.theme())};
 		}
 	};
 
@@ -6916,15 +6906,15 @@ var $;
 
 ;
 	($.$mol_link_source) = class $mol_link_source extends ($.$mol_link) {
+		Icon(){
+			const obj = new this.$.$mol_icon_script_text();
+			return obj;
+		}
 		hint(){
 			return (this.$.$mol_locale.text("$mol_link_source_hint"));
 		}
 		sub(){
 			return [(this.Icon())];
-		}
-		Icon(){
-			const obj = new this.$.$mol_icon_script_text();
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_link_source.prototype), "Icon"));
@@ -6935,17 +6925,6 @@ var $;
 
 ;
 	($.$mol_check) = class $mol_check extends ($.$mol_button_minor) {
-		attr(){
-			return {
-				...(super.attr()), 
-				"mol_check_checked": (this.checked()), 
-				"aria-checked": (this.aria_checked()), 
-				"role": (this.aria_role())
-			};
-		}
-		sub(){
-			return [(this.Icon()), (this.label())];
-		}
 		checked(next){
 			if(next !== undefined) return next;
 			return false;
@@ -6969,6 +6948,17 @@ var $;
 		}
 		label(){
 			return [(this.Title())];
+		}
+		attr(){
+			return {
+				...(super.attr()), 
+				"mol_check_checked": (this.checked()), 
+				"aria-checked": (this.aria_checked()), 
+				"role": (this.aria_role())
+			};
+		}
+		sub(){
+			return [(this.Icon()), (this.label())];
 		}
 	};
 	($mol_mem(($.$mol_check.prototype), "checked"));
@@ -7053,6 +7043,14 @@ var $;
 
 ;
 	($.$mol_lights_toggle) = class $mol_lights_toggle extends ($.$mol_check_icon) {
+		Lights_icon(){
+			const obj = new this.$.$mol_icon_brightness_6();
+			return obj;
+		}
+		lights(next){
+			if(next !== undefined) return next;
+			return false;
+		}
 		Icon(){
 			return (this.Lights_icon());
 		}
@@ -7061,14 +7059,6 @@ var $;
 		}
 		checked(next){
 			return (this.lights(next));
-		}
-		Lights_icon(){
-			const obj = new this.$.$mol_icon_brightness_6();
-			return obj;
-		}
-		lights(next){
-			if(next !== undefined) return next;
-			return false;
 		}
 	};
 	($mol_mem(($.$mol_lights_toggle.prototype), "Lights_icon"));
@@ -7095,12 +7085,6 @@ var $;
 
 ;
 	($.$mol_pick) = class $mol_pick extends ($.$mol_pop) {
-		event(){
-			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
-		}
-		Anchor(){
-			return (this.Trigger());
-		}
 		keydown(next){
 			if(next !== undefined) return next;
 			return null;
@@ -7128,6 +7112,12 @@ var $;
 			(obj.sub) = () => ((this.trigger_content()));
 			(obj.hint) = () => ((this.hint()));
 			return obj;
+		}
+		event(){
+			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
+		}
+		Anchor(){
+			return (this.Trigger());
 		}
 	};
 	($mol_mem(($.$mol_pick.prototype), "keydown"));
@@ -7182,52 +7172,6 @@ var $;
 
 ;
 	($.$mol_select) = class $mol_select extends ($.$mol_pick) {
-		dictionary(next){
-			if(next !== undefined) return next;
-			return {};
-		}
-		options(){
-			return [];
-		}
-		value(next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		option_label_default(){
-			return "";
-		}
-		Option_row(id){
-			const obj = new this.$.$mol_button_minor();
-			(obj.event_click) = (next) => ((this.event_select(id, next)));
-			(obj.sub) = () => ((this.option_content(id)));
-			return obj;
-		}
-		No_options(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.no_options_message())]);
-			return obj;
-		}
-		plugins(){
-			return [...(super.plugins()), (this.Nav())];
-		}
-		hint(){
-			return (this.$.$mol_locale.text("$mol_select_hint"));
-		}
-		bubble_content(){
-			return [(this.Filter()), (this.Bubble_pane())];
-		}
-		Filter(){
-			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this.filter_pattern(next)));
-			(obj.hint) = () => ((this.filter_hint()));
-			(obj.submit) = (next) => ((this.submit(next)));
-			(obj.enabled) = () => ((this.enabled()));
-			return obj;
-		}
-		Trigger_icon(){
-			const obj = new this.$.$mol_icon_dots_vertical();
-			return obj;
-		}
 		event_select(id, next){
 			if(next !== undefined) return next;
 			return null;
@@ -7292,13 +7236,53 @@ var $;
 		enabled(){
 			return true;
 		}
+		dictionary(next){
+			if(next !== undefined) return next;
+			return {};
+		}
+		options(){
+			return [];
+		}
+		value(next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		option_label_default(){
+			return "";
+		}
+		Option_row(id){
+			const obj = new this.$.$mol_button_minor();
+			(obj.event_click) = (next) => ((this.event_select(id, next)));
+			(obj.sub) = () => ((this.option_content(id)));
+			return obj;
+		}
+		No_options(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.no_options_message())]);
+			return obj;
+		}
+		plugins(){
+			return [...(super.plugins()), (this.Nav())];
+		}
+		hint(){
+			return (this.$.$mol_locale.text("$mol_select_hint"));
+		}
+		bubble_content(){
+			return [(this.Filter()), (this.Bubble_pane())];
+		}
+		Filter(){
+			const obj = new this.$.$mol_search();
+			(obj.query) = (next) => ((this.filter_pattern(next)));
+			(obj.hint) = () => ((this.filter_hint()));
+			(obj.submit) = (next) => ((this.submit(next)));
+			(obj.enabled) = () => ((this.enabled()));
+			return obj;
+		}
+		Trigger_icon(){
+			const obj = new this.$.$mol_icon_dots_vertical();
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_select.prototype), "dictionary"));
-	($mol_mem(($.$mol_select.prototype), "value"));
-	($mol_mem_key(($.$mol_select.prototype), "Option_row"));
-	($mol_mem(($.$mol_select.prototype), "No_options"));
-	($mol_mem(($.$mol_select.prototype), "Filter"));
-	($mol_mem(($.$mol_select.prototype), "Trigger_icon"));
 	($mol_mem_key(($.$mol_select.prototype), "event_select"));
 	($mol_mem(($.$mol_select.prototype), "filter_pattern"));
 	($mol_mem_key(($.$mol_select.prototype), "Option_label"));
@@ -7308,6 +7292,12 @@ var $;
 	($mol_mem(($.$mol_select.prototype), "Menu"));
 	($mol_mem(($.$mol_select.prototype), "Bubble_pane"));
 	($mol_mem(($.$mol_select.prototype), "submit"));
+	($mol_mem(($.$mol_select.prototype), "dictionary"));
+	($mol_mem(($.$mol_select.prototype), "value"));
+	($mol_mem_key(($.$mol_select.prototype), "Option_row"));
+	($mol_mem(($.$mol_select.prototype), "No_options"));
+	($mol_mem(($.$mol_select.prototype), "Filter"));
+	($mol_mem(($.$mol_select.prototype), "Trigger_icon"));
 
 
 ;
@@ -7539,10 +7529,6 @@ var $;
         $$.$mol_locale_select = $mol_locale_select;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
-let $hyoo_sync_revision = "echo";
 
 ;
 "use strict";
@@ -8128,16 +8114,530 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    async function $hyoo_sync_peer(path, next) {
-        let serial = $mol_state_local.value('$hyoo_sync_peer', next);
-        if (typeof serial === 'string') {
-            return await $hyoo_crowd_peer.restore(serial);
+    class $hyoo_crowd_node extends $mol_object2 {
+        land;
+        head;
+        constructor(land = new $hyoo_crowd_land, head = '0_0') {
+            super();
+            this.land = land;
+            this.head = head;
         }
-        const peer = await $hyoo_crowd_peer.generate();
-        $mol_state_local.value('$hyoo_sync_peer', peer.key_private_serial);
-        return peer;
+        static for(land, head) {
+            return new this(land, head);
+        }
+        static toJSON() {
+            return this.name;
+        }
+        id() {
+            return this.head === '0_0'
+                ? this.land.id()
+                : `${this.land.id()}!${this.head}`;
+        }
+        world() {
+            return this.land.world();
+        }
+        as(Node) {
+            return this.world()?.Fund(Node).Item(`${this.land.id()}!${this.head}`) ?? new Node(this.land, this.head);
+        }
+        units() {
+            return this.land.unit_alives(this.head);
+        }
+        nodes(Node) {
+            const fund = this.world()?.Fund(Node);
+            return this.units().map(unit => fund?.Item(`${this.land.id()}!${unit.self}`) ?? new Node(this.land, unit.self));
+        }
+        virgin() {
+            return this.land.unit_list(this.head).length === 0;
+        }
+        [Symbol.toPrimitive]() {
+            return `${this.constructor.name}("${this.land.id()}","${this.head}")`;
+        }
+        toJSON() {
+            return this.id();
+        }
+        [$mol_dev_format_head]() {
+            return $mol_dev_format_span({}, $mol_dev_format_native(this), $mol_dev_format_shade(':'), $mol_dev_format_auto(this.land.unit_list(this.head)));
+        }
     }
-    $.$hyoo_sync_peer = $hyoo_sync_peer;
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_crowd_node.prototype, "nodes", null);
+    $.$hyoo_crowd_node = $hyoo_crowd_node;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_reg extends $hyoo_crowd_node {
+        value(next) {
+            const unit = this.units().at(-1);
+            if (next === undefined)
+                return unit?.data ?? null;
+            if ($mol_compare_deep(unit?.data, next))
+                return next;
+            this.land.put(this.head, unit?.self ?? this.land.id_new(), '0_0', next);
+            return next;
+        }
+        str(next) {
+            return String(this.value(next) ?? '');
+        }
+        numb(next) {
+            return Number(this.value(next));
+        }
+        bool(next) {
+            return Boolean(this.value(next));
+        }
+        yoke(law = [''], mod = [], add = []) {
+            const world = this.world();
+            let land_id = $mol_int62_string_ensure(this.value());
+            if (land_id)
+                return world.land_sync(land_id);
+            if (!this.land.allowed_add())
+                return null;
+            const land = $mol_wire_sync(world).grab(law, mod, add);
+            this.value(land.id());
+            world.land_init(land);
+            return land;
+        }
+    }
+    $.$hyoo_crowd_reg = $hyoo_crowd_reg;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_struct extends $hyoo_crowd_node {
+        sub(key, Node) {
+            const head = $mol_int62_hash_string(key + '\n' + this.head);
+            return this.world()?.Fund(Node).Item(`${this.land.id()}!${head}`) ?? new Node(this.land, head);
+        }
+        yoke(key, Node, law = [''], mod = [], add = []) {
+            const land = this.sub(key, $hyoo_crowd_reg).yoke(law, mod, add);
+            return land?.chief.sub(key, Node) ?? null;
+        }
+    }
+    $.$hyoo_crowd_struct = $hyoo_crowd_struct;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_reconcile({ prev, from, to, next, equal, drop, insert, update, }) {
+        if (!update)
+            update = (next, prev, lead) => insert(next, drop(prev, lead));
+        let p = from;
+        let n = 0;
+        let lead = p ? prev[p - 1] : null;
+        if (to > prev.length)
+            $mol_fail(new RangeError(`To(${to}) greater then length(${prev.length})`));
+        if (from > to)
+            $mol_fail(new RangeError(`From(${to}) greater then to(${to})`));
+        while (p < to || n < next.length) {
+            if (p < to && n < next.length && equal(next[n], prev[p])) {
+                lead = prev[p];
+                ++p;
+                ++n;
+            }
+            else if (next.length - n > to - p) {
+                lead = insert(next[n], lead);
+                ++n;
+            }
+            else if (next.length - n < to - p) {
+                lead = drop(prev[p], lead);
+                ++p;
+            }
+            else {
+                lead = update(next[n], prev[p], lead);
+                ++p;
+                ++n;
+            }
+        }
+    }
+    $.$mol_reconcile = $mol_reconcile;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const { unicode_only, line_end, tab, repeat_greedy, optional, forbid_after, force_after, char_only, char_except } = $mol_regexp;
+    $.$hyoo_crowd_tokenizer = $mol_regexp.from({
+        token: {
+            'line-break': line_end,
+            'indents': repeat_greedy(tab, 1),
+            'emoji': [
+                unicode_only('Extended_Pictographic'),
+                optional(unicode_only('Emoji_Modifier')),
+                repeat_greedy([
+                    unicode_only('Emoji_Component'),
+                    unicode_only('Extended_Pictographic'),
+                    optional(unicode_only('Emoji_Modifier')),
+                ]),
+            ],
+            'link': /\b(https?:\/\/[^\s,.;:!?")]+(?:[,.;:!?")][^\s,.;:!?")]+)+)/,
+            'Word': [
+                [
+                    forbid_after(line_end),
+                    unicode_only('White_Space'),
+                ],
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]), 1),
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ])),
+            ],
+            'word': [
+                [
+                    forbid_after(line_end),
+                    unicode_only('White_Space'),
+                ],
+                repeat_greedy(char_only([
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]), 1),
+            ],
+            'spaces': [
+                forbid_after(line_end),
+                repeat_greedy(unicode_only('White_Space'), 1),
+                force_after(unicode_only('White_Space')),
+            ],
+            'space': [
+                forbid_after(line_end),
+                unicode_only('White_Space'),
+                forbid_after([
+                    unicode_only('White_Space'),
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                ]),
+            ],
+            'others': [
+                repeat_greedy(char_except([
+                    unicode_only('General_Category', 'Uppercase_Letter'),
+                    unicode_only('General_Category', 'Lowercase_Letter'),
+                    unicode_only('Diacritic'),
+                    unicode_only('General_Category', 'Number'),
+                    unicode_only('White_Space'),
+                ]), 1),
+            ],
+        },
+    }).native;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_list extends $hyoo_crowd_node {
+        list(next) {
+            const units = this.units();
+            if (next === undefined) {
+                return units.map(unit => unit.data);
+            }
+            else {
+                this.insert(next, 0, units.length);
+                return next;
+            }
+        }
+        set(next) {
+            return new Set(this.list(next && [...next]));
+        }
+        insert(next, from = this.units().length, to = from) {
+            $mol_reconcile({
+                prev: this.units(),
+                from,
+                to,
+                next,
+                equal: (next, prev) => $mol_compare_deep(prev.data, next),
+                drop: (prev, lead) => this.land.wipe(prev),
+                insert: (next, lead) => this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', next),
+                update: (next, prev, lead) => this.land.put(prev.head, prev.self, lead?.self ?? '0_0', next),
+            });
+        }
+        move(from, to) {
+            const units = this.units();
+            const lead = to ? units[to - 1] : null;
+            this.land.move(units[from], this.head, lead?.self ?? '0_0');
+        }
+        cut(seat) {
+            return this.land.wipe(this.units()[seat]);
+        }
+        has(val, next) {
+            if (next === undefined) {
+                for (const unit of this.units()) {
+                    if (unit.data === val)
+                        return true;
+                }
+                return false;
+            }
+            if (next)
+                this.add(val);
+            else
+                this.drop(val);
+            return next;
+        }
+        add(val) {
+            if (this.has(val))
+                return;
+            this.insert([val]);
+        }
+        drop(val) {
+            for (const unit of this.units()) {
+                if (unit.data !== val)
+                    continue;
+                this.land.wipe(unit);
+            }
+        }
+        node_make(val, Node) {
+            this.insert([val]);
+            const unit = this.units().at(-1);
+            return this.land.node(unit.self, Node);
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_crowd_list.prototype, "set", null);
+    $.$hyoo_crowd_list = $hyoo_crowd_list;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_text extends $hyoo_crowd_node {
+        text(next) {
+            if (next === undefined) {
+                return this.str();
+            }
+            else {
+                const prev = this.units();
+                const lines = next.match(/.*\n|.+$/g) ?? [];
+                $mol_reconcile({
+                    prev,
+                    from: 0,
+                    to: prev.length,
+                    next: lines,
+                    equal: (next, prev) => {
+                        if (typeof prev.data === 'string')
+                            return false;
+                        return this.land.node(prev.self, $hyoo_crowd_text).str() === next;
+                    },
+                    drop: (prev, lead) => this.land.wipe(prev),
+                    insert: (next, lead) => {
+                        const unit = this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', []);
+                        this.land.node(unit.self, $hyoo_crowd_text).str(next);
+                        return unit;
+                    },
+                    update: (next, prev, lead) => {
+                        this.land.node(prev.self, $hyoo_crowd_text).str(next);
+                        return prev;
+                    },
+                });
+                return next;
+            }
+        }
+        str(next) {
+            if (next === undefined) {
+                let str = '';
+                for (const unit of this.units()) {
+                    if (typeof unit.data === 'string')
+                        str += unit.data;
+                    else
+                        str += this.land.node(unit.self, $hyoo_crowd_text).str();
+                }
+                return str;
+            }
+            else {
+                this.write(next, 0, -1);
+                return next;
+            }
+        }
+        write(next, str_from = -1, str_to = str_from) {
+            const list = this.units();
+            let from = str_from < 0 ? list.length : 0;
+            let word = '';
+            while (from < list.length) {
+                word = String(list[from].data);
+                if (str_from <= word.length) {
+                    next = word.slice(0, str_from) + next;
+                    break;
+                }
+                str_from -= word.length;
+                if (str_to > 0)
+                    str_to -= word.length;
+                from++;
+            }
+            let to = str_to < 0 ? list.length : from;
+            while (to < list.length) {
+                word = String(list[to].data);
+                to++;
+                if (str_to < word.length) {
+                    next = next + word.slice(str_to);
+                    break;
+                }
+                str_to -= word.length;
+            }
+            if (from && from === list.length) {
+                --from;
+                next = String(list[from].data) + next;
+            }
+            const words = next.match($hyoo_crowd_tokenizer) ?? [];
+            this.as($hyoo_crowd_list).insert(words, from, to);
+            return this;
+        }
+        point_by_offset(offset) {
+            let off = offset;
+            for (const unit of this.units()) {
+                if (typeof unit.data === 'string') {
+                    const len = String(unit.data).length;
+                    if (off <= len)
+                        return [unit.self, off];
+                    else
+                        off -= len;
+                }
+                else {
+                    const found = this.land.node(unit.self, $hyoo_crowd_text).point_by_offset(off);
+                    if (found[0] !== '0_0')
+                        return found;
+                    off = found[1];
+                }
+            }
+            return ['0_0', off];
+        }
+        offset_by_point([self, offset]) {
+            for (const unit of this.units()) {
+                if (unit.self === self)
+                    return [self, offset];
+                if (typeof unit.data === 'string') {
+                    offset += unit.data.length;
+                }
+                else {
+                    const found = this.land.node(unit.self, $hyoo_crowd_text).offset_by_point([self, offset]);
+                    if (found[0] !== '0_0')
+                        return [self, found[1]];
+                    offset = found[1];
+                }
+            }
+            return ['0_0', offset];
+        }
+        selection(peer, next) {
+            const reg = this.land.selection(peer);
+            if (next) {
+                reg.value(next.map(offset => this.point_by_offset(offset)));
+                return next;
+            }
+            else {
+                this.units();
+                return reg.value()
+                    ?.map(point => this.offset_by_point(point)[1]) ?? [0, 0];
+            }
+        }
+    }
+    $.$hyoo_crowd_text = $hyoo_crowd_text;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_crowd_fund extends $mol_object {
+        world;
+        node_class;
+        constructor(world, node_class) {
+            super();
+            this.world = world;
+            this.node_class = node_class;
+        }
+        Item(id) {
+            const [land, head] = id.split('!');
+            if (!head)
+                return this.Item(`${land}!0_0`);
+            return this.world.land_sync(land).node(head, this.node_class);
+        }
+        make(law = [''], mod = [], add = []) {
+            const land = $mol_wire_sync(this.world).grab(law, mod, add);
+            return this.Item(land.id());
+        }
+    }
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_crowd_fund.prototype, "Item", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_crowd_fund.prototype, "make", null);
+    $.$hyoo_crowd_fund = $hyoo_crowd_fund;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_dict_key = $mol_key;
+    class $mol_dict extends Map {
+        get(key) {
+            return super.get($mol_key(key));
+        }
+        has(key) {
+            return super.has($mol_key(key));
+        }
+        set(key, value) {
+            return super.set($mol_key(key), value);
+        }
+        delete(key) {
+            return super.delete($mol_key(key));
+        }
+        forEach(back, context) {
+            return super.forEach((val, key, dict) => {
+                if (typeof key === 'string')
+                    key = JSON.parse(key);
+                return back.call(this, val, key, dict);
+            }, context);
+        }
+        keys() {
+            const iterator = super.keys();
+            return {
+                [Symbol.iterator]() {
+                    return this;
+                },
+                next() {
+                    const iteration = iterator.next();
+                    if (iteration.done)
+                        return iteration;
+                    iteration.value = JSON.parse(iteration.value);
+                    return iteration;
+                }
+            };
+        }
+        entries() {
+            const iterator = super.entries();
+            return {
+                [Symbol.iterator]() {
+                    return this;
+                },
+                next() {
+                    const iteration = iterator.next();
+                    if (iteration.done)
+                        return iteration;
+                    iteration.value = [JSON.parse(iteration.value[0]), iteration.value[1]];
+                    return iteration;
+                }
+            };
+        }
+        [Symbol.iterator]() {
+            return this.entries();
+        }
+    }
+    $.$mol_dict = $mol_dict;
 })($ || ($ = {}));
 
 ;
@@ -8268,111 +8768,220 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $hyoo_crowd_node extends $mol_object2 {
-        land;
-        head;
-        constructor(land = new $hyoo_crowd_land, head = '0_0') {
+    class $hyoo_crowd_world extends $mol_object {
+        peer;
+        constructor(peer) {
             super();
-            this.land = land;
-            this.head = head;
+            this.peer = peer;
+            if (peer)
+                this._knights.set(peer.id, peer);
         }
-        static for(land, head) {
-            return new this(land, head);
+        lands_pub = new $mol_wire_pub;
+        _lands = new Map();
+        get lands() {
+            this.lands_pub.promote();
+            return this._lands;
         }
-        static toJSON() {
-            return this.name;
+        land_init(id) { }
+        land(id) {
+            const exists = this._lands.get(id);
+            if (exists)
+                return exists;
+            const land = $hyoo_crowd_land.make({
+                id: $mol_const(id),
+                world: $mol_const(this),
+            });
+            this._lands.set(id, land);
+            this.lands_pub.emit();
+            return land;
         }
-        id() {
-            return this.head === '0_0'
-                ? this.land.id()
-                : `${this.land.id()}!${this.head}`;
+        land_sync(id) {
+            const land = this.land(id);
+            this.land_init(land);
+            return land;
         }
-        world() {
-            return this.land.world();
+        Fund(Item) {
+            return new $hyoo_crowd_fund(this, Item);
         }
-        as(Node) {
-            return this.world()?.Fund(Node).Item(`${this.land.id()}!${this.head}`) ?? new Node(this.land, this.head);
+        home() {
+            return this.land_sync(this.peer.id);
         }
-        units() {
-            return this.land.unit_alives(this.head);
+        _knights = new $mol_dict();
+        _signs = new WeakMap();
+        async grab(law = [''], mod = [], add = []) {
+            const knight = await $hyoo_crowd_peer.generate();
+            this._knights.set(knight.id, knight);
+            const land_inner = this.land(knight.id);
+            const land_outer = $hyoo_crowd_land.make({
+                id: $mol_const(knight.id),
+                peer: $mol_const(knight),
+            });
+            land_outer.join();
+            for (const peer of law)
+                land_outer.level(peer || this.peer.id, $hyoo_crowd_peer_level.law);
+            for (const peer of mod)
+                land_outer.level(peer || this.peer.id, $hyoo_crowd_peer_level.mod);
+            for (const peer of add)
+                land_outer.level(peer || this.peer.id, $hyoo_crowd_peer_level.add);
+            land_inner.apply(land_outer.delta());
+            return land_inner;
         }
-        nodes(Node) {
-            const fund = this.world()?.Fund(Node);
-            return this.units().map(unit => fund?.Item(`${this.land.id()}!${unit.self}`) ?? new Node(this.land, unit.self));
+        sign_units(units) {
+            return Promise.all(units.map(async (unit) => {
+                if (unit.bin)
+                    return unit;
+                const bin = $hyoo_crowd_unit_bin.from_unit(unit);
+                let sign = this._signs.get(unit);
+                if (!sign) {
+                    const knight = this._knights.get(unit.auth);
+                    sign = new Uint8Array(await knight.key_private.sign(bin.sens()));
+                }
+                bin.sign(sign);
+                unit.bin = bin;
+                this._signs.set(unit, sign);
+                return unit;
+            }));
         }
-        virgin() {
-            return this.land.unit_list(this.head).length === 0;
+        delta_land(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
+            return this.sign_units(land.delta(clocks));
         }
-        [Symbol.toPrimitive]() {
-            return `${this.constructor.name}("${this.land.id()}","${this.head}")`;
+        async delta_batch(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
+            const units = await this.delta_land(land, clocks);
+            let size = 0;
+            const bins = [];
+            for (const unit of units) {
+                const bin = unit.bin;
+                bins.push(bin);
+                size += bin.byteLength;
+            }
+            const batch = new Uint8Array(size);
+            let offset = 0;
+            for (const bin of bins) {
+                batch.set(new Uint8Array(bin.buffer, bin.byteOffset, bin.byteLength), offset);
+                offset += bin.byteLength;
+            }
+            return batch;
         }
-        toJSON() {
-            return this.id();
+        async *delta(clocks = new Map()) {
+            for (const land of this.lands.values()) {
+                const batch = await this.delta_batch(land, clocks.get(land.id()));
+                if (batch.length)
+                    yield batch;
+            }
         }
-        [$mol_dev_format_head]() {
-            return $mol_dev_format_span({}, $mol_dev_format_native(this), $mol_dev_format_shade(':'), $mol_dev_format_auto(this.land.unit_list(this.head)));
+        async merge(donor) {
+            for await (const batch of donor.delta())
+                await this.apply(batch);
+        }
+        async apply(delta) {
+            const units = [];
+            let bin_offset = 0;
+            while (bin_offset < delta.byteLength) {
+                const buf = new Int16Array(delta.buffer, delta.byteOffset + bin_offset);
+                const bin = $hyoo_crowd_unit_bin.from_buffer(buf);
+                units.push(bin.unit());
+                bin_offset += bin.size();
+            }
+            const land = this.land(units[0].land);
+            const report = await this.audit_delta(land, units);
+            land.apply(report.allow);
+            return report;
+        }
+        async audit_delta(land, delta) {
+            const all = new Map();
+            const desync = 60 * 60 * 10;
+            const deadline = land.clock_data.now() + desync;
+            const get_unit = (id) => {
+                return all.get(id) ?? land._unit_all.get(id);
+            };
+            const get_level = (head, self) => {
+                return get_unit(`${head}!${self}`)?.level()
+                    ?? get_unit(`${head}!0_0`)?.level()
+                    ?? $hyoo_crowd_peer_level.get;
+            };
+            const check_unit = async (unit) => {
+                const bin = unit.bin;
+                if (unit.time > deadline)
+                    return 'Far future';
+                const auth_unit = get_unit(`${unit.auth}!${unit.auth}`);
+                const kind = unit.kind();
+                switch (kind) {
+                    case $hyoo_crowd_unit_kind.grab:
+                    case $hyoo_crowd_unit_kind.join: {
+                        const key_str = auth_unit?.data ?? unit.data;
+                        if (typeof key_str !== 'string')
+                            return 'No join key';
+                        const self = $mol_int62_hash_string(key_str);
+                        if (unit.self !== self)
+                            return 'Alien join key';
+                        const key = await $mol_crypto_auditor_public.from(key_str);
+                        const sign = bin.sign();
+                        const valid = await key.verify(bin.sens(), sign);
+                        if (!valid)
+                            return 'Wrong join sign';
+                        all.set(`${unit.head}!${unit.auth}`, unit);
+                        this._signs.set(unit, sign);
+                        return '';
+                    }
+                    case $hyoo_crowd_unit_kind.give: {
+                        const lord_level = get_level(land.id(), unit.auth);
+                        if (lord_level < $hyoo_crowd_peer_level.law)
+                            return `Level too low`;
+                        const peer_level = get_level(land.id(), unit.self);
+                        if (peer_level > unit.level())
+                            return `Cancel unsupported`;
+                        break;
+                    }
+                    case $hyoo_crowd_unit_kind.data: {
+                        const level = get_level(land.id(), unit.auth);
+                        if (level >= $hyoo_crowd_peer_level.mod)
+                            break;
+                        if (level === $hyoo_crowd_peer_level.add) {
+                            const exists = get_unit(`${unit.head}!${unit.self}`);
+                            if (!exists)
+                                break;
+                            if (exists.auth === unit.auth)
+                                break;
+                        }
+                        return `Level too low`;
+                    }
+                }
+                const key_str = auth_unit?.data;
+                if (typeof key_str !== 'string')
+                    return 'No auth key';
+                const key = await $mol_crypto_auditor_public.from(key_str);
+                const sign = bin.sign();
+                const valid = await key.verify(bin.sens(), sign);
+                if (!valid)
+                    return 'Wrong auth sign';
+                all.set(`${unit.head}!${unit.self}`, unit);
+                this._signs.set(unit, sign);
+                return '';
+            };
+            const allow = [];
+            const forbid = new Map();
+            const proceed_unit = async (unit) => {
+                const error = await check_unit(unit);
+                if (error)
+                    forbid.set(unit, error);
+                else
+                    allow.push(unit);
+            };
+            const tasks = [];
+            for (const unit of delta) {
+                const task = proceed_unit(unit);
+                tasks.push(task);
+                if (unit.group() === $hyoo_crowd_unit_group.auth)
+                    await task;
+            }
+            await Promise.all(tasks);
+            return { allow, forbid };
         }
     }
     __decorate([
         $mol_mem_key
-    ], $hyoo_crowd_node.prototype, "nodes", null);
-    $.$hyoo_crowd_node = $hyoo_crowd_node;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_reg extends $hyoo_crowd_node {
-        value(next) {
-            const unit = this.units().at(-1);
-            if (next === undefined)
-                return unit?.data ?? null;
-            if ($mol_compare_deep(unit?.data, next))
-                return next;
-            this.land.put(this.head, unit?.self ?? this.land.id_new(), '0_0', next);
-            return next;
-        }
-        str(next) {
-            return String(this.value(next) ?? '');
-        }
-        numb(next) {
-            return Number(this.value(next));
-        }
-        bool(next) {
-            return Boolean(this.value(next));
-        }
-        yoke(law = [''], mod = [], add = []) {
-            const world = this.world();
-            let land_id = $mol_int62_string_ensure(this.value());
-            if (land_id)
-                return world.land_sync(land_id);
-            if (!this.land.allowed_add())
-                return null;
-            const land = $mol_wire_sync(world).grab(law, mod, add);
-            this.value(land.id());
-            world.land_init(land);
-            return land;
-        }
-    }
-    $.$hyoo_crowd_reg = $hyoo_crowd_reg;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_struct extends $hyoo_crowd_node {
-        sub(key, Node) {
-            const head = $mol_int62_hash_string(key + '\n' + this.head);
-            return this.world()?.Fund(Node).Item(`${this.land.id()}!${head}`) ?? new Node(this.land, head);
-        }
-        yoke(key, Node, law = [''], mod = [], add = []) {
-            const land = this.sub(key, $hyoo_crowd_reg).yoke(law, mod, add);
-            return land?.chief.sub(key, Node) ?? null;
-        }
-    }
-    $.$hyoo_crowd_struct = $hyoo_crowd_struct;
+    ], $hyoo_crowd_world.prototype, "Fund", null);
+    $.$hyoo_crowd_world = $hyoo_crowd_world;
 })($ || ($ = {}));
 
 ;
@@ -8728,1427 +9337,6 @@ var $;
         $mol_memo.method
     ], $hyoo_crowd_land.prototype, "id", null);
     $.$hyoo_crowd_land = $hyoo_crowd_land;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_fund extends $mol_object {
-        world;
-        node_class;
-        constructor(world, node_class) {
-            super();
-            this.world = world;
-            this.node_class = node_class;
-        }
-        Item(id) {
-            const [land, head] = id.split('!');
-            if (!head)
-                return this.Item(`${land}!0_0`);
-            return this.world.land_sync(land).node(head, this.node_class);
-        }
-        make(law = [''], mod = [], add = []) {
-            const land = $mol_wire_sync(this.world).grab(law, mod, add);
-            return this.Item(land.id());
-        }
-    }
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_crowd_fund.prototype, "Item", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_crowd_fund.prototype, "make", null);
-    $.$hyoo_crowd_fund = $hyoo_crowd_fund;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $.$mol_dict_key = $mol_key;
-    class $mol_dict extends Map {
-        get(key) {
-            return super.get($mol_key(key));
-        }
-        has(key) {
-            return super.has($mol_key(key));
-        }
-        set(key, value) {
-            return super.set($mol_key(key), value);
-        }
-        delete(key) {
-            return super.delete($mol_key(key));
-        }
-        forEach(back, context) {
-            return super.forEach((val, key, dict) => {
-                if (typeof key === 'string')
-                    key = JSON.parse(key);
-                return back.call(this, val, key, dict);
-            }, context);
-        }
-        keys() {
-            const iterator = super.keys();
-            return {
-                [Symbol.iterator]() {
-                    return this;
-                },
-                next() {
-                    const iteration = iterator.next();
-                    if (iteration.done)
-                        return iteration;
-                    iteration.value = JSON.parse(iteration.value);
-                    return iteration;
-                }
-            };
-        }
-        entries() {
-            const iterator = super.entries();
-            return {
-                [Symbol.iterator]() {
-                    return this;
-                },
-                next() {
-                    const iteration = iterator.next();
-                    if (iteration.done)
-                        return iteration;
-                    iteration.value = [JSON.parse(iteration.value[0]), iteration.value[1]];
-                    return iteration;
-                }
-            };
-        }
-        [Symbol.iterator]() {
-            return this.entries();
-        }
-    }
-    $.$mol_dict = $mol_dict;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_world extends $mol_object {
-        peer;
-        constructor(peer) {
-            super();
-            this.peer = peer;
-            if (peer)
-                this._knights.set(peer.id, peer);
-        }
-        lands_pub = new $mol_wire_pub;
-        _lands = new Map();
-        get lands() {
-            this.lands_pub.promote();
-            return this._lands;
-        }
-        land_init(id) { }
-        land(id) {
-            const exists = this._lands.get(id);
-            if (exists)
-                return exists;
-            const land = $hyoo_crowd_land.make({
-                id: $mol_const(id),
-                world: $mol_const(this),
-            });
-            this._lands.set(id, land);
-            this.lands_pub.emit();
-            return land;
-        }
-        land_sync(id) {
-            const land = this.land(id);
-            this.land_init(land);
-            return land;
-        }
-        Fund(Item) {
-            return new $hyoo_crowd_fund(this, Item);
-        }
-        home() {
-            return this.land_sync(this.peer.id);
-        }
-        _knights = new $mol_dict();
-        _signs = new WeakMap();
-        async grab(law = [''], mod = [], add = []) {
-            const knight = await $hyoo_crowd_peer.generate();
-            this._knights.set(knight.id, knight);
-            const land_inner = this.land(knight.id);
-            const land_outer = $hyoo_crowd_land.make({
-                id: $mol_const(knight.id),
-                peer: $mol_const(knight),
-            });
-            land_outer.join();
-            for (const peer of law)
-                land_outer.level(peer || this.peer.id, $hyoo_crowd_peer_level.law);
-            for (const peer of mod)
-                land_outer.level(peer || this.peer.id, $hyoo_crowd_peer_level.mod);
-            for (const peer of add)
-                land_outer.level(peer || this.peer.id, $hyoo_crowd_peer_level.add);
-            land_inner.apply(land_outer.delta());
-            return land_inner;
-        }
-        sign_units(units) {
-            return Promise.all(units.map(async (unit) => {
-                if (unit.bin)
-                    return unit;
-                const bin = $hyoo_crowd_unit_bin.from_unit(unit);
-                let sign = this._signs.get(unit);
-                if (!sign) {
-                    const knight = this._knights.get(unit.auth);
-                    sign = new Uint8Array(await knight.key_private.sign(bin.sens()));
-                }
-                bin.sign(sign);
-                unit.bin = bin;
-                this._signs.set(unit, sign);
-                return unit;
-            }));
-        }
-        delta_land(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
-            return this.sign_units(land.delta(clocks));
-        }
-        async delta_batch(land, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]) {
-            const units = await this.delta_land(land, clocks);
-            let size = 0;
-            const bins = [];
-            for (const unit of units) {
-                const bin = unit.bin;
-                bins.push(bin);
-                size += bin.byteLength;
-            }
-            const batch = new Uint8Array(size);
-            let offset = 0;
-            for (const bin of bins) {
-                batch.set(new Uint8Array(bin.buffer, bin.byteOffset, bin.byteLength), offset);
-                offset += bin.byteLength;
-            }
-            return batch;
-        }
-        async *delta(clocks = new Map()) {
-            for (const land of this.lands.values()) {
-                const batch = await this.delta_batch(land, clocks.get(land.id()));
-                if (batch.length)
-                    yield batch;
-            }
-        }
-        async merge(donor) {
-            for await (const batch of donor.delta())
-                await this.apply(batch);
-        }
-        async apply(delta) {
-            const units = [];
-            let bin_offset = 0;
-            while (bin_offset < delta.byteLength) {
-                const buf = new Int16Array(delta.buffer, delta.byteOffset + bin_offset);
-                const bin = $hyoo_crowd_unit_bin.from_buffer(buf);
-                units.push(bin.unit());
-                bin_offset += bin.size();
-            }
-            const land = this.land(units[0].land);
-            const report = await this.audit_delta(land, units);
-            land.apply(report.allow);
-            return report;
-        }
-        async audit_delta(land, delta) {
-            const all = new Map();
-            const desync = 60 * 60 * 10;
-            const deadline = land.clock_data.now() + desync;
-            const get_unit = (id) => {
-                return all.get(id) ?? land._unit_all.get(id);
-            };
-            const get_level = (head, self) => {
-                return get_unit(`${head}!${self}`)?.level()
-                    ?? get_unit(`${head}!0_0`)?.level()
-                    ?? $hyoo_crowd_peer_level.get;
-            };
-            const check_unit = async (unit) => {
-                const bin = unit.bin;
-                if (unit.time > deadline)
-                    return 'Far future';
-                const auth_unit = get_unit(`${unit.auth}!${unit.auth}`);
-                const kind = unit.kind();
-                switch (kind) {
-                    case $hyoo_crowd_unit_kind.grab:
-                    case $hyoo_crowd_unit_kind.join: {
-                        const key_str = auth_unit?.data ?? unit.data;
-                        if (typeof key_str !== 'string')
-                            return 'No join key';
-                        const self = $mol_int62_hash_string(key_str);
-                        if (unit.self !== self)
-                            return 'Alien join key';
-                        const key = await $mol_crypto_auditor_public.from(key_str);
-                        const sign = bin.sign();
-                        const valid = await key.verify(bin.sens(), sign);
-                        if (!valid)
-                            return 'Wrong join sign';
-                        all.set(`${unit.head}!${unit.auth}`, unit);
-                        this._signs.set(unit, sign);
-                        return '';
-                    }
-                    case $hyoo_crowd_unit_kind.give: {
-                        const lord_level = get_level(land.id(), unit.auth);
-                        if (lord_level < $hyoo_crowd_peer_level.law)
-                            return `Level too low`;
-                        const peer_level = get_level(land.id(), unit.self);
-                        if (peer_level > unit.level())
-                            return `Cancel unsupported`;
-                        break;
-                    }
-                    case $hyoo_crowd_unit_kind.data: {
-                        const level = get_level(land.id(), unit.auth);
-                        if (level >= $hyoo_crowd_peer_level.mod)
-                            break;
-                        if (level === $hyoo_crowd_peer_level.add) {
-                            const exists = get_unit(`${unit.head}!${unit.self}`);
-                            if (!exists)
-                                break;
-                            if (exists.auth === unit.auth)
-                                break;
-                        }
-                        return `Level too low`;
-                    }
-                }
-                const key_str = auth_unit?.data;
-                if (typeof key_str !== 'string')
-                    return 'No auth key';
-                const key = await $mol_crypto_auditor_public.from(key_str);
-                const sign = bin.sign();
-                const valid = await key.verify(bin.sens(), sign);
-                if (!valid)
-                    return 'Wrong auth sign';
-                all.set(`${unit.head}!${unit.self}`, unit);
-                this._signs.set(unit, sign);
-                return '';
-            };
-            const allow = [];
-            const forbid = new Map();
-            const proceed_unit = async (unit) => {
-                const error = await check_unit(unit);
-                if (error)
-                    forbid.set(unit, error);
-                else
-                    allow.push(unit);
-            };
-            const tasks = [];
-            for (const unit of delta) {
-                const task = proceed_unit(unit);
-                tasks.push(task);
-                if (unit.group() === $hyoo_crowd_unit_group.auth)
-                    await task;
-            }
-            await Promise.all(tasks);
-            return { allow, forbid };
-        }
-    }
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_crowd_world.prototype, "Fund", null);
-    $.$hyoo_crowd_world = $hyoo_crowd_world;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_promise() {
-        let done;
-        let fail;
-        const promise = new Promise((d, f) => {
-            done = d;
-            fail = f;
-        });
-        return Object.assign(promise, {
-            done,
-            fail,
-        });
-    }
-    $.$mol_promise = $mol_promise;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wait_timeout_async(timeout) {
-        const promise = $mol_promise();
-        const task = new this.$mol_after_timeout(timeout, () => promise.done());
-        return Object.assign(promise, {
-            destructor: () => task.destructor()
-        });
-    }
-    $.$mol_wait_timeout_async = $mol_wait_timeout_async;
-    function $mol_wait_timeout(timeout) {
-        return this.$mol_wire_sync(this).$mol_wait_timeout_async(timeout);
-    }
-    $.$mol_wait_timeout = $mol_wait_timeout;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_wire_race(...tasks) {
-        const results = tasks.map(task => {
-            try {
-                return task();
-            }
-            catch (error) {
-                return error;
-            }
-        });
-        const promises = results.filter(res => $mol_promise_like(res));
-        if (promises.length)
-            $mol_fail(Promise.race(promises));
-        const error = results.find(res => res instanceof Error);
-        if (error)
-            $mol_fail(error);
-        return results;
-    }
-    $.$mol_wire_race = $mol_wire_race;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $.$hyoo_sync_masters = [
-        `sync.hyoo.ru`,
-        `sync-pmzz.onrender.com`,
-    ];
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_sync_yard extends $mol_object2 {
-        db_unit_persisted = new WeakSet();
-        log_pack(data) {
-            return data;
-        }
-        peer(next) {
-            return $mol_wire_sync($hyoo_sync_peer)(this + '.peer()', next);
-        }
-        world() {
-            $mol_wire_solid();
-            const world = new this.$.$hyoo_crowd_world(this.peer());
-            world.land_init = land => this.land_init(land);
-            return world;
-        }
-        land_init(land) {
-            this.db_land_init(land);
-            try {
-                this.land_sync(land);
-            }
-            catch (error) {
-                $mol_fail_log(error);
-            }
-            if (!land.grabbed())
-                this.$.$mol_wait_timeout(10_000);
-        }
-        land(id) {
-            return this.world().land_sync(id);
-        }
-        land_grab(law = [''], mod = [], add = []) {
-            return $mol_wire_sync(this.world()).grab(law, mod, add);
-        }
-        home() {
-            return this.land(this.peer().id);
-        }
-        land_search(query) {
-            const stat = new Map();
-            for (const prefix of query.match(/\p{Letter}{2,}/gu) ?? []) {
-                const caps = prefix.slice(0, 1).toUpperCase() + prefix.slice(1);
-                const prefs = new Set([
-                    caps, ' ' + caps,
-                    prefix, ' ' + prefix,
-                ]);
-                const lands = new Set();
-                const founds = $mol_wire_race(...[...prefs].map(pref => () => $mol_wire_sync(this).db_land_search(pref)));
-                for (const found of founds) {
-                    for (const land of [...found].reverse())
-                        lands.add(land);
-                }
-                for (const land of lands) {
-                    stat.set(land, (stat.get(land) ?? 0) + 1);
-                }
-            }
-            return [...stat].sort((left, right) => right[1] - left[1]).map(pair => pair[0]);
-        }
-        sync() {
-            this.server();
-            for (const land of this.world().lands.values()) {
-                this.db_land_sync(land);
-            }
-            $mol_wire_race(...this.slaves().map(line => () => this.line_sync(line)));
-            try {
-                const master = this.master();
-                if (master)
-                    $mol_wire_race(...[...this.world().lands.values()].map(land => () => this.line_land_sync({ line: master, land })));
-            }
-            catch (error) {
-                $mol_fail_log(error);
-            }
-        }
-        land_sync(land) {
-            this.db_land_init(land);
-            try {
-                this.db_land_sync(land);
-            }
-            catch (error) {
-                $mol_fail_log(error);
-            }
-            try {
-                const master = this.master();
-                if (master)
-                    this.line_land_sync({ line: master, land });
-            }
-            catch (error) {
-                $mol_fail_log(error);
-            }
-            try {
-                $mol_wire_race(...this.slaves()
-                    .filter(line => this.line_lands(line).includes(land))
-                    .map(line => () => this.line_land_sync({ line, land })));
-            }
-            catch (error) {
-                $mol_fail_log(error);
-            }
-        }
-        db_land_clocks(land, next) {
-            $mol_wire_solid();
-            return next;
-        }
-        db_land_sync(land) {
-            this.db_land_init(land);
-            land.clocks;
-            const units = [];
-            for (const unit of land._unit_all.values()) {
-                if (this.db_unit_persisted.has(unit))
-                    continue;
-                units.push(unit);
-            }
-            if (!units.length)
-                return;
-            $mol_wire_sync(this.world()).sign_units(units);
-            $mol_wire_sync(this).db_land_save(land, units);
-            for (const unit of units)
-                this.db_unit_persisted.add(unit);
-        }
-        db_land_init(land) {
-            try {
-                var units = $mol_wire_sync(this).db_land_load(land);
-            }
-            catch (error) {
-                if (!(error instanceof Error))
-                    $mol_fail_hidden(error);
-                this.$.$mol_log3_fail({
-                    place: this,
-                    land: land.id(),
-                    message: error.message,
-                });
-                units = [];
-            }
-            for (const unit of units)
-                this.db_unit_persisted.add(unit);
-            units.sort($hyoo_crowd_unit_compare);
-            land.apply(units);
-        }
-        async db_land_load(land) {
-            return [];
-        }
-        async db_land_search(from, to = from) {
-            return new Set();
-        }
-        async db_land_save(land, units) { }
-        master_cursor(next = 0) {
-            return next;
-        }
-        master_list() {
-            const scheme = this.$.$mol_dom_context.document.location.protocol.replace(/^http/, 'ws');
-            return this.$.$hyoo_sync_masters.map(host => `${scheme}//${host}`);
-        }
-        master_link() {
-            return this.master_list()[this.master_cursor()];
-        }
-        master() {
-            return null;
-        }
-        server() {
-            return null;
-        }
-        slaves(next = []) {
-            return next;
-        }
-        line_lands(line, next = []) {
-            return next;
-        }
-        line_land_clocks({ line, land }, next) {
-            $mol_wire_solid();
-            return next;
-        }
-        line_sync(line) {
-            $mol_wire_race(...this.line_lands(line).map(land => () => this.line_land_sync({ line, land })));
-        }
-        line_land_sync({ line, land }) {
-            this.line_land_init({ line, land });
-            let clocks = this.line_land_clocks({ line, land });
-            if (!clocks)
-                return;
-            const units = land.delta(clocks);
-            if (!units.length)
-                return;
-            this.line_send_units(line, units);
-            for (const unit of units) {
-                clocks[unit.group()].see_peer(unit.auth, unit.time);
-            }
-        }
-        line_land_init({ line, land }) {
-            this.db_land_init(land);
-            this.line_send_clocks(line, land);
-        }
-        line_land_neck({ line, land }, next = []) {
-            return next;
-        }
-        async line_receive(line, message) {
-            if (!message.byteLength)
-                return;
-            const view = new DataView(message.buffer, message.byteOffset, message.byteLength);
-            const int0 = view.getInt32(0, true);
-            const int1 = view.getInt32(4, true);
-            const land_id = $mol_int62_to_string({
-                lo: int0 << 1 >> 1,
-                hi: int1 << 1 >> 1,
-            });
-            const handle = async (prev) => {
-                if (prev)
-                    await prev;
-                const world = this.world();
-                const land = await $mol_wire_async(world).land(land_id);
-                let clocks = this.line_land_clocks({ line, land });
-                if (!clocks)
-                    this.line_land_clocks({ line, land }, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]);
-                if (int0 << 1 >> 1 ^ int0) {
-                    const bin = new $hyoo_crowd_clock_bin(message.buffer, message.byteOffset, message.byteLength);
-                    for (let group = 0; group < clocks.length; ++group) {
-                        clocks[group].see_bin(bin, group);
-                    }
-                    if (bin.count() + land.delta(clocks).length < land._unit_all.size) {
-                        this.line_land_clocks({ line, land }, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]);
-                    }
-                    const lands = this.line_lands(line);
-                    if (lands.includes(land)) {
-                        this.$.$mol_log3_warn({
-                            place: this,
-                            land: land.id(),
-                            message: 'Already syncing',
-                            hint: 'Bug at $hyoo_sync_yard',
-                            line: $mol_key(line),
-                            clocks,
-                        });
-                    }
-                    else {
-                        this.line_lands(line, [...lands, land]);
-                    }
-                    return;
-                }
-                const { allow, forbid } = await world.apply(message);
-                for (const [{ bin, ...unit }, error] of forbid) {
-                    this.$.$mol_log3_fail({
-                        place: this,
-                        land: land.id(),
-                        message: error,
-                        line: $mol_key(line),
-                        unit,
-                    });
-                }
-                if (!allow.length)
-                    return;
-                for (const unit of allow) {
-                    clocks[unit.group()].see_peer(unit.auth, unit.time);
-                }
-                this.$.$mol_log3_rise({
-                    place: this,
-                    land: land.id(),
-                    message: 'Sync Gain',
-                    line: $mol_key(line),
-                    units: this.log_pack(allow),
-                });
-            };
-            this.line_land_neck({ line, land: land_id }, [
-                handle(this.line_land_neck({ line, land: land_id })[0])
-                    .catch(error => {
-                    this.$.$mol_log3_fail({
-                        place: this,
-                        land: land_id,
-                        message: String(error?.message ?? error),
-                    });
-                })
-            ]);
-        }
-        line_send_clocks(line, land) { }
-        async line_send_units(line, units) { }
-        [$mol_dev_format_head]() {
-            return $mol_dev_format_native(this);
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $hyoo_sync_yard.prototype, "peer", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_sync_yard.prototype, "world", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "land_init", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_sync_yard.prototype, "land_search", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_sync_yard.prototype, "sync", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "land_sync", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "db_land_clocks", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "db_land_sync", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "db_land_init", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_sync_yard.prototype, "master_cursor", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_sync_yard.prototype, "master_link", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_sync_yard.prototype, "slaves", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "line_lands", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "line_land_clocks", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "line_sync", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "line_land_sync", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "line_land_init", null);
-    __decorate([
-        $mol_mem_key
-    ], $hyoo_sync_yard.prototype, "line_land_neck", null);
-    $.$hyoo_sync_yard = $hyoo_sync_yard;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_db_response(request) {
-        return new Promise((done, fail) => {
-            request.onerror = () => fail(new Error(request.error.message));
-            request.onsuccess = () => done(request.result);
-        });
-    }
-    $.$mol_db_response = $mol_db_response;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    async function $mol_db(name, ...migrations) {
-        const request = this.$mol_dom_context.indexedDB.open(name, migrations.length ? migrations.length + 1 : undefined);
-        request.onupgradeneeded = event => {
-            migrations.splice(0, event.oldVersion - 1);
-            const transaction = new $mol_db_transaction(request.transaction);
-            for (const migrate of migrations)
-                migrate(transaction);
-        };
-        const db = await $mol_db_response(request);
-        return new $mol_db_database(db);
-    }
-    $.$mol_db = $mol_db;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_db_store {
-        native;
-        constructor(native) {
-            this.native = native;
-        }
-        get name() {
-            return this.native.name;
-        }
-        get path() {
-            return this.native.keyPath;
-        }
-        get incremental() {
-            return this.native.autoIncrement;
-        }
-        get indexes() {
-            return new Proxy({}, {
-                ownKeys: () => [...this.native.indexNames],
-                has: (_, name) => this.native.indexNames.contains(name),
-                get: (_, name) => new $mol_db_index(this.native.index(name))
-            });
-        }
-        index_make(name, path = [], unique = false, multiEntry = false) {
-            return this.native.createIndex(name, path, { multiEntry, unique });
-        }
-        index_drop(name) {
-            this.native.deleteIndex(name);
-            return this;
-        }
-        get transaction() {
-            return new $mol_db_transaction(this.native.transaction);
-        }
-        get db() {
-            return this.transaction.db;
-        }
-        clear() {
-            return $mol_db_response(this.native.clear());
-        }
-        count(keys) {
-            return $mol_db_response(this.native.count(keys));
-        }
-        put(doc, key) {
-            return $mol_db_response(this.native.put(doc, key));
-        }
-        get(key) {
-            return $mol_db_response(this.native.get(key));
-        }
-        select(key, count) {
-            return $mol_db_response(this.native.getAll(key, count));
-        }
-        drop(keys) {
-            return $mol_db_response(this.native.delete(keys));
-        }
-    }
-    $.$mol_db_store = $mol_db_store;
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_db_index {
-        native;
-        constructor(native) {
-            this.native = native;
-        }
-        get name() {
-            return this.native.name;
-        }
-        get paths() {
-            return this.native.keyPath;
-        }
-        get unique() {
-            return this.native.unique;
-        }
-        get multiple() {
-            return this.native.multiEntry;
-        }
-        get store() {
-            return new $mol_db_store(this.native.objectStore);
-        }
-        get transaction() {
-            return this.store.transaction;
-        }
-        get db() {
-            return this.store.db;
-        }
-        count(keys) {
-            return $mol_db_response(this.native.count(keys));
-        }
-        get(key) {
-            return $mol_db_response(this.native.get(key));
-        }
-        select(key, count) {
-            return $mol_db_response(this.native.getAll(key, count));
-        }
-    }
-    $.$mol_db_index = $mol_db_index;
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_dom_context.indexedDB = $node['fake-indexeddb'].indexedDB;
-    $mol_dom_context.IDBCursor = $node['fake-indexeddb'].IDBCursor;
-    $mol_dom_context.IDBCursorWithValue = $node['fake-indexeddb'].IDBCursorWithValue;
-    $mol_dom_context.IDBDatabase = $node['fake-indexeddb'].IDBDatabase;
-    $mol_dom_context.IDBFactory = $node['fake-indexeddb'].IDBFactory;
-    $mol_dom_context.IDBIndex = $node['fake-indexeddb'].IDBIndex;
-    $mol_dom_context.IDBKeyRange = $node['fake-indexeddb'].IDBKeyRange;
-    $mol_dom_context.IDBObjectStore = $node['fake-indexeddb'].IDBObjectStore;
-    $mol_dom_context.IDBOpenDBRequest = $node['fake-indexeddb'].IDBOpenDBRequest;
-    $mol_dom_context.IDBRequest = $node['fake-indexeddb'].IDBRequest;
-    $mol_dom_context.IDBTransaction = $node['fake-indexeddb'].IDBTransaction;
-    $mol_dom_context.IDBVersionChangeEvent = $node['fake-indexeddb'].IDBVersionChangeEvent;
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_db_database {
-        native;
-        constructor(native) {
-            this.native = native;
-        }
-        get name() {
-            return this.native.name;
-        }
-        get version() {
-            return this.native.version;
-        }
-        get stores() {
-            return [...this.native.objectStoreNames];
-        }
-        read(...names) {
-            return new $mol_db_transaction(this.native.transaction(names, 'readonly', { durability: 'relaxed' })).stores;
-        }
-        change(...names) {
-            return new $mol_db_transaction(this.native.transaction(names, 'readwrite', { durability: 'relaxed' }));
-        }
-        kill() {
-            this.native.close();
-            const request = $mol_dom_context.indexedDB.deleteDatabase(this.name);
-            request.onblocked = console.warn;
-            return $mol_db_response(request);
-        }
-        destructor() {
-            this.native.close();
-        }
-    }
-    $.$mol_db_database = $mol_db_database;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_db_transaction {
-        native;
-        constructor(native) {
-            this.native = native;
-        }
-        get stores() {
-            return new Proxy({}, {
-                ownKeys: () => [...this.native.objectStoreNames],
-                has: (_, name) => this.native.objectStoreNames.contains(name),
-                get: (_, name, proxy) => (name in proxy)
-                    ? new $mol_db_store(this.native.objectStore(name))
-                    : undefined,
-            });
-        }
-        store_make(name) {
-            return this.native.db.createObjectStore(name, { autoIncrement: true });
-        }
-        store_drop(name) {
-            this.native.db.deleteObjectStore(name);
-            return this;
-        }
-        abort() {
-            if (this.native.error)
-                return;
-            this.native.abort();
-        }
-        commit() {
-            this.native.commit?.();
-            return new Promise((done, fail) => {
-                this.native.onerror = () => fail(new Error(this.native.error.message));
-                this.native.oncomplete = () => done();
-            });
-        }
-        get db() {
-            return new $mol_db_database(this.native.db);
-        }
-    }
-    $.$mol_db_transaction = $mol_db_transaction;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_sync_client extends $hyoo_sync_yard {
-        async db() {
-            const db1 = await this.$.$mol_db('$hyoo_sync_client_db');
-            await db1.kill();
-            return await this.$.$mol_db('$hyoo_sync_client_db2', mig => mig.store_make('Unit'), mig => mig.stores.Unit.index_make('Land', ['land']), mig => mig.stores.Unit.index_make('Data', ['data']));
-        }
-        async db_land_load(land) {
-            try {
-                var db = await this.db();
-            }
-            catch (error) {
-                $mol_fail_log(error);
-                return [];
-            }
-            const Unit = db.read('Unit').Unit;
-            const recs = await Unit.indexes.Land.select([land.id()]);
-            if (!recs)
-                return [];
-            const units = recs.map(rec => new $hyoo_crowd_unit(rec.land, rec.auth, rec.head, rec.self, rec.next, rec.prev, rec.time, rec.data, new $hyoo_crowd_unit_bin(rec.bin.buffer)));
-            return units;
-        }
-        async db_land_search(from, to = from + '\uFFFF') {
-            try {
-                var db = await this.db();
-            }
-            catch (error) {
-                $mol_fail_log(error);
-                return new Set();
-            }
-            const Unit = db.read('Unit').Unit;
-            const query = IDBKeyRange.bound([from], [to]);
-            const recs = await Unit.indexes.Data.select(query);
-            return new Set(recs.map(rec => rec.land));
-        }
-        async db_land_save(land, units) {
-            try {
-                var db = await this.db();
-            }
-            catch (error) {
-                $mol_fail_log(error);
-                return;
-            }
-            const trans = db.change('Unit');
-            const Unit = trans.stores.Unit;
-            for (const unit of units) {
-                Unit.put(unit, [unit.land, unit.head, unit.self]);
-            }
-            await trans.commit();
-            this.$.$mol_storage.persisted(true);
-        }
-        reconnects(reset) {
-            return ($mol_wire_probe(() => this.reconnects()) ?? 0) + 1;
-        }
-        master() {
-            this.reconnects();
-            const link = this.master_link();
-            const line = new $mol_dom_context.WebSocket(link, ['$hyoo_sync_protocol_1']);
-            line.binaryType = 'arraybuffer';
-            line.onmessage = async (event) => {
-                if (event.data instanceof ArrayBuffer) {
-                    await this.line_receive(line, new Uint8Array(event.data));
-                }
-                else {
-                    this.$.$mol_log3_fail({
-                        place: this,
-                        message: 'Wrong data',
-                        data: event.data
-                    });
-                }
-            };
-            let interval;
-            line.onclose = () => {
-                clearInterval(interval);
-                setTimeout(() => this.reconnects(null), 1000);
-            };
-            Object.assign(line, {
-                destructor: () => {
-                    line.onclose = () => { };
-                    clearInterval(interval);
-                    line.close();
-                }
-            });
-            return new Promise((done, fail) => {
-                line.onopen = () => {
-                    this.$.$mol_log3_come({
-                        place: this,
-                        message: 'Connected to Master',
-                        line: $mol_key(line),
-                        server: link,
-                    });
-                    interval = setInterval(() => line.send(new Uint8Array), 30000);
-                    done(line);
-                };
-                line.onerror = () => {
-                    line.onclose = event => {
-                        fail(new Error(`Master is unavailable (${event.code})`));
-                    };
-                    clearInterval(interval);
-                    this.master_cursor((this.master_cursor() + 1) % this.$.$hyoo_sync_masters.length);
-                };
-            });
-        }
-        line_send_clocks(line, land) {
-            if (line instanceof WebSocket) {
-                line.send(land.clocks_bin);
-            }
-            else {
-                line.postMessage(['hyoo_sync_clocks', land.id(), land._clocks]);
-            }
-        }
-        async line_send_units(line, units) {
-            if (line instanceof WebSocket) {
-                await this.world().sign_units(units);
-                const message = new Blob(units.map(unit => unit.bin));
-                line.send(message);
-            }
-            else {
-                line.postMessage(['hyoo_sync_units', units[0].land, units]);
-            }
-        }
-    }
-    __decorate([
-        $mol_memo.method
-    ], $hyoo_sync_client.prototype, "db", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_sync_client.prototype, "reconnects", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_sync_client.prototype, "master", null);
-    $.$hyoo_sync_client = $hyoo_sync_client;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_reconcile({ prev, from, to, next, equal, drop, insert, update, }) {
-        if (!update)
-            update = (next, prev, lead) => insert(next, drop(prev, lead));
-        let p = from;
-        let n = 0;
-        let lead = p ? prev[p - 1] : null;
-        if (to > prev.length)
-            $mol_fail(new RangeError(`To(${to}) greater then length(${prev.length})`));
-        if (from > to)
-            $mol_fail(new RangeError(`From(${to}) greater then to(${to})`));
-        while (p < to || n < next.length) {
-            if (p < to && n < next.length && equal(next[n], prev[p])) {
-                lead = prev[p];
-                ++p;
-                ++n;
-            }
-            else if (next.length - n > to - p) {
-                lead = insert(next[n], lead);
-                ++n;
-            }
-            else if (next.length - n < to - p) {
-                lead = drop(prev[p], lead);
-                ++p;
-            }
-            else {
-                lead = update(next[n], prev[p], lead);
-                ++p;
-                ++n;
-            }
-        }
-    }
-    $.$mol_reconcile = $mol_reconcile;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const { unicode_only, line_end, tab, repeat_greedy, optional, forbid_after, force_after, char_only, char_except } = $mol_regexp;
-    $.$hyoo_crowd_tokenizer = $mol_regexp.from({
-        token: {
-            'line-break': line_end,
-            'indents': repeat_greedy(tab, 1),
-            'emoji': [
-                unicode_only('Extended_Pictographic'),
-                optional(unicode_only('Emoji_Modifier')),
-                repeat_greedy([
-                    unicode_only('Emoji_Component'),
-                    unicode_only('Extended_Pictographic'),
-                    optional(unicode_only('Emoji_Modifier')),
-                ]),
-            ],
-            'link': /\b(https?:\/\/[^\s,.;:!?")]+(?:[,.;:!?")][^\s,.;:!?")]+)+)/,
-            'Word': [
-                [
-                    forbid_after(line_end),
-                    unicode_only('White_Space'),
-                ],
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]), 1),
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ])),
-            ],
-            'word': [
-                [
-                    forbid_after(line_end),
-                    unicode_only('White_Space'),
-                ],
-                repeat_greedy(char_only([
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]), 1),
-            ],
-            'spaces': [
-                forbid_after(line_end),
-                repeat_greedy(unicode_only('White_Space'), 1),
-                force_after(unicode_only('White_Space')),
-            ],
-            'space': [
-                forbid_after(line_end),
-                unicode_only('White_Space'),
-                forbid_after([
-                    unicode_only('White_Space'),
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                ]),
-            ],
-            'others': [
-                repeat_greedy(char_except([
-                    unicode_only('General_Category', 'Uppercase_Letter'),
-                    unicode_only('General_Category', 'Lowercase_Letter'),
-                    unicode_only('Diacritic'),
-                    unicode_only('General_Category', 'Number'),
-                    unicode_only('White_Space'),
-                ]), 1),
-            ],
-        },
-    }).native;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_list extends $hyoo_crowd_node {
-        list(next) {
-            const units = this.units();
-            if (next === undefined) {
-                return units.map(unit => unit.data);
-            }
-            else {
-                this.insert(next, 0, units.length);
-                return next;
-            }
-        }
-        set(next) {
-            return new Set(this.list(next && [...next]));
-        }
-        insert(next, from = this.units().length, to = from) {
-            $mol_reconcile({
-                prev: this.units(),
-                from,
-                to,
-                next,
-                equal: (next, prev) => $mol_compare_deep(prev.data, next),
-                drop: (prev, lead) => this.land.wipe(prev),
-                insert: (next, lead) => this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', next),
-                update: (next, prev, lead) => this.land.put(prev.head, prev.self, lead?.self ?? '0_0', next),
-            });
-        }
-        move(from, to) {
-            const units = this.units();
-            const lead = to ? units[to - 1] : null;
-            this.land.move(units[from], this.head, lead?.self ?? '0_0');
-        }
-        cut(seat) {
-            return this.land.wipe(this.units()[seat]);
-        }
-        has(val, next) {
-            if (next === undefined) {
-                for (const unit of this.units()) {
-                    if (unit.data === val)
-                        return true;
-                }
-                return false;
-            }
-            if (next)
-                this.add(val);
-            else
-                this.drop(val);
-            return next;
-        }
-        add(val) {
-            if (this.has(val))
-                return;
-            this.insert([val]);
-        }
-        drop(val) {
-            for (const unit of this.units()) {
-                if (unit.data !== val)
-                    continue;
-                this.land.wipe(unit);
-            }
-        }
-        node_make(val, Node) {
-            this.insert([val]);
-            const unit = this.units().at(-1);
-            return this.land.node(unit.self, Node);
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $hyoo_crowd_list.prototype, "set", null);
-    $.$hyoo_crowd_list = $hyoo_crowd_list;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_crowd_text extends $hyoo_crowd_node {
-        text(next) {
-            if (next === undefined) {
-                return this.str();
-            }
-            else {
-                const prev = this.units();
-                const lines = next.match(/.*\n|.+$/g) ?? [];
-                $mol_reconcile({
-                    prev,
-                    from: 0,
-                    to: prev.length,
-                    next: lines,
-                    equal: (next, prev) => {
-                        if (typeof prev.data === 'string')
-                            return false;
-                        return this.land.node(prev.self, $hyoo_crowd_text).str() === next;
-                    },
-                    drop: (prev, lead) => this.land.wipe(prev),
-                    insert: (next, lead) => {
-                        const unit = this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', []);
-                        this.land.node(unit.self, $hyoo_crowd_text).str(next);
-                        return unit;
-                    },
-                    update: (next, prev, lead) => {
-                        this.land.node(prev.self, $hyoo_crowd_text).str(next);
-                        return prev;
-                    },
-                });
-                return next;
-            }
-        }
-        str(next) {
-            if (next === undefined) {
-                let str = '';
-                for (const unit of this.units()) {
-                    if (typeof unit.data === 'string')
-                        str += unit.data;
-                    else
-                        str += this.land.node(unit.self, $hyoo_crowd_text).str();
-                }
-                return str;
-            }
-            else {
-                this.write(next, 0, -1);
-                return next;
-            }
-        }
-        write(next, str_from = -1, str_to = str_from) {
-            const list = this.units();
-            let from = str_from < 0 ? list.length : 0;
-            let word = '';
-            while (from < list.length) {
-                word = String(list[from].data);
-                if (str_from <= word.length) {
-                    next = word.slice(0, str_from) + next;
-                    break;
-                }
-                str_from -= word.length;
-                if (str_to > 0)
-                    str_to -= word.length;
-                from++;
-            }
-            let to = str_to < 0 ? list.length : from;
-            while (to < list.length) {
-                word = String(list[to].data);
-                to++;
-                if (str_to < word.length) {
-                    next = next + word.slice(str_to);
-                    break;
-                }
-                str_to -= word.length;
-            }
-            if (from && from === list.length) {
-                --from;
-                next = String(list[from].data) + next;
-            }
-            const words = next.match($hyoo_crowd_tokenizer) ?? [];
-            this.as($hyoo_crowd_list).insert(words, from, to);
-            return this;
-        }
-        point_by_offset(offset) {
-            let off = offset;
-            for (const unit of this.units()) {
-                if (typeof unit.data === 'string') {
-                    const len = String(unit.data).length;
-                    if (off <= len)
-                        return [unit.self, off];
-                    else
-                        off -= len;
-                }
-                else {
-                    const found = this.land.node(unit.self, $hyoo_crowd_text).point_by_offset(off);
-                    if (found[0] !== '0_0')
-                        return found;
-                    off = found[1];
-                }
-            }
-            return ['0_0', off];
-        }
-        offset_by_point([self, offset]) {
-            for (const unit of this.units()) {
-                if (unit.self === self)
-                    return [self, offset];
-                if (typeof unit.data === 'string') {
-                    offset += unit.data.length;
-                }
-                else {
-                    const found = this.land.node(unit.self, $hyoo_crowd_text).offset_by_point([self, offset]);
-                    if (found[0] !== '0_0')
-                        return [self, found[1]];
-                    offset = found[1];
-                }
-            }
-            return ['0_0', offset];
-        }
-        selection(peer, next) {
-            const reg = this.land.selection(peer);
-            if (next) {
-                reg.value(next.map(offset => this.point_by_offset(offset)));
-                return next;
-            }
-            else {
-                this.units();
-                return reg.value()
-                    ?.map(point => this.offset_by_point(point)[1]) ?? [0, 0];
-            }
-        }
-    }
-    $.$hyoo_crowd_text = $hyoo_crowd_text;
 })($ || ($ = {}));
 
 ;
@@ -11242,22 +10430,6 @@ var $;
 
 ;
 	($.$hyoo_meta_link) = class $hyoo_meta_link extends ($.$mol_link) {
-		minimal_height(){
-			return 40;
-		}
-		meta(){
-			const obj = new this.$.$hyoo_meta_model();
-			return obj;
-		}
-		param(){
-			return "";
-		}
-		all_title(){
-			return (this.$.$mol_locale.text("$hyoo_meta_link_all_title"));
-		}
-		sub(){
-			return [(this.Avatar()), (this.Title())];
-		}
 		id(){
 			return (this.meta().id());
 		}
@@ -11278,10 +10450,26 @@ var $;
 			(obj.needle) = () => ((this.highlight()));
 			return obj;
 		}
+		minimal_height(){
+			return 40;
+		}
+		meta(){
+			const obj = new this.$.$hyoo_meta_model();
+			return obj;
+		}
+		param(){
+			return "";
+		}
+		all_title(){
+			return (this.$.$mol_locale.text("$hyoo_meta_link_all_title"));
+		}
+		sub(){
+			return [(this.Avatar()), (this.Title())];
+		}
 	};
-	($mol_mem(($.$hyoo_meta_link.prototype), "meta"));
 	($mol_mem(($.$hyoo_meta_link.prototype), "Avatar"));
 	($mol_mem(($.$hyoo_meta_link.prototype), "Title"));
+	($mol_mem(($.$hyoo_meta_link.prototype), "meta"));
 
 
 ;
@@ -11328,19 +10516,6 @@ var $;
 
 ;
 	($.$hyoo_page_side_news) = class $hyoo_page_side_news extends ($.$mol_page) {
-		side(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		title(){
-			return (this.$.$mol_locale.text("$hyoo_page_side_news_title"));
-		}
-		attr(){
-			return {...(super.attr()), "mol_theme": "$mol_theme_special"};
-		}
-		body(){
-			return [(this.Section_list())];
-		}
 		news(){
 			return (this.side().news());
 		}
@@ -11366,11 +10541,24 @@ var $;
 			(obj.rows) = () => ((this.items()));
 			return obj;
 		}
+		side(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		title(){
+			return (this.$.$mol_locale.text("$hyoo_page_side_news_title"));
+		}
+		attr(){
+			return {...(super.attr()), "mol_theme": "$mol_theme_special"};
+		}
+		body(){
+			return [(this.Section_list())];
+		}
 	};
-	($mol_mem(($.$hyoo_page_side_news.prototype), "side"));
 	($mol_mem_key(($.$hyoo_page_side_news.prototype), "item"));
 	($mol_mem_key(($.$hyoo_page_side_news.prototype), "Item"));
 	($mol_mem(($.$hyoo_page_side_news.prototype), "Section_list"));
+	($mol_mem(($.$hyoo_page_side_news.prototype), "side"));
 
 
 ;
@@ -11470,6 +10658,16 @@ var $;
 
 ;
 	($.$mol_check_expand) = class $mol_check_expand extends ($.$mol_check) {
+		level_style(){
+			return "0px";
+		}
+		expanded(next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		expandable(){
+			return false;
+		}
 		Icon(){
 			const obj = new this.$.$mol_icon_chevron();
 			return obj;
@@ -11486,19 +10684,9 @@ var $;
 		enabled(){
 			return (this.expandable());
 		}
-		level_style(){
-			return "0px";
-		}
-		expanded(next){
-			if(next !== undefined) return next;
-			return false;
-		}
-		expandable(){
-			return false;
-		}
 	};
-	($mol_mem(($.$mol_check_expand.prototype), "Icon"));
 	($mol_mem(($.$mol_check_expand.prototype), "expanded"));
+	($mol_mem(($.$mol_check_expand.prototype), "Icon"));
 
 
 ;
@@ -11594,6 +10782,31 @@ var $;
 
 ;
 	($.$mol_drag) = class $mol_drag extends ($.$mol_ghost) {
+		start(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		drag_start(next){
+			return (this.start(next));
+		}
+		move(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		drag_move(next){
+			return (this.move(next));
+		}
+		end(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		drag_end(next){
+			return (this.end(next));
+		}
+		status(next){
+			if(next !== undefined) return next;
+			return "ready";
+		}
 		event(){
 			return {
 				"dragstart": (next) => (this.drag_start(next)), 
@@ -11622,31 +10835,6 @@ var $;
 		}
 		image(){
 			return (this.dom_node());
-		}
-		start(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		drag_start(next){
-			return (this.start(next));
-		}
-		move(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		drag_move(next){
-			return (this.move(next));
-		}
-		end(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		drag_end(next){
-			return (this.end(next));
-		}
-		status(next){
-			if(next !== undefined) return next;
-			return "ready";
 		}
 	};
 	($mol_mem(($.$mol_drag.prototype), "start"));
@@ -11700,6 +10888,26 @@ var $;
 
 ;
 	($.$mol_drop) = class $mol_drop extends ($.$mol_ghost) {
+		enter(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		move(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		leave(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		drop(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		status(next){
+			if(next !== undefined) return next;
+			return "ready";
+		}
 		enabled(next){
 			if(next !== undefined) return next;
 			return true;
@@ -11730,35 +10938,15 @@ var $;
 				"link"
 			];
 		}
-		enter(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		move(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		leave(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		drop(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		status(next){
-			if(next !== undefined) return next;
-			return "ready";
-		}
 	};
-	($mol_mem(($.$mol_drop.prototype), "enabled"));
-	($mol_mem(($.$mol_drop.prototype), "adopt"));
-	($mol_mem(($.$mol_drop.prototype), "receive"));
 	($mol_mem(($.$mol_drop.prototype), "enter"));
 	($mol_mem(($.$mol_drop.prototype), "move"));
 	($mol_mem(($.$mol_drop.prototype), "leave"));
 	($mol_mem(($.$mol_drop.prototype), "drop"));
 	($mol_mem(($.$mol_drop.prototype), "status"));
+	($mol_mem(($.$mol_drop.prototype), "enabled"));
+	($mol_mem(($.$mol_drop.prototype), "adopt"));
+	($mol_mem(($.$mol_drop.prototype), "receive"));
 
 
 ;
@@ -11854,34 +11042,6 @@ var $;
 
 ;
 	($.$hyoo_meta_menu_items) = class $hyoo_meta_menu_items extends ($.$mol_list) {
-		id(){
-			return "";
-		}
-		editing(){
-			return false;
-		}
-		drop_allow(){
-			return ["move", "link"];
-		}
-		list(){
-			const obj = new this.$.$hyoo_crowd_list();
-			return obj;
-		}
-		item(id){
-			const obj = new this.$.$hyoo_meta_model();
-			return obj;
-		}
-		item_list(id){
-			const obj = new this.$.$hyoo_crowd_list();
-			return obj;
-		}
-		item_moved(id, next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		rows(){
-			return (this.items());
-		}
 		ids(){
 			return (this.list().list());
 		}
@@ -12055,11 +11215,35 @@ var $;
 		items(){
 			return [(this.Item("0_0"))];
 		}
+		id(){
+			return "";
+		}
+		editing(){
+			return false;
+		}
+		drop_allow(){
+			return ["move", "link"];
+		}
+		list(){
+			const obj = new this.$.$hyoo_crowd_list();
+			return obj;
+		}
+		item(id){
+			const obj = new this.$.$hyoo_meta_model();
+			return obj;
+		}
+		item_list(id){
+			const obj = new this.$.$hyoo_crowd_list();
+			return obj;
+		}
+		item_moved(id, next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		rows(){
+			return (this.items());
+		}
 	};
-	($mol_mem(($.$hyoo_meta_menu_items.prototype), "list"));
-	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "item"));
-	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "item_list"));
-	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "item_moved"));
 	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "item_expanded"));
 	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "Item_expand"));
 	($mol_mem(($.$hyoo_meta_menu_items.prototype), "transfer_adopt"));
@@ -12082,6 +11266,10 @@ var $;
 	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "Item_row"));
 	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "Item_items"));
 	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "Item"));
+	($mol_mem(($.$hyoo_meta_menu_items.prototype), "list"));
+	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "item"));
+	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "item_list"));
+	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "item_moved"));
 
 
 ;
@@ -12303,63 +11491,430 @@ var $;
 })($ || ($ = {}));
 
 ;
+"use strict";
+let $hyoo_sync_revision = "echo";
+
+;
+"use strict";
+var $;
+(function ($) {
+    async function $hyoo_sync_peer(path, next) {
+        let serial = $mol_state_local.value('$hyoo_sync_peer', next);
+        if (typeof serial === 'string') {
+            return await $hyoo_crowd_peer.restore(serial);
+        }
+        const peer = await $hyoo_crowd_peer.generate();
+        $mol_state_local.value('$hyoo_sync_peer', peer.key_private_serial);
+        return peer;
+    }
+    $.$hyoo_sync_peer = $hyoo_sync_peer;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_promise() {
+        let done;
+        let fail;
+        const promise = new Promise((d, f) => {
+            done = d;
+            fail = f;
+        });
+        return Object.assign(promise, {
+            done,
+            fail,
+        });
+    }
+    $.$mol_promise = $mol_promise;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wait_timeout_async(timeout) {
+        const promise = $mol_promise();
+        const task = new this.$mol_after_timeout(timeout, () => promise.done());
+        return Object.assign(promise, {
+            destructor: () => task.destructor()
+        });
+    }
+    $.$mol_wait_timeout_async = $mol_wait_timeout_async;
+    function $mol_wait_timeout(timeout) {
+        return this.$mol_wire_sync(this).$mol_wait_timeout_async(timeout);
+    }
+    $.$mol_wait_timeout = $mol_wait_timeout;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_wire_race(...tasks) {
+        const results = tasks.map(task => {
+            try {
+                return task();
+            }
+            catch (error) {
+                return error;
+            }
+        });
+        const promises = results.filter(res => $mol_promise_like(res));
+        if (promises.length)
+            $mol_fail(Promise.race(promises));
+        const error = results.find(res => res instanceof Error);
+        if (error)
+            $mol_fail(error);
+        return results;
+    }
+    $.$mol_wire_race = $mol_wire_race;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$hyoo_sync_masters = [
+        `sync.hyoo.ru`,
+        `sync-pmzz.onrender.com`,
+    ];
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_sync_yard extends $mol_object2 {
+        db_unit_persisted = new WeakSet();
+        log_pack(data) {
+            return data;
+        }
+        peer(next) {
+            return $mol_wire_sync($hyoo_sync_peer)(this + '.peer()', next);
+        }
+        world() {
+            $mol_wire_solid();
+            const world = new this.$.$hyoo_crowd_world(this.peer());
+            world.land_init = land => this.land_init(land);
+            return world;
+        }
+        land_init(land) {
+            this.db_land_init(land);
+            try {
+                this.land_sync(land);
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+            if (!land.grabbed())
+                this.$.$mol_wait_timeout(10_000);
+        }
+        land(id) {
+            return this.world().land_sync(id);
+        }
+        land_grab(law = [''], mod = [], add = []) {
+            return $mol_wire_sync(this.world()).grab(law, mod, add);
+        }
+        home() {
+            return this.land(this.peer().id);
+        }
+        land_search(query) {
+            const stat = new Map();
+            for (const prefix of query.match(/\p{Letter}{2,}/gu) ?? []) {
+                const caps = prefix.slice(0, 1).toUpperCase() + prefix.slice(1);
+                const prefs = new Set([
+                    caps, ' ' + caps,
+                    prefix, ' ' + prefix,
+                ]);
+                const lands = new Set();
+                const founds = $mol_wire_race(...[...prefs].map(pref => () => $mol_wire_sync(this).db_land_search(pref)));
+                for (const found of founds) {
+                    for (const land of [...found].reverse())
+                        lands.add(land);
+                }
+                for (const land of lands) {
+                    stat.set(land, (stat.get(land) ?? 0) + 1);
+                }
+            }
+            return [...stat].sort((left, right) => right[1] - left[1]).map(pair => pair[0]);
+        }
+        sync() {
+            this.server();
+            for (const land of this.world().lands.values()) {
+                this.db_land_sync(land);
+            }
+            $mol_wire_race(...this.slaves().map(line => () => this.line_sync(line)));
+            try {
+                const master = this.master();
+                if (master)
+                    $mol_wire_race(...[...this.world().lands.values()].map(land => () => this.line_land_sync({ line: master, land })));
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+        }
+        land_sync(land) {
+            this.db_land_init(land);
+            try {
+                this.db_land_sync(land);
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+            try {
+                const master = this.master();
+                if (master)
+                    this.line_land_sync({ line: master, land });
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+            try {
+                $mol_wire_race(...this.slaves()
+                    .filter(line => this.line_lands(line).includes(land))
+                    .map(line => () => this.line_land_sync({ line, land })));
+            }
+            catch (error) {
+                $mol_fail_log(error);
+            }
+        }
+        db_land_clocks(land, next) {
+            $mol_wire_solid();
+            return next;
+        }
+        db_land_sync(land) {
+            this.db_land_init(land);
+            land.clocks;
+            const units = [];
+            for (const unit of land._unit_all.values()) {
+                if (this.db_unit_persisted.has(unit))
+                    continue;
+                units.push(unit);
+            }
+            if (!units.length)
+                return;
+            $mol_wire_sync(this.world()).sign_units(units);
+            $mol_wire_sync(this).db_land_save(land, units);
+            for (const unit of units)
+                this.db_unit_persisted.add(unit);
+        }
+        db_land_init(land) {
+            try {
+                var units = $mol_wire_sync(this).db_land_load(land);
+            }
+            catch (error) {
+                if (!(error instanceof Error))
+                    $mol_fail_hidden(error);
+                this.$.$mol_log3_fail({
+                    place: this,
+                    land: land.id(),
+                    message: error.message,
+                });
+                units = [];
+            }
+            for (const unit of units)
+                this.db_unit_persisted.add(unit);
+            units.sort($hyoo_crowd_unit_compare);
+            land.apply(units);
+        }
+        async db_land_load(land) {
+            return [];
+        }
+        async db_land_search(from, to = from) {
+            return new Set();
+        }
+        async db_land_save(land, units) { }
+        master_cursor(next = 0) {
+            return next;
+        }
+        master_list() {
+            const scheme = this.$.$mol_dom_context.document.location.protocol.replace(/^http/, 'ws');
+            return this.$.$hyoo_sync_masters.map(host => `${scheme}//${host}`);
+        }
+        master_link() {
+            return this.master_list()[this.master_cursor()];
+        }
+        master() {
+            return null;
+        }
+        server() {
+            return null;
+        }
+        slaves(next = []) {
+            return next;
+        }
+        line_lands(line, next = []) {
+            return next;
+        }
+        line_land_clocks({ line, land }, next) {
+            $mol_wire_solid();
+            return next;
+        }
+        line_sync(line) {
+            $mol_wire_race(...this.line_lands(line).map(land => () => this.line_land_sync({ line, land })));
+        }
+        line_land_sync({ line, land }) {
+            this.line_land_init({ line, land });
+            let clocks = this.line_land_clocks({ line, land });
+            if (!clocks)
+                return;
+            const units = land.delta(clocks);
+            if (!units.length)
+                return;
+            this.line_send_units(line, units);
+            for (const unit of units) {
+                clocks[unit.group()].see_peer(unit.auth, unit.time);
+            }
+        }
+        line_land_init({ line, land }) {
+            this.db_land_init(land);
+            this.line_send_clocks(line, land);
+        }
+        line_land_neck({ line, land }, next = []) {
+            return next;
+        }
+        async line_receive(line, message) {
+            if (!message.byteLength)
+                return;
+            const view = new DataView(message.buffer, message.byteOffset, message.byteLength);
+            const int0 = view.getInt32(0, true);
+            const int1 = view.getInt32(4, true);
+            const land_id = $mol_int62_to_string({
+                lo: int0 << 1 >> 1,
+                hi: int1 << 1 >> 1,
+            });
+            const handle = async (prev) => {
+                if (prev)
+                    await prev;
+                const world = this.world();
+                const land = await $mol_wire_async(world).land(land_id);
+                let clocks = this.line_land_clocks({ line, land });
+                if (!clocks)
+                    this.line_land_clocks({ line, land }, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]);
+                if (int0 << 1 >> 1 ^ int0) {
+                    const bin = new $hyoo_crowd_clock_bin(message.buffer, message.byteOffset, message.byteLength);
+                    for (let group = 0; group < clocks.length; ++group) {
+                        clocks[group].see_bin(bin, group);
+                    }
+                    if (bin.count() + land.delta(clocks).length < land._unit_all.size) {
+                        this.line_land_clocks({ line, land }, clocks = [new $hyoo_crowd_clock, new $hyoo_crowd_clock]);
+                    }
+                    const lands = this.line_lands(line);
+                    if (lands.includes(land)) {
+                        this.$.$mol_log3_warn({
+                            place: this,
+                            land: land.id(),
+                            message: 'Already syncing',
+                            hint: 'Bug at $hyoo_sync_yard',
+                            line: $mol_key(line),
+                            clocks,
+                        });
+                    }
+                    else {
+                        this.line_lands(line, [...lands, land]);
+                    }
+                    return;
+                }
+                const { allow, forbid } = await world.apply(message);
+                for (const [{ bin, ...unit }, error] of forbid) {
+                    this.$.$mol_log3_fail({
+                        place: this,
+                        land: land.id(),
+                        message: error,
+                        line: $mol_key(line),
+                        unit,
+                    });
+                }
+                if (!allow.length)
+                    return;
+                for (const unit of allow) {
+                    clocks[unit.group()].see_peer(unit.auth, unit.time);
+                }
+                this.$.$mol_log3_rise({
+                    place: this,
+                    land: land.id(),
+                    message: 'Sync Gain',
+                    line: $mol_key(line),
+                    units: this.log_pack(allow),
+                });
+            };
+            this.line_land_neck({ line, land: land_id }, [
+                handle(this.line_land_neck({ line, land: land_id })[0])
+                    .catch(error => {
+                    this.$.$mol_log3_fail({
+                        place: this,
+                        land: land_id,
+                        message: String(error?.message ?? error),
+                    });
+                })
+            ]);
+        }
+        line_send_clocks(line, land) { }
+        async line_send_units(line, units) { }
+        [$mol_dev_format_head]() {
+            return $mol_dev_format_native(this);
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "peer", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "world", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "land_init", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_sync_yard.prototype, "land_search", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "land_sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "db_land_clocks", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "db_land_sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "db_land_init", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "master_cursor", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "master_link", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_yard.prototype, "slaves", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_lands", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_land_clocks", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_land_sync", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_land_init", null);
+    __decorate([
+        $mol_mem_key
+    ], $hyoo_sync_yard.prototype, "line_land_neck", null);
+    $.$hyoo_sync_yard = $hyoo_sync_yard;
+})($ || ($ = {}));
+
+;
 	($.$hyoo_meta_menu) = class $hyoo_meta_menu extends ($.$mol_page) {
-		editable(){
-			return true;
-		}
-		item_moved(id, next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		yard(){
-			const obj = new this.$.$hyoo_sync_yard();
-			return obj;
-		}
-		item(id){
-			const obj = new this.$.$hyoo_meta_model();
-			return obj;
-		}
-		list(){
-			const obj = new this.$.$hyoo_crowd_list();
-			return obj;
-		}
-		item_list(id){
-			const obj = new this.$.$hyoo_crowd_list();
-			return obj;
-		}
-		drop_allow(){
-			return ["move", "link"];
-		}
-		Logo(){
-			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this.id()));
-			return obj;
-		}
-		tools_ext(){
-			return [];
-		}
-		head(){
-			return [
-				(this.Title()), 
-				(this.Tools()), 
-				(this.Search())
-			];
-		}
-		tools(){
-			return [
-				(this.Search_toggle()), 
-				(this.Editing()), 
-				(this.Add()), 
-				...(this.tools_ext())
-			];
-		}
-		body(){
-			return [
-				(this.Found()), 
-				(this.Content()), 
-				(this.Drop_end())
-			];
-		}
 		item_title(id){
 			return (this.item(id).title());
 		}
@@ -12485,13 +12040,63 @@ var $;
 			(obj.allow) = () => ((this.drop_allow()));
 			return obj;
 		}
+		editable(){
+			return true;
+		}
+		item_moved(id, next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		yard(){
+			const obj = new this.$.$hyoo_sync_yard();
+			return obj;
+		}
+		item(id){
+			const obj = new this.$.$hyoo_meta_model();
+			return obj;
+		}
+		list(){
+			const obj = new this.$.$hyoo_crowd_list();
+			return obj;
+		}
+		item_list(id){
+			const obj = new this.$.$hyoo_crowd_list();
+			return obj;
+		}
+		drop_allow(){
+			return ["move", "link"];
+		}
+		Logo(){
+			const obj = new this.$.$mol_avatar();
+			(obj.id) = () => ((this.id()));
+			return obj;
+		}
+		tools_ext(){
+			return [];
+		}
+		head(){
+			return [
+				(this.Title()), 
+				(this.Tools()), 
+				(this.Search())
+			];
+		}
+		tools(){
+			return [
+				(this.Search_toggle()), 
+				(this.Editing()), 
+				(this.Add()), 
+				...(this.tools_ext())
+			];
+		}
+		body(){
+			return [
+				(this.Found()), 
+				(this.Content()), 
+				(this.Drop_end())
+			];
+		}
 	};
-	($mol_mem_key(($.$hyoo_meta_menu.prototype), "item_moved"));
-	($mol_mem(($.$hyoo_meta_menu.prototype), "yard"));
-	($mol_mem_key(($.$hyoo_meta_menu.prototype), "item"));
-	($mol_mem(($.$hyoo_meta_menu.prototype), "list"));
-	($mol_mem_key(($.$hyoo_meta_menu.prototype), "item_list"));
-	($mol_mem(($.$hyoo_meta_menu.prototype), "Logo"));
 	($mol_mem(($.$hyoo_meta_menu.prototype), "search"));
 	($mol_mem(($.$hyoo_meta_menu.prototype), "Search"));
 	($mol_mem(($.$hyoo_meta_menu.prototype), "search_show"));
@@ -12511,6 +12116,12 @@ var $;
 	($mol_mem(($.$hyoo_meta_menu.prototype), "receive_end"));
 	($mol_mem(($.$hyoo_meta_menu.prototype), "Drop_zone"));
 	($mol_mem(($.$hyoo_meta_menu.prototype), "Drop_end"));
+	($mol_mem_key(($.$hyoo_meta_menu.prototype), "item_moved"));
+	($mol_mem(($.$hyoo_meta_menu.prototype), "yard"));
+	($mol_mem_key(($.$hyoo_meta_menu.prototype), "item"));
+	($mol_mem(($.$hyoo_meta_menu.prototype), "list"));
+	($mol_mem_key(($.$hyoo_meta_menu.prototype), "item_list"));
+	($mol_mem(($.$hyoo_meta_menu.prototype), "Logo"));
 
 
 ;
@@ -12646,6 +12257,13 @@ var $;
 
 ;
 	($.$hyoo_page_side_menu) = class $hyoo_page_side_menu extends ($.$hyoo_meta_menu) {
+		title(){
+			return (this.side().title());
+		}
+		side(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
 		side_current(){
 			const obj = new this.$.$hyoo_page_side();
 			return obj;
@@ -12655,17 +12273,10 @@ var $;
 			(obj.meta) = () => ((this.side()));
 			return obj;
 		}
-		title(){
-			return (this.side().title());
-		}
-		side(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
 	};
+	($mol_mem(($.$hyoo_page_side_menu.prototype), "side"));
 	($mol_mem(($.$hyoo_page_side_menu.prototype), "side_current"));
 	($mol_mem(($.$hyoo_page_side_menu.prototype), "Title"));
-	($mol_mem(($.$hyoo_page_side_menu.prototype), "side"));
 
 
 ;
@@ -12744,13 +12355,6 @@ var $;
 
 ;
 	($.$mol_paginator) = class $mol_paginator extends ($.$mol_bar) {
-		sub(){
-			return [
-				(this.Backward()), 
-				(this.Value()), 
-				(this.Forward())
-			];
-		}
 		backward_hint(){
 			return (this.$.$mol_locale.text("$mol_paginator_backward_hint"));
 		}
@@ -12795,6 +12399,13 @@ var $;
 			(obj.click) = (next) => ((this.forward(next)));
 			(obj.sub) = () => ([(this.Forward_icon())]);
 			return obj;
+		}
+		sub(){
+			return [
+				(this.Backward()), 
+				(this.Value()), 
+				(this.Forward())
+			];
 		}
 	};
 	($mol_mem(($.$mol_paginator.prototype), "backward"));
@@ -12843,22 +12454,6 @@ var $;
 
 ;
 	($.$mol_search_jumper) = class $mol_search_jumper extends ($.$mol_search) {
-		Root(){
-			const obj = new this.$.$mol_view();
-			return obj;
-		}
-		Index(){
-			const obj = new this.$.$mol_paginator();
-			(obj.value) = (next) => ((this.index(next)));
-			return obj;
-		}
-		plugins(){
-			return [
-				...(super.plugins()), 
-				(this.Backward()), 
-				(this.Forward())
-			];
-		}
 		index(next){
 			if(next !== undefined) return next;
 			return 0;
@@ -12884,13 +12479,29 @@ var $;
 			(obj.key) = () => ({"enter": (next) => (this.forward(next)), "escape": (next) => (this.escape(next))});
 			return obj;
 		}
+		Root(){
+			const obj = new this.$.$mol_view();
+			return obj;
+		}
+		Index(){
+			const obj = new this.$.$mol_paginator();
+			(obj.value) = (next) => ((this.index(next)));
+			return obj;
+		}
+		plugins(){
+			return [
+				...(super.plugins()), 
+				(this.Backward()), 
+				(this.Forward())
+			];
+		}
 	};
-	($mol_mem(($.$mol_search_jumper.prototype), "Root"));
-	($mol_mem(($.$mol_search_jumper.prototype), "Index"));
 	($mol_mem(($.$mol_search_jumper.prototype), "index"));
 	($mol_mem(($.$mol_search_jumper.prototype), "Backward"));
 	($mol_mem(($.$mol_search_jumper.prototype), "escape"));
 	($mol_mem(($.$mol_search_jumper.prototype), "Forward"));
+	($mol_mem(($.$mol_search_jumper.prototype), "Root"));
+	($mol_mem(($.$mol_search_jumper.prototype), "Index"));
 
 
 ;
@@ -13016,14 +12627,17 @@ var $;
 
 ;
 	($.$mol_text_code_token) = class $mol_text_code_token extends ($.$mol_dimmer) {
-		attr(){
-			return {...(super.attr()), "mol_text_code_token_type": (this.type())};
-		}
 		type(){
 			return "";
 		}
+		attr(){
+			return {...(super.attr()), "mol_text_code_token_type": (this.type())};
+		}
 	};
 	($.$mol_text_code_token_link) = class $mol_text_code_token_link extends ($.$mol_text_code_token) {
+		uri(){
+			return "";
+		}
 		dom_name(){
 			return "a";
 		}
@@ -13036,9 +12650,6 @@ var $;
 				"href": (this.uri()), 
 				"target": "_blank"
 			};
-		}
-		uri(){
-			return "";
 		}
 	};
 
@@ -13105,6 +12716,21 @@ var $;
 
 ;
 	($.$mol_text_code_row) = class $mol_text_code_row extends ($.$mol_paragraph) {
+		numb(){
+			return 0;
+		}
+		token_type(id){
+			return "";
+		}
+		token_text(id){
+			return "";
+		}
+		highlight(){
+			return "";
+		}
+		token_uri(id){
+			return "";
+		}
 		text(){
 			return "";
 		}
@@ -13141,21 +12767,6 @@ var $;
 		}
 		find_pos(id){
 			return null;
-		}
-		numb(){
-			return 0;
-		}
-		token_type(id){
-			return "";
-		}
-		token_text(id){
-			return "";
-		}
-		highlight(){
-			return "";
-		}
-		token_uri(id){
-			return "";
 		}
 	};
 	($mol_mem(($.$mol_text_code_row.prototype), "Numb"));
@@ -13433,15 +13044,6 @@ var $;
 
 ;
 	($.$mol_button_copy) = class $mol_button_copy extends ($.$mol_button_minor) {
-		blobs(){
-			return [(this.text_blob()), (this.html_blob())];
-		}
-		data(){
-			return {};
-		}
-		sub(){
-			return [(this.Icon()), (this.title())];
-		}
 		text(){
 			return (this.title());
 		}
@@ -13464,6 +13066,15 @@ var $;
 		}
 		title(){
 			return "";
+		}
+		blobs(){
+			return [(this.text_blob()), (this.html_blob())];
+		}
+		data(){
+			return {};
+		}
+		sub(){
+			return [(this.Icon()), (this.title())];
 		}
 	};
 	($mol_mem(($.$mol_button_copy.prototype), "text_blob"));
@@ -13527,24 +13138,6 @@ var $;
 
 ;
 	($.$mol_text_code) = class $mol_text_code extends ($.$mol_stack) {
-		attr(){
-			return {...(super.attr()), "mol_text_code_sidebar_showed": (this.sidebar_showed())};
-		}
-		text(){
-			return "";
-		}
-		text_lines(){
-			return [];
-		}
-		find_pos(id){
-			return null;
-		}
-		uri_base(){
-			return "";
-		}
-		sub(){
-			return [(this.Rows()), (this.Copy())];
-		}
 		sidebar_showed(){
 			return false;
 		}
@@ -13593,6 +13186,24 @@ var $;
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_text_code_Copy_hint")));
 			(obj.text) = () => ((this.text_export()));
 			return obj;
+		}
+		attr(){
+			return {...(super.attr()), "mol_text_code_sidebar_showed": (this.sidebar_showed())};
+		}
+		text(){
+			return "";
+		}
+		text_lines(){
+			return [];
+		}
+		find_pos(id){
+			return null;
+		}
+		uri_base(){
+			return "";
+		}
+		sub(){
+			return [(this.Rows()), (this.Copy())];
 		}
 	};
 	($mol_mem_key(($.$mol_text_code.prototype), "Row"));
@@ -13745,6 +13356,51 @@ var $;
 
 ;
 	($.$mol_grid) = class $mol_grid extends ($.$mol_view) {
+		rows(){
+			return [];
+		}
+		Table(){
+			const obj = new this.$.$mol_grid_table();
+			(obj.sub) = () => ((this.rows()));
+			return obj;
+		}
+		head_cells(){
+			return [];
+		}
+		cells(id){
+			return [];
+		}
+		cell_content(id){
+			return [];
+		}
+		cell_content_text(id){
+			return (this.cell_content(id));
+		}
+		cell_content_number(id){
+			return (this.cell_content(id));
+		}
+		col_head_content(id){
+			return [];
+		}
+		cell_level(id){
+			return 0;
+		}
+		cell_expanded(id, next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		needle(){
+			return "";
+		}
+		cell_value(id){
+			return "";
+		}
+		Cell_dimmer(id){
+			const obj = new this.$.$mol_dimmer();
+			(obj.needle) = () => ((this.needle()));
+			(obj.haystack) = () => ((this.cell_value(id)));
+			return obj;
+		}
 		row_height(){
 			return 32;
 		}
@@ -13820,52 +13476,10 @@ var $;
 		Cell_content(id){
 			return [(this.Cell_dimmer(id))];
 		}
-		rows(){
-			return [];
-		}
-		Table(){
-			const obj = new this.$.$mol_grid_table();
-			(obj.sub) = () => ((this.rows()));
-			return obj;
-		}
-		head_cells(){
-			return [];
-		}
-		cells(id){
-			return [];
-		}
-		cell_content(id){
-			return [];
-		}
-		cell_content_text(id){
-			return (this.cell_content(id));
-		}
-		cell_content_number(id){
-			return (this.cell_content(id));
-		}
-		col_head_content(id){
-			return [];
-		}
-		cell_level(id){
-			return 0;
-		}
-		cell_expanded(id, next){
-			if(next !== undefined) return next;
-			return false;
-		}
-		needle(){
-			return "";
-		}
-		cell_value(id){
-			return "";
-		}
-		Cell_dimmer(id){
-			const obj = new this.$.$mol_dimmer();
-			(obj.needle) = () => ((this.needle()));
-			(obj.haystack) = () => ((this.cell_value(id)));
-			return obj;
-		}
 	};
+	($mol_mem(($.$mol_grid.prototype), "Table"));
+	($mol_mem_key(($.$mol_grid.prototype), "cell_expanded"));
+	($mol_mem_key(($.$mol_grid.prototype), "Cell_dimmer"));
 	($mol_mem(($.$mol_grid.prototype), "Head"));
 	($mol_mem_key(($.$mol_grid.prototype), "Row"));
 	($mol_mem_key(($.$mol_grid.prototype), "Cell"));
@@ -13873,16 +13487,13 @@ var $;
 	($mol_mem_key(($.$mol_grid.prototype), "Cell_number"));
 	($mol_mem_key(($.$mol_grid.prototype), "Col_head"));
 	($mol_mem_key(($.$mol_grid.prototype), "Cell_branch"));
-	($mol_mem(($.$mol_grid.prototype), "Table"));
-	($mol_mem_key(($.$mol_grid.prototype), "cell_expanded"));
-	($mol_mem_key(($.$mol_grid.prototype), "Cell_dimmer"));
 	($.$mol_grid_table) = class $mol_grid_table extends ($.$mol_list) {};
 	($.$mol_grid_row) = class $mol_grid_row extends ($.$mol_view) {
-		sub(){
-			return (this.cells());
-		}
 		cells(){
 			return [];
+		}
+		sub(){
+			return (this.cells());
 		}
 	};
 	($.$mol_grid_cell) = class $mol_grid_cell extends ($.$mol_view) {
@@ -14091,6 +13702,28 @@ var $;
 
 ;
 	($.$mol_image) = class $mol_image extends ($.$mol_view) {
+		uri(){
+			return "";
+		}
+		loading(){
+			return "eager";
+		}
+		decoding(){
+			return "async";
+		}
+		cors(){
+			return null;
+		}
+		natural_width(){
+			return 0;
+		}
+		natural_height(){
+			return 0;
+		}
+		load(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		dom_name(){
 			return "img";
 		}
@@ -14119,28 +13752,6 @@ var $;
 		}
 		minimal_height(){
 			return 16;
-		}
-		uri(){
-			return "";
-		}
-		loading(){
-			return "eager";
-		}
-		decoding(){
-			return "async";
-		}
-		cors(){
-			return null;
-		}
-		natural_width(){
-			return 0;
-		}
-		natural_height(){
-			return 0;
-		}
-		load(next){
-			if(next !== undefined) return next;
-			return null;
 		}
 	};
 	($mol_mem(($.$mol_image.prototype), "load"));
@@ -14194,15 +13805,6 @@ var $;
 
 ;
 	($.$mol_link_iconed) = class $mol_link_iconed extends ($.$mol_link) {
-		sub(){
-			return [(this.Icon())];
-		}
-		content(){
-			return [(this.title())];
-		}
-		host(){
-			return "";
-		}
 		icon(){
 			return "";
 		}
@@ -14214,6 +13816,15 @@ var $;
 		}
 		title(){
 			return (this.uri());
+		}
+		sub(){
+			return [(this.Icon())];
+		}
+		content(){
+			return [(this.title())];
+		}
+		host(){
+			return "";
 		}
 	};
 	($mol_mem(($.$mol_link_iconed.prototype), "Icon"));
@@ -14275,6 +13886,22 @@ var $;
 
 ;
 	($.$mol_embed_native) = class $mol_embed_native extends ($.$mol_scroll) {
+		mime(){
+			return "";
+		}
+		title(){
+			return "";
+		}
+		Fallback(){
+			const obj = new this.$.$mol_link();
+			(obj.uri) = () => ((this.uri()));
+			(obj.sub) = () => ([(this.title())]);
+			return obj;
+		}
+		uri_change(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		uri(next){
 			if(next !== undefined) return next;
 			return "";
@@ -14298,26 +13925,10 @@ var $;
 		message(){
 			return {"hashchange": (next) => (this.uri_change(next))};
 		}
-		mime(){
-			return "";
-		}
-		title(){
-			return "";
-		}
-		Fallback(){
-			const obj = new this.$.$mol_link();
-			(obj.uri) = () => ((this.uri()));
-			(obj.sub) = () => ([(this.title())]);
-			return obj;
-		}
-		uri_change(next){
-			if(next !== undefined) return next;
-			return null;
-		}
 	};
-	($mol_mem(($.$mol_embed_native.prototype), "uri"));
 	($mol_mem(($.$mol_embed_native.prototype), "Fallback"));
 	($mol_mem(($.$mol_embed_native.prototype), "uri_change"));
+	($mol_mem(($.$mol_embed_native.prototype), "uri"));
 
 
 ;
@@ -14409,6 +14020,16 @@ var $;
 
 ;
 	($.$mol_frame) = class $mol_frame extends ($.$mol_embed_native) {
+		uri(next){
+			if(next !== undefined) return next;
+			return "about:config";
+		}
+		html(){
+			return null;
+		}
+		allow(){
+			return "";
+		}
 		dom_name(){
 			return "iframe";
 		}
@@ -14445,16 +14066,6 @@ var $;
 		}
 		clipboard_write(){
 			return true;
-		}
-		uri(next){
-			if(next !== undefined) return next;
-			return "about:config";
-		}
-		html(){
-			return null;
-		}
-		allow(){
-			return "";
 		}
 	};
 	($mol_mem(($.$mol_frame.prototype), "uri"));
@@ -14504,25 +14115,6 @@ var $;
 
 ;
 	($.$mol_embed_youtube) = class $mol_embed_youtube extends ($.$mol_check) {
-		uri(){
-			return "";
-		}
-		video_preview(){
-			return "";
-		}
-		video_id(){
-			return "";
-		}
-		checked(next){
-			return (this.active(next));
-		}
-		sub(){
-			return [
-				(this.Image()), 
-				(this.Hint()), 
-				(this.Frame())
-			];
-		}
 		active(next){
 			if(next !== undefined) return next;
 			return false;
@@ -14551,6 +14143,22 @@ var $;
 			(obj.title) = () => ((this.title()));
 			(obj.uri) = () => ((this.video_embed()));
 			return obj;
+		}
+		uri(){
+			return "";
+		}
+		video_id(){
+			return "";
+		}
+		checked(next){
+			return (this.active(next));
+		}
+		sub(){
+			return [
+				(this.Image()), 
+				(this.Hint()), 
+				(this.Frame())
+			];
 		}
 	};
 	($mol_mem(($.$mol_embed_youtube.prototype), "active"));
@@ -14611,6 +14219,12 @@ var $;
 
 ;
 	($.$mol_embed_any) = class $mol_embed_any extends ($.$mol_view) {
+		title(){
+			return "";
+		}
+		uri(){
+			return "";
+		}
 		Image(){
 			const obj = new this.$.$mol_image();
 			(obj.title) = () => ((this.title()));
@@ -14628,12 +14242,6 @@ var $;
 			(obj.title) = () => ((this.title()));
 			(obj.uri) = () => ((this.uri()));
 			return obj;
-		}
-		title(){
-			return "";
-		}
-		uri(){
-			return "";
 		}
 	};
 	($mol_mem(($.$mol_embed_any.prototype), "Image"));
@@ -14687,6 +14295,81 @@ var $;
 
 ;
 	($.$mol_text) = class $mol_text extends ($.$mol_list) {
+		auto_scroll(){
+			return null;
+		}
+		block_content(id){
+			return [];
+		}
+		uri_resolve(id){
+			return "";
+		}
+		quote_text(id){
+			return "";
+		}
+		highlight(){
+			return "";
+		}
+		list_type(id){
+			return "-";
+		}
+		list_text(id){
+			return "";
+		}
+		header_level(id){
+			return 1;
+		}
+		header_arg(id){
+			return {};
+		}
+		pre_text(id){
+			return "";
+		}
+		code_sidebar_showed(){
+			return true;
+		}
+		pre_sidebar_showed(){
+			return (this.code_sidebar_showed());
+		}
+		table_head_cells(id){
+			return [];
+		}
+		table_rows(id){
+			return [];
+		}
+		table_cells(id){
+			return [];
+		}
+		table_cell_text(id){
+			return "";
+		}
+		grid_rows(id){
+			return [];
+		}
+		grid_cells(id){
+			return [];
+		}
+		grid_cell_text(id){
+			return "";
+		}
+		line_text(id){
+			return "";
+		}
+		line_type(id){
+			return "";
+		}
+		line_content(id){
+			return [];
+		}
+		code_syntax(){
+			return null;
+		}
+		link_uri(id){
+			return "";
+		}
+		link_host(id){
+			return "";
+		}
 		uri_base(){
 			return "";
 		}
@@ -14828,81 +14511,6 @@ var $;
 			(obj.title) = () => ((this.line_text(id)));
 			return obj;
 		}
-		auto_scroll(){
-			return null;
-		}
-		block_content(id){
-			return [];
-		}
-		uri_resolve(id){
-			return "";
-		}
-		quote_text(id){
-			return "";
-		}
-		highlight(){
-			return "";
-		}
-		list_type(id){
-			return "-";
-		}
-		list_text(id){
-			return "";
-		}
-		header_level(id){
-			return 1;
-		}
-		header_arg(id){
-			return {};
-		}
-		pre_text(id){
-			return "";
-		}
-		code_sidebar_showed(){
-			return true;
-		}
-		pre_sidebar_showed(){
-			return (this.code_sidebar_showed());
-		}
-		table_head_cells(id){
-			return [];
-		}
-		table_rows(id){
-			return [];
-		}
-		table_cells(id){
-			return [];
-		}
-		table_cell_text(id){
-			return "";
-		}
-		grid_rows(id){
-			return [];
-		}
-		grid_cells(id){
-			return [];
-		}
-		grid_cell_text(id){
-			return "";
-		}
-		line_text(id){
-			return "";
-		}
-		line_type(id){
-			return "";
-		}
-		line_content(id){
-			return [];
-		}
-		code_syntax(){
-			return null;
-		}
-		link_uri(id){
-			return "";
-		}
-		link_host(id){
-			return "";
-		}
 	};
 	($mol_mem_key(($.$mol_text.prototype), "Paragraph"));
 	($mol_mem_key(($.$mol_text.prototype), "Quote"));
@@ -14923,12 +14531,6 @@ var $;
 	($mol_mem_key(($.$mol_text.prototype), "Link_http"));
 	($mol_mem_key(($.$mol_text.prototype), "Embed"));
 	($.$mol_text_header) = class $mol_text_header extends ($.$mol_paragraph) {
-		level(){
-			return 1;
-		}
-		sub(){
-			return [(this.Link())];
-		}
 		arg(){
 			return {};
 		}
@@ -14942,17 +14544,23 @@ var $;
 			(obj.sub) = () => ((this.content()));
 			return obj;
 		}
+		level(){
+			return 1;
+		}
+		sub(){
+			return [(this.Link())];
+		}
 	};
 	($mol_mem(($.$mol_text_header.prototype), "Link"));
 	($.$mol_text_span) = class $mol_text_span extends ($.$mol_paragraph) {
+		type(){
+			return "";
+		}
 		dom_name(){
 			return "span";
 		}
 		attr(){
 			return {...(super.attr()), "mol_text_type": (this.type())};
-		}
-		type(){
-			return "";
 		}
 	};
 
@@ -15293,6 +14901,9 @@ var $;
 
 ;
 	($.$mol_format) = class $mol_format extends ($.$mol_string) {
+		mask(id){
+			return "";
+		}
 		allow(){
 			return "0123456789";
 		}
@@ -15301,9 +14912,6 @@ var $;
 		}
 		keyboard(){
 			return "numeric";
-		}
-		mask(id){
-			return "";
 		}
 	};
 
@@ -15449,43 +15057,6 @@ var $;
 
 ;
 	($.$mol_calendar) = class $mol_calendar extends ($.$mol_list) {
-		sub(){
-			return [(this.Head()), (this.Weekdays())];
-		}
-		weeks(){
-			return [];
-		}
-		weeks_count(){
-			return 6;
-		}
-		Weekday(id){
-			const obj = new this.$.$mol_calendar_day();
-			(obj.holiday) = () => ((this.weekend(id)));
-			(obj.sub) = () => ([(this.weekday(id))]);
-			return obj;
-		}
-		Week(id){
-			const obj = new this.$.$mol_hor();
-			(obj.sub) = () => ((this.week_days(id)));
-			return obj;
-		}
-		Day(id){
-			const obj = new this.$.$mol_calendar_day();
-			(obj.ghost) = () => ((this.day_ghost(id)));
-			(obj.holiday) = () => ((this.day_holiday(id)));
-			(obj.selected) = () => ((this.day_selected(id)));
-			(obj.today) = () => ((this.day_today(id)));
-			(obj.theme) = () => ((this.day_theme(id)));
-			(obj.sub) = () => ((this.day_content(id)));
-			return obj;
-		}
-		month_string(){
-			return "";
-		}
-		month_moment(){
-			const obj = new this.$.$mol_time_moment();
-			return obj;
-		}
 		title(){
 			return "";
 		}
@@ -15541,30 +15112,52 @@ var $;
 		day_content(id){
 			return [(this.day_text(id))];
 		}
+		sub(){
+			return [(this.Head()), (this.Weekdays())];
+		}
+		weeks(){
+			return [];
+		}
+		weeks_count(){
+			return 6;
+		}
+		Weekday(id){
+			const obj = new this.$.$mol_calendar_day();
+			(obj.holiday) = () => ((this.weekend(id)));
+			(obj.sub) = () => ([(this.weekday(id))]);
+			return obj;
+		}
+		Week(id){
+			const obj = new this.$.$mol_hor();
+			(obj.sub) = () => ((this.week_days(id)));
+			return obj;
+		}
+		Day(id){
+			const obj = new this.$.$mol_calendar_day();
+			(obj.ghost) = () => ((this.day_ghost(id)));
+			(obj.holiday) = () => ((this.day_holiday(id)));
+			(obj.selected) = () => ((this.day_selected(id)));
+			(obj.today) = () => ((this.day_today(id)));
+			(obj.theme) = () => ((this.day_theme(id)));
+			(obj.sub) = () => ((this.day_content(id)));
+			return obj;
+		}
+		month_string(){
+			return "";
+		}
+		month_moment(){
+			const obj = new this.$.$mol_time_moment();
+			return obj;
+		}
 	};
+	($mol_mem(($.$mol_calendar.prototype), "Title"));
+	($mol_mem(($.$mol_calendar.prototype), "Head"));
+	($mol_mem(($.$mol_calendar.prototype), "Weekdays"));
 	($mol_mem_key(($.$mol_calendar.prototype), "Weekday"));
 	($mol_mem_key(($.$mol_calendar.prototype), "Week"));
 	($mol_mem_key(($.$mol_calendar.prototype), "Day"));
 	($mol_mem(($.$mol_calendar.prototype), "month_moment"));
-	($mol_mem(($.$mol_calendar.prototype), "Title"));
-	($mol_mem(($.$mol_calendar.prototype), "Head"));
-	($mol_mem(($.$mol_calendar.prototype), "Weekdays"));
 	($.$mol_calendar_day) = class $mol_calendar_day extends ($.$mol_view) {
-		minimal_height(){
-			return 24;
-		}
-		minimal_width(){
-			return 36;
-		}
-		attr(){
-			return {
-				"mol_calendar_holiday": (this.holiday()), 
-				"mol_calendar_ghost": (this.ghost()), 
-				"mol_calendar_selected": (this.selected()), 
-				"mol_calendar_today": (this.today()), 
-				"mol_theme": (this.theme())
-			};
-		}
 		holiday(){
 			return false;
 		}
@@ -15579,6 +15172,21 @@ var $;
 		}
 		theme(){
 			return null;
+		}
+		minimal_height(){
+			return 24;
+		}
+		minimal_width(){
+			return 36;
+		}
+		attr(){
+			return {
+				"mol_calendar_holiday": (this.holiday()), 
+				"mol_calendar_ghost": (this.ghost()), 
+				"mol_calendar_selected": (this.selected()), 
+				"mol_calendar_today": (this.today()), 
+				"mol_theme": (this.theme())
+			};
 		}
 	};
 
@@ -15719,22 +15327,6 @@ var $;
 
 ;
 	($.$mol_date) = class $mol_date extends ($.$mol_pick) {
-		Icon(){
-			const obj = new this.$.$mol_icon_calendar();
-			return obj;
-		}
-		bubble_content(){
-			return [(this.Input_row()), (this.Calendar())];
-		}
-		value_number(next){
-			if(next !== undefined) return next;
-			return +NaN;
-		}
-		value_moment(next){
-			if(next !== undefined) return next;
-			const obj = new this.$.$mol_time_moment();
-			return obj;
-		}
 		enabled(){
 			return true;
 		}
@@ -15866,10 +15458,23 @@ var $;
 			(obj.head) = () => ([(this.Calendar_tools())]);
 			return obj;
 		}
+		Icon(){
+			const obj = new this.$.$mol_icon_calendar();
+			return obj;
+		}
+		bubble_content(){
+			return [(this.Input_row()), (this.Calendar())];
+		}
+		value_number(next){
+			if(next !== undefined) return next;
+			return +NaN;
+		}
+		value_moment(next){
+			if(next !== undefined) return next;
+			const obj = new this.$.$mol_time_moment();
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_date.prototype), "Icon"));
-	($mol_mem(($.$mol_date.prototype), "value_number"));
-	($mol_mem(($.$mol_date.prototype), "value_moment"));
 	($mol_mem(($.$mol_date.prototype), "today_click"));
 	($mol_mem(($.$mol_date.prototype), "Today_icon"));
 	($mol_mem(($.$mol_date.prototype), "Today"));
@@ -15888,10 +15493,10 @@ var $;
 	($mol_mem(($.$mol_date.prototype), "Next"));
 	($mol_mem(($.$mol_date.prototype), "Calendar_tools"));
 	($mol_mem(($.$mol_date.prototype), "Calendar"));
+	($mol_mem(($.$mol_date.prototype), "Icon"));
+	($mol_mem(($.$mol_date.prototype), "value_number"));
+	($mol_mem(($.$mol_date.prototype), "value_moment"));
 	($.$mol_date_calendar) = class $mol_date_calendar extends ($.$mol_calendar) {
-		day_content(id){
-			return [(this.Day_button(id))];
-		}
 		day_click(id, next){
 			if(next !== undefined) return next;
 			return null;
@@ -15906,6 +15511,9 @@ var $;
 			(obj.minimal_height) = () => (24);
 			(obj.enabled) = () => ((this.enabled()));
 			return obj;
+		}
+		day_content(id){
+			return [(this.Day_button(id))];
 		}
 	};
 	($mol_mem_key(($.$mol_date_calendar.prototype), "day_click"));
@@ -16049,6 +15657,9 @@ var $;
 
 ;
 	($.$mol_text_list) = class $mol_text_list extends ($.$mol_text) {
+		type(){
+			return "";
+		}
 		auto_scroll(){
 			return null;
 		}
@@ -16061,17 +15672,14 @@ var $;
 			(obj.sub) = () => ((this.block_content(id)));
 			return obj;
 		}
-		type(){
-			return "";
-		}
 	};
 	($mol_mem_key(($.$mol_text_list.prototype), "Paragraph"));
 	($.$mol_text_list_item) = class $mol_text_list_item extends ($.$mol_paragraph) {
-		attr(){
-			return {...(super.attr()), "mol_text_list_item_index": (this.index())};
-		}
 		index(){
 			return 0;
+		}
+		attr(){
+			return {...(super.attr()), "mol_text_list_item_index": (this.index())};
 		}
 	};
 
@@ -16088,55 +15696,6 @@ var $;
 
 ;
 	($.$hyoo_page_side_view) = class $hyoo_page_side_view extends ($.$mol_page) {
-		profile(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		peer(id){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		book(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		highlight(){
-			return "";
-		}
-		side(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		plugins(){
-			return [(this.Search_start())];
-		}
-		auto(){
-			return [(this.slides_send()), (this.history_mark())];
-		}
-		Logo(){
-			return (this.Menu_toggle());
-		}
-		head(){
-			return [
-				(this.Title()), 
-				(this.Tools()), 
-				(this.Search())
-			];
-		}
-		tools(){
-			return [
-				(this.Edit_toggle()), 
-				(this.Search_toggle()), 
-				(this.Info_toggle()), 
-				(this.Bookmark_toggle())
-			];
-		}
-		slides_content(){
-			return "# {title}\n{details}";
-		}
-		body(){
-			return [(this.Details()), (this.Signature())];
-		}
 		id(){
 			return (this.side().id());
 		}
@@ -16324,11 +15883,56 @@ var $;
 			]);
 			return obj;
 		}
+		profile(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		peer(id){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		book(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		highlight(){
+			return "";
+		}
+		side(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		plugins(){
+			return [(this.Search_start())];
+		}
+		auto(){
+			return [(this.slides_send()), (this.history_mark())];
+		}
+		Logo(){
+			return (this.Menu_toggle());
+		}
+		head(){
+			return [
+				(this.Title()), 
+				(this.Tools()), 
+				(this.Search())
+			];
+		}
+		tools(){
+			return [
+				(this.Edit_toggle()), 
+				(this.Search_toggle()), 
+				(this.Info_toggle()), 
+				(this.Bookmark_toggle())
+			];
+		}
+		slides_content(){
+			return "# {title}\n{details}";
+		}
+		body(){
+			return [(this.Details()), (this.Signature())];
+		}
 	};
-	($mol_mem(($.$hyoo_page_side_view.prototype), "profile"));
-	($mol_mem_key(($.$hyoo_page_side_view.prototype), "peer"));
-	($mol_mem(($.$hyoo_page_side_view.prototype), "book"));
-	($mol_mem(($.$hyoo_page_side_view.prototype), "side"));
 	($mol_mem(($.$hyoo_page_side_view.prototype), "search_start"));
 	($mol_mem(($.$hyoo_page_side_view.prototype), "Search_start"));
 	($mol_mem(($.$hyoo_page_side_view.prototype), "menu_showed"));
@@ -16356,6 +15960,10 @@ var $;
 	($mol_mem(($.$hyoo_page_side_view.prototype), "Author_list"));
 	($mol_mem(($.$hyoo_page_side_view.prototype), "Following"));
 	($mol_mem(($.$hyoo_page_side_view.prototype), "Signature"));
+	($mol_mem(($.$hyoo_page_side_view.prototype), "profile"));
+	($mol_mem_key(($.$hyoo_page_side_view.prototype), "peer"));
+	($mol_mem(($.$hyoo_page_side_view.prototype), "book"));
+	($mol_mem(($.$hyoo_page_side_view.prototype), "side"));
 
 
 ;
@@ -16497,20 +16105,6 @@ var $;
         },
     });
 })($ || ($ = {}));
-
-;
-	($.$mol_string_button) = class $mol_string_button extends ($.$mol_string) {};
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/string/button/button.view.css", "[mol_string_button]:not(:placeholder-shown):not(:focus):not(:hover):not(:disabled) {\n\tcolor: var(--mol_theme_control);\n\tbackground: transparent;\n\tbox-shadow: none;\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_icon_publish) = class $mol_icon_publish extends ($.$mol_icon) {
@@ -16671,6 +16265,13 @@ var $;
 
 ;
 	($.$mol_button_download) = class $mol_button_download extends ($.$mol_button_minor) {
+		Icon(){
+			const obj = new this.$.$mol_icon_download();
+			return obj;
+		}
+		title(){
+			return "";
+		}
 		blob(){
 			return null;
 		}
@@ -16682,13 +16283,6 @@ var $;
 		}
 		sub(){
 			return [(this.Icon()), (this.title())];
-		}
-		Icon(){
-			const obj = new this.$.$mol_icon_download();
-			return obj;
-		}
-		title(){
-			return "";
 		}
 	};
 	($mol_mem(($.$mol_button_download.prototype), "Icon"));
@@ -16743,67 +16337,6 @@ var $;
 
 ;
 	($.$mol_textarea) = class $mol_textarea extends ($.$mol_stack) {
-		attr(){
-			return {
-				...(super.attr()), 
-				"mol_textarea_clickable": (this.clickable()), 
-				"mol_textarea_sidebar_showed": (this.sidebar_showed())
-			};
-		}
-		event(){
-			return {"keydown": (next) => (this.press(next)), "pointermove": (next) => (this.hover(next))};
-		}
-		sub(){
-			return [(this.Edit()), (this.View())];
-		}
-		symbols_alt(){
-			return {
-				"comma": "<", 
-				"period": ">", 
-				"dash": "−", 
-				"equals": "≈", 
-				"graveAccent": "́", 
-				"forwardSlash": "÷", 
-				"E": "€", 
-				"V": "✔", 
-				"X": "×", 
-				"C": "©", 
-				"P": "§", 
-				"H": "₽", 
-				"key0": "°", 
-				"key8": "•", 
-				"key2": "@", 
-				"key3": "#", 
-				"key4": "$", 
-				"key6": "^", 
-				"key7": "&", 
-				"bracketOpen": "[", 
-				"bracketClose": "]", 
-				"slashBack": "|"
-			};
-		}
-		symbols_alt_ctrl(){
-			return {"space": " "};
-		}
-		symbols_alt_shift(){
-			return {
-				"V": "✅", 
-				"X": "❌", 
-				"O": "⭕", 
-				"key1": "❗", 
-				"key4": "💲", 
-				"key7": "❓", 
-				"comma": "«", 
-				"period": "»", 
-				"semicolon": "“", 
-				"quoteSingle": "”", 
-				"dash": "—", 
-				"equals": "≠", 
-				"graveAccent": "̱", 
-				"bracketOpen": "{", 
-				"bracketClose": "}"
-			};
-		}
 		clickable(next){
 			if(next !== undefined) return next;
 			return false;
@@ -16875,6 +16408,67 @@ var $;
 			(obj.sidebar_showed) = () => ((this.sidebar_showed()));
 			(obj.highlight) = () => ((this.highlight()));
 			return obj;
+		}
+		attr(){
+			return {
+				...(super.attr()), 
+				"mol_textarea_clickable": (this.clickable()), 
+				"mol_textarea_sidebar_showed": (this.sidebar_showed())
+			};
+		}
+		event(){
+			return {"keydown": (next) => (this.press(next)), "pointermove": (next) => (this.hover(next))};
+		}
+		sub(){
+			return [(this.Edit()), (this.View())];
+		}
+		symbols_alt(){
+			return {
+				"comma": "<", 
+				"period": ">", 
+				"dash": "−", 
+				"equals": "≈", 
+				"graveAccent": "́", 
+				"forwardSlash": "÷", 
+				"E": "€", 
+				"V": "✔", 
+				"X": "×", 
+				"C": "©", 
+				"P": "§", 
+				"H": "₽", 
+				"key0": "°", 
+				"key8": "•", 
+				"key2": "@", 
+				"key3": "#", 
+				"key4": "$", 
+				"key6": "^", 
+				"key7": "&", 
+				"bracketOpen": "[", 
+				"bracketClose": "]", 
+				"slashBack": "|"
+			};
+		}
+		symbols_alt_ctrl(){
+			return {"space": " "};
+		}
+		symbols_alt_shift(){
+			return {
+				"V": "✅", 
+				"X": "❌", 
+				"O": "⭕", 
+				"key1": "❗", 
+				"key4": "💲", 
+				"key7": "❓", 
+				"comma": "«", 
+				"period": "»", 
+				"semicolon": "“", 
+				"quoteSingle": "”", 
+				"dash": "—", 
+				"equals": "≠", 
+				"graveAccent": "̱", 
+				"bracketOpen": "{", 
+				"bracketClose": "}"
+			};
 		}
 	};
 	($mol_mem(($.$mol_textarea.prototype), "clickable"));
@@ -17000,10 +16594,21 @@ var $;
 })($ || ($ = {}));
 
 ;
+	($.$mol_string_button) = class $mol_string_button extends ($.$mol_string) {};
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/string/button/button.view.css", "[mol_string_button]:not(:placeholder-shown):not(:focus):not(:hover):not(:disabled) {\n\tcolor: var(--mol_theme_control);\n\tbackground: transparent;\n\tbox-shadow: none;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
 	($.$mol_labeler) = class $mol_labeler extends ($.$mol_list) {
-		rows(){
-			return [(this.Label()), (this.Content())];
-		}
 		label(){
 			return [(this.title())];
 		}
@@ -17022,6 +16627,9 @@ var $;
 			(obj.sub) = () => ((this.content()));
 			return obj;
 		}
+		rows(){
+			return [(this.Label()), (this.Content())];
+		}
 	};
 	($mol_mem(($.$mol_labeler.prototype), "Label"));
 	($mol_mem(($.$mol_labeler.prototype), "Content"));
@@ -17039,15 +16647,6 @@ var $;
 
 ;
 	($.$mol_form_field) = class $mol_form_field extends ($.$mol_labeler) {
-		bids(){
-			return [];
-		}
-		label(){
-			return [(this.name()), (this.Bid())];
-		}
-		content(){
-			return [(this.control())];
-		}
 		name(){
 			return "";
 		}
@@ -17061,6 +16660,15 @@ var $;
 		}
 		control(){
 			return null;
+		}
+		bids(){
+			return [];
+		}
+		label(){
+			return [(this.name()), (this.Bid())];
+		}
+		content(){
+			return [(this.control())];
 		}
 	};
 	($mol_mem(($.$mol_form_field.prototype), "Bid"));
@@ -17110,22 +16718,6 @@ var $;
 
 ;
 	($.$mol_form) = class $mol_form extends ($.$mol_list) {
-		submit_allowed(){
-			return true;
-		}
-		submit_blocked(){
-			return false;
-		}
-		event(){
-			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
-		}
-		submit(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		rows(){
-			return [(this.Body()), (this.Foot())];
-		}
 		keydown(next){
 			if(next !== undefined) return next;
 			return null;
@@ -17152,11 +16744,27 @@ var $;
 			(obj.sub) = () => ((this.foot()));
 			return obj;
 		}
+		submit_allowed(){
+			return true;
+		}
+		submit_blocked(){
+			return false;
+		}
+		event(){
+			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
+		}
+		submit(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		rows(){
+			return [(this.Body()), (this.Foot())];
+		}
 	};
-	($mol_mem(($.$mol_form.prototype), "submit"));
 	($mol_mem(($.$mol_form.prototype), "keydown"));
 	($mol_mem(($.$mol_form.prototype), "Body"));
 	($mol_mem(($.$mol_form.prototype), "Foot"));
+	($mol_mem(($.$mol_form.prototype), "submit"));
 
 
 ;
@@ -17203,32 +16811,6 @@ var $;
 
 ;
 	($.$hyoo_page_side_edit) = class $hyoo_page_side_edit extends ($.$mol_page) {
-		side(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		Title(){
-			const obj = new this.$.$mol_string_button();
-			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Title_hint")));
-			(obj.value) = (next) => ((this.title(next)));
-			(obj.enabled) = () => ((this.editable()));
-			return obj;
-		}
-		export_sign(){
-			return (this.$.$mol_locale.text("$hyoo_page_side_edit_export_sign"));
-		}
-		tools(){
-			return [
-				(this.Syntax()), 
-				(this.Publish()), 
-				(this.Export()), 
-				(this.Rights_toggle()), 
-				(this.Close())
-			];
-		}
-		body(){
-			return [(this.Details_edit()), (this.Aura_field())];
-		}
 		title(next){
 			return (this.side().title(next));
 		}
@@ -17359,9 +16941,33 @@ var $;
 			(obj.Content) = () => ((this.Aura()));
 			return obj;
 		}
+		side(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		Title(){
+			const obj = new this.$.$mol_string_button();
+			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Title_hint")));
+			(obj.value) = (next) => ((this.title(next)));
+			(obj.enabled) = () => ((this.editable()));
+			return obj;
+		}
+		export_sign(){
+			return (this.$.$mol_locale.text("$hyoo_page_side_edit_export_sign"));
+		}
+		tools(){
+			return [
+				(this.Syntax()), 
+				(this.Publish()), 
+				(this.Export()), 
+				(this.Rights_toggle()), 
+				(this.Close())
+			];
+		}
+		body(){
+			return [(this.Details_edit()), (this.Aura_field())];
+		}
 	};
-	($mol_mem(($.$hyoo_page_side_edit.prototype), "side"));
-	($mol_mem(($.$hyoo_page_side_edit.prototype), "Title"));
 	($mol_mem(($.$hyoo_page_side_edit.prototype), "Syntax"));
 	($mol_mem(($.$hyoo_page_side_edit.prototype), "publish"));
 	($mol_mem(($.$hyoo_page_side_edit.prototype), "Publish_icon"));
@@ -17380,6 +16986,8 @@ var $;
 	($mol_mem(($.$hyoo_page_side_edit.prototype), "Details_edit"));
 	($mol_mem(($.$hyoo_page_side_edit.prototype), "Aura"));
 	($mol_mem(($.$hyoo_page_side_edit.prototype), "Aura_field"));
+	($mol_mem(($.$hyoo_page_side_edit.prototype), "side"));
+	($mol_mem(($.$hyoo_page_side_edit.prototype), "Title"));
 
 
 ;
@@ -17784,9 +17392,6 @@ var $;
 
 ;
 	($.$mol_expander) = class $mol_expander extends ($.$mol_list) {
-		rows(){
-			return [(this.Label()), (this.Content())];
-		}
 		expanded(next){
 			if(next !== undefined) return next;
 			return false;
@@ -17819,6 +17424,9 @@ var $;
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ((this.content()));
 			return obj;
+		}
+		rows(){
+			return [(this.Label()), (this.Content())];
 		}
 	};
 	($mol_mem(($.$mol_expander.prototype), "expanded"));
@@ -17863,28 +17471,6 @@ var $;
 
 ;
 	($.$hyoo_page_side_info) = class $hyoo_page_side_info extends ($.$mol_page) {
-		Text(){
-			const obj = new this.$.$mol_text();
-			return obj;
-		}
-		side(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		title(){
-			return (this.$.$mol_locale.text("$hyoo_page_side_info_title"));
-		}
-		tools(){
-			return [(this.Slides()), (this.Close())];
-		}
-		body(){
-			return [
-				(this.Stat()), 
-				(this.Section_list()), 
-				(this.Ref_list()), 
-				(this.Word_list())
-			];
-		}
 		text_tokens(){
 			return (this.Text().flow_tokens());
 		}
@@ -18073,9 +17659,29 @@ var $;
 			(obj.content) = () => ([(this.Word_list_items())]);
 			return obj;
 		}
+		Text(){
+			const obj = new this.$.$mol_text();
+			return obj;
+		}
+		side(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		title(){
+			return (this.$.$mol_locale.text("$hyoo_page_side_info_title"));
+		}
+		tools(){
+			return [(this.Slides()), (this.Close())];
+		}
+		body(){
+			return [
+				(this.Stat()), 
+				(this.Section_list()), 
+				(this.Ref_list()), 
+				(this.Word_list())
+			];
+		}
 	};
-	($mol_mem(($.$hyoo_page_side_info.prototype), "Text"));
-	($mol_mem(($.$hyoo_page_side_info.prototype), "side"));
 	($mol_mem(($.$hyoo_page_side_info.prototype), "Slides"));
 	($mol_mem(($.$hyoo_page_side_info.prototype), "close"));
 	($mol_mem(($.$hyoo_page_side_info.prototype), "Close_icon"));
@@ -18098,6 +17704,8 @@ var $;
 	($mol_mem_key(($.$hyoo_page_side_info.prototype), "Word_item"));
 	($mol_mem(($.$hyoo_page_side_info.prototype), "Word_list_items"));
 	($mol_mem(($.$hyoo_page_side_info.prototype), "Word_list"));
+	($mol_mem(($.$hyoo_page_side_info.prototype), "Text"));
+	($mol_mem(($.$hyoo_page_side_info.prototype), "side"));
 
 
 ;
@@ -18364,16 +17972,6 @@ var $;
 
 ;
 	($.$hyoo_meta_rights) = class $hyoo_meta_rights extends ($.$mol_page) {
-		title(){
-			return (this.$.$mol_locale.text("$hyoo_meta_rights_title"));
-		}
-		meta(){
-			const obj = new this.$.$hyoo_meta_model();
-			return obj;
-		}
-		body(){
-			return [(this.Content())];
-		}
 		editors(){
 			return (this.meta().editors());
 		}
@@ -18480,8 +18078,17 @@ var $;
 			(obj.rows) = () => ((this.blocks()));
 			return obj;
 		}
+		title(){
+			return (this.$.$mol_locale.text("$hyoo_meta_rights_title"));
+		}
+		meta(){
+			const obj = new this.$.$hyoo_meta_model();
+			return obj;
+		}
+		body(){
+			return [(this.Content())];
+		}
 	};
-	($mol_mem(($.$hyoo_meta_rights.prototype), "meta"));
 	($mol_mem_key(($.$hyoo_meta_rights.prototype), "peer"));
 	($mol_mem_key(($.$hyoo_meta_rights.prototype), "Editor_link"));
 	($mol_mem(($.$hyoo_meta_rights.prototype), "Editor_list"));
@@ -18498,6 +18105,7 @@ var $;
 	($mol_mem(($.$hyoo_meta_rights.prototype), "Editor_add_form"));
 	($mol_mem(($.$hyoo_meta_rights.prototype), "Editor_add"));
 	($mol_mem(($.$hyoo_meta_rights.prototype), "Content"));
+	($mol_mem(($.$hyoo_meta_rights.prototype), "meta"));
 
 
 ;
@@ -18603,13 +18211,6 @@ var $;
 
 ;
 	($.$mol_password) = class $mol_password extends ($.$mol_view) {
-		type(next){
-			if(next !== undefined) return next;
-			return "password";
-		}
-		sub(){
-			return (this.content());
-		}
 		hint(){
 			return "";
 		}
@@ -18650,14 +18251,21 @@ var $;
 		content(){
 			return [(this.Pass()), (this.Show())];
 		}
+		type(next){
+			if(next !== undefined) return next;
+			return "password";
+		}
+		sub(){
+			return (this.content());
+		}
 	};
-	($mol_mem(($.$mol_password.prototype), "type"));
 	($mol_mem(($.$mol_password.prototype), "value"));
 	($mol_mem(($.$mol_password.prototype), "submit"));
 	($mol_mem(($.$mol_password.prototype), "Pass"));
 	($mol_mem(($.$mol_password.prototype), "checked"));
 	($mol_mem(($.$mol_password.prototype), "Show_icon"));
 	($mol_mem(($.$mol_password.prototype), "Show"));
+	($mol_mem(($.$mol_password.prototype), "type"));
 
 
 ;
@@ -18684,25 +18292,6 @@ var $;
 
 ;
 	($.$hyoo_meta_safe) = class $hyoo_meta_safe extends ($.$mol_page) {
-		title(){
-			return (this.$.$mol_locale.text("$hyoo_meta_safe_title"));
-		}
-		yard(){
-			const obj = new this.$.$hyoo_sync_yard();
-			return obj;
-		}
-		bid_pass_long(){
-			return (this.$.$mol_locale.text("$hyoo_meta_safe_bid_pass_long"));
-		}
-		key_size(){
-			return 144;
-		}
-		attr(){
-			return {...(super.attr()), "mol_theme": "$mol_theme_special"};
-		}
-		body(){
-			return [(this.Content())];
-		}
 		Expot_bid(){
 			const obj = new this.$.$mol_text();
 			(obj.text) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Expot_bid_text")));
@@ -18823,8 +18412,26 @@ var $;
 			(obj.rows) = () => ((this.content()));
 			return obj;
 		}
+		title(){
+			return (this.$.$mol_locale.text("$hyoo_meta_safe_title"));
+		}
+		yard(){
+			const obj = new this.$.$hyoo_sync_yard();
+			return obj;
+		}
+		bid_pass_long(){
+			return (this.$.$mol_locale.text("$hyoo_meta_safe_bid_pass_long"));
+		}
+		key_size(){
+			return 144;
+		}
+		attr(){
+			return {...(super.attr()), "mol_theme": "$mol_theme_special"};
+		}
+		body(){
+			return [(this.Content())];
+		}
 	};
-	($mol_mem(($.$hyoo_meta_safe.prototype), "yard"));
 	($mol_mem(($.$hyoo_meta_safe.prototype), "Expot_bid"));
 	($mol_mem(($.$hyoo_meta_safe.prototype), "password"));
 	($mol_mem(($.$hyoo_meta_safe.prototype), "Password"));
@@ -18842,6 +18449,7 @@ var $;
 	($mol_mem(($.$hyoo_meta_safe.prototype), "Import_switch"));
 	($mol_mem(($.$hyoo_meta_safe.prototype), "Import_block"));
 	($mol_mem(($.$hyoo_meta_safe.prototype), "Content"));
+	($mol_mem(($.$hyoo_meta_safe.prototype), "yard"));
 
 
 ;
@@ -19197,25 +18805,6 @@ var $;
 
 ;
 	($.$hyoo_sync_online) = class $hyoo_sync_online extends ($.$mol_select) {
-		minimal_width(){
-			return 40;
-		}
-		minimal_height(){
-			return 40;
-		}
-		yard(){
-			const obj = new this.$.$hyoo_sync_yard();
-			return obj;
-		}
-		Filter(){
-			return null;
-		}
-		option_content(id){
-			return [(this.Option_logo(id)), (this.option_label(id))];
-		}
-		trigger_content(){
-			return [(this.Link())];
-		}
 		dictionary(){
 			return (this.yard().master_list());
 		}
@@ -19258,12 +18847,31 @@ var $;
 			(obj.hint) = () => ((this.message()));
 			return obj;
 		}
+		minimal_width(){
+			return 40;
+		}
+		minimal_height(){
+			return 40;
+		}
+		yard(){
+			const obj = new this.$.$hyoo_sync_yard();
+			return obj;
+		}
+		Filter(){
+			return null;
+		}
+		option_content(id){
+			return [(this.Option_logo(id)), (this.option_label(id))];
+		}
+		trigger_content(){
+			return [(this.Link())];
+		}
 	};
-	($mol_mem(($.$hyoo_sync_online.prototype), "yard"));
 	($mol_mem_key(($.$hyoo_sync_online.prototype), "Option_logo"));
 	($mol_mem(($.$hyoo_sync_online.prototype), "Well"));
 	($mol_mem(($.$hyoo_sync_online.prototype), "Fail"));
 	($mol_mem(($.$hyoo_sync_online.prototype), "Link"));
+	($mol_mem(($.$hyoo_sync_online.prototype), "yard"));
 
 
 ;
@@ -19374,31 +18982,6 @@ var $;
 
 ;
 	($.$hyoo_page_menu) = class $hyoo_page_menu extends ($.$hyoo_meta_menu) {
-		title(){
-			return (this.$.$mol_locale.text("$hyoo_page_menu_title"));
-		}
-		attr(){
-			return {...(super.attr()), "mol_theme": "$mol_theme_special"};
-		}
-		head(){
-			return [
-				(this.Profile()), 
-				(this.Title()), 
-				(this.Tools())
-			];
-		}
-		Logo(){
-			return null;
-		}
-		foot(){
-			return [
-				(this.Online()), 
-				(this.Safe_showing()), 
-				(this.About()), 
-				(this.Aura_showing()), 
-				(this.Lights())
-			];
-		}
 		side(){
 			const obj = new this.$.$hyoo_page_side();
 			return obj;
@@ -19457,6 +19040,31 @@ var $;
 			const obj = new this.$.$mol_lights_toggle();
 			return obj;
 		}
+		title(){
+			return (this.$.$mol_locale.text("$hyoo_page_menu_title"));
+		}
+		attr(){
+			return {...(super.attr()), "mol_theme": "$mol_theme_special"};
+		}
+		head(){
+			return [
+				(this.Profile()), 
+				(this.Title()), 
+				(this.Tools())
+			];
+		}
+		Logo(){
+			return null;
+		}
+		foot(){
+			return [
+				(this.Online()), 
+				(this.Safe_showing()), 
+				(this.About()), 
+				(this.Aura_showing()), 
+				(this.Lights())
+			];
+		}
 	};
 	($mol_mem(($.$hyoo_page_menu.prototype), "side"));
 	($mol_mem(($.$hyoo_page_menu.prototype), "Profile"));
@@ -19487,49 +19095,386 @@ var $;
 "use strict";
 
 ;
+"use strict";
+var $;
+(function ($) {
+    function $mol_db_response(request) {
+        return new Promise((done, fail) => {
+            request.onerror = () => fail(new Error(request.error.message));
+            request.onsuccess = () => done(request.result);
+        });
+    }
+    $.$mol_db_response = $mol_db_response;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    async function $mol_db(name, ...migrations) {
+        const request = this.$mol_dom_context.indexedDB.open(name, migrations.length ? migrations.length + 1 : undefined);
+        request.onupgradeneeded = event => {
+            migrations.splice(0, event.oldVersion - 1);
+            const transaction = new $mol_db_transaction(request.transaction);
+            for (const migrate of migrations)
+                migrate(transaction);
+        };
+        const db = await $mol_db_response(request);
+        return new $mol_db_database(db);
+    }
+    $.$mol_db = $mol_db;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_db_store {
+        native;
+        constructor(native) {
+            this.native = native;
+        }
+        get name() {
+            return this.native.name;
+        }
+        get path() {
+            return this.native.keyPath;
+        }
+        get incremental() {
+            return this.native.autoIncrement;
+        }
+        get indexes() {
+            return new Proxy({}, {
+                ownKeys: () => [...this.native.indexNames],
+                has: (_, name) => this.native.indexNames.contains(name),
+                get: (_, name) => new $mol_db_index(this.native.index(name))
+            });
+        }
+        index_make(name, path = [], unique = false, multiEntry = false) {
+            return this.native.createIndex(name, path, { multiEntry, unique });
+        }
+        index_drop(name) {
+            this.native.deleteIndex(name);
+            return this;
+        }
+        get transaction() {
+            return new $mol_db_transaction(this.native.transaction);
+        }
+        get db() {
+            return this.transaction.db;
+        }
+        clear() {
+            return $mol_db_response(this.native.clear());
+        }
+        count(keys) {
+            return $mol_db_response(this.native.count(keys));
+        }
+        put(doc, key) {
+            return $mol_db_response(this.native.put(doc, key));
+        }
+        get(key) {
+            return $mol_db_response(this.native.get(key));
+        }
+        select(key, count) {
+            return $mol_db_response(this.native.getAll(key, count));
+        }
+        drop(keys) {
+            return $mol_db_response(this.native.delete(keys));
+        }
+    }
+    $.$mol_db_store = $mol_db_store;
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_db_index {
+        native;
+        constructor(native) {
+            this.native = native;
+        }
+        get name() {
+            return this.native.name;
+        }
+        get paths() {
+            return this.native.keyPath;
+        }
+        get unique() {
+            return this.native.unique;
+        }
+        get multiple() {
+            return this.native.multiEntry;
+        }
+        get store() {
+            return new $mol_db_store(this.native.objectStore);
+        }
+        get transaction() {
+            return this.store.transaction;
+        }
+        get db() {
+            return this.store.db;
+        }
+        count(keys) {
+            return $mol_db_response(this.native.count(keys));
+        }
+        get(key) {
+            return $mol_db_response(this.native.get(key));
+        }
+        select(key, count) {
+            return $mol_db_response(this.native.getAll(key, count));
+        }
+    }
+    $.$mol_db_index = $mol_db_index;
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_dom_context.indexedDB = $node['fake-indexeddb'].indexedDB;
+    $mol_dom_context.IDBCursor = $node['fake-indexeddb'].IDBCursor;
+    $mol_dom_context.IDBCursorWithValue = $node['fake-indexeddb'].IDBCursorWithValue;
+    $mol_dom_context.IDBDatabase = $node['fake-indexeddb'].IDBDatabase;
+    $mol_dom_context.IDBFactory = $node['fake-indexeddb'].IDBFactory;
+    $mol_dom_context.IDBIndex = $node['fake-indexeddb'].IDBIndex;
+    $mol_dom_context.IDBKeyRange = $node['fake-indexeddb'].IDBKeyRange;
+    $mol_dom_context.IDBObjectStore = $node['fake-indexeddb'].IDBObjectStore;
+    $mol_dom_context.IDBOpenDBRequest = $node['fake-indexeddb'].IDBOpenDBRequest;
+    $mol_dom_context.IDBRequest = $node['fake-indexeddb'].IDBRequest;
+    $mol_dom_context.IDBTransaction = $node['fake-indexeddb'].IDBTransaction;
+    $mol_dom_context.IDBVersionChangeEvent = $node['fake-indexeddb'].IDBVersionChangeEvent;
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_db_database {
+        native;
+        constructor(native) {
+            this.native = native;
+        }
+        get name() {
+            return this.native.name;
+        }
+        get version() {
+            return this.native.version;
+        }
+        get stores() {
+            return [...this.native.objectStoreNames];
+        }
+        read(...names) {
+            return new $mol_db_transaction(this.native.transaction(names, 'readonly', { durability: 'relaxed' })).stores;
+        }
+        change(...names) {
+            return new $mol_db_transaction(this.native.transaction(names, 'readwrite', { durability: 'relaxed' }));
+        }
+        kill() {
+            this.native.close();
+            const request = $mol_dom_context.indexedDB.deleteDatabase(this.name);
+            request.onblocked = console.warn;
+            return $mol_db_response(request);
+        }
+        destructor() {
+            this.native.close();
+        }
+    }
+    $.$mol_db_database = $mol_db_database;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_db_transaction {
+        native;
+        constructor(native) {
+            this.native = native;
+        }
+        get stores() {
+            return new Proxy({}, {
+                ownKeys: () => [...this.native.objectStoreNames],
+                has: (_, name) => this.native.objectStoreNames.contains(name),
+                get: (_, name, proxy) => (name in proxy)
+                    ? new $mol_db_store(this.native.objectStore(name))
+                    : undefined,
+            });
+        }
+        store_make(name) {
+            return this.native.db.createObjectStore(name, { autoIncrement: true });
+        }
+        store_drop(name) {
+            this.native.db.deleteObjectStore(name);
+            return this;
+        }
+        abort() {
+            if (this.native.error)
+                return;
+            this.native.abort();
+        }
+        commit() {
+            this.native.commit?.();
+            return new Promise((done, fail) => {
+                this.native.onerror = () => fail(new Error(this.native.error.message));
+                this.native.oncomplete = () => done();
+            });
+        }
+        get db() {
+            return new $mol_db_database(this.native.db);
+        }
+    }
+    $.$mol_db_transaction = $mol_db_transaction;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_sync_client extends $hyoo_sync_yard {
+        async db() {
+            const db1 = await this.$.$mol_db('$hyoo_sync_client_db');
+            await db1.kill();
+            return await this.$.$mol_db('$hyoo_sync_client_db2', mig => mig.store_make('Unit'), mig => mig.stores.Unit.index_make('Land', ['land']), mig => mig.stores.Unit.index_make('Data', ['data']));
+        }
+        async db_land_load(land) {
+            try {
+                var db = await this.db();
+            }
+            catch (error) {
+                $mol_fail_log(error);
+                return [];
+            }
+            const Unit = db.read('Unit').Unit;
+            const recs = await Unit.indexes.Land.select([land.id()]);
+            if (!recs)
+                return [];
+            const units = recs.map(rec => new $hyoo_crowd_unit(rec.land, rec.auth, rec.head, rec.self, rec.next, rec.prev, rec.time, rec.data, new $hyoo_crowd_unit_bin(rec.bin.buffer)));
+            return units;
+        }
+        async db_land_search(from, to = from + '\uFFFF') {
+            try {
+                var db = await this.db();
+            }
+            catch (error) {
+                $mol_fail_log(error);
+                return new Set();
+            }
+            const Unit = db.read('Unit').Unit;
+            const query = IDBKeyRange.bound([from], [to]);
+            const recs = await Unit.indexes.Data.select(query);
+            return new Set(recs.map(rec => rec.land));
+        }
+        async db_land_save(land, units) {
+            try {
+                var db = await this.db();
+            }
+            catch (error) {
+                $mol_fail_log(error);
+                return;
+            }
+            const trans = db.change('Unit');
+            const Unit = trans.stores.Unit;
+            for (const unit of units) {
+                Unit.put(unit, [unit.land, unit.head, unit.self]);
+            }
+            await trans.commit();
+            this.$.$mol_storage.persisted(true);
+        }
+        reconnects(reset) {
+            return ($mol_wire_probe(() => this.reconnects()) ?? 0) + 1;
+        }
+        master() {
+            this.reconnects();
+            const link = this.master_link();
+            const line = new $mol_dom_context.WebSocket(link, ['$hyoo_sync_protocol_1']);
+            line.binaryType = 'arraybuffer';
+            line.onmessage = async (event) => {
+                if (event.data instanceof ArrayBuffer) {
+                    await this.line_receive(line, new Uint8Array(event.data));
+                }
+                else {
+                    this.$.$mol_log3_fail({
+                        place: this,
+                        message: 'Wrong data',
+                        data: event.data
+                    });
+                }
+            };
+            let interval;
+            line.onclose = () => {
+                clearInterval(interval);
+                setTimeout(() => this.reconnects(null), 1000);
+            };
+            Object.assign(line, {
+                destructor: () => {
+                    line.onclose = () => { };
+                    clearInterval(interval);
+                    line.close();
+                }
+            });
+            return new Promise((done, fail) => {
+                line.onopen = () => {
+                    this.$.$mol_log3_come({
+                        place: this,
+                        message: 'Connected to Master',
+                        line: $mol_key(line),
+                        server: link,
+                    });
+                    interval = setInterval(() => line.send(new Uint8Array), 30000);
+                    done(line);
+                };
+                line.onerror = () => {
+                    line.onclose = event => {
+                        fail(new Error(`Master is unavailable (${event.code})`));
+                    };
+                    clearInterval(interval);
+                    this.master_cursor((this.master_cursor() + 1) % this.$.$hyoo_sync_masters.length);
+                };
+            });
+        }
+        line_send_clocks(line, land) {
+            if (line instanceof WebSocket) {
+                line.send(land.clocks_bin);
+            }
+            else {
+                line.postMessage(['hyoo_sync_clocks', land.id(), land._clocks]);
+            }
+        }
+        async line_send_units(line, units) {
+            if (line instanceof WebSocket) {
+                await this.world().sign_units(units);
+                const message = new Blob(units.map(unit => unit.bin));
+                line.send(message);
+            }
+            else {
+                line.postMessage(['hyoo_sync_units', units[0].land, units]);
+            }
+        }
+    }
+    __decorate([
+        $mol_memo.method
+    ], $hyoo_sync_client.prototype, "db", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_client.prototype, "reconnects", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_sync_client.prototype, "master", null);
+    $.$hyoo_sync_client = $hyoo_sync_client;
+})($ || ($ = {}));
+
+;
 	($.$hyoo_page) = class $hyoo_page extends ($.$mol_book2) {
-		side_main_id(){
-			return "iy8wtn_tky6pc";
-		}
-		yard(){
-			const obj = new this.$.$hyoo_sync_client();
-			return obj;
-		}
-		side(id){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		side_current(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		profile(){
-			const obj = new this.$.$hyoo_page_side();
-			return obj;
-		}
-		style(){
-			return {...(super.style()), "backgroundImage": (this.aura_image())};
-		}
-		plugins(){
-			return [(this.Theme())];
-		}
-		auto(){
-			return [(this.ref_track())];
-		}
-		pages(){
-			return [
-				(this.News()), 
-				(this.Side_menu()), 
-				(this.View("0_0")), 
-				(this.Edit("0_0")), 
-				(this.Info("0_0")), 
-				(this.Rights("0_0")), 
-				(this.Safe())
-			];
-		}
-		Placeholder(){
-			return (this.Menu());
-		}
 		side_title(id){
 			return (this.side(id).title());
 		}
@@ -19703,11 +19648,49 @@ var $;
 			(obj.safe_showing) = (next) => ((this.safe(next)));
 			return obj;
 		}
+		side_main_id(){
+			return "iy8wtn_tky6pc";
+		}
+		yard(){
+			const obj = new this.$.$hyoo_sync_client();
+			return obj;
+		}
+		side(id){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		side_current(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		profile(){
+			const obj = new this.$.$hyoo_page_side();
+			return obj;
+		}
+		style(){
+			return {...(super.style()), "backgroundImage": (this.aura_image())};
+		}
+		plugins(){
+			return [(this.Theme())];
+		}
+		auto(){
+			return [(this.ref_track())];
+		}
+		pages(){
+			return [
+				(this.News()), 
+				(this.Side_menu()), 
+				(this.View("0_0")), 
+				(this.Edit("0_0")), 
+				(this.Info("0_0")), 
+				(this.Rights("0_0")), 
+				(this.Safe())
+			];
+		}
+		Placeholder(){
+			return (this.Menu());
+		}
 	};
-	($mol_mem(($.$hyoo_page.prototype), "yard"));
-	($mol_mem_key(($.$hyoo_page.prototype), "side"));
-	($mol_mem(($.$hyoo_page.prototype), "side_current"));
-	($mol_mem(($.$hyoo_page.prototype), "profile"));
 	($mol_mem(($.$hyoo_page.prototype), "Theme"));
 	($mol_mem(($.$hyoo_page.prototype), "News"));
 	($mol_mem(($.$hyoo_page.prototype), "book_side"));
@@ -19734,6 +19717,10 @@ var $;
 	($mol_mem(($.$hyoo_page.prototype), "aura_showing"));
 	($mol_mem(($.$hyoo_page.prototype), "safe"));
 	($mol_mem(($.$hyoo_page.prototype), "Menu"));
+	($mol_mem(($.$hyoo_page.prototype), "yard"));
+	($mol_mem_key(($.$hyoo_page.prototype), "side"));
+	($mol_mem(($.$hyoo_page.prototype), "side_current"));
+	($mol_mem(($.$hyoo_page.prototype), "profile"));
 
 
 ;
@@ -19974,6 +19961,123 @@ var $;
 
 ;
 	($.$hyoo_apps) = class $hyoo_apps extends ($.$mol_book2) {
+		Theme(){
+			const obj = new this.$.$mol_theme_auto();
+			return obj;
+		}
+		menu_title(){
+			return (this.$.$mol_locale.text("$hyoo_apps_menu_title"));
+		}
+		Source(){
+			const obj = new this.$.$mol_link_source();
+			(obj.uri) = () => ("https://github.com/hyoo-ru/apps.hyoo.ru");
+			return obj;
+		}
+		Lights(){
+			const obj = new this.$.$mol_lights_toggle();
+			return obj;
+		}
+		tools(){
+			return [(this.Source()), (this.Lights())];
+		}
+		Menu_title(){
+			return (this.Menu().Title());
+		}
+		Menu_tools(){
+			return (this.Menu().Tools());
+		}
+		filter(next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		Filter(){
+			const obj = new this.$.$mol_search();
+			(obj.query) = (next) => ((this.filter(next)));
+			return obj;
+		}
+		group_name(id){
+			return "";
+		}
+		group_expanded(id, next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		app_uri_default(id){
+			return "";
+		}
+		app_arg(id){
+			return {};
+		}
+		app_title(id){
+			return "";
+		}
+		Menu_link_title(id){
+			const obj = new this.$.$mol_dimmer();
+			(obj.haystack) = () => ((this.app_title(id)));
+			(obj.needle) = () => ((this.filter()));
+			return obj;
+		}
+		Menu_link_out(id){
+			const obj = new this.$.$mol_link_iconed();
+			(obj.uri) = () => ((this.app_uri_default(id)));
+			(obj.arg) = () => ((this.app_arg(id)));
+			(obj.sub) = () => ([(this.Menu_link_title(id))]);
+			return obj;
+		}
+		Menu_link_in_icon(id){
+			const obj = new this.$.$mol_icon_chevron_right();
+			return obj;
+		}
+		Menu_link_in(id){
+			const obj = new this.$.$mol_link();
+			(obj.arg) = () => ((this.app_arg(id)));
+			(obj.sub) = () => ([(this.Menu_link_in_icon(id))]);
+			return obj;
+		}
+		Menu_item(id){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.Menu_link_out(id)), (this.Menu_link_in(id))]);
+			return obj;
+		}
+		group_items(id){
+			return [(this.Menu_item(id))];
+		}
+		Group(id){
+			const obj = new this.$.$mol_expander();
+			(obj.title) = () => ((this.group_name(id)));
+			(obj.expanded) = (next) => ((this.group_expanded(id, next)));
+			(obj.content) = () => ((this.group_items(id)));
+			return obj;
+		}
+		group_list(){
+			return [(this.Group("id"))];
+		}
+		Menu_items(){
+			const obj = new this.$.$mol_list();
+			(obj.rows) = () => ((this.group_list()));
+			return obj;
+		}
+		Menu(){
+			const obj = new this.$.$mol_page();
+			(obj.title) = () => ((this.menu_title()));
+			(obj.tools) = () => ((this.tools()));
+			(obj.head) = () => ([
+				(this.Menu_title()), 
+				(this.Menu_tools()), 
+				(this.Filter())
+			]);
+			(obj.body) = () => ([(this.Menu_items())]);
+			return obj;
+		}
+		app_uri_embed(id, next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		App(id){
+			const obj = new this.$.$mol_frame();
+			(obj.uri) = (next) => ((this.app_uri_embed(id, next)));
+			return obj;
+		}
 		Placeholder(){
 			return null;
 		}
@@ -20214,123 +20318,6 @@ var $;
 				}
 			};
 		}
-		Theme(){
-			const obj = new this.$.$mol_theme_auto();
-			return obj;
-		}
-		menu_title(){
-			return (this.$.$mol_locale.text("$hyoo_apps_menu_title"));
-		}
-		Source(){
-			const obj = new this.$.$mol_link_source();
-			(obj.uri) = () => ("https://github.com/hyoo-ru/apps.hyoo.ru");
-			return obj;
-		}
-		Lights(){
-			const obj = new this.$.$mol_lights_toggle();
-			return obj;
-		}
-		tools(){
-			return [(this.Source()), (this.Lights())];
-		}
-		Menu_title(){
-			return (this.Menu().Title());
-		}
-		Menu_tools(){
-			return (this.Menu().Tools());
-		}
-		filter(next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		Filter(){
-			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this.filter(next)));
-			return obj;
-		}
-		group_name(id){
-			return "";
-		}
-		group_expanded(id, next){
-			if(next !== undefined) return next;
-			return false;
-		}
-		app_uri_default(id){
-			return "";
-		}
-		app_arg(id){
-			return {};
-		}
-		app_title(id){
-			return "";
-		}
-		Menu_link_title(id){
-			const obj = new this.$.$mol_dimmer();
-			(obj.haystack) = () => ((this.app_title(id)));
-			(obj.needle) = () => ((this.filter()));
-			return obj;
-		}
-		Menu_link_out(id){
-			const obj = new this.$.$mol_link_iconed();
-			(obj.uri) = () => ((this.app_uri_default(id)));
-			(obj.arg) = () => ((this.app_arg(id)));
-			(obj.sub) = () => ([(this.Menu_link_title(id))]);
-			return obj;
-		}
-		Menu_link_in_icon(id){
-			const obj = new this.$.$mol_icon_chevron_right();
-			return obj;
-		}
-		Menu_link_in(id){
-			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this.app_arg(id)));
-			(obj.sub) = () => ([(this.Menu_link_in_icon(id))]);
-			return obj;
-		}
-		Menu_item(id){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.Menu_link_out(id)), (this.Menu_link_in(id))]);
-			return obj;
-		}
-		group_items(id){
-			return [(this.Menu_item(id))];
-		}
-		Group(id){
-			const obj = new this.$.$mol_expander();
-			(obj.title) = () => ((this.group_name(id)));
-			(obj.expanded) = (next) => ((this.group_expanded(id, next)));
-			(obj.content) = () => ((this.group_items(id)));
-			return obj;
-		}
-		group_list(){
-			return [(this.Group("id"))];
-		}
-		Menu_items(){
-			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this.group_list()));
-			return obj;
-		}
-		Menu(){
-			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this.menu_title()));
-			(obj.tools) = () => ((this.tools()));
-			(obj.head) = () => ([
-				(this.Menu_title()), 
-				(this.Menu_tools()), 
-				(this.Filter())
-			]);
-			(obj.body) = () => ([(this.Menu_items())]);
-			return obj;
-		}
-		app_uri_embed(id, next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		App(id){
-			const obj = new this.$.$mol_frame();
-			(obj.uri) = (next) => ((this.app_uri_embed(id, next)));
-			return obj;
-		}
 	};
 	($mol_mem(($.$hyoo_apps.prototype), "Theme"));
 	($mol_mem(($.$hyoo_apps.prototype), "Source"));
@@ -20434,96 +20421,7 @@ var $;
 "use strict";
 
 ;
-	($.$mol_example) = class $mol_example extends ($.$mol_view) {
-		tags(){
-			return [];
-		}
-		aspects(){
-			return [];
-		}
-	};
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/example/example.view.css", "[mol_example] {\n\tmax-width: 100%;\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-	($.$mol_example_small) = class $mol_example_small extends ($.$mol_example) {};
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/example/small/small.view.css", "[mol_example_small] {\n\tdisplay: flex;\n\tflex-wrap: wrap;\n\talign-items: flex-start;\n\talign-content: flex-start;\n\tjustify-content: flex-start;\n\tflex: 0 0 auto;\n\tbox-sizing: border-box;\n\tmax-width: 100%;\n\tgap: var(--mol_gap_block);\n}\n\n[mol_example_small] > * {\n\tmax-width: 100%;\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-	($.$mol_example_large) = class $mol_example_large extends ($.$mol_example) {};
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/example/large/large.view.css", "[mol_example_large] {\n\tflex: 1 1 auto;\n\tflex-direction: column;\n\tbackground: var(--mol_theme_back);\n\tbox-shadow: 0 0 0 1px var(--mol_theme_line);\n\tborder-radius: var(--mol_gap_round);\n\tmax-width: 100%;\n\tmax-height: 100%;\n\toverflow: hidden;\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
 	($.$mol_tag_tree) = class $mol_tag_tree extends ($.$mol_list) {
-		path(){
-			return [];
-		}
-		ids_tags(){
-			return {};
-		}
-		ids(){
-			return [];
-		}
-		tags(){
-			return [];
-		}
-		levels_expanded(){
-			return 0;
-		}
-		sub(){
-			return [...(this.tag_list()), ...(this.item_list())];
-		}
-		tag_name(id){
-			return "";
-		}
-		tag_list(){
-			return [];
-		}
-		item_list(){
-			return [];
-		}
-		Item(id){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.item_title(id))]);
-			return obj;
-		}
-		Tag(id){
-			const obj = new this.$.$mol_expander();
-			(obj.expandable) = () => (true);
-			(obj.expanded) = (next) => ((this.tag_expanded(id, next)));
-			(obj.title) = () => ((this.tag_name(id)));
-			(obj.content) = () => ([(this.Tag_tree(id))]);
-			return obj;
-		}
 		tag_list(){
 			return [];
 		}
@@ -20553,11 +20451,42 @@ var $;
 			(obj.tag_name) = (id) => ((this.tag_name(id)));
 			return obj;
 		}
+		path(){
+			return [];
+		}
+		ids_tags(){
+			return {};
+		}
+		ids(){
+			return [];
+		}
+		tags(){
+			return [];
+		}
+		levels_expanded(){
+			return 0;
+		}
+		sub(){
+			return [...(this.tag_list()), ...(this.item_list())];
+		}
+		Item(id){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.item_title(id))]);
+			return obj;
+		}
+		Tag(id){
+			const obj = new this.$.$mol_expander();
+			(obj.expandable) = () => (true);
+			(obj.expanded) = (next) => ((this.tag_expanded(id, next)));
+			(obj.title) = () => ((this.tag_name(id)));
+			(obj.content) = () => ([(this.Tag_tree(id))]);
+			return obj;
+		}
 	};
-	($mol_mem_key(($.$mol_tag_tree.prototype), "Item"));
-	($mol_mem_key(($.$mol_tag_tree.prototype), "Tag"));
 	($mol_mem_key(($.$mol_tag_tree.prototype), "tag_expanded"));
 	($mol_mem_key(($.$mol_tag_tree.prototype), "Tag_tree"));
+	($mol_mem_key(($.$mol_tag_tree.prototype), "Item"));
+	($mol_mem_key(($.$mol_tag_tree.prototype), "Tag"));
 
 
 ;
@@ -20680,31 +20609,6 @@ var $;
 
 ;
 	($.$mol_app_demo_menu) = class $mol_app_demo_menu extends ($.$mol_page) {
-		names(){
-			return [];
-		}
-		widget_tags(id){
-			return [];
-		}
-		widget_aspects(id){
-			return [];
-		}
-		widget_title(id){
-			return "";
-		}
-		search_start(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		body(){
-			return [(this.Filter()), (this.Tree())];
-		}
-		Option(id){
-			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this.option_arg(id)));
-			(obj.sub) = () => ([(this.Option_title(id))]);
-			return obj;
-		}
 		filter(next){
 			if(next !== undefined) return next;
 			return "";
@@ -20742,13 +20646,38 @@ var $;
 			(obj.needle) = () => ((this.filter()));
 			return obj;
 		}
+		names(){
+			return [];
+		}
+		widget_tags(id){
+			return [];
+		}
+		widget_aspects(id){
+			return [];
+		}
+		widget_title(id){
+			return "";
+		}
+		search_start(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		body(){
+			return [(this.Filter()), (this.Tree())];
+		}
+		Option(id){
+			const obj = new this.$.$mol_link();
+			(obj.arg) = () => ((this.option_arg(id)));
+			(obj.sub) = () => ([(this.Option_title(id))]);
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_app_demo_menu.prototype), "search_start"));
-	($mol_mem_key(($.$mol_app_demo_menu.prototype), "Option"));
 	($mol_mem(($.$mol_app_demo_menu.prototype), "filter"));
 	($mol_mem(($.$mol_app_demo_menu.prototype), "Filter"));
 	($mol_mem(($.$mol_app_demo_menu.prototype), "Tree"));
 	($mol_mem_key(($.$mol_app_demo_menu.prototype), "Option_title"));
+	($mol_mem(($.$mol_app_demo_menu.prototype), "search_start"));
+	($mol_mem_key(($.$mol_app_demo_menu.prototype), "Option"));
 
 
 ;
@@ -20916,24 +20845,6 @@ var $;
 
 ;
 	($.$mol_chat) = class $mol_chat extends ($.$mol_link) {
-		seed(){
-			return "";
-		}
-		opened(){
-			return false;
-		}
-		arg(){
-			return {"mol_chat": ""};
-		}
-		hint(){
-			return (this.title());
-		}
-		sub(){
-			return [(this.Icon())];
-		}
-		pages(){
-			return [(this.Page())];
-		}
 		Icon(){
 			const obj = new this.$.$mol_icon_forum_outline();
 			return obj;
@@ -20978,6 +20889,24 @@ var $;
 			(obj.tools) = () => ([(this.Esternal()), (this.Close())]);
 			(obj.Body) = () => ((this.Embed()));
 			return obj;
+		}
+		seed(){
+			return "";
+		}
+		opened(){
+			return false;
+		}
+		arg(){
+			return {"mol_chat": ""};
+		}
+		hint(){
+			return (this.title());
+		}
+		sub(){
+			return [(this.Icon())];
+		}
+		pages(){
+			return [(this.Page())];
 		}
 	};
 	($mol_mem(($.$mol_chat.prototype), "Icon"));
@@ -21047,20 +20976,6 @@ var $;
 
 ;
 	($.$mol_app_demo_detail) = class $mol_app_demo_detail extends ($.$mol_page) {
-		description(){
-			return "";
-		}
-		tools(){
-			return [
-				(this.Readme()), 
-				(this.Chat()), 
-				(this.Edit()), 
-				(this.Close())
-			];
-		}
-		body(){
-			return [(this.Demo())];
-		}
 		readme(next){
 			if(next !== undefined) return next;
 			return false;
@@ -21130,6 +21045,20 @@ var $;
 			const obj = new this.$.$mol_view();
 			return obj;
 		}
+		description(){
+			return "";
+		}
+		tools(){
+			return [
+				(this.Readme()), 
+				(this.Chat()), 
+				(this.Edit()), 
+				(this.Close())
+			];
+		}
+		body(){
+			return [(this.Demo())];
+		}
 	};
 	($mol_mem(($.$mol_app_demo_detail.prototype), "readme"));
 	($mol_mem(($.$mol_app_demo_detail.prototype), "readme_icon"));
@@ -21147,40 +21076,56 @@ var $;
 "use strict";
 
 ;
-	($.$mol_app_demo_readme) = class $mol_app_demo_readme extends ($.$mol_page) {
-		readme_link_template(){
-			return "https://raw.githubusercontent.com/{repo}/HEAD/{module}/readme.md";
-		}
-		source_link_template(){
-			return "https://github.com/{repo}/tree/HEAD/{module}";
-		}
-		repo(){
-			return "";
-		}
-		module(){
+	($.$mol_example) = class $mol_example extends ($.$mol_view) {
+		tags(){
 			return [];
 		}
-		title(){
-			return (this.$.$mol_locale.text("$mol_app_demo_readme_title"));
+		aspects(){
+			return [];
 		}
-		opened(next){
-			if(next !== undefined) return next;
-			return false;
-		}
-		tools(){
-			return [(this.Source_link()), (this.Close())];
-		}
-		Readme(){
-			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this.readme()));
-			(obj.uri_base) = () => ((this.uri_base()));
-			return obj;
-		}
-		Not_found(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.Not_found_caption())]);
-			return obj;
-		}
+	};
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/example/example.view.css", "[mol_example] {\n\tmax-width: 100%;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+	($.$mol_example_small) = class $mol_example_small extends ($.$mol_example) {};
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/example/small/small.view.css", "[mol_example_small] {\n\tdisplay: flex;\n\tflex-wrap: wrap;\n\talign-items: flex-start;\n\talign-content: flex-start;\n\tjustify-content: flex-start;\n\tflex: 0 0 auto;\n\tbox-sizing: border-box;\n\tmax-width: 100%;\n\tgap: var(--mol_gap_block);\n}\n\n[mol_example_small] > * {\n\tmax-width: 100%;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+	($.$mol_example_large) = class $mol_example_large extends ($.$mol_example) {};
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/example/large/large.view.css", "[mol_example_large] {\n\tflex: 1 1 auto;\n\tflex-direction: column;\n\tbackground: var(--mol_theme_back);\n\tbox-shadow: 0 0 0 1px var(--mol_theme_line);\n\tborder-radius: var(--mol_gap_round);\n\tmax-width: 100%;\n\tmax-height: 100%;\n\toverflow: hidden;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+	($.$mol_app_demo_readme) = class $mol_app_demo_readme extends ($.$mol_page) {
 		source_link(){
 			return "";
 		}
@@ -21218,15 +21163,48 @@ var $;
 		Not_found_caption(){
 			return (this.$.$mol_locale.text("$mol_app_demo_readme_Not_found_caption"));
 		}
+		readme_link_template(){
+			return "https://raw.githubusercontent.com/{repo}/HEAD/{module}/readme.md";
+		}
+		source_link_template(){
+			return "https://github.com/{repo}/tree/HEAD/{module}";
+		}
+		repo(){
+			return "";
+		}
+		module(){
+			return [];
+		}
+		title(){
+			return (this.$.$mol_locale.text("$mol_app_demo_readme_title"));
+		}
+		opened(next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		tools(){
+			return [(this.Source_link()), (this.Close())];
+		}
+		Readme(){
+			const obj = new this.$.$mol_text();
+			(obj.text) = () => ((this.readme()));
+			(obj.uri_base) = () => ((this.uri_base()));
+			return obj;
+		}
+		Not_found(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.Not_found_caption())]);
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_app_demo_readme.prototype), "opened"));
-	($mol_mem(($.$mol_app_demo_readme.prototype), "Readme"));
-	($mol_mem(($.$mol_app_demo_readme.prototype), "Not_found"));
 	($mol_mem(($.$mol_app_demo_readme.prototype), "Source_link"));
 	($mol_mem(($.$mol_app_demo_readme.prototype), "Close_icon"));
 	($mol_mem(($.$mol_app_demo_readme.prototype), "close"));
 	($mol_mem(($.$mol_app_demo_readme.prototype), "Close"));
 	($mol_mem(($.$mol_app_demo_readme.prototype), "uri_base"));
+	($mol_mem(($.$mol_app_demo_readme.prototype), "opened"));
+	($mol_mem(($.$mol_app_demo_readme.prototype), "Readme"));
+	($mol_mem(($.$mol_app_demo_readme.prototype), "Not_found"));
 
 
 ;
@@ -21473,6 +21451,9 @@ var $;
 
 ;
 	($.$mol_status) = class $mol_status extends ($.$mol_view) {
+		message(){
+			return "";
+		}
 		status(){
 			return (this.title());
 		}
@@ -21484,9 +21465,6 @@ var $;
 		}
 		sub(){
 			return [(this.message())];
-		}
-		message(){
-			return "";
 		}
 	};
 
@@ -21525,57 +21503,6 @@ var $;
 
 ;
 	($.$mol_app_demo) = class $mol_app_demo extends ($.$mol_book2) {
-		editor_title(){
-			return (this.detail_title());
-		}
-		meta_bundle_base(){
-			return "";
-		}
-		repo_dict(){
-			return {};
-		}
-		plugins(){
-			return [(this.Theme()), (this.Search_start())];
-		}
-		demo_block_list(){
-			return ["$mol_example_small", "$mol_example_large"];
-		}
-		Menu(){
-			const obj = new this.$.$mol_app_demo_menu();
-			(obj.title) = () => ((this.menu_title()));
-			(obj.names) = () => ((this.names()));
-			(obj.widget_tags) = (id) => ((this.widget_tags(id)));
-			(obj.widget_aspects) = (id) => ((this.widget_aspects(id)));
-			(obj.widget_title) = (id) => ((this.widget_title(id)));
-			(obj.tools) = () => ((this.tools()));
-			return obj;
-		}
-		Detail(id){
-			const obj = new this.$.$mol_app_demo_detail();
-			(obj.chat_seed) = () => ((this.chat_seed(id)));
-			(obj.title) = () => ((this.detail_title()));
-			(obj.description) = () => ((this.detail_description()));
-			(obj.edit_uri) = () => ((this.edit_uri()));
-			(obj.readme) = (next) => ((this.readme_page(next)));
-			(obj.Demo) = () => ((this.Demo()));
-			return obj;
-		}
-		Readme_page(){
-			const obj = new this.$.$mol_app_demo_readme();
-			(obj.repo) = () => ((this.repo()));
-			(obj.opened) = (next) => ((this.readme_page(next)));
-			(obj.module) = () => ((this.module()));
-			return obj;
-		}
-		Detail_empty_message(){
-			const obj = new this.$.$mol_status();
-			(obj.sub) = () => ([
-				(this.detail_empty_prefix()), 
-				(this.selected()), 
-				(this.detail_empty_postfix())
-			]);
-			return obj;
-		}
 		detail_title(){
 			return "$mol";
 		}
@@ -21657,17 +21584,68 @@ var $;
 		detail_empty_postfix(){
 			return (this.$.$mol_locale.text("$mol_app_demo_detail_empty_postfix"));
 		}
+		editor_title(){
+			return (this.detail_title());
+		}
+		meta_bundle_base(){
+			return "";
+		}
+		repo_dict(){
+			return {};
+		}
+		plugins(){
+			return [(this.Theme()), (this.Search_start())];
+		}
+		demo_block_list(){
+			return ["$mol_example_small", "$mol_example_large"];
+		}
+		Menu(){
+			const obj = new this.$.$mol_app_demo_menu();
+			(obj.title) = () => ((this.menu_title()));
+			(obj.names) = () => ((this.names()));
+			(obj.widget_tags) = (id) => ((this.widget_tags(id)));
+			(obj.widget_aspects) = (id) => ((this.widget_aspects(id)));
+			(obj.widget_title) = (id) => ((this.widget_title(id)));
+			(obj.tools) = () => ((this.tools()));
+			return obj;
+		}
+		Detail(id){
+			const obj = new this.$.$mol_app_demo_detail();
+			(obj.chat_seed) = () => ((this.chat_seed(id)));
+			(obj.title) = () => ((this.detail_title()));
+			(obj.description) = () => ((this.detail_description()));
+			(obj.edit_uri) = () => ((this.edit_uri()));
+			(obj.readme) = (next) => ((this.readme_page(next)));
+			(obj.Demo) = () => ((this.Demo()));
+			return obj;
+		}
+		Readme_page(){
+			const obj = new this.$.$mol_app_demo_readme();
+			(obj.repo) = () => ((this.repo()));
+			(obj.opened) = (next) => ((this.readme_page(next)));
+			(obj.module) = () => ((this.module()));
+			return obj;
+		}
+		Detail_empty_message(){
+			const obj = new this.$.$mol_status();
+			(obj.sub) = () => ([
+				(this.detail_empty_prefix()), 
+				(this.selected()), 
+				(this.detail_empty_postfix())
+			]);
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_app_demo.prototype), "Menu"));
-	($mol_mem_key(($.$mol_app_demo.prototype), "Detail"));
-	($mol_mem(($.$mol_app_demo.prototype), "Readme_page"));
-	($mol_mem(($.$mol_app_demo.prototype), "Detail_empty_message"));
 	($mol_mem(($.$mol_app_demo.prototype), "Theme"));
 	($mol_mem(($.$mol_app_demo.prototype), "Search_start"));
 	($mol_mem(($.$mol_app_demo.prototype), "Sources"));
 	($mol_mem(($.$mol_app_demo.prototype), "Lights"));
 	($mol_mem(($.$mol_app_demo.prototype), "readme_page"));
 	($mol_mem(($.$mol_app_demo.prototype), "Demo"));
+	($mol_mem(($.$mol_app_demo.prototype), "Menu"));
+	($mol_mem_key(($.$mol_app_demo.prototype), "Detail"));
+	($mol_mem(($.$mol_app_demo.prototype), "Readme_page"));
+	($mol_mem(($.$mol_app_demo.prototype), "Detail_empty_message"));
 
 
 ;
@@ -21682,18 +21660,6 @@ var $;
 
 ;
 	($.$mol_app_demo_main) = class $mol_app_demo_main extends ($.$mol_page) {
-		minimal_width(){
-			return 400;
-		}
-		title(){
-			return "$mol libs for web ui";
-		}
-		tools(){
-			return [(this.Lights()), (this.Project())];
-		}
-		body(){
-			return [(this.Description())];
-		}
 		Lights(){
 			const obj = new this.$.$mol_lights_toggle();
 			return obj;
@@ -21714,6 +21680,18 @@ var $;
 			(obj.text) = () => ((this.description()));
 			(obj.uri_base) = () => ((this.project_uri()));
 			return obj;
+		}
+		minimal_width(){
+			return 400;
+		}
+		title(){
+			return "$mol libs for web ui";
+		}
+		tools(){
+			return [(this.Lights()), (this.Project())];
+		}
+		body(){
+			return [(this.Description())];
 		}
 	};
 	($mol_mem(($.$mol_app_demo_main.prototype), "Lights"));
@@ -21926,37 +21904,6 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_icon_tick) = class $mol_icon_tick extends ($.$mol_icon) {
-		path(){
-			return "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
-		}
-	};
-
-
-;
-"use strict";
-
-;
-	($.$mol_check_box) = class $mol_check_box extends ($.$mol_check) {
-		Icon(){
-			const obj = new this.$.$mol_icon_tick();
-			return obj;
-		}
-	};
-	($mol_mem(($.$mol_check_box.prototype), "Icon"));
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/check/box/box.view.css", "[mol_check_box_icon] {\n\tborder-radius: var(--mol_gap_round);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n\tcolor: var(--mol_theme_shade);\n\theight: 1rem;\n\talign-self: center;\n}\n\n[mol_check]:not([mol_check_checked]) > [mol_check_box_icon] {\n\tfill: transparent;\n}\n\n[mol_check]:not([disabled]) > [mol_check_box_icon] {\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
 	($.$mol_icon_sort) = class $mol_icon_sort extends ($.$mol_icon) {
 		path(){
 			return "M10,13V11H18V13H10M10,19V17H14V19H10M10,7V5H22V7H10M6,17H8.5L5,20.5L1.5,17H4V7H1.5L5,3.5L8.5,7H6V17Z";
@@ -21980,20 +21927,14 @@ var $;
 
 ;
 	($.$mol_portion_indicator) = class $mol_portion_indicator extends ($.$mol_view) {
-		style(){
-			return {...(super.style()), "width": (this.width_style())};
-		}
 		width_style(){
 			return "0";
 		}
+		style(){
+			return {...(super.style()), "width": (this.width_style())};
+		}
 	};
 	($.$mol_portion) = class $mol_portion extends ($.$mol_view) {
-		portion(){
-			return 0;
-		}
-		sub(){
-			return [(this.indicator())];
-		}
 		indicator_width_style(){
 			return "0";
 		}
@@ -22001,6 +21942,12 @@ var $;
 			const obj = new this.$.$mol_portion_indicator();
 			(obj.width_style) = () => ((this.indicator_width_style()));
 			return obj;
+		}
+		portion(){
+			return 0;
+		}
+		sub(){
+			return [(this.indicator())];
 		}
 	};
 	($mol_mem(($.$mol_portion.prototype), "indicator"));
@@ -22033,22 +21980,6 @@ var $;
 
 ;
 	($.$mol_bench) = class $mol_bench extends ($.$mol_grid) {
-		records(){
-			return (this.result());
-		}
-		col_sort(next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		Col_head(id){
-			const obj = new this.$.$mol_bench_head();
-			(obj.event_click) = (next) => ((this.event_sort_toggle(id, next)));
-			(obj.sub) = () => ((this.col_head_content(id)));
-			return obj;
-		}
-		cell_content_number(id){
-			return [(this.result_value(id)), (this.Result_portion(id))];
-		}
 		result(){
 			return {};
 		}
@@ -22077,13 +22008,36 @@ var $;
 			(obj.portion) = () => ((this.result_portion(id)));
 			return obj;
 		}
+		records(){
+			return (this.result());
+		}
+		col_sort(next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		Col_head(id){
+			const obj = new this.$.$mol_bench_head();
+			(obj.event_click) = (next) => ((this.event_sort_toggle(id, next)));
+			(obj.sub) = () => ((this.col_head_content(id)));
+			return obj;
+		}
+		cell_content_number(id){
+			return [(this.result_value(id)), (this.Result_portion(id))];
+		}
 	};
-	($mol_mem(($.$mol_bench.prototype), "col_sort"));
-	($mol_mem_key(($.$mol_bench.prototype), "Col_head"));
 	($mol_mem_key(($.$mol_bench.prototype), "event_sort_toggle"));
 	($mol_mem_key(($.$mol_bench.prototype), "Col_head_sort"));
 	($mol_mem_key(($.$mol_bench.prototype), "Result_portion"));
+	($mol_mem(($.$mol_bench.prototype), "col_sort"));
+	($mol_mem_key(($.$mol_bench.prototype), "Col_head"));
 	($.$mol_bench_head) = class $mol_bench_head extends ($.$mol_float) {
+		event_click(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		hint(){
+			return (this.$.$mol_locale.text("$mol_bench_head_hint"));
+		}
 		horizontal(){
 			return false;
 		}
@@ -22092,13 +22046,6 @@ var $;
 		}
 		attr(){
 			return {...(super.attr()), "title": (this.hint())};
-		}
-		event_click(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		hint(){
-			return (this.$.$mol_locale.text("$mol_bench_head_hint"));
 		}
 	};
 	($mol_mem(($.$mol_bench_head.prototype), "event_click"));
@@ -22211,32 +22158,6 @@ var $;
 
 ;
 	($.$mol_number) = class $mol_number extends ($.$mol_view) {
-		precision_view(){
-			return (this.precision());
-		}
-		precision_change(){
-			return (this.precision());
-		}
-		value_min(){
-			return -Infinity;
-		}
-		value_max(){
-			return +Infinity;
-		}
-		value(next){
-			if(next !== undefined) return next;
-			return +NaN;
-		}
-		enabled(){
-			return true;
-		}
-		sub(){
-			return [
-				(this.String()), 
-				(this.Dec()), 
-				(this.Inc())
-			];
-		}
 		precision(){
 			return 1;
 		}
@@ -22302,8 +22223,33 @@ var $;
 			(obj.sub) = () => ([(this.inc_icon())]);
 			return obj;
 		}
+		precision_view(){
+			return (this.precision());
+		}
+		precision_change(){
+			return (this.precision());
+		}
+		value_min(){
+			return -Infinity;
+		}
+		value_max(){
+			return +Infinity;
+		}
+		value(next){
+			if(next !== undefined) return next;
+			return +NaN;
+		}
+		enabled(){
+			return true;
+		}
+		sub(){
+			return [
+				(this.String()), 
+				(this.Dec()), 
+				(this.Inc())
+			];
+		}
 	};
-	($mol_mem(($.$mol_number.prototype), "value"));
 	($mol_mem(($.$mol_number.prototype), "value_string"));
 	($mol_mem(($.$mol_number.prototype), "submit"));
 	($mol_mem(($.$mol_number.prototype), "String"));
@@ -22313,6 +22259,7 @@ var $;
 	($mol_mem(($.$mol_number.prototype), "event_inc"));
 	($mol_mem(($.$mol_number.prototype), "inc_icon"));
 	($mol_mem(($.$mol_number.prototype), "Inc"));
+	($mol_mem(($.$mol_number.prototype), "value"));
 
 
 ;
@@ -22385,34 +22332,38 @@ var $;
 })($ || ($ = {}));
 
 ;
+	($.$mol_icon_tick) = class $mol_icon_tick extends ($.$mol_icon) {
+		path(){
+			return "M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z";
+		}
+	};
+
+
+;
+"use strict";
+
+;
+	($.$mol_check_box) = class $mol_check_box extends ($.$mol_check) {
+		Icon(){
+			const obj = new this.$.$mol_icon_tick();
+			return obj;
+		}
+	};
+	($mol_mem(($.$mol_check_box.prototype), "Icon"));
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/check/box/box.view.css", "[mol_check_box_icon] {\n\tborder-radius: var(--mol_gap_round);\n\tbox-shadow: inset 0 0 0 1px var(--mol_theme_line);\n\tcolor: var(--mol_theme_shade);\n\theight: 1rem;\n\talign-self: center;\n}\n\n[mol_check]:not([mol_check_checked]) > [mol_check_box_icon] {\n\tfill: transparent;\n}\n\n[mol_check]:not([disabled]) > [mol_check_box_icon] {\n\tbackground: var(--mol_theme_field);\n\tcolor: var(--mol_theme_text);\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
 	($.$hyoo_bench_app) = class $hyoo_bench_app extends ($.$mol_book2) {
-		samples(next){
-			if(next !== undefined) return next;
-			return [];
-		}
-		pages(){
-			return [
-				(this.Addon_page()), 
-				(this.Main_page()), 
-				(this.Sandbox_page())
-			];
-		}
-		Menu_option(id){
-			const obj = new this.$.$mol_check_box();
-			(obj.minimal_height) = () => (36);
-			(obj.checked) = (next) => ((this.menu_option_checked(id, next)));
-			(obj.title) = () => ((this.sample_title(id)));
-			return obj;
-		}
-		Param(id){
-			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => ((this.param_title(id)));
-			(obj.content) = () => ([(this.Param_value(id))]);
-			return obj;
-		}
-		result_col_title_sample(){
-			return (this.$.$mol_locale.text("$hyoo_bench_app_result_col_title_sample"));
-		}
 		addon_title(){
 			return (this.$.$mol_locale.text("$hyoo_bench_app_addon_title"));
 		}
@@ -22539,10 +22490,34 @@ var $;
 			(obj.precision_change) = () => ((this.param_precision(id)));
 			return obj;
 		}
+		samples(next){
+			if(next !== undefined) return next;
+			return [];
+		}
+		pages(){
+			return [
+				(this.Addon_page()), 
+				(this.Main_page()), 
+				(this.Sandbox_page())
+			];
+		}
+		Menu_option(id){
+			const obj = new this.$.$mol_check_box();
+			(obj.minimal_height) = () => (36);
+			(obj.checked) = (next) => ((this.menu_option_checked(id, next)));
+			(obj.title) = () => ((this.sample_title(id)));
+			return obj;
+		}
+		Param(id){
+			const obj = new this.$.$mol_labeler();
+			(obj.title) = () => ((this.param_title(id)));
+			(obj.content) = () => ([(this.Param_value(id))]);
+			return obj;
+		}
+		result_col_title_sample(){
+			return (this.$.$mol_locale.text("$hyoo_bench_app_result_col_title_sample"));
+		}
 	};
-	($mol_mem(($.$hyoo_bench_app.prototype), "samples"));
-	($mol_mem_key(($.$hyoo_bench_app.prototype), "Menu_option"));
-	($mol_mem_key(($.$hyoo_bench_app.prototype), "Param"));
 	($mol_mem(($.$hyoo_bench_app.prototype), "filter"));
 	($mol_mem(($.$hyoo_bench_app.prototype), "Filter"));
 	($mol_mem(($.$hyoo_bench_app.prototype), "Source_link"));
@@ -22559,6 +22534,9 @@ var $;
 	($mol_mem_key(($.$hyoo_bench_app.prototype), "menu_option_checked"));
 	($mol_mem_key(($.$hyoo_bench_app.prototype), "param_value"));
 	($mol_mem_key(($.$hyoo_bench_app.prototype), "Param_value"));
+	($mol_mem(($.$hyoo_bench_app.prototype), "samples"));
+	($mol_mem_key(($.$hyoo_bench_app.prototype), "Menu_option"));
+	($mol_mem_key(($.$hyoo_bench_app.prototype), "Param"));
 
 
 ;
@@ -22770,125 +22748,6 @@ var $;
 "use strict";
 
 ;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_js_perf_case extends $hyoo_crowd_struct {
-        title(next) {
-            return this.sub('title', $hyoo_crowd_reg).str(next);
-        }
-        setup(next) {
-            return this.sub('setup', $hyoo_crowd_reg).str(next);
-        }
-        measure(next) {
-            return this.sub('measure', $hyoo_crowd_reg).str(next);
-        }
-        steal(donor) {
-            this.title(donor.title());
-            this.setup(donor.setup());
-            this.measure(donor.measure());
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "title", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "setup", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_case.prototype, "measure", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_js_perf_case.prototype, "steal", null);
-    $.$hyoo_js_perf_case = $hyoo_js_perf_case;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_js_perf_bench extends $hyoo_crowd_struct {
-        title(next) {
-            return this.sub('title', $hyoo_crowd_reg).str(next);
-        }
-        prefix(next) {
-            return this.sub('prefix', $hyoo_crowd_reg).str(next);
-        }
-        postfix(next) {
-            return this.sub('postfix', $hyoo_crowd_reg).str(next);
-        }
-        cases() {
-            return this.sub('cases', $hyoo_crowd_list).nodes($hyoo_js_perf_case);
-        }
-        case_ensure(index) {
-            return this.cases()[index] ?? this.case_add();
-        }
-        case_add() {
-            this.sub('cases', $hyoo_crowd_list).insert([{}]);
-            return this.cases().slice(-1)[0];
-        }
-        case_drop(index) {
-            this.sub('cases', $hyoo_crowd_list).cut(index);
-        }
-        case_dupe(index) {
-            this.sub('cases', $hyoo_crowd_list).insert([{}], index + 1);
-            const [prev, next] = this.cases().slice(index, index + 2);
-            next.steal(prev);
-            return next;
-        }
-        case_swap(index) {
-            const list = this.sub('cases', $hyoo_crowd_list);
-            const pos = index ? index - 1 : list.units().length;
-            list.move(index, pos);
-            return pos;
-        }
-        steal(donor) {
-            this.title(donor.title());
-            this.prefix(donor.prefix());
-            this.postfix(donor.postfix());
-            for (const _case of donor.cases()) {
-                this.case_add().steal(_case);
-            }
-        }
-        changable() {
-            return this.land.level('') >= $hyoo_crowd_peer_level.mod;
-        }
-    }
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_bench.prototype, "title", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_bench.prototype, "prefix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_bench.prototype, "postfix", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_bench.prototype, "cases", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_js_perf_bench.prototype, "case_add", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_js_perf_bench.prototype, "case_drop", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_js_perf_bench.prototype, "case_dupe", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_js_perf_bench.prototype, "case_swap", null);
-    __decorate([
-        $mol_action
-    ], $hyoo_js_perf_bench.prototype, "steal", null);
-    __decorate([
-        $mol_mem
-    ], $hyoo_js_perf_bench.prototype, "changable", null);
-    $.$hyoo_js_perf_bench = $hyoo_js_perf_bench;
-})($ || ($ = {}));
-
-;
 	($.$mol_icon_help) = class $mol_icon_help extends ($.$mol_icon) {
 		path(){
 			return "M10,19H13V22H10V19M12,2C17.35,2.22 19.68,7.62 16.5,11.67C15.67,12.67 14.33,13.33 13.67,14.17C13,15 13,16 13,17H10C10,15.33 10,13.92 10.67,12.92C11.33,11.92 12.67,11.33 13.5,10.67C15.92,8.43 15.32,5.26 12,5C10.34,5 9,6.34 9,8H6C6,4.69 8.69,2 12,2Z";
@@ -23060,12 +22919,398 @@ var $;
 })($ || ($ = {}));
 
 ;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_js_perf_case extends $hyoo_crowd_struct {
+        title(next) {
+            return this.sub('title', $hyoo_crowd_reg).str(next);
+        }
+        setup(next) {
+            return this.sub('setup', $hyoo_crowd_reg).str(next);
+        }
+        measure(next) {
+            return this.sub('measure', $hyoo_crowd_reg).str(next);
+        }
+        steal(donor) {
+            this.title(donor.title());
+            this.setup(donor.setup());
+            this.measure(donor.measure());
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case.prototype, "title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case.prototype, "setup", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_case.prototype, "measure", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_case.prototype, "steal", null);
+    $.$hyoo_js_perf_case = $hyoo_js_perf_case;
+})($ || ($ = {}));
+
+;
 	($.$mol_icon_play) = class $mol_icon_play extends ($.$mol_icon) {
 		path(){
 			return "M8,5.14V19.14L19,12.14L8,5.14Z";
 		}
 	};
 
+
+;
+"use strict";
+
+;
+	($.$mol_icon_chevron_double_down) = class $mol_icon_chevron_double_down extends ($.$mol_icon) {
+		path(){
+			return "M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z";
+		}
+	};
+
+
+;
+"use strict";
+
+;
+	($.$mol_icon_unfold_more_horizontal) = class $mol_icon_unfold_more_horizontal extends ($.$mol_icon) {
+		path(){
+			return "M12,18.17L8.83,15L7.42,16.41L12,21L16.59,16.41L15.17,15M12,5.83L15.17,9L16.58,7.59L12,3L7.41,7.59L8.83,9L12,5.83Z";
+		}
+	};
+
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_js_perf_stats extends $mol_object2 {
+        elapsed;
+        iterations;
+        frequency_portion;
+        error;
+        memory;
+        memory_portion;
+        size;
+        size_portion;
+        deps;
+        deps_portion;
+        get time() { return this.elapsed / this.iterations; }
+        get frequency() { return this.iterations * 1000 / this.elapsed; }
+        get memory_per_iteration() { return this.memory / this.iterations; }
+    }
+    $.$hyoo_js_perf_stats = $hyoo_js_perf_stats;
+})($ || ($ = {}));
+
+;
+	($.$hyoo_js_perf_case_result) = class $hyoo_js_perf_case_result extends ($.$mol_view) {
+		frequency_portion(){
+			return 0;
+		}
+		Frequency_portion(){
+			const obj = new this.$.$mol_portion();
+			(obj.portion) = () => ((this.frequency_portion()));
+			return obj;
+		}
+		memory_portion(){
+			return 0;
+		}
+		Memory_portion(){
+			const obj = new this.$.$mol_portion();
+			(obj.portion) = () => ((this.memory_portion()));
+			return obj;
+		}
+		size_portion(){
+			return 0;
+		}
+		Size_portion(){
+			const obj = new this.$.$mol_portion();
+			(obj.portion) = () => ((this.size_portion()));
+			return obj;
+		}
+		deps_portion(){
+			return 0;
+		}
+		Deps_portion(){
+			const obj = new this.$.$mol_portion();
+			(obj.portion) = () => ((this.deps_portion()));
+			return obj;
+		}
+		portions(){
+			return [
+				(this.Frequency_portion()), 
+				(this.Memory_portion()), 
+				(this.Size_portion()), 
+				(this.Deps_portion())
+			];
+		}
+		Portions(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ((this.portions()));
+			return obj;
+		}
+		title(){
+			return "";
+		}
+		frequency_hint(){
+			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_frequency_hint"));
+		}
+		frequency(){
+			return "";
+		}
+		Frequency(){
+			const obj = new this.$.$mol_view();
+			(obj.attr) = () => ({"title": (this.frequency_hint())});
+			(obj.sub) = () => ([(this.frequency())]);
+			return obj;
+		}
+		time_hint(){
+			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_time_hint"));
+		}
+		time_total(){
+			return "";
+		}
+		Time(){
+			const obj = new this.$.$mol_view();
+			(obj.attr) = () => ({"title": (this.time_hint())});
+			(obj.sub) = () => ([(this.time_total())]);
+			return obj;
+		}
+		iterations_hint(){
+			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_iterations_hint"));
+		}
+		iterations(){
+			return "";
+		}
+		Iterations(){
+			const obj = new this.$.$mol_view();
+			(obj.attr) = () => ({"title": (this.iterations_hint())});
+			(obj.sub) = () => ([(this.iterations())]);
+			return obj;
+		}
+		Stats_main(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([
+				(this.title()), 
+				(this.Frequency()), 
+				"≈", 
+				(this.Time()), 
+				"×", 
+				(this.Iterations())
+			]);
+			return obj;
+		}
+		memory_per_iteration_hint(){
+			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_memory_per_iteration_hint"));
+		}
+		memory_per_iteration(){
+			return "";
+		}
+		Memory_per_iteration(){
+			const obj = new this.$.$mol_view();
+			(obj.attr) = () => ({"title": (this.memory_per_iteration_hint())});
+			(obj.sub) = () => ([(this.memory_per_iteration())]);
+			return obj;
+		}
+		memory_hint(){
+			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_memory_hint"));
+		}
+		memory_total(){
+			return "";
+		}
+		Memory(){
+			const obj = new this.$.$mol_view();
+			(obj.attr) = () => ({"title": (this.memory_hint())});
+			(obj.sub) = () => ([(this.memory_total())]);
+			return obj;
+		}
+		Stats_mem(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([
+				"×", 
+				(this.Memory_per_iteration()), 
+				"=", 
+				(this.Memory())
+			]);
+			return obj;
+		}
+		size_hint(){
+			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_size_hint"));
+		}
+		size(){
+			return 0;
+		}
+		Size(){
+			const obj = new this.$.$mol_view();
+			(obj.attr) = () => ({"title": (this.size_hint())});
+			(obj.sub) = () => ([(this.size())]);
+			return obj;
+		}
+		Stats_size(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.title()), (this.Size())]);
+			return obj;
+		}
+		deps_hint(){
+			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_deps_hint"));
+		}
+		deps(){
+			return "";
+		}
+		Deps(){
+			const obj = new this.$.$mol_view();
+			(obj.attr) = () => ({"title": (this.deps_hint())});
+			(obj.sub) = () => ([(this.deps())]);
+			return obj;
+		}
+		Stats_deps(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => (["📦", (this.Deps())]);
+			return obj;
+		}
+		stats(){
+			return [
+				(this.Stats_main()), 
+				(this.Stats_mem()), 
+				(this.Stats_size()), 
+				(this.Stats_deps())
+			];
+		}
+		Stats(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ((this.stats()));
+			return obj;
+		}
+		error(){
+			return "";
+		}
+		Error(){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.error())]);
+			return obj;
+		}
+		result(){
+			const obj = new this.$.$hyoo_js_perf_stats();
+			return obj;
+		}
+		sub(){
+			return [
+				(this.Portions()), 
+				(this.Stats()), 
+				(this.Error())
+			];
+		}
+	};
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Frequency_portion"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Memory_portion"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Size_portion"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Deps_portion"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Portions"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Frequency"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Time"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Iterations"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats_main"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Memory_per_iteration"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Memory"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats_mem"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Size"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats_size"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Deps"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats_deps"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Error"));
+	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "result"));
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
+            sub() {
+                if (!this.result())
+                    return [];
+                return this.result().error ? [this.Error()] : [this.Stats(), this.Portions()];
+            }
+            portions() {
+                const result = this.result();
+                return [
+                    ...result.frequency ? [this.Frequency_portion()] : [],
+                    ...result.memory ? [this.Memory_portion()] : [],
+                    ...result.size ? [this.Size_portion(), this.Deps_portion()] : [],
+                ];
+            }
+            stats() {
+                const result = this.result();
+                return [
+                    ...result.frequency ? [this.Stats_main()] : [],
+                    ...result.memory ? [this.Stats_mem()] : [],
+                    ...result.size ? [this.Stats_size(), this.Stats_deps()] : [],
+                ];
+            }
+            error() {
+                return `${this.result().error}`;
+            }
+            iterations() {
+                return $mol_si_short(this.result().iterations, 'It');
+            }
+            frequency() {
+                return $mol_si_short(this.result().frequency, 'Hz');
+            }
+            time_total() {
+                return $mol_si_short(this.result().time / 1000, 's');
+            }
+            memory_total() {
+                const val = this.result().memory;
+                return val ? $mol_si_short(val, 'B') : '?B';
+            }
+            memory_per_iteration() {
+                const val = this.result().memory_per_iteration;
+                return val ? $mol_si_short(val, 'B') : '?B';
+            }
+            size() {
+                return this.result().size;
+            }
+            deps() {
+                return $mol_si_short(this.result().deps, 'B');
+            }
+            frequency_portion() {
+                return this.result().frequency_portion;
+            }
+            memory_portion() {
+                return this.result().memory_portion;
+            }
+            size_portion() {
+                return this.result().size_portion;
+            }
+            deps_portion() {
+                return this.result().deps_portion;
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf_case_result.prototype, "portions", null);
+        __decorate([
+            $mol_mem
+        ], $hyoo_js_perf_case_result.prototype, "stats", null);
+        $$.$hyoo_js_perf_case_result = $hyoo_js_perf_case_result;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("hyoo/js/perf/case/result/result.view.css", "[hyoo_js_perf_case_result] {\n\tpadding: .5rem .75rem .25rem;\n\tflex-direction: column;\n\tflex: 1 1 24rem;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\t/* margin: 0 .5rem; */\n}\n\n[hyoo_js_perf_case_result_stats_main],\n[hyoo_js_perf_case_result_stats_mem] {\n\tdisplay: contents;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portions] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: dimgray;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
+})($ || ($ = {}));
 
 ;
 "use strict";
@@ -23083,6 +23328,9 @@ var $;
 
 ;
 	($.$mol_follower) = class $mol_follower extends ($.$mol_ghost) {
+		transform(){
+			return "";
+		}
 		Anchor(){
 			const obj = new this.$.$mol_view();
 			return obj;
@@ -23092,9 +23340,6 @@ var $;
 		}
 		style(){
 			return {...(super.style()), "transform": (this.transform())};
-		}
-		transform(){
-			return "";
 		}
 	};
 	($mol_mem(($.$mol_follower.prototype), "Anchor"));
@@ -23155,17 +23400,6 @@ var $;
 
 ;
 	($.$mol_dump_value) = class $mol_dump_value extends ($.$mol_view) {
-		value(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		preview_show(next){
-			if(next !== undefined) return next;
-			return true;
-		}
-		sub(){
-			return [(this.Simple()), (this.Expand())];
-		}
 		simple(){
 			return "";
 		}
@@ -23243,9 +23477,18 @@ var $;
 			(obj.content) = () => ((this.expand_content()));
 			return obj;
 		}
+		value(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		preview_show(next){
+			if(next !== undefined) return next;
+			return true;
+		}
+		sub(){
+			return [(this.Simple()), (this.Expand())];
+		}
 	};
-	($mol_mem(($.$mol_dump_value.prototype), "value"));
-	($mol_mem(($.$mol_dump_value.prototype), "preview_show"));
 	($mol_mem(($.$mol_dump_value.prototype), "Simple"));
 	($mol_mem(($.$mol_dump_value.prototype), "expanded"));
 	($mol_mem(($.$mol_dump_value.prototype), "expand_all"));
@@ -23255,6 +23498,8 @@ var $;
 	($mol_mem(($.$mol_dump_value.prototype), "Preview"));
 	($mol_mem_key(($.$mol_dump_value.prototype), "Row"));
 	($mol_mem(($.$mol_dump_value.prototype), "Expand"));
+	($mol_mem(($.$mol_dump_value.prototype), "value"));
+	($mol_mem(($.$mol_dump_value.prototype), "preview_show"));
 
 
 ;
@@ -23427,12 +23672,6 @@ var $;
 
 ;
 	($.$mol_dump_list) = class $mol_dump_list extends ($.$mol_view) {
-		values(){
-			return [];
-		}
-		sub(){
-			return [(this.Dump("0"))];
-		}
 		dump_value(id){
 			return null;
 		}
@@ -23453,6 +23692,12 @@ var $;
 			(obj.prototypes) = () => ((this.prototypes()));
 			(obj.preview_show) = () => ((this.preview_show()));
 			return obj;
+		}
+		values(){
+			return [];
+		}
+		sub(){
+			return [(this.Dump("0"))];
 		}
 	};
 	($mol_mem_key(($.$mol_dump_list.prototype), "dump_expanded"));
@@ -23495,23 +23740,6 @@ var $;
 
 ;
 	($.$hyoo_js_eval) = class $hyoo_js_eval extends ($.$mol_book2) {
-		Placeholder(){
-			return null;
-		}
-		plugins(){
-			return [(this.Theme()), (this.Submit())];
-		}
-		bookmark_list(next){
-			if(next !== undefined) return next;
-			return ["// Example Notebook\n\n// load external script\nconst {\n\t$mol_compare_deep: compare\n} = $mol_import.module(\n\t'https://esm.sh/mol_compare_deep'\n).default\n\n// local vars\nconst one = [1]\none.push( one )\nconst left =  { a: [1,one], b:    one  }\nconst right = { a:    one,  b: [1,one] }\n\n// result\ncompare( left, right )"];
-		}
-		pages(){
-			return [
-				(this.Menu_page()), 
-				(this.Code_page()), 
-				(this.Result_page())
-			];
-		}
 		Theme(){
 			const obj = new this.$.$mol_theme_auto();
 			return obj;
@@ -23706,8 +23934,24 @@ var $;
 			(obj.body) = () => ([(this.Result())]);
 			return obj;
 		}
+		Placeholder(){
+			return null;
+		}
+		plugins(){
+			return [(this.Theme()), (this.Submit())];
+		}
+		bookmark_list(next){
+			if(next !== undefined) return next;
+			return ["// Example Notebook\n\n// load external script\nconst {\n\t$mol_compare_deep: compare\n} = $mol_import.module(\n\t'https://esm.sh/mol_compare_deep'\n).default\n\n// local vars\nconst one = [1]\none.push( one )\nconst left =  { a: [1,one], b:    one  }\nconst right = { a:    one,  b: [1,one] }\n\n// result\ncompare( left, right )"];
+		}
+		pages(){
+			return [
+				(this.Menu_page()), 
+				(this.Code_page()), 
+				(this.Result_page())
+			];
+		}
 	};
-	($mol_mem(($.$hyoo_js_eval.prototype), "bookmark_list"));
 	($mol_mem(($.$hyoo_js_eval.prototype), "Theme"));
 	($mol_mem(($.$hyoo_js_eval.prototype), "submit"));
 	($mol_mem(($.$hyoo_js_eval.prototype), "Submit"));
@@ -23736,6 +23980,7 @@ var $;
 	($mol_mem_key(($.$hyoo_js_eval.prototype), "Log"));
 	($mol_mem(($.$hyoo_js_eval.prototype), "Result"));
 	($mol_mem(($.$hyoo_js_eval.prototype), "Result_page"));
+	($mol_mem(($.$hyoo_js_eval.prototype), "bookmark_list"));
 
 
 ;
@@ -24248,370 +24493,7 @@ var $;
 "use strict";
 
 ;
-	($.$mol_icon_chevron_double_down) = class $mol_icon_chevron_double_down extends ($.$mol_icon) {
-		path(){
-			return "M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z";
-		}
-	};
-
-
-;
-"use strict";
-
-;
-	($.$mol_icon_unfold_more_horizontal) = class $mol_icon_unfold_more_horizontal extends ($.$mol_icon) {
-		path(){
-			return "M12,18.17L8.83,15L7.42,16.41L12,21L16.59,16.41L15.17,15M12,5.83L15.17,9L16.58,7.59L12,3L7.41,7.59L8.83,9L12,5.83Z";
-		}
-	};
-
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $hyoo_js_perf_stats extends $mol_object2 {
-        elapsed;
-        iterations;
-        frequency_portion;
-        error;
-        memory;
-        memory_portion;
-        size;
-        size_portion;
-        deps;
-        deps_portion;
-        get time() { return this.elapsed / this.iterations; }
-        get frequency() { return this.iterations * 1000 / this.elapsed; }
-        get memory_per_iteration() { return this.memory / this.iterations; }
-    }
-    $.$hyoo_js_perf_stats = $hyoo_js_perf_stats;
-})($ || ($ = {}));
-
-;
-	($.$hyoo_js_perf_case_result) = class $hyoo_js_perf_case_result extends ($.$mol_view) {
-		result(){
-			const obj = new this.$.$hyoo_js_perf_stats();
-			return obj;
-		}
-		sub(){
-			return [
-				(this.Portions()), 
-				(this.Stats()), 
-				(this.Error())
-			];
-		}
-		frequency_portion(){
-			return 0;
-		}
-		Frequency_portion(){
-			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this.frequency_portion()));
-			return obj;
-		}
-		memory_portion(){
-			return 0;
-		}
-		Memory_portion(){
-			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this.memory_portion()));
-			return obj;
-		}
-		size_portion(){
-			return 0;
-		}
-		Size_portion(){
-			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this.size_portion()));
-			return obj;
-		}
-		deps_portion(){
-			return 0;
-		}
-		Deps_portion(){
-			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this.deps_portion()));
-			return obj;
-		}
-		portions(){
-			return [
-				(this.Frequency_portion()), 
-				(this.Memory_portion()), 
-				(this.Size_portion()), 
-				(this.Deps_portion())
-			];
-		}
-		Portions(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this.portions()));
-			return obj;
-		}
-		title(){
-			return "";
-		}
-		frequency_hint(){
-			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_frequency_hint"));
-		}
-		frequency(){
-			return "";
-		}
-		Frequency(){
-			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this.frequency_hint())});
-			(obj.sub) = () => ([(this.frequency())]);
-			return obj;
-		}
-		time_hint(){
-			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_time_hint"));
-		}
-		time_total(){
-			return "";
-		}
-		Time(){
-			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this.time_hint())});
-			(obj.sub) = () => ([(this.time_total())]);
-			return obj;
-		}
-		iterations_hint(){
-			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_iterations_hint"));
-		}
-		iterations(){
-			return "";
-		}
-		Iterations(){
-			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this.iterations_hint())});
-			(obj.sub) = () => ([(this.iterations())]);
-			return obj;
-		}
-		Stats_main(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([
-				(this.title()), 
-				(this.Frequency()), 
-				"≈", 
-				(this.Time()), 
-				"×", 
-				(this.Iterations())
-			]);
-			return obj;
-		}
-		memory_per_iteration_hint(){
-			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_memory_per_iteration_hint"));
-		}
-		memory_per_iteration(){
-			return "";
-		}
-		Memory_per_iteration(){
-			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this.memory_per_iteration_hint())});
-			(obj.sub) = () => ([(this.memory_per_iteration())]);
-			return obj;
-		}
-		memory_hint(){
-			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_memory_hint"));
-		}
-		memory_total(){
-			return "";
-		}
-		Memory(){
-			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this.memory_hint())});
-			(obj.sub) = () => ([(this.memory_total())]);
-			return obj;
-		}
-		Stats_mem(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([
-				"×", 
-				(this.Memory_per_iteration()), 
-				"=", 
-				(this.Memory())
-			]);
-			return obj;
-		}
-		size_hint(){
-			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_size_hint"));
-		}
-		size(){
-			return 0;
-		}
-		Size(){
-			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this.size_hint())});
-			(obj.sub) = () => ([(this.size())]);
-			return obj;
-		}
-		Stats_size(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.title()), (this.Size())]);
-			return obj;
-		}
-		deps_hint(){
-			return (this.$.$mol_locale.text("$hyoo_js_perf_case_result_deps_hint"));
-		}
-		deps(){
-			return "";
-		}
-		Deps(){
-			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this.deps_hint())});
-			(obj.sub) = () => ([(this.deps())]);
-			return obj;
-		}
-		Stats_deps(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => (["📦", (this.Deps())]);
-			return obj;
-		}
-		stats(){
-			return [
-				(this.Stats_main()), 
-				(this.Stats_mem()), 
-				(this.Stats_size()), 
-				(this.Stats_deps())
-			];
-		}
-		Stats(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this.stats()));
-			return obj;
-		}
-		error(){
-			return "";
-		}
-		Error(){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.error())]);
-			return obj;
-		}
-	};
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "result"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Frequency_portion"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Memory_portion"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Size_portion"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Deps_portion"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Portions"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Frequency"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Time"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Iterations"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats_main"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Memory_per_iteration"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Memory"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats_mem"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Size"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats_size"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Deps"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats_deps"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Stats"));
-	($mol_mem(($.$hyoo_js_perf_case_result.prototype), "Error"));
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
-            sub() {
-                if (!this.result())
-                    return [];
-                return this.result().error ? [this.Error()] : [this.Stats(), this.Portions()];
-            }
-            portions() {
-                const result = this.result();
-                return [
-                    ...result.frequency ? [this.Frequency_portion()] : [],
-                    ...result.memory ? [this.Memory_portion()] : [],
-                    ...result.size ? [this.Size_portion(), this.Deps_portion()] : [],
-                ];
-            }
-            stats() {
-                const result = this.result();
-                return [
-                    ...result.frequency ? [this.Stats_main()] : [],
-                    ...result.memory ? [this.Stats_mem()] : [],
-                    ...result.size ? [this.Stats_size(), this.Stats_deps()] : [],
-                ];
-            }
-            error() {
-                return `${this.result().error}`;
-            }
-            iterations() {
-                return $mol_si_short(this.result().iterations, 'It');
-            }
-            frequency() {
-                return $mol_si_short(this.result().frequency, 'Hz');
-            }
-            time_total() {
-                return $mol_si_short(this.result().time / 1000, 's');
-            }
-            memory_total() {
-                const val = this.result().memory;
-                return val ? $mol_si_short(val, 'B') : '?B';
-            }
-            memory_per_iteration() {
-                const val = this.result().memory_per_iteration;
-                return val ? $mol_si_short(val, 'B') : '?B';
-            }
-            size() {
-                return this.result().size;
-            }
-            deps() {
-                return $mol_si_short(this.result().deps, 'B');
-            }
-            frequency_portion() {
-                return this.result().frequency_portion;
-            }
-            memory_portion() {
-                return this.result().memory_portion;
-            }
-            size_portion() {
-                return this.result().size_portion;
-            }
-            deps_portion() {
-                return this.result().deps_portion;
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $hyoo_js_perf_case_result.prototype, "portions", null);
-        __decorate([
-            $mol_mem
-        ], $hyoo_js_perf_case_result.prototype, "stats", null);
-        $$.$hyoo_js_perf_case_result = $hyoo_js_perf_case_result;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("hyoo/js/perf/case/result/result.view.css", "[hyoo_js_perf_case_result] {\n\tpadding: .5rem .75rem .25rem;\n\tflex-direction: column;\n\tflex: 1 1 24rem;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\t/* margin: 0 .5rem; */\n}\n\n[hyoo_js_perf_case_result_stats_main],\n[hyoo_js_perf_case_result_stats_mem] {\n\tdisplay: contents;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portions] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: dimgray;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
 	($.$hyoo_js_perf_case_row) = class $hyoo_js_perf_case_row extends ($.$mol_view) {
-		results(){
-			return [];
-		}
-		Eval(){
-			const obj = new this.$.$hyoo_js_eval();
-			(obj.code) = () => ((this.sample()));
-			(obj.run) = () => ((this.eval_showed()));
-			return obj;
-		}
-		sub(){
-			return (this.columns());
-		}
 		sample(){
 			return "";
 		}
@@ -24817,8 +24699,19 @@ var $;
 				(this.Results())
 			];
 		}
+		results(){
+			return [];
+		}
+		Eval(){
+			const obj = new this.$.$hyoo_js_eval();
+			(obj.code) = () => ((this.sample()));
+			(obj.run) = () => ((this.eval_showed()));
+			return obj;
+		}
+		sub(){
+			return (this.columns());
+		}
 	};
-	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "Eval"));
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "prefix_showed"));
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "measurable"));
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "Measurable_icon"));
@@ -24849,6 +24742,7 @@ var $;
 	($mol_mem_key(($.$hyoo_js_perf_case_row.prototype), "result"));
 	($mol_mem_key(($.$hyoo_js_perf_case_row.prototype), "Result"));
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "Results"));
+	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "Eval"));
 
 
 ;
@@ -25012,6 +24906,13 @@ var $;
 
 ;
 	($.$mol_button_share) = class $mol_button_share extends ($.$mol_button_minor) {
+		Icon(){
+			const obj = new this.$.$mol_icon_share_variant();
+			return obj;
+		}
+		title(){
+			return "";
+		}
 		uri(){
 			return "";
 		}
@@ -25023,13 +24924,6 @@ var $;
 		}
 		sub(){
 			return [(this.Icon()), (this.title())];
-		}
-		Icon(){
-			const obj = new this.$.$mol_icon_share_variant();
-			return obj;
-		}
-		title(){
-			return "";
 		}
 	};
 	($mol_mem(($.$mol_button_share.prototype), "Icon"));
@@ -25200,39 +25094,91 @@ var $;
 "use strict";
 
 ;
+"use strict";
+var $;
+(function ($) {
+    class $hyoo_js_perf_bench extends $hyoo_crowd_struct {
+        title(next) {
+            return this.sub('title', $hyoo_crowd_reg).str(next);
+        }
+        prefix(next) {
+            return this.sub('prefix', $hyoo_crowd_reg).str(next);
+        }
+        postfix(next) {
+            return this.sub('postfix', $hyoo_crowd_reg).str(next);
+        }
+        cases() {
+            return this.sub('cases', $hyoo_crowd_list).nodes($hyoo_js_perf_case);
+        }
+        case_ensure(index) {
+            return this.cases()[index] ?? this.case_add();
+        }
+        case_add() {
+            this.sub('cases', $hyoo_crowd_list).insert([{}]);
+            return this.cases().slice(-1)[0];
+        }
+        case_drop(index) {
+            this.sub('cases', $hyoo_crowd_list).cut(index);
+        }
+        case_dupe(index) {
+            this.sub('cases', $hyoo_crowd_list).insert([{}], index + 1);
+            const [prev, next] = this.cases().slice(index, index + 2);
+            next.steal(prev);
+            return next;
+        }
+        case_swap(index) {
+            const list = this.sub('cases', $hyoo_crowd_list);
+            const pos = index ? index - 1 : list.units().length;
+            list.move(index, pos);
+            return pos;
+        }
+        steal(donor) {
+            this.title(donor.title());
+            this.prefix(donor.prefix());
+            this.postfix(donor.postfix());
+            for (const _case of donor.cases()) {
+                this.case_add().steal(_case);
+            }
+        }
+        changable() {
+            return this.land.level('') >= $hyoo_crowd_peer_level.mod;
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "title", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "prefix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "postfix", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "cases", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "case_add", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "case_drop", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "case_dupe", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "case_swap", null);
+    __decorate([
+        $mol_action
+    ], $hyoo_js_perf_bench.prototype, "steal", null);
+    __decorate([
+        $mol_mem
+    ], $hyoo_js_perf_bench.prototype, "changable", null);
+    $.$hyoo_js_perf_bench = $hyoo_js_perf_bench;
+})($ || ($ = {}));
+
+;
 	($.$hyoo_js_perf) = class $hyoo_js_perf extends ($.$mol_book2) {
-		yard(){
-			const obj = new this.$.$hyoo_sync_client();
-			return obj;
-		}
-		bench_id(){
-			return null;
-		}
-		bench(){
-			const obj = new this.$.$hyoo_js_perf_bench();
-			return obj;
-		}
-		titles(){
-			return [];
-		}
-		prefixes(){
-			return [];
-		}
-		sources(){
-			return [];
-		}
-		menu_title(){
-			return (this.$.$mol_locale.text("$hyoo_js_perf_menu_title"));
-		}
-		permalink(){
-			return "";
-		}
-		plugins(){
-			return [(this.Theme()), (this.Hotkey())];
-		}
-		pages(){
-			return [(this.Common()), (this.Cases_pane())];
-		}
 		Theme(){
 			const obj = new this.$.$mol_theme_auto();
 			return obj;
@@ -25488,9 +25434,39 @@ var $;
 			(obj.tools) = () => ([(this.Tool_buttons())]);
 			return obj;
 		}
+		yard(){
+			const obj = new this.$.$hyoo_sync_client();
+			return obj;
+		}
+		bench_id(){
+			return null;
+		}
+		bench(){
+			const obj = new this.$.$hyoo_js_perf_bench();
+			return obj;
+		}
+		titles(){
+			return [];
+		}
+		prefixes(){
+			return [];
+		}
+		sources(){
+			return [];
+		}
+		menu_title(){
+			return (this.$.$mol_locale.text("$hyoo_js_perf_menu_title"));
+		}
+		permalink(){
+			return "";
+		}
+		plugins(){
+			return [(this.Theme()), (this.Hotkey())];
+		}
+		pages(){
+			return [(this.Common()), (this.Cases_pane())];
+		}
 	};
-	($mol_mem(($.$hyoo_js_perf.prototype), "yard"));
-	($mol_mem(($.$hyoo_js_perf.prototype), "bench"));
 	($mol_mem(($.$hyoo_js_perf.prototype), "Theme"));
 	($mol_mem(($.$hyoo_js_perf.prototype), "run"));
 	($mol_mem(($.$hyoo_js_perf.prototype), "Hotkey"));
@@ -25532,6 +25508,8 @@ var $;
 	($mol_mem(($.$hyoo_js_perf.prototype), "New"));
 	($mol_mem(($.$hyoo_js_perf.prototype), "Tool_buttons"));
 	($mol_mem(($.$hyoo_js_perf.prototype), "Cases_pane"));
+	($mol_mem(($.$hyoo_js_perf.prototype), "yard"));
+	($mol_mem(($.$hyoo_js_perf.prototype), "bench"));
 
 
 ;
@@ -26161,27 +26139,6 @@ var $;
 
 ;
 	($.$mol_check_list) = class $mol_check_list extends ($.$mol_view) {
-		dictionary(){
-			return {};
-		}
-		Option(id){
-			const obj = new this.$.$mol_check();
-			(obj.checked) = (next) => ((this.option_checked(id, next)));
-			(obj.label) = () => ((this.option_label(id)));
-			(obj.enabled) = () => ((this.option_enabled(id)));
-			(obj.hint) = () => ((this.option_hint(id)));
-			(obj.minimal_height) = () => (24);
-			return obj;
-		}
-		options(){
-			return {};
-		}
-		keys(){
-			return [];
-		}
-		sub(){
-			return (this.items());
-		}
 		option_checked(id, next){
 			if(next !== undefined) return next;
 			return false;
@@ -26204,9 +26161,30 @@ var $;
 		items(){
 			return [];
 		}
+		dictionary(){
+			return {};
+		}
+		Option(id){
+			const obj = new this.$.$mol_check();
+			(obj.checked) = (next) => ((this.option_checked(id, next)));
+			(obj.label) = () => ((this.option_label(id)));
+			(obj.enabled) = () => ((this.option_enabled(id)));
+			(obj.hint) = () => ((this.option_hint(id)));
+			(obj.minimal_height) = () => (24);
+			return obj;
+		}
+		options(){
+			return {};
+		}
+		keys(){
+			return [];
+		}
+		sub(){
+			return (this.items());
+		}
 	};
-	($mol_mem_key(($.$mol_check_list.prototype), "Option"));
 	($mol_mem_key(($.$mol_check_list.prototype), "option_checked"));
+	($mol_mem_key(($.$mol_check_list.prototype), "Option"));
 
 
 ;
@@ -26297,12 +26275,6 @@ var $;
 
 ;
 	($.$mol_deck) = class $mol_deck extends ($.$mol_list) {
-		items(){
-			return [];
-		}
-		rows(){
-			return [(this.Switch()), (this.Content())];
-		}
 		current(next){
 			if(next !== undefined) return next;
 			return "0";
@@ -26319,6 +26291,12 @@ var $;
 		Content(){
 			const obj = new this.$.$mol_view();
 			return obj;
+		}
+		items(){
+			return [];
+		}
+		rows(){
+			return [(this.Switch()), (this.Content())];
 		}
 	};
 	($mol_mem(($.$mol_deck.prototype), "current"));
@@ -26370,38 +26348,6 @@ var $;
 
 ;
 	($.$hyoo_mol_bench) = class $hyoo_mol_bench extends ($.$mol_book2_catalog) {
-		menu_title(){
-			return (this.$.$mol_locale.text("$hyoo_mol_bench_menu_title"));
-		}
-		Placeholder(){
-			return null;
-		}
-		Close_item(){
-			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ({"bench": null});
-			(obj.sub) = () => ([(this.Close_item_icon())]);
-			return obj;
-		}
-		param(){
-			return "bench";
-		}
-		spreads(){
-			return {
-				"reactivity": (this.Init()), 
-				"equals": (this.equals()), 
-				"moment": (this.moment()), 
-				"markdown": (this.Markdown()), 
-				"runtype": (this.Runtype()), 
-				"imutable": (this.Immutable()), 
-				"rope": (this.Rope()), 
-				"todomvc": (this.Todomvc()), 
-				"changelog": (this.Chanelog()), 
-				"toxic": (this.Toxic()), 
-				"dbmon": (this.DBMon()), 
-				"habr": (this.Habr()), 
-				"sierp": (this.Sierp())
-			};
-		}
 		Close_item_icon(){
 			const obj = new this.$.$mol_icon_cross();
 			return obj;
@@ -26606,8 +26552,39 @@ var $;
 			]);
 			return obj;
 		}
+		menu_title(){
+			return (this.$.$mol_locale.text("$hyoo_mol_bench_menu_title"));
+		}
+		Placeholder(){
+			return null;
+		}
+		Close_item(){
+			const obj = new this.$.$mol_link();
+			(obj.arg) = () => ({"bench": null});
+			(obj.sub) = () => ([(this.Close_item_icon())]);
+			return obj;
+		}
+		param(){
+			return "bench";
+		}
+		spreads(){
+			return {
+				"reactivity": (this.Init()), 
+				"equals": (this.equals()), 
+				"moment": (this.moment()), 
+				"markdown": (this.Markdown()), 
+				"runtype": (this.Runtype()), 
+				"imutable": (this.Immutable()), 
+				"rope": (this.Rope()), 
+				"todomvc": (this.Todomvc()), 
+				"changelog": (this.Chanelog()), 
+				"toxic": (this.Toxic()), 
+				"dbmon": (this.DBMon()), 
+				"habr": (this.Habr()), 
+				"sierp": (this.Sierp())
+			};
+		}
 	};
-	($mol_mem(($.$hyoo_mol_bench.prototype), "Close_item"));
 	($mol_mem(($.$hyoo_mol_bench.prototype), "Close_item_icon"));
 	($mol_mem(($.$hyoo_mol_bench.prototype), "Init"));
 	($mol_mem(($.$hyoo_mol_bench.prototype), "equals"));
@@ -26636,13 +26613,8 @@ var $;
 	($mol_mem(($.$hyoo_mol_bench.prototype), "Sierp_react"));
 	($mol_mem(($.$hyoo_mol_bench.prototype), "Sierp_glimmer"));
 	($mol_mem(($.$hyoo_mol_bench.prototype), "Sierp"));
+	($mol_mem(($.$hyoo_mol_bench.prototype), "Close_item"));
 	($.$hyoo_mol_bench_bench) = class $hyoo_mol_bench_bench extends ($.$hyoo_bench_app) {
-		addon_title(){
-			return (this.title());
-		}
-		menu_tools(){
-			return [(this.Analysis()), (this.Close())];
-		}
 		analysis_uri(){
 			return "";
 		}
@@ -26655,29 +26627,16 @@ var $;
 			const obj = new this.$.$mol_view();
 			return obj;
 		}
+		addon_title(){
+			return (this.title());
+		}
+		menu_tools(){
+			return [(this.Analysis()), (this.Close())];
+		}
 	};
 	($mol_mem(($.$hyoo_mol_bench_bench.prototype), "Analysis"));
 	($mol_mem(($.$hyoo_mol_bench_bench.prototype), "Close"));
 	($.$hyoo_mol_bench_perf) = class $hyoo_mol_bench_perf extends ($.$hyoo_js_perf) {
-		changable(){
-			return false;
-		}
-		Share(){
-			return null;
-		}
-		Fork(){
-			return null;
-		}
-		New(){
-			return null;
-		}
-		menu_tools(){
-			return [
-				(this.Permalink()), 
-				(this.Analysis()), 
-				(this.Close())
-			];
-		}
 		Permalink(){
 			const obj = new this.$.$mol_link_iconed();
 			(obj.title) = () => ("");
@@ -26697,24 +26656,30 @@ var $;
 			const obj = new this.$.$mol_view();
 			return obj;
 		}
+		changable(){
+			return false;
+		}
+		Share(){
+			return null;
+		}
+		Fork(){
+			return null;
+		}
+		New(){
+			return null;
+		}
+		menu_tools(){
+			return [
+				(this.Permalink()), 
+				(this.Analysis()), 
+				(this.Close())
+			];
+		}
 	};
 	($mol_mem(($.$hyoo_mol_bench_perf.prototype), "Permalink"));
 	($mol_mem(($.$hyoo_mol_bench_perf.prototype), "Analysis"));
 	($mol_mem(($.$hyoo_mol_bench_perf.prototype), "Close"));
 	($.$hyoo_mol_bench_visual) = class $hyoo_mol_bench_visual extends ($.$mol_page) {
-		head(){
-			return [
-				(this.Title()), 
-				(this.Switch()), 
-				(this.Tools())
-			];
-		}
-		tools(){
-			return [(this.Analysis()), (this.Close())];
-		}
-		body(){
-			return [(this.Deck())];
-		}
 		analysis_uri(){
 			return "";
 		}
@@ -26742,20 +26707,33 @@ var $;
 			(obj.items) = () => ((this.items()));
 			return obj;
 		}
+		head(){
+			return [
+				(this.Title()), 
+				(this.Switch()), 
+				(this.Tools())
+			];
+		}
+		tools(){
+			return [(this.Analysis()), (this.Close())];
+		}
+		body(){
+			return [(this.Deck())];
+		}
 	};
 	($mol_mem(($.$hyoo_mol_bench_visual.prototype), "Analysis"));
 	($mol_mem(($.$hyoo_mol_bench_visual.prototype), "Close"));
 	($mol_mem(($.$hyoo_mol_bench_visual.prototype), "Deck"));
 	($.$hyoo_mol_bench_analysis) = class $hyoo_mol_bench_analysis extends ($.$mol_link) {
+		Icon(){
+			const obj = new this.$.$mol_icon_poll();
+			return obj;
+		}
 		hint(){
 			return (this.$.$mol_locale.text("$hyoo_mol_bench_analysis_hint"));
 		}
 		sub(){
 			return [(this.Icon())];
-		}
-		Icon(){
-			const obj = new this.$.$mol_icon_poll();
-			return obj;
 		}
 	};
 	($mol_mem(($.$hyoo_mol_bench_analysis.prototype), "Icon"));
@@ -26875,6 +26853,51 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    const { begin, end, latin_only, or, optional, repeat_greedy } = $mol_regexp;
+    $.$mol_view_tree2_prop_signature = $mol_regexp.from([
+        begin,
+        { name: repeat_greedy(latin_only, 1) },
+        { key: optional(['*', repeat_greedy(latin_only, 0)]) },
+        { next: optional(['?', repeat_greedy(latin_only, 0)]) },
+        end,
+    ]);
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_view_tree2_prop_parts(prop) {
+        const groups = [...prop.type.matchAll($mol_view_tree2_prop_signature)][0]?.groups;
+        if (!groups) {
+            this.$mol_fail($mol_view_tree2_error_str `Required prop like some*? at ${prop.span}`);
+        }
+        return {
+            name: groups.name,
+            key: groups.key,
+            next: groups.next ? '?' : ''
+        };
+    }
+    $.$mol_view_tree2_prop_parts = $mol_view_tree2_prop_parts;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const regular_regex = /^\w+$/;
+    function $mol_view_tree2_prop_quote(name) {
+        if (regular_regex.test(name.value))
+            return name;
+        return name.data(JSON.stringify(name.value));
+    }
+    $.$mol_view_tree2_prop_quote = $mol_view_tree2_prop_quote;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
     const class_regex = /^[$A-Z][$\w<>\[\]()"'?|]+$/;
     function $mol_view_tree2_class_match(klass) {
         if (!klass?.type)
@@ -26921,11 +26944,12 @@ var $;
         }));
         const props_inner = {};
         const add_inner = (prop) => {
-            const prev = props_inner[prop.type];
-            if (prev && prev.kids[0]?.type !== prop.kids[0]?.type) {
-                this.$mol_fail(err `Different kids ${prev.span} vs ${prop.span}`);
+            const { name } = this.$mol_view_tree2_prop_parts(prop);
+            const prev = props_inner[name];
+            if (prev && prev.kids[0]?.toString() !== prop.kids[0]?.toString()) {
+                this.$mol_fail(err `Need an equal default values at ${prev.span} vs ${prop.span}`);
             }
-            props_inner[prop.type] = prop;
+            props_inner[name] = prop;
         };
         const upper = (operator, belt, context) => {
             const prop = this.$mol_view_tree2_child(operator);
@@ -26962,57 +26986,15 @@ var $;
                 else if (operator && !context.factory && $mol_view_tree2_class_match(operator)) {
                     context = { factory: left.clone([]) };
                 }
-                return [left.clone(left.hack(belt, context))];
+                const hacked = left.clone(left.hack(belt, context));
+                return [hacked];
             }
         }, { factory: undefined });
-        return [...props_root, ...Object.values(props_inner)];
+        for (const prop of props_root)
+            add_inner(prop);
+        return Object.values(props_inner);
     }
     $.$mol_view_tree2_class_props = $mol_view_tree2_class_props;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const { begin, end, latin_only, or, optional, repeat_greedy } = $mol_regexp;
-    $.$mol_view_tree2_prop_signature = $mol_regexp.from([
-        begin,
-        { name: repeat_greedy(latin_only, 1) },
-        { key: optional(['*', repeat_greedy(latin_only, 0)]) },
-        { next: optional(['?', repeat_greedy(latin_only, 0)]) },
-        end,
-    ]);
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_view_tree2_prop_parts(prop) {
-        const groups = [...prop.type.matchAll($mol_view_tree2_prop_signature)][0]?.groups;
-        if (!groups) {
-            this.$mol_fail($mol_view_tree2_error_str `Required prop like some*? at ${prop.span}`);
-        }
-        return {
-            name: groups.name,
-            key: groups.key,
-            next: groups.next ? '?' : ''
-        };
-    }
-    $.$mol_view_tree2_prop_parts = $mol_view_tree2_prop_parts;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const regular_regex = /^\w+$/;
-    function $mol_view_tree2_prop_quote(name) {
-        if (regular_regex.test(name.value))
-            return name;
-        return name.data(JSON.stringify(name.value));
-    }
-    $.$mol_view_tree2_prop_quote = $mol_view_tree2_prop_quote;
 })($ || ($ = {}));
 
 ;
@@ -27189,7 +27171,7 @@ var $;
                         ref.struct('[]', [
                             ref.data(ref.kids[0]?.type ? name_of.call(this, ref.kids[0]) : name),
                         ]),
-                        ref.struct('(,)')
+                        ref.kids[0]?.type ? params_of.call(this, ref.kids[0]) : ref.struct('(,)')
                     ]),
                 ]),
             ],
@@ -27587,6 +27569,196 @@ var $;
         return res;
     }
     $.$mol_tree2_text_to_string = $mol_tree2_text_to_string;
+})($ || ($ = {}));
+
+;
+	($.$mol_select_list) = class $mol_select_list extends ($.$mol_view) {
+		Badges(){
+			return [];
+		}
+		badge_title(id){
+			return "badge";
+		}
+		remove(id, next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		badge_hint(){
+			return (this.$.$mol_locale.text("$mol_select_list_badge_hint"));
+		}
+		enabled(){
+			return true;
+		}
+		drop_enabled(){
+			return (this.enabled());
+		}
+		event_select(id, next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		align_hor(){
+			return "right";
+		}
+		options(){
+			return [];
+		}
+		options_pickable(){
+			return (this.options());
+		}
+		pick(next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		option_title(id){
+			return "";
+		}
+		pick_enabled(){
+			return (this.enabled());
+		}
+		pick_hint(){
+			return (this.$.$mol_locale.text("$mol_select_list_pick_hint"));
+		}
+		filter_pattern(next){
+			return (this.Pick().filter_pattern(next));
+		}
+		Pick_icon(){
+			const obj = new this.$.$mol_icon_plus();
+			return obj;
+		}
+		Pick(){
+			const obj = new this.$.$mol_select();
+			(obj.event_select) = (id, next) => ((this.event_select(id, next)));
+			(obj.align_hor) = () => ((this.align_hor()));
+			(obj.options) = () => ((this.options_pickable()));
+			(obj.value) = (next) => ((this.pick(next)));
+			(obj.option_label) = (id) => ((this.option_title(id)));
+			(obj.trigger_enabled) = () => ((this.pick_enabled()));
+			(obj.hint) = () => ((this.pick_hint()));
+			(obj.Trigger_icon) = () => ((this.Pick_icon()));
+			return obj;
+		}
+		value(next){
+			if(next !== undefined) return next;
+			return [];
+		}
+		dictionary(){
+			return {};
+		}
+		badges_list(){
+			return (this.Badges());
+		}
+		Badge(id){
+			const obj = new this.$.$mol_button_minor();
+			(obj.title) = () => ((this.badge_title(id)));
+			(obj.click) = (next) => ((this.remove(id, next)));
+			(obj.hint) = () => ((this.badge_hint()));
+			(obj.enabled) = () => ((this.drop_enabled()));
+			return obj;
+		}
+		sub(){
+			return [(this.Pick()), ...(this.badges_list())];
+		}
+	};
+	($mol_mem_key(($.$mol_select_list.prototype), "remove"));
+	($mol_mem_key(($.$mol_select_list.prototype), "event_select"));
+	($mol_mem(($.$mol_select_list.prototype), "pick"));
+	($mol_mem(($.$mol_select_list.prototype), "Pick_icon"));
+	($mol_mem(($.$mol_select_list.prototype), "Pick"));
+	($mol_mem(($.$mol_select_list.prototype), "value"));
+	($mol_mem_key(($.$mol_select_list.prototype), "Badge"));
+
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_select_list extends $.$mol_select_list {
+            value(val) {
+                return super.value(val);
+            }
+            pick(key) {
+                if (!key)
+                    return '';
+                this.value([...this.value(), key]);
+                return '';
+            }
+            event_select(id, event) {
+                event?.preventDefault();
+                this.pick(id);
+            }
+            options() {
+                return Object.keys(this.dictionary());
+            }
+            options_pickable() {
+                if (!this.enabled())
+                    return [];
+                const exists = new Set(this.value());
+                return this.options().filter(key => !exists.has(key));
+            }
+            option_title(key) {
+                const value = this.dictionary()[key];
+                return value == null ? key : value;
+            }
+            badge_title(key) {
+                return this.option_title(key);
+            }
+            pick_enabled() {
+                return this.options_pickable().length > 0;
+            }
+            Badges() {
+                return this.value()
+                    .map(id => this.Badge(id))
+                    .reverse();
+            }
+            title() {
+                return this.value().map(key => this.option_title(key)).join(' + ');
+            }
+            remove(key) {
+                this.value(this.value().filter(id => id !== key));
+            }
+        }
+        __decorate([
+            $mol_mem
+        ], $mol_select_list.prototype, "pick", null);
+        __decorate([
+            $mol_mem
+        ], $mol_select_list.prototype, "options", null);
+        __decorate([
+            $mol_mem
+        ], $mol_select_list.prototype, "options_pickable", null);
+        __decorate([
+            $mol_mem
+        ], $mol_select_list.prototype, "pick_enabled", null);
+        __decorate([
+            $mol_mem
+        ], $mol_select_list.prototype, "title", null);
+        __decorate([
+            $mol_action
+        ], $mol_select_list.prototype, "remove", null);
+        $$.$mol_select_list = $mol_select_list;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        const { rem } = $mol_style_unit;
+        $mol_style_define($mol_select_list, {
+            flex: {
+                wrap: 'wrap',
+                shrink: 1,
+                grow: 1,
+            },
+        });
+    })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
 
 ;
@@ -29070,249 +29242,7 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_select_list) = class $mol_select_list extends ($.$mol_view) {
-		value(next){
-			if(next !== undefined) return next;
-			return [];
-		}
-		dictionary(){
-			return {};
-		}
-		badges_list(){
-			return (this.Badges());
-		}
-		Badge(id){
-			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this.badge_title(id)));
-			(obj.click) = (next) => ((this.remove(id, next)));
-			(obj.hint) = () => ((this.badge_hint()));
-			(obj.enabled) = () => ((this.drop_enabled()));
-			return obj;
-		}
-		sub(){
-			return [(this.Pick()), ...(this.badges_list())];
-		}
-		Badges(){
-			return [];
-		}
-		badge_title(id){
-			return "badge";
-		}
-		remove(id, next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		badge_hint(){
-			return (this.$.$mol_locale.text("$mol_select_list_badge_hint"));
-		}
-		enabled(){
-			return true;
-		}
-		drop_enabled(){
-			return (this.enabled());
-		}
-		event_select(id, next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		align_hor(){
-			return "right";
-		}
-		options(){
-			return [];
-		}
-		options_pickable(){
-			return (this.options());
-		}
-		pick(next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		option_title(id){
-			return "";
-		}
-		pick_enabled(){
-			return (this.enabled());
-		}
-		pick_hint(){
-			return (this.$.$mol_locale.text("$mol_select_list_pick_hint"));
-		}
-		filter_pattern(next){
-			return (this.Pick().filter_pattern(next));
-		}
-		Pick_icon(){
-			const obj = new this.$.$mol_icon_plus();
-			return obj;
-		}
-		Pick(){
-			const obj = new this.$.$mol_select();
-			(obj.event_select) = (id, next) => ((this.event_select(id, next)));
-			(obj.align_hor) = () => ((this.align_hor()));
-			(obj.options) = () => ((this.options_pickable()));
-			(obj.value) = (next) => ((this.pick(next)));
-			(obj.option_label) = (id) => ((this.option_title(id)));
-			(obj.trigger_enabled) = () => ((this.pick_enabled()));
-			(obj.hint) = () => ((this.pick_hint()));
-			(obj.Trigger_icon) = () => ((this.Pick_icon()));
-			return obj;
-		}
-	};
-	($mol_mem(($.$mol_select_list.prototype), "value"));
-	($mol_mem_key(($.$mol_select_list.prototype), "Badge"));
-	($mol_mem_key(($.$mol_select_list.prototype), "remove"));
-	($mol_mem_key(($.$mol_select_list.prototype), "event_select"));
-	($mol_mem(($.$mol_select_list.prototype), "pick"));
-	($mol_mem(($.$mol_select_list.prototype), "Pick_icon"));
-	($mol_mem(($.$mol_select_list.prototype), "Pick"));
-
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_select_list extends $.$mol_select_list {
-            value(val) {
-                return super.value(val);
-            }
-            pick(key) {
-                if (!key)
-                    return '';
-                this.value([...this.value(), key]);
-                return '';
-            }
-            event_select(id, event) {
-                event?.preventDefault();
-                this.pick(id);
-            }
-            options() {
-                return Object.keys(this.dictionary());
-            }
-            options_pickable() {
-                if (!this.enabled())
-                    return [];
-                const exists = new Set(this.value());
-                return this.options().filter(key => !exists.has(key));
-            }
-            option_title(key) {
-                const value = this.dictionary()[key];
-                return value == null ? key : value;
-            }
-            badge_title(key) {
-                return this.option_title(key);
-            }
-            pick_enabled() {
-                return this.options_pickable().length > 0;
-            }
-            Badges() {
-                return this.value()
-                    .map(id => this.Badge(id))
-                    .reverse();
-            }
-            title() {
-                return this.value().map(key => this.option_title(key)).join(' + ');
-            }
-            remove(key) {
-                this.value(this.value().filter(id => id !== key));
-            }
-        }
-        __decorate([
-            $mol_mem
-        ], $mol_select_list.prototype, "pick", null);
-        __decorate([
-            $mol_mem
-        ], $mol_select_list.prototype, "options", null);
-        __decorate([
-            $mol_mem
-        ], $mol_select_list.prototype, "options_pickable", null);
-        __decorate([
-            $mol_mem
-        ], $mol_select_list.prototype, "pick_enabled", null);
-        __decorate([
-            $mol_mem
-        ], $mol_select_list.prototype, "title", null);
-        __decorate([
-            $mol_action
-        ], $mol_select_list.prototype, "remove", null);
-        $$.$mol_select_list = $mol_select_list;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        const { rem } = $mol_style_unit;
-        $mol_style_define($mol_select_list, {
-            flex: {
-                wrap: 'wrap',
-                shrink: 1,
-                grow: 1,
-            },
-        });
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
 	($.$hyoo_tree) = class $hyoo_tree extends ($.$mol_book2) {
-		transform_map(){
-			return {
-				"$mol_tree2_from_string": {"input": "text", "output": "tree"}, 
-				"$mol_tree2_to_string": {"input": "tree", "output": "text"}, 
-				"$mol_tree2_from_json": {"input": "json", "output": "tree"}, 
-				"$mol_tree2_to_json": {"input": "tree", "output": "json"}, 
-				"$mol_tree2_grammar_check": {"input": "grammar.tree", "output": "grammar.tree"}, 
-				"$mol_dom_parse": {"input": "text", "output": "dom"}, 
-				"$mol_tree2_xml_to_text": {"input": "xml.tree", "output": "text.tree"}, 
-				"$mol_tree2_xml_from_dom": {"input": "dom", "output": "xml.tree"}, 
-				"$mol_tree2_js_to_text": {"input": "js.tree", "output": "text.tree"}, 
-				"$mol_tree2_text_to_string": {"input": "text.tree", "output": "text"}, 
-				"$mol_tree2_text_to_string_mapped_js": {"input": "text.tree", "output": "text"}, 
-				"$mol_tree2_text_to_string_mapped_css": {"input": "text.tree", "output": "text"}, 
-				"$mol_tree2_text_to_sourcemap": {"input": "text.tree", "output": "map.json"}, 
-				"$mol_tree2_text_to_sourcemap_vis": {"input": "text.tree", "output": "map.vis.url"}, 
-				"$mol_tree2_span_imprint": {"input": "tree", "output": "span.tree"}, 
-				"$mol_tree2_span_reuse": {"input": "span.tree", "output": "tree"}, 
-				"$mol_tree2_wasm_to_bin": {"input": "wasm.tree", "output": "bin.tree"}, 
-				"$mol_tree2_bin_from_string": {"input": "text", "output": "bin.tree"}, 
-				"$mol_tree2_bin_from_bytes": {"input": "bytes.json", "output": "bin.tree"}, 
-				"$mol_tree2_bin_to_bytes": {"input": "bin.tree", "output": "bin"}, 
-				"$mol_view_tree2_to_text": {"input": "view.tree", "output": "text.tree"}, 
-				"$mol_view_tree2_to_locale": {"input": "view.tree", "output": "json"}, 
-				"$mol_view_tree2_to_dts": {"input": "view.tree", "output": "text.tree"}, 
-				"$mol_view_tree2_to_js": {"input": "view.tree", "output": "js.tree"}, 
-				"$hyoo_marked_tree_from_line": {"input": "text", "output": "marked.tree"}, 
-				"$hyoo_marked_tree_to_js": {"input": "marked.tree", "output": "js.tree"}, 
-				"$mol_json_from_string": {"input": "text", "output": "json"}, 
-				"$mol_json_to_string": {"input": "json", "output": "text"}, 
-				"$mol_jack_transform": {"input": "jack.tree", "output": "tree"}, 
-				"$mol_wasm_module": {"input": "wasm.bin", "output": "wasm.module"}, 
-				"$mol_js_eval": {"input": "text", "output": ""}
-			};
-		}
-		plugins(){
-			return [(this.Theme())];
-		}
-		pipeline(next){
-			if(next !== undefined) return next;
-			return (this.pipeline_default());
-		}
-		Placeholder(){
-			return null;
-		}
-		pages(){
-			return [
-				(this.Presets()), 
-				(this.Source()), 
-				(this.Result())
-			];
-		}
 		Theme(){
 			const obj = new this.$.$mol_theme_auto();
 			return obj;
@@ -29485,8 +29415,59 @@ var $;
 			(obj.body) = () => ([(this.Result_text())]);
 			return obj;
 		}
+		transform_map(){
+			return {
+				"$mol_tree2_from_string": {"input": "text", "output": "tree"}, 
+				"$mol_tree2_to_string": {"input": "tree", "output": "text"}, 
+				"$mol_tree2_from_json": {"input": "json", "output": "tree"}, 
+				"$mol_tree2_to_json": {"input": "tree", "output": "json"}, 
+				"$mol_tree2_grammar_check": {"input": "grammar.tree", "output": "grammar.tree"}, 
+				"$mol_dom_parse": {"input": "text", "output": "dom"}, 
+				"$mol_tree2_xml_to_text": {"input": "xml.tree", "output": "text.tree"}, 
+				"$mol_tree2_xml_from_dom": {"input": "dom", "output": "xml.tree"}, 
+				"$mol_tree2_js_to_text": {"input": "js.tree", "output": "text.tree"}, 
+				"$mol_tree2_text_to_string": {"input": "text.tree", "output": "text"}, 
+				"$mol_tree2_text_to_string_mapped_js": {"input": "text.tree", "output": "text"}, 
+				"$mol_tree2_text_to_string_mapped_css": {"input": "text.tree", "output": "text"}, 
+				"$mol_tree2_text_to_sourcemap": {"input": "text.tree", "output": "map.json"}, 
+				"$mol_tree2_text_to_sourcemap_vis": {"input": "text.tree", "output": "map.vis.url"}, 
+				"$mol_tree2_span_imprint": {"input": "tree", "output": "span.tree"}, 
+				"$mol_tree2_span_reuse": {"input": "span.tree", "output": "tree"}, 
+				"$mol_tree2_wasm_to_bin": {"input": "wasm.tree", "output": "bin.tree"}, 
+				"$mol_tree2_bin_from_string": {"input": "text", "output": "bin.tree"}, 
+				"$mol_tree2_bin_from_bytes": {"input": "bytes.json", "output": "bin.tree"}, 
+				"$mol_tree2_bin_to_bytes": {"input": "bin.tree", "output": "bin"}, 
+				"$mol_view_tree2_to_text": {"input": "view.tree", "output": "text.tree"}, 
+				"$mol_view_tree2_to_locale": {"input": "view.tree", "output": "json"}, 
+				"$mol_view_tree2_to_dts": {"input": "view.tree", "output": "text.tree"}, 
+				"$mol_view_tree2_to_js": {"input": "view.tree", "output": "js.tree"}, 
+				"$hyoo_marked_tree_from_line": {"input": "text", "output": "marked.tree"}, 
+				"$hyoo_marked_tree_to_js": {"input": "marked.tree", "output": "js.tree"}, 
+				"$mol_json_from_string": {"input": "text", "output": "json"}, 
+				"$mol_json_to_string": {"input": "json", "output": "text"}, 
+				"$mol_jack_transform": {"input": "jack.tree", "output": "tree"}, 
+				"$mol_wasm_module": {"input": "wasm.bin", "output": "wasm.module"}, 
+				"$mol_js_eval": {"input": "text", "output": ""}
+			};
+		}
+		plugins(){
+			return [(this.Theme())];
+		}
+		pipeline(next){
+			if(next !== undefined) return next;
+			return (this.pipeline_default());
+		}
+		Placeholder(){
+			return null;
+		}
+		pages(){
+			return [
+				(this.Presets()), 
+				(this.Source()), 
+				(this.Result())
+			];
+		}
 	};
-	($mol_mem(($.$hyoo_tree.prototype), "pipeline"));
 	($mol_mem(($.$hyoo_tree.prototype), "Theme"));
 	($mol_mem(($.$hyoo_tree.prototype), "Lights"));
 	($mol_mem(($.$hyoo_tree.prototype), "Github"));
@@ -29510,6 +29491,7 @@ var $;
 	($mol_mem(($.$hyoo_tree.prototype), "Pipeline"));
 	($mol_mem(($.$hyoo_tree.prototype), "Result_text"));
 	($mol_mem(($.$hyoo_tree.prototype), "Result"));
+	($mol_mem(($.$hyoo_tree.prototype), "pipeline"));
 
 
 ;
@@ -29653,34 +29635,6 @@ var $;
 
 ;
 	($.$hyoo_mol) = class $hyoo_mol extends ($.$mol_book2_catalog) {
-		plugins(){
-			return [(this.Theme())];
-		}
-		Placeholder(){
-			return null;
-		}
-		menu_title(){
-			return (this.$.$mol_locale.text("$hyoo_mol_menu_title"));
-		}
-		menu_tools(){
-			return (this.tools_root());
-		}
-		menu_foot(){
-			return [(this.Lang())];
-		}
-		param(){
-			return "section";
-		}
-		spreads(){
-			return {
-				"docs": (this.Docs()), 
-				"apps": (this.Apps()), 
-				"demos": (this.Demos()), 
-				"bench": (this.Bench()), 
-				"view.tree": (this.View_tree()), 
-				"icons": (this.Icons())
-			};
-		}
 		Theme(){
 			const obj = new this.$.$mol_theme_auto();
 			return obj;
@@ -29763,6 +29717,34 @@ var $;
 			(obj.uri) = () => ("https://nin-jin.github.io/mol_icon/");
 			return obj;
 		}
+		plugins(){
+			return [(this.Theme())];
+		}
+		Placeholder(){
+			return null;
+		}
+		menu_title(){
+			return (this.$.$mol_locale.text("$hyoo_mol_menu_title"));
+		}
+		menu_tools(){
+			return (this.tools_root());
+		}
+		menu_foot(){
+			return [(this.Lang())];
+		}
+		param(){
+			return "section";
+		}
+		spreads(){
+			return {
+				"docs": (this.Docs()), 
+				"apps": (this.Apps()), 
+				"demos": (this.Demos()), 
+				"bench": (this.Bench()), 
+				"view.tree": (this.View_tree()), 
+				"icons": (this.Icons())
+			};
+		}
 	};
 	($mol_mem(($.$hyoo_mol.prototype), "Theme"));
 	($mol_mem(($.$hyoo_mol.prototype), "Sources"));
@@ -29780,12 +29762,6 @@ var $;
 
 ;
 	($.$mol_section) = class $mol_section extends ($.$mol_list) {
-		level(){
-			return 1;
-		}
-		rows(){
-			return [(this.Head()), (this.Content())];
-		}
 		title_dom_name(){
 			return "h1";
 		}
@@ -29818,6 +29794,12 @@ var $;
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ((this.content()));
 			return obj;
+		}
+		level(){
+			return 1;
+		}
+		rows(){
+			return [(this.Head()), (this.Content())];
 		}
 	};
 	($mol_mem(($.$mol_section.prototype), "Title"));
@@ -29853,15 +29835,6 @@ var $;
 
 ;
 	($.$hyoo_crowd_app) = class $hyoo_crowd_app extends ($.$mol_book2) {
-		Placeholder(){
-			return null;
-		}
-		plugins(){
-			return [(this.Theme())];
-		}
-		pages(){
-			return [(this.Left()), (this.Right())];
-		}
 		Theme(){
 			const obj = new this.$.$mol_theme_auto();
 			return obj;
@@ -29905,6 +29878,15 @@ var $;
 			(obj.tools) = () => ([(this.Lights()), (this.Source())]);
 			return obj;
 		}
+		Placeholder(){
+			return null;
+		}
+		plugins(){
+			return [(this.Theme())];
+		}
+		pages(){
+			return [(this.Left()), (this.Right())];
+		}
 	};
 	($mol_mem(($.$hyoo_crowd_app.prototype), "Theme"));
 	($mol_mem(($.$hyoo_crowd_app.prototype), "sync"));
@@ -29914,30 +29896,6 @@ var $;
 	($mol_mem(($.$hyoo_crowd_app.prototype), "Source"));
 	($mol_mem(($.$hyoo_crowd_app.prototype), "Right"));
 	($.$hyoo_crowd_app_peer) = class $hyoo_crowd_app_peer extends ($.$mol_page) {
-		store(){
-			const obj = new this.$.$hyoo_crowd_land();
-			return obj;
-		}
-		sync(){
-			return 0;
-		}
-		sync_clocks(next){
-			if(next !== undefined) return next;
-			return [];
-		}
-		changes(){
-			return 0;
-		}
-		delta(){
-			return [];
-		}
-		body(){
-			return [
-				(this.Text()), 
-				(this.Stats()), 
-				(this.Delta_section())
-			];
-		}
 		hint(){
 			return "";
 		}
@@ -29974,14 +29932,38 @@ var $;
 			(obj.content) = () => ([(this.Delta())]);
 			return obj;
 		}
+		store(){
+			const obj = new this.$.$hyoo_crowd_land();
+			return obj;
+		}
+		sync(){
+			return 0;
+		}
+		sync_clocks(next){
+			if(next !== undefined) return next;
+			return [];
+		}
+		changes(){
+			return 0;
+		}
+		delta(){
+			return [];
+		}
+		body(){
+			return [
+				(this.Text()), 
+				(this.Stats()), 
+				(this.Delta_section())
+			];
+		}
 	};
-	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "store"));
-	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "sync_clocks"));
 	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "text"));
 	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "Text"));
 	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "Stats"));
 	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "Delta"));
 	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "Delta_section"));
+	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "store"));
+	($mol_mem(($.$hyoo_crowd_app_peer.prototype), "sync_clocks"));
 
 
 ;
@@ -30152,6 +30134,10 @@ var $;
 
 ;
 	($.$hyoo_crowd_text_demo) = class $hyoo_crowd_text_demo extends ($.$mol_example_large) {
+		Sandbox(){
+			const obj = new this.$.$hyoo_crowd_app();
+			return obj;
+		}
 		title(){
 			return "CROWD Text Merge";
 		}
@@ -30168,10 +30154,6 @@ var $;
 				"Algorithm/Merge"
 			];
 		}
-		Sandbox(){
-			const obj = new this.$.$hyoo_crowd_app();
-			return obj;
-		}
 	};
 	($mol_mem(($.$hyoo_crowd_text_demo.prototype), "Sandbox"));
 
@@ -30181,9 +30163,6 @@ var $;
 
 ;
 	($.$mol_app_hello) = class $mol_app_hello extends ($.$mol_view) {
-		sub(){
-			return [(this.Name()), (this.Greeting())];
-		}
 		name_hint(){
 			return "Name";
 		}
@@ -30204,6 +30183,9 @@ var $;
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([(this.greeting())]);
 			return obj;
+		}
+		sub(){
+			return [(this.Name()), (this.Greeting())];
 		}
 	};
 	($mol_mem(($.$mol_app_hello.prototype), "name"));
@@ -30243,6 +30225,10 @@ var $;
 
 ;
 	($.$mol_app_hello_demo) = class $mol_app_hello_demo extends ($.$mol_example_large) {
+		App(){
+			const obj = new this.$.$mol_app_hello();
+			return obj;
+		}
 		title(){
 			return "Simpliest application";
 		}
@@ -30251,10 +30237,6 @@ var $;
 		}
 		aspects(){
 			return ["Application"];
-		}
-		App(){
-			const obj = new this.$.$mol_app_hello();
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_app_hello_demo.prototype), "App"));
@@ -30276,41 +30258,6 @@ var $;
 
 ;
 	($.$mol_app_questions) = class $mol_app_questions extends ($.$mol_book2) {
-		plugins(){
-			return [(this.Themme())];
-		}
-		Menu(){
-			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this.title_default()));
-			(obj.tools) = () => ([(this.Lights()), (this.Source_link())]);
-			(obj.body) = () => ([(this.Menu_links())]);
-			return obj;
-		}
-		Details(id){
-			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this.question_title(id)));
-			(obj.tools) = () => ([(this.Details_permalink(id)), (this.Details_close(id))]);
-			(obj.body) = () => ([(this.Details_descr(id)), (this.Answers(id))]);
-			return obj;
-		}
-		Answer(id){
-			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this.question_answer(id)));
-			return obj;
-		}
-		Question_link(id){
-			const obj = new this.$.$mol_link();
-			(obj.minimal_width) = () => (64);
-			(obj.minimal_height) = () => (64);
-			(obj.arg) = () => ((this.question_arg_by_index(id)));
-			(obj.sub) = () => ([(this.Question_title(id)), (this.Question_tags(id))]);
-			return obj;
-		}
-		Tag(id){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.tag_name(id))]);
-			return obj;
-		}
 		Themme(){
 			const obj = new this.$.$mol_theme_auto();
 			return obj;
@@ -30402,12 +30349,42 @@ var $;
 		tag_name(id){
 			return " ";
 		}
+		plugins(){
+			return [(this.Themme())];
+		}
+		Menu(){
+			const obj = new this.$.$mol_page();
+			(obj.title) = () => ((this.title_default()));
+			(obj.tools) = () => ([(this.Lights()), (this.Source_link())]);
+			(obj.body) = () => ([(this.Menu_links())]);
+			return obj;
+		}
+		Details(id){
+			const obj = new this.$.$mol_page();
+			(obj.title) = () => ((this.question_title(id)));
+			(obj.tools) = () => ([(this.Details_permalink(id)), (this.Details_close(id))]);
+			(obj.body) = () => ([(this.Details_descr(id)), (this.Answers(id))]);
+			return obj;
+		}
+		Answer(id){
+			const obj = new this.$.$mol_text();
+			(obj.text) = () => ((this.question_answer(id)));
+			return obj;
+		}
+		Question_link(id){
+			const obj = new this.$.$mol_link();
+			(obj.minimal_width) = () => (64);
+			(obj.minimal_height) = () => (64);
+			(obj.arg) = () => ((this.question_arg_by_index(id)));
+			(obj.sub) = () => ([(this.Question_title(id)), (this.Question_tags(id))]);
+			return obj;
+		}
+		Tag(id){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.tag_name(id))]);
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_app_questions.prototype), "Menu"));
-	($mol_mem_key(($.$mol_app_questions.prototype), "Details"));
-	($mol_mem_key(($.$mol_app_questions.prototype), "Answer"));
-	($mol_mem_key(($.$mol_app_questions.prototype), "Question_link"));
-	($mol_mem_key(($.$mol_app_questions.prototype), "Tag"));
 	($mol_mem(($.$mol_app_questions.prototype), "Themme"));
 	($mol_mem(($.$mol_app_questions.prototype), "Lights"));
 	($mol_mem(($.$mol_app_questions.prototype), "Source_link"));
@@ -30420,6 +30397,11 @@ var $;
 	($mol_mem_key(($.$mol_app_questions.prototype), "Answers"));
 	($mol_mem_key(($.$mol_app_questions.prototype), "Question_title"));
 	($mol_mem_key(($.$mol_app_questions.prototype), "Question_tags"));
+	($mol_mem(($.$mol_app_questions.prototype), "Menu"));
+	($mol_mem_key(($.$mol_app_questions.prototype), "Details"));
+	($mol_mem_key(($.$mol_app_questions.prototype), "Answer"));
+	($mol_mem_key(($.$mol_app_questions.prototype), "Question_link"));
+	($mol_mem_key(($.$mol_app_questions.prototype), "Tag"));
 
 
 ;
@@ -30553,6 +30535,10 @@ var $;
 
 ;
 	($.$mol_app_questions_demo) = class $mol_app_questions_demo extends ($.$mol_example_large) {
+		App(){
+			const obj = new this.$.$mol_app_questions();
+			return obj;
+		}
 		title(){
 			return "New questions from StackOverflow";
 		}
@@ -30566,10 +30552,6 @@ var $;
 				"Integration"
 			];
 		}
-		App(){
-			const obj = new this.$.$mol_app_questions();
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_app_questions_demo.prototype), "App"));
 
@@ -30579,6 +30561,14 @@ var $;
 
 ;
 	($.$mol_app_quine) = class $mol_app_quine extends ($.$mol_page) {
+		content(){
+			return "";
+		}
+		Text(){
+			const obj = new this.$.$mol_text();
+			(obj.text) = () => ((this.content()));
+			return obj;
+		}
 		title(){
 			return (this.$.$mol_locale.text("$mol_app_quine_title"));
 		}
@@ -30592,14 +30582,6 @@ var $;
 				"mol/app/quine/index.html", 
 				"mol/app/quine/quine.locale=ru.json"
 			];
-		}
-		content(){
-			return "";
-		}
-		Text(){
-			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this.content()));
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_app_quine.prototype), "Text"));
@@ -30634,15 +30616,15 @@ var $;
 
 ;
 	($.$mol_app_quine_demo) = class $mol_app_quine_demo extends ($.$mol_example_large) {
+		App(){
+			const obj = new this.$.$mol_app_quine();
+			return obj;
+		}
 		sub(){
 			return [(this.App())];
 		}
 		aspects(){
 			return ["Application", "Network/HTTP"];
-		}
-		App(){
-			const obj = new this.$.$mol_app_quine();
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_app_quine_demo.prototype), "App"));
@@ -30653,40 +30635,6 @@ var $;
 
 ;
 	($.$mol_app_report) = class $mol_app_report extends ($.$mol_page) {
-		title(){
-			return (this.$.$mol_locale.text("$mol_app_report_title"));
-		}
-		body(){
-			return [(this.descriptor()), (this.tabler())];
-		}
-		rower(id){
-			const obj = new this.$.$mol_app_report_rower();
-			(obj.cells) = () => ((this.rowerCells(id)));
-			return obj;
-		}
-		cell(id){
-			const obj = new this.$.$mol_app_report_cell();
-			(obj.content) = () => ((this.cell_content(id)));
-			(obj.rows) = () => ((this.cellrows(id)));
-			(obj.cols) = () => ((this.cellCols(id)));
-			return obj;
-		}
-		texter(id){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.cell_value(id))]);
-			return obj;
-		}
-		select(id){
-			const obj = new this.$.$mol_select();
-			(obj.value) = (next) => ((this.cell_value(id, next)));
-			(obj.dictionary) = () => ((this.cell_options(id)));
-			return obj;
-		}
-		number(id){
-			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this.cell_value(id, next)));
-			return obj;
-		}
 		description(){
 			return "";
 		}
@@ -30730,39 +30678,82 @@ var $;
 		cell_options(id){
 			return {};
 		}
+		title(){
+			return (this.$.$mol_locale.text("$mol_app_report_title"));
+		}
+		body(){
+			return [(this.descriptor()), (this.tabler())];
+		}
+		rower(id){
+			const obj = new this.$.$mol_app_report_rower();
+			(obj.cells) = () => ((this.rowerCells(id)));
+			return obj;
+		}
+		cell(id){
+			const obj = new this.$.$mol_app_report_cell();
+			(obj.content) = () => ((this.cell_content(id)));
+			(obj.rows) = () => ((this.cellrows(id)));
+			(obj.cols) = () => ((this.cellCols(id)));
+			return obj;
+		}
+		texter(id){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.cell_value(id))]);
+			return obj;
+		}
+		select(id){
+			const obj = new this.$.$mol_select();
+			(obj.value) = (next) => ((this.cell_value(id, next)));
+			(obj.dictionary) = () => ((this.cell_options(id)));
+			return obj;
+		}
+		number(id){
+			const obj = new this.$.$mol_number();
+			(obj.value) = (next) => ((this.cell_value(id, next)));
+			return obj;
+		}
 	};
+	($mol_mem(($.$mol_app_report.prototype), "descriptor"));
+	($mol_mem(($.$mol_app_report.prototype), "headRower"));
+	($mol_mem(($.$mol_app_report.prototype), "tabler"));
+	($mol_mem_key(($.$mol_app_report.prototype), "cell_value"));
 	($mol_mem_key(($.$mol_app_report.prototype), "rower"));
 	($mol_mem_key(($.$mol_app_report.prototype), "cell"));
 	($mol_mem_key(($.$mol_app_report.prototype), "texter"));
 	($mol_mem_key(($.$mol_app_report.prototype), "select"));
 	($mol_mem_key(($.$mol_app_report.prototype), "number"));
-	($mol_mem(($.$mol_app_report.prototype), "descriptor"));
-	($mol_mem(($.$mol_app_report.prototype), "headRower"));
-	($mol_mem(($.$mol_app_report.prototype), "tabler"));
-	($mol_mem_key(($.$mol_app_report.prototype), "cell_value"));
 	($.$mol_app_report_tabler) = class $mol_app_report_tabler extends ($.$mol_view) {
+		rows(){
+			return [];
+		}
 		dom_name(){
 			return "table";
 		}
 		sub(){
 			return (this.rows());
 		}
-		rows(){
-			return [];
-		}
 	};
 	($.$mol_app_report_rower) = class $mol_app_report_rower extends ($.$mol_view) {
+		cells(){
+			return [];
+		}
 		dom_name(){
 			return "tr";
 		}
 		sub(){
 			return (this.cells());
 		}
-		cells(){
-			return [];
-		}
 	};
 	($.$mol_app_report_cell) = class $mol_app_report_cell extends ($.$mol_view) {
+		cols(){
+			return 1;
+		}
+		rows(){
+			return 1;
+		}
+		content(){
+			return null;
+		}
 		dom_name(){
 			return "td";
 		}
@@ -30775,15 +30766,6 @@ var $;
 		}
 		sub(){
 			return [(this.content())];
-		}
-		cols(){
-			return 1;
-		}
-		rows(){
-			return 1;
-		}
-		content(){
-			return null;
 		}
 	};
 
@@ -31081,15 +31063,15 @@ var $;
 
 ;
 	($.$mol_app_report_demo) = class $mol_app_report_demo extends ($.$mol_example_large) {
+		App(){
+			const obj = new this.$.$mol_app_report();
+			return obj;
+		}
 		sub(){
 			return [(this.App())];
 		}
 		aspects(){
 			return ["Widget/Form"];
-		}
-		App(){
-			const obj = new this.$.$mol_app_report();
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_app_report_demo.prototype), "App"));
@@ -31121,6 +31103,18 @@ var $;
 
 ;
 	($.$mol_example_code) = class $mol_example_code extends ($.$mol_example) {
+		code(next){
+			if(next !== undefined) return next;
+			return "";
+		}
+		Sandbox(){
+			const obj = new this.$.$hyoo_js_eval();
+			(obj.Menu_page) = () => (null);
+			(obj.Perf) = () => (null);
+			(obj.Bookmark) = () => (null);
+			(obj.code) = (next) => ((this.code(next)));
+			return obj;
+		}
 		sub(){
 			return [(this.Sandbox())];
 		}
@@ -31134,18 +31128,6 @@ var $;
 		}
 		aspects(){
 			return ["Widget/Playground"];
-		}
-		code(next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		Sandbox(){
-			const obj = new this.$.$hyoo_js_eval();
-			(obj.Menu_page) = () => (null);
-			(obj.Perf) = () => (null);
-			(obj.Bookmark) = () => (null);
-			(obj.code) = (next) => ((this.code(next)));
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_example_code.prototype), "code"));
@@ -31268,9 +31250,6 @@ var $;
 
 ;
 	($.$mol_button_open) = class $mol_button_open extends ($.$mol_button_minor) {
-		sub(){
-			return [(this.Icon()), (this.Native())];
-		}
 		Icon(){
 			const obj = new this.$.$mol_icon_upload();
 			return obj;
@@ -31292,11 +31271,24 @@ var $;
 			(obj.multiple) = () => ((this.multiple()));
 			return obj;
 		}
+		sub(){
+			return [(this.Icon()), (this.Native())];
+		}
 	};
 	($mol_mem(($.$mol_button_open.prototype), "Icon"));
 	($mol_mem(($.$mol_button_open.prototype), "files"));
 	($mol_mem(($.$mol_button_open.prototype), "Native"));
 	($.$mol_button_open_native) = class $mol_button_open_native extends ($.$mol_view) {
+		accept(){
+			return "";
+		}
+		multiple(){
+			return true;
+		}
+		picked(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		dom_name(){
 			return "input";
 		}
@@ -31314,19 +31306,9 @@ var $;
 		event(){
 			return {"change": (next) => (this.picked(next))};
 		}
-		accept(){
-			return "";
-		}
-		multiple(){
-			return true;
-		}
-		picked(next){
-			if(next !== undefined) return next;
-			return null;
-		}
 	};
-	($mol_mem(($.$mol_button_open_native.prototype), "files"));
 	($mol_mem(($.$mol_button_open_native.prototype), "picked"));
+	($mol_mem(($.$mol_button_open_native.prototype), "files"));
 
 
 ;
@@ -31362,25 +31344,6 @@ var $;
 
 ;
 	($.$mol_attach) = class $mol_attach extends ($.$mol_view) {
-		items(next){
-			if(next !== undefined) return next;
-			return [];
-		}
-		sub(){
-			return [(this.Content())];
-		}
-		Add(){
-			const obj = new this.$.$mol_button_open();
-			(obj.title) = () => ((this.attach_title()));
-			(obj.files) = (next) => ((this.attach_new(next)));
-			return obj;
-		}
-		Item(id){
-			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this.item_drop(id, next)));
-			(obj.sub) = () => ([(this.Image(id))]);
-			return obj;
-		}
 		content(){
 			return [];
 		}
@@ -31409,14 +31372,33 @@ var $;
 			(obj.uri) = () => ((this.item_uri(id)));
 			return obj;
 		}
+		items(next){
+			if(next !== undefined) return next;
+			return [];
+		}
+		sub(){
+			return [(this.Content())];
+		}
+		Add(){
+			const obj = new this.$.$mol_button_open();
+			(obj.title) = () => ((this.attach_title()));
+			(obj.files) = (next) => ((this.attach_new(next)));
+			return obj;
+		}
+		Item(id){
+			const obj = new this.$.$mol_button_minor();
+			(obj.click) = (next) => ((this.item_drop(id, next)));
+			(obj.sub) = () => ([(this.Image(id))]);
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_attach.prototype), "items"));
-	($mol_mem(($.$mol_attach.prototype), "Add"));
-	($mol_mem_key(($.$mol_attach.prototype), "Item"));
 	($mol_mem(($.$mol_attach.prototype), "Content"));
 	($mol_mem(($.$mol_attach.prototype), "attach_new"));
 	($mol_mem_key(($.$mol_attach.prototype), "item_drop"));
 	($mol_mem_key(($.$mol_attach.prototype), "Image"));
+	($mol_mem(($.$mol_attach.prototype), "items"));
+	($mol_mem(($.$mol_attach.prototype), "Add"));
+	($mol_mem_key(($.$mol_attach.prototype), "Item"));
 
 
 ;
@@ -31465,6 +31447,15 @@ var $;
 
 ;
 	($.$mol_attach_demo) = class $mol_attach_demo extends ($.$mol_example_small) {
+		filled_items(next){
+			if(next !== undefined) return next;
+			return ["https://picsum.photos/200"];
+		}
+		Filled(){
+			const obj = new this.$.$mol_attach();
+			(obj.items) = (next) => ((this.filled_items(next)));
+			return obj;
+		}
 		title(){
 			return "Attach files an show them";
 		}
@@ -31480,15 +31471,6 @@ var $;
 		}
 		aspects(){
 			return ["Widget/Control", "Type/File"];
-		}
-		filled_items(next){
-			if(next !== undefined) return next;
-			return ["https://picsum.photos/200"];
-		}
-		Filled(){
-			const obj = new this.$.$mol_attach();
-			(obj.items) = (next) => ((this.filled_items(next)));
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_attach_demo.prototype), "filled_items"));
@@ -31573,22 +31555,6 @@ var $;
         $mol_mem
     ], $mol_audio_node.prototype, "output", null);
     $.$mol_audio_node = $mol_audio_node;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class $mol_audio_room extends $mol_audio_node {
-        play() {
-            this.output();
-            this.$.$mol_wait_timeout(this.duration() * 1000);
-        }
-    }
-    __decorate([
-        $mol_action
-    ], $mol_audio_room.prototype, "play", null);
-    $.$mol_audio_room = $mol_audio_room;
 })($ || ($ = {}));
 
 ;
@@ -31685,31 +31651,23 @@ var $;
 })($ || ($ = {}));
 
 ;
+"use strict";
+var $;
+(function ($) {
+    class $mol_audio_room extends $mol_audio_node {
+        play() {
+            this.output();
+            this.$.$mol_wait_timeout(this.duration() * 1000);
+        }
+    }
+    __decorate([
+        $mol_action
+    ], $mol_audio_room.prototype, "play", null);
+    $.$mol_audio_room = $mol_audio_room;
+})($ || ($ = {}));
+
+;
 	($.$mol_audio_demo) = class $mol_audio_demo extends ($.$mol_example_small) {
-		title(){
-			return "WebAudio API example";
-		}
-		Beep(){
-			const obj = new this.$.$mol_audio_room();
-			(obj.duration) = () => (0.1);
-			(obj.input) = () => ([(this.Beep_vibe())]);
-			return obj;
-		}
-		Noise(){
-			const obj = new this.$.$mol_audio_room();
-			(obj.duration) = () => (1);
-			(obj.input) = () => ([(this.Noise_vibe())]);
-			return obj;
-		}
-		sub(){
-			return [(this.Beep_play()), (this.Noise_play())];
-		}
-		tags(){
-			return ["sound"];
-		}
-		aspects(){
-			return ["Media/Audio"];
-		}
 		beep_play(){
 			return (this.Beep().play());
 		}
@@ -31741,13 +31699,37 @@ var $;
 			(obj.title) = () => ("Noise");
 			return obj;
 		}
+		title(){
+			return "WebAudio API example";
+		}
+		Beep(){
+			const obj = new this.$.$mol_audio_room();
+			(obj.duration) = () => (0.1);
+			(obj.input) = () => ([(this.Beep_vibe())]);
+			return obj;
+		}
+		Noise(){
+			const obj = new this.$.$mol_audio_room();
+			(obj.duration) = () => (1);
+			(obj.input) = () => ([(this.Noise_vibe())]);
+			return obj;
+		}
+		sub(){
+			return [(this.Beep_play()), (this.Noise_play())];
+		}
+		tags(){
+			return ["sound"];
+		}
+		aspects(){
+			return ["Media/Audio"];
+		}
 	};
-	($mol_mem(($.$mol_audio_demo.prototype), "Beep"));
-	($mol_mem(($.$mol_audio_demo.prototype), "Noise"));
 	($mol_mem(($.$mol_audio_demo.prototype), "Beep_vibe"));
 	($mol_mem(($.$mol_audio_demo.prototype), "Noise_vibe"));
 	($mol_mem(($.$mol_audio_demo.prototype), "Beep_play"));
 	($mol_mem(($.$mol_audio_demo.prototype), "Noise_play"));
+	($mol_mem(($.$mol_audio_demo.prototype), "Beep"));
+	($mol_mem(($.$mol_audio_demo.prototype), "Noise"));
 
 
 ;
@@ -31771,24 +31753,6 @@ var $;
 
 ;
 	($.$mol_audio_demo_vibe) = class $mol_audio_demo_vibe extends ($.$mol_example_small) {
-		title(){
-			return "WebAudio API complex example";
-		}
-		Room(){
-			const obj = new this.$.$mol_audio_room();
-			(obj.duration) = () => ((this.duration()));
-			(obj.input) = () => ([(this.Beep_vibe())]);
-			return obj;
-		}
-		sub(){
-			return [(this.List())];
-		}
-		tags(){
-			return ["sound"];
-		}
-		aspects(){
-			return ["Media/Audio"];
-		}
 		play(){
 			return (this.Room().play());
 		}
@@ -31886,8 +31850,25 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "WebAudio API complex example";
+		}
+		Room(){
+			const obj = new this.$.$mol_audio_room();
+			(obj.duration) = () => ((this.duration()));
+			(obj.input) = () => ([(this.Beep_vibe())]);
+			return obj;
+		}
+		sub(){
+			return [(this.List())];
+		}
+		tags(){
+			return ["sound"];
+		}
+		aspects(){
+			return ["Media/Audio"];
+		}
 	};
-	($mol_mem(($.$mol_audio_demo_vibe.prototype), "Room"));
 	($mol_mem(($.$mol_audio_demo_vibe.prototype), "Beep_vibe"));
 	($mol_mem(($.$mol_audio_demo_vibe.prototype), "duration"));
 	($mol_mem(($.$mol_audio_demo_vibe.prototype), "Duration_num"));
@@ -31902,6 +31883,7 @@ var $;
 	($mol_mem(($.$mol_audio_demo_vibe.prototype), "Play_button"));
 	($mol_mem(($.$mol_audio_demo_vibe.prototype), "Button_row"));
 	($mol_mem(($.$mol_audio_demo_vibe.prototype), "List"));
+	($mol_mem(($.$mol_audio_demo_vibe.prototype), "Room"));
 
 
 ;
@@ -31927,22 +31909,6 @@ var $;
 
 ;
 	($.$mol_avatar_demo) = class $mol_avatar_demo extends ($.$mol_example_small) {
-		title(){
-			return "Avatar uniquely-generated by id";
-		}
-		sub(){
-			return [(this.Avatar_id_label()), (this.Avatar_label())];
-		}
-		tags(){
-			return [
-				"generated", 
-				"identity", 
-				"user"
-			];
-		}
-		aspects(){
-			return ["Widget/Draw", "Algorithm/Hash"];
-		}
 		avatar_id(next){
 			if(next !== undefined) return next;
 			return "$mol_avatar";
@@ -31968,6 +31934,22 @@ var $;
 			(obj.title) = () => ("Avatar");
 			(obj.content) = () => ([(this.Avatar())]);
 			return obj;
+		}
+		title(){
+			return "Avatar uniquely-generated by id";
+		}
+		sub(){
+			return [(this.Avatar_id_label()), (this.Avatar_label())];
+		}
+		tags(){
+			return [
+				"generated", 
+				"identity", 
+				"user"
+			];
+		}
+		aspects(){
+			return ["Widget/Draw", "Algorithm/Hash"];
 		}
 	};
 	($mol_mem(($.$mol_avatar_demo.prototype), "avatar_id"));
@@ -31998,18 +31980,6 @@ var $;
 
 ;
 	($.$mol_bar_demo) = class $mol_bar_demo extends ($.$mol_example_small) {
-		title(){
-			return "Group of controls as one control";
-		}
-		sub(){
-			return [(this.Two()), (this.Three())];
-		}
-		tags(){
-			return ["group", "container"];
-		}
-		aspects(){
-			return ["Widget/Layout", "Widget/Island"];
-		}
 		mail_hint(){
 			return "E-mail";
 		}
@@ -32060,6 +32030,18 @@ var $;
 			(obj.sub) = () => ([(this.Three_mail()), (this.Three_confirm())]);
 			return obj;
 		}
+		title(){
+			return "Group of controls as one control";
+		}
+		sub(){
+			return [(this.Two()), (this.Three())];
+		}
+		tags(){
+			return ["group", "container"];
+		}
+		aspects(){
+			return ["Widget/Layout", "Widget/Island"];
+		}
 	};
 	($mol_mem(($.$mol_bar_demo.prototype), "mail"));
 	($mol_mem(($.$mol_bar_demo.prototype), "Two_mail"));
@@ -32076,18 +32058,6 @@ var $;
 
 ;
 	($.$mol_bench_demo) = class $mol_bench_demo extends ($.$mol_example_small) {
-		title(){
-			return "Benchmarking results visualization";
-		}
-		sub(){
-			return [(this.View())];
-		}
-		tags(){
-			return ["perfomance", "comparison"];
-		}
-		aspects(){
-			return ["Widget/Grid"];
-		}
 		col_sort(next){
 			if(next !== undefined) return next;
 			return "mid";
@@ -32100,6 +32070,18 @@ var $;
 			(obj.col_sort) = (next) => ((this.col_sort(next)));
 			(obj.result) = () => ((this.result()));
 			return obj;
+		}
+		title(){
+			return "Benchmarking results visualization";
+		}
+		sub(){
+			return [(this.View())];
+		}
+		tags(){
+			return ["perfomance", "comparison"];
+		}
+		aspects(){
+			return ["Widget/Grid"];
 		}
 	};
 	($mol_mem(($.$mol_bench_demo.prototype), "col_sort"));
@@ -32139,27 +32121,6 @@ var $;
 
 ;
 	($.$mol_book2_demo) = class $mol_book2_demo extends ($.$mol_example_large) {
-		title(){
-			return "Adaprive layout for various sizes of screen";
-		}
-		sub(){
-			return [(this.View())];
-		}
-		tags(){
-			return [
-				"app", 
-				"page", 
-				"navigation", 
-				"transition", 
-				"multipage", 
-				"dialog", 
-				"breadcrumbs", 
-				"drawer"
-			];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		Side(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => (["Side"]);
@@ -32190,6 +32151,27 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Adaprive layout for various sizes of screen";
+		}
+		sub(){
+			return [(this.View())];
+		}
+		tags(){
+			return [
+				"app", 
+				"page", 
+				"navigation", 
+				"transition", 
+				"multipage", 
+				"dialog", 
+				"breadcrumbs", 
+				"drawer"
+			];
+		}
+		aspects(){
+			return ["Widget/Layout"];
+		}
 	};
 	($mol_mem(($.$mol_book2_demo.prototype), "Side"));
 	($mol_mem(($.$mol_book2_demo.prototype), "First"));
@@ -32210,12 +32192,6 @@ var $;
 
 ;
 	($.$mol_filler) = class $mol_filler extends ($.$mol_paragraph) {
-		min_symbols(){
-			return 7000;
-		}
-		sub(){
-			return (this.filler_lines());
-		}
 		filler_lines(){
 			return [
 				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. ", 
@@ -32348,6 +32324,12 @@ var $;
 				"Donec vel. "
 			];
 		}
+		min_symbols(){
+			return 7000;
+		}
+		sub(){
+			return (this.filler_lines());
+		}
 	};
 
 
@@ -32385,33 +32367,6 @@ var $;
 
 ;
 	($.$mol_book2_catalog_demo) = class $mol_book2_catalog_demo extends ($.$mol_example_large) {
-		title(){
-			return "Catalog of pages";
-		}
-		Content(){
-			const obj = new this.$.$mol_filler();
-			return obj;
-		}
-		Empty(){
-			const obj = new this.$.$mol_status();
-			return obj;
-		}
-		sub(){
-			return [(this.Calatog())];
-		}
-		tags(){
-			return [
-				"app", 
-				"page", 
-				"menu", 
-				"navigation", 
-				"transition", 
-				"multipage"
-			];
-		}
-		aspects(){
-			return ["Navigation", "Widget/Layout"];
-		}
 		Spread_close(){
 			return (this.Calatog().Spread_close());
 		}
@@ -32550,9 +32505,34 @@ var $;
 			(obj.spreads) = () => ({"foods": (this.Foods()), "animals": (this.Animals())});
 			return obj;
 		}
+		title(){
+			return "Catalog of pages";
+		}
+		Content(){
+			const obj = new this.$.$mol_filler();
+			return obj;
+		}
+		Empty(){
+			const obj = new this.$.$mol_status();
+			return obj;
+		}
+		sub(){
+			return [(this.Calatog())];
+		}
+		tags(){
+			return [
+				"app", 
+				"page", 
+				"menu", 
+				"navigation", 
+				"transition", 
+				"multipage"
+			];
+		}
+		aspects(){
+			return ["Navigation", "Widget/Layout"];
+		}
 	};
-	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Content"));
-	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Empty"));
 	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Pizza"));
 	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Hot_dogs"));
 	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Fries"));
@@ -32569,6 +32549,8 @@ var $;
 	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Bugs"));
 	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Animals"));
 	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Calatog"));
+	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Content"));
+	($mol_mem(($.$mol_book2_catalog_demo.prototype), "Empty"));
 
 
 ;
@@ -32609,22 +32591,6 @@ var $;
 
 ;
 	($.$mol_button_demo) = class $mol_button_demo extends ($.$mol_example_small) {
-		title(){
-			return "All types of buttons in every states";
-		}
-		sub(){
-			return [
-				(this.Major_enabled()), 
-				(this.Major_disabled()), 
-				(this.Minor_enabled()), 
-				(this.Minor_disabled()), 
-				(this.Minor_icon_only()), 
-				(this.Minor_iconed())
-			];
-		}
-		aspects(){
-			return ["Widget/Control/Button"];
-		}
 		fail(next){
 			if(next !== undefined) return next;
 			return null;
@@ -32673,6 +32639,22 @@ var $;
 			(obj.sub) = () => ([(this.Minor_iconed_icon()), "Minor with Icon"]);
 			return obj;
 		}
+		title(){
+			return "All types of buttons in every states";
+		}
+		sub(){
+			return [
+				(this.Major_enabled()), 
+				(this.Major_disabled()), 
+				(this.Minor_enabled()), 
+				(this.Minor_disabled()), 
+				(this.Minor_icon_only()), 
+				(this.Minor_iconed())
+			];
+		}
+		aspects(){
+			return ["Widget/Control/Button"];
+		}
 	};
 	($mol_mem(($.$mol_button_demo.prototype), "fail"));
 	($mol_mem(($.$mol_button_demo.prototype), "Major_enabled"));
@@ -32706,19 +32688,6 @@ var $;
 
 ;
 	($.$mol_button_share_demo) = class $mol_button_share_demo extends ($.$mol_example_small) {
-		title(){
-			return "Share button demo";
-		}
-		sub(){
-			return [
-				(this.Share_page()), 
-				(this.Share_screenshot()), 
-				(this.Share_hyoo())
-			];
-		}
-		aspects(){
-			return ["Widget/Control/Button"];
-		}
 		Share_page(){
 			const obj = new this.$.$mol_button_share();
 			(obj.title) = () => ((this.title()));
@@ -32741,6 +32710,19 @@ var $;
 			(obj.capture) = () => (null);
 			return obj;
 		}
+		title(){
+			return "Share button demo";
+		}
+		sub(){
+			return [
+				(this.Share_page()), 
+				(this.Share_screenshot()), 
+				(this.Share_hyoo())
+			];
+		}
+		aspects(){
+			return ["Widget/Control/Button"];
+		}
 	};
 	($mol_mem(($.$mol_button_share_demo.prototype), "Share_page"));
 	($mol_mem(($.$mol_button_share_demo.prototype), "Share_screenshot"));
@@ -32752,6 +32734,18 @@ var $;
 
 ;
 	($.$mol_calendar_demo_holiday) = class $mol_calendar_demo_holiday extends ($.$mol_example_small) {
+		month(){
+			return "2018-01";
+		}
+		holiday(id){
+			return false;
+		}
+		Calendar(){
+			const obj = new this.$.$mol_calendar();
+			(obj.month_string) = () => ((this.month()));
+			(obj.day_holiday) = (id) => ((this.holiday(id)));
+			return obj;
+		}
 		title(){
 			return "Days of month 2018-01 with custom holidays";
 		}
@@ -32782,18 +32776,6 @@ var $;
 		aspects(){
 			return ["Widget/Grid", "Type/Date"];
 		}
-		month(){
-			return "2018-01";
-		}
-		holiday(id){
-			return false;
-		}
-		Calendar(){
-			const obj = new this.$.$mol_calendar();
-			(obj.month_string) = () => ((this.month()));
-			(obj.day_holiday) = (id) => ((this.holiday(id)));
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_calendar_demo_holiday.prototype), "Calendar"));
 
@@ -32818,6 +32800,18 @@ var $;
 
 ;
 	($.$mol_calendar_demo_selection) = class $mol_calendar_demo_selection extends ($.$mol_example_small) {
+		month(){
+			return "2018-01";
+		}
+		selected(id){
+			return false;
+		}
+		Calendar(){
+			const obj = new this.$.$mol_calendar();
+			(obj.month_string) = () => ((this.month()));
+			(obj.day_selected) = (id) => ((this.selected(id)));
+			return obj;
+		}
 		title(){
 			return "Days of month 2018-01 with custom selection";
 		}
@@ -32841,18 +32835,6 @@ var $;
 		}
 		aspects(){
 			return ["Widget/Grid", "Type/Date"];
-		}
-		month(){
-			return "2018-01";
-		}
-		selected(id){
-			return false;
-		}
-		Calendar(){
-			const obj = new this.$.$mol_calendar();
-			(obj.month_string) = () => ((this.month()));
-			(obj.day_selected) = (id) => ((this.selected(id)));
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_calendar_demo_selection.prototype), "Calendar"));
@@ -32961,6 +32943,15 @@ var $;
 
 ;
 	($.$mol_calendar_demo_simple) = class $mol_calendar_demo_simple extends ($.$mol_example_small) {
+		today(){
+			const obj = new this.$.$mol_time_moment();
+			return obj;
+		}
+		Calendar(){
+			const obj = new this.$.$mol_calendar();
+			(obj.month_moment) = () => ((this.today()));
+			return obj;
+		}
 		title(){
 			return "Days of curret month";
 		}
@@ -32972,15 +32963,6 @@ var $;
 		}
 		aspects(){
 			return ["Widget/Grid", "Type/Date"];
-		}
-		today(){
-			const obj = new this.$.$mol_time_moment();
-			return obj;
-		}
-		Calendar(){
-			const obj = new this.$.$mol_calendar();
-			(obj.month_moment) = () => ((this.today()));
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_calendar_demo_simple.prototype), "today"));
@@ -33007,12 +32989,6 @@ var $;
 
 ;
 	($.$mol_card) = class $mol_card extends ($.$mol_list) {
-		attr(){
-			return {...(super.attr()), "mol_card_status_type": (this.status())};
-		}
-		rows(){
-			return [(this.Content()), (this.Status())];
-		}
 		status(){
 			return "";
 		}
@@ -33032,6 +33008,12 @@ var $;
 			(obj.minimal_height) = () => (30);
 			(obj.sub) = () => ([(this.status_text())]);
 			return obj;
+		}
+		attr(){
+			return {...(super.attr()), "mol_card_status_type": (this.status())};
+		}
+		rows(){
+			return [(this.Content()), (this.Status())];
 		}
 	};
 	($mol_mem(($.$mol_card.prototype), "Content"));
@@ -33068,6 +33050,17 @@ var $;
 
 ;
 	($.$mol_card_demo) = class $mol_card_demo extends ($.$mol_example_small) {
+		Simple(){
+			const obj = new this.$.$mol_card();
+			(obj.content) = () => (["Hello world!"]);
+			return obj;
+		}
+		Pending(){
+			const obj = new this.$.$mol_card();
+			(obj.title) = () => ("Hello pending!");
+			(obj.status) = () => ("pending");
+			return obj;
+		}
 		title(){
 			return "Cards with optional status";
 		}
@@ -33084,17 +33077,6 @@ var $;
 		aspects(){
 			return ["Widget/Layout", "Widget/Island"];
 		}
-		Simple(){
-			const obj = new this.$.$mol_card();
-			(obj.content) = () => (["Hello world!"]);
-			return obj;
-		}
-		Pending(){
-			const obj = new this.$.$mol_card();
-			(obj.title) = () => ("Hello pending!");
-			(obj.status) = () => ("pending");
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_card_demo.prototype), "Simple"));
 	($mol_mem(($.$mol_card_demo.prototype), "Pending"));
@@ -33105,15 +33087,6 @@ var $;
 
 ;
 	($.$mol_gallery) = class $mol_gallery extends ($.$mol_view) {
-		sub(){
-			return (this.items());
-		}
-		Side(id){
-			const obj = new this.$.$mol_gallery();
-			(obj.style) = () => ({"flexGrow": (this.side_size(id))});
-			(obj.items) = () => ((this.side_items(id)));
-			return obj;
-		}
 		items(){
 			return [];
 		}
@@ -33122,6 +33095,15 @@ var $;
 		}
 		side_items(id){
 			return [];
+		}
+		sub(){
+			return (this.items());
+		}
+		Side(id){
+			const obj = new this.$.$mol_gallery();
+			(obj.style) = () => ({"flexGrow": (this.side_size(id))});
+			(obj.items) = () => ((this.side_items(id)));
+			return obj;
 		}
 	};
 	($mol_mem_key(($.$mol_gallery.prototype), "Side"));
@@ -33178,20 +33160,6 @@ var $;
 
 ;
 	($.$mol_chart_legend) = class $mol_chart_legend extends ($.$mol_scroll) {
-		graphs(){
-			return [];
-		}
-		graphs_front(){
-			return [];
-		}
-		sub(){
-			return [(this.Gallery())];
-		}
-		Graph_legend(id){
-			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this.Graph_sample_box(id)), (this.Graph_title(id))]);
-			return obj;
-		}
 		graph_legends(){
 			return [];
 		}
@@ -33216,11 +33184,25 @@ var $;
 			(obj.sub) = () => ([(this.graph_title(id))]);
 			return obj;
 		}
+		graphs(){
+			return [];
+		}
+		graphs_front(){
+			return [];
+		}
+		sub(){
+			return [(this.Gallery())];
+		}
+		Graph_legend(id){
+			const obj = new this.$.$mol_view();
+			(obj.sub) = () => ([(this.Graph_sample_box(id)), (this.Graph_title(id))]);
+			return obj;
+		}
 	};
-	($mol_mem_key(($.$mol_chart_legend.prototype), "Graph_legend"));
 	($mol_mem(($.$mol_chart_legend.prototype), "Gallery"));
 	($mol_mem_key(($.$mol_chart_legend.prototype), "Graph_sample_box"));
 	($mol_mem_key(($.$mol_chart_legend.prototype), "Graph_title"));
+	($mol_mem_key(($.$mol_chart_legend.prototype), "Graph_legend"));
 
 
 ;
@@ -33366,6 +33348,50 @@ var $;
 
 ;
 	($.$mol_plot_graph) = class $mol_plot_graph extends ($.$mol_svg_group) {
+		type(){
+			return "solid";
+		}
+		color(){
+			return "";
+		}
+		viewport_x(){
+			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+			return obj;
+		}
+		viewport_y(){
+			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+			return obj;
+		}
+		dimensions_pane_x(){
+			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+			return obj;
+		}
+		dimensions_pane_y(){
+			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+			return obj;
+		}
+		dimensions_x(){
+			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+			return obj;
+		}
+		dimensions_y(){
+			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+			return obj;
+		}
+		gap_x(){
+			const obj = new this.$.$mol_vector_range(0, 0);
+			return obj;
+		}
+		gap_y(){
+			const obj = new this.$.$mol_vector_range(0, 0);
+			return obj;
+		}
+		title(){
+			return "";
+		}
+		hint(){
+			return (this.title());
+		}
 		series_x(){
 			return [];
 		}
@@ -33437,58 +33463,7 @@ var $;
 		Sample(){
 			return null;
 		}
-		type(){
-			return "solid";
-		}
-		color(){
-			return "";
-		}
-		viewport_x(){
-			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
-			return obj;
-		}
-		viewport_y(){
-			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
-			return obj;
-		}
-		dimensions_pane_x(){
-			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
-			return obj;
-		}
-		dimensions_pane_y(){
-			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
-			return obj;
-		}
-		dimensions_x(){
-			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
-			return obj;
-		}
-		dimensions_y(){
-			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
-			return obj;
-		}
-		gap_x(){
-			const obj = new this.$.$mol_vector_range(0, 0);
-			return obj;
-		}
-		gap_y(){
-			const obj = new this.$.$mol_vector_range(0, 0);
-			return obj;
-		}
-		title(){
-			return "";
-		}
-		hint(){
-			return (this.title());
-		}
 	};
-	($mol_mem(($.$mol_plot_graph.prototype), "viewport"));
-	($mol_mem(($.$mol_plot_graph.prototype), "cursor_position"));
-	($mol_mem(($.$mol_plot_graph.prototype), "dimensions_pane"));
-	($mol_mem(($.$mol_plot_graph.prototype), "dimensions"));
-	($mol_mem(($.$mol_plot_graph.prototype), "size_real"));
-	($mol_mem(($.$mol_plot_graph.prototype), "gap"));
-	($mol_mem(($.$mol_plot_graph.prototype), "Hint"));
 	($mol_mem(($.$mol_plot_graph.prototype), "viewport_x"));
 	($mol_mem(($.$mol_plot_graph.prototype), "viewport_y"));
 	($mol_mem(($.$mol_plot_graph.prototype), "dimensions_pane_x"));
@@ -33497,18 +33472,25 @@ var $;
 	($mol_mem(($.$mol_plot_graph.prototype), "dimensions_y"));
 	($mol_mem(($.$mol_plot_graph.prototype), "gap_x"));
 	($mol_mem(($.$mol_plot_graph.prototype), "gap_y"));
+	($mol_mem(($.$mol_plot_graph.prototype), "viewport"));
+	($mol_mem(($.$mol_plot_graph.prototype), "cursor_position"));
+	($mol_mem(($.$mol_plot_graph.prototype), "dimensions_pane"));
+	($mol_mem(($.$mol_plot_graph.prototype), "dimensions"));
+	($mol_mem(($.$mol_plot_graph.prototype), "size_real"));
+	($mol_mem(($.$mol_plot_graph.prototype), "gap"));
+	($mol_mem(($.$mol_plot_graph.prototype), "Hint"));
 	($.$mol_plot_graph_sample) = class $mol_plot_graph_sample extends ($.$mol_view) {
-		attr(){
-			return {...(super.attr()), "mol_plot_graph_type": (this.type())};
-		}
-		style(){
-			return {...(super.style()), "color": (this.color())};
-		}
 		type(){
 			return "solid";
 		}
 		color(){
 			return "black";
+		}
+		attr(){
+			return {...(super.attr()), "mol_plot_graph_type": (this.type())};
+		}
+		style(){
+			return {...(super.style()), "color": (this.color())};
 		}
 	};
 
@@ -33635,6 +33617,26 @@ var $;
 
 ;
 	($.$mol_touch) = class $mol_touch extends ($.$mol_plugin) {
+		event_start(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		event_move(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		event_end(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		event_leave(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		event_wheel(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		start_zoom(next){
 			if(next !== undefined) return next;
 			return 0;
@@ -33762,27 +33764,12 @@ var $;
 				"wheel": (next) => (this.event_wheel(next))
 			};
 		}
-		event_start(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		event_move(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		event_end(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		event_leave(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		event_wheel(next){
-			if(next !== undefined) return next;
-			return null;
-		}
 	};
+	($mol_mem(($.$mol_touch.prototype), "event_start"));
+	($mol_mem(($.$mol_touch.prototype), "event_move"));
+	($mol_mem(($.$mol_touch.prototype), "event_end"));
+	($mol_mem(($.$mol_touch.prototype), "event_leave"));
+	($mol_mem(($.$mol_touch.prototype), "event_wheel"));
 	($mol_mem(($.$mol_touch.prototype), "start_zoom"));
 	($mol_mem(($.$mol_touch.prototype), "start_distance"));
 	($mol_mem(($.$mol_touch.prototype), "zoom"));
@@ -33807,11 +33794,6 @@ var $;
 	($mol_mem(($.$mol_touch.prototype), "draw_start"));
 	($mol_mem(($.$mol_touch.prototype), "draw"));
 	($mol_mem(($.$mol_touch.prototype), "draw_end"));
-	($mol_mem(($.$mol_touch.prototype), "event_start"));
-	($mol_mem(($.$mol_touch.prototype), "event_move"));
-	($mol_mem(($.$mol_touch.prototype), "event_end"));
-	($mol_mem(($.$mol_touch.prototype), "event_leave"));
-	($mol_mem(($.$mol_touch.prototype), "event_wheel"));
 
 
 ;
@@ -34065,98 +34047,6 @@ var $;
 
 ;
 	($.$mol_plot_pane) = class $mol_plot_pane extends ($.$mol_svg_root) {
-		aspect(){
-			return "none";
-		}
-		hue_base(next){
-			if(next !== undefined) return next;
-			return +NaN;
-		}
-		hue_shift(next){
-			if(next !== undefined) return next;
-			return 111;
-		}
-		gap_hor(){
-			return 48;
-		}
-		gap_vert(){
-			return 24;
-		}
-		gap_left(){
-			return (this.gap_hor());
-		}
-		gap_right(){
-			return (this.gap_hor());
-		}
-		gap_top(){
-			return (this.gap_vert());
-		}
-		gap_bottom(){
-			return (this.gap_vert());
-		}
-		gap(){
-			const obj = new this.$.$mol_vector_2d((this.gap_x()), (this.gap_y()));
-			return obj;
-		}
-		shift_limit(){
-			const obj = new this.$.$mol_vector_2d((this.shift_limit_x()), (this.shift_limit_y()));
-			return obj;
-		}
-		shift_default(){
-			const obj = new this.$.$mol_vector_2d(0, 0);
-			return obj;
-		}
-		shift(next){
-			if(next !== undefined) return next;
-			const obj = new this.$.$mol_vector_2d(0, 0);
-			return obj;
-		}
-		scale_limit(){
-			const obj = new this.$.$mol_vector_2d((this.scale_limit_x()), (this.scale_limit_y()));
-			return obj;
-		}
-		scale_default(){
-			const obj = new this.$.$mol_vector_2d(0, 0);
-			return obj;
-		}
-		scale(next){
-			if(next !== undefined) return next;
-			const obj = new this.$.$mol_vector_2d(1, -1);
-			return obj;
-		}
-		scale_x(next){
-			if(next !== undefined) return next;
-			return 1;
-		}
-		scale_y(next){
-			if(next !== undefined) return next;
-			return -1;
-		}
-		size(){
-			const obj = new this.$.$mol_vector_2d(0, 0);
-			return obj;
-		}
-		size_real(){
-			const obj = new this.$.$mol_vector_2d(1, 1);
-			return obj;
-		}
-		dimensions(){
-			const obj = new this.$.$mol_vector_2d((this.dimensions_x()), (this.dimensions_y()));
-			return obj;
-		}
-		dimensions_viewport(){
-			const obj = new this.$.$mol_vector_2d((this.dimensions_viewport_x()), (this.dimensions_viewport_y()));
-			return obj;
-		}
-		sub(){
-			return (this.graphs_sorted());
-		}
-		graphs_colored(){
-			return (this.graphs_visible());
-		}
-		plugins(){
-			return [...(super.plugins()), (this.Touch())];
-		}
 		gap_x(){
 			const obj = new this.$.$mol_vector_range((this.gap_left()), (this.gap_right()));
 			return obj;
@@ -34255,22 +34145,99 @@ var $;
 			(obj.draw_end) = (next) => ((this.draw_end(next)));
 			return obj;
 		}
+		aspect(){
+			return "none";
+		}
+		hue_base(next){
+			if(next !== undefined) return next;
+			return +NaN;
+		}
+		hue_shift(next){
+			if(next !== undefined) return next;
+			return 111;
+		}
+		gap_hor(){
+			return 48;
+		}
+		gap_vert(){
+			return 24;
+		}
+		gap_left(){
+			return (this.gap_hor());
+		}
+		gap_right(){
+			return (this.gap_hor());
+		}
+		gap_top(){
+			return (this.gap_vert());
+		}
+		gap_bottom(){
+			return (this.gap_vert());
+		}
+		gap(){
+			const obj = new this.$.$mol_vector_2d((this.gap_x()), (this.gap_y()));
+			return obj;
+		}
+		shift_limit(){
+			const obj = new this.$.$mol_vector_2d((this.shift_limit_x()), (this.shift_limit_y()));
+			return obj;
+		}
+		shift_default(){
+			const obj = new this.$.$mol_vector_2d(0, 0);
+			return obj;
+		}
+		shift(next){
+			if(next !== undefined) return next;
+			const obj = new this.$.$mol_vector_2d(0, 0);
+			return obj;
+		}
+		scale_limit(){
+			const obj = new this.$.$mol_vector_2d((this.scale_limit_x()), (this.scale_limit_y()));
+			return obj;
+		}
+		scale_default(){
+			const obj = new this.$.$mol_vector_2d(0, 0);
+			return obj;
+		}
+		scale(next){
+			if(next !== undefined) return next;
+			const obj = new this.$.$mol_vector_2d(1, -1);
+			return obj;
+		}
+		scale_x(next){
+			if(next !== undefined) return next;
+			return 1;
+		}
+		scale_y(next){
+			if(next !== undefined) return next;
+			return -1;
+		}
+		size(){
+			const obj = new this.$.$mol_vector_2d(0, 0);
+			return obj;
+		}
+		size_real(){
+			const obj = new this.$.$mol_vector_2d(1, 1);
+			return obj;
+		}
+		dimensions(){
+			const obj = new this.$.$mol_vector_2d((this.dimensions_x()), (this.dimensions_y()));
+			return obj;
+		}
+		dimensions_viewport(){
+			const obj = new this.$.$mol_vector_2d((this.dimensions_viewport_x()), (this.dimensions_viewport_y()));
+			return obj;
+		}
+		sub(){
+			return (this.graphs_sorted());
+		}
+		graphs_colored(){
+			return (this.graphs_visible());
+		}
+		plugins(){
+			return [...(super.plugins()), (this.Touch())];
+		}
 	};
-	($mol_mem(($.$mol_plot_pane.prototype), "hue_base"));
-	($mol_mem(($.$mol_plot_pane.prototype), "hue_shift"));
-	($mol_mem(($.$mol_plot_pane.prototype), "gap"));
-	($mol_mem(($.$mol_plot_pane.prototype), "shift_limit"));
-	($mol_mem(($.$mol_plot_pane.prototype), "shift_default"));
-	($mol_mem(($.$mol_plot_pane.prototype), "shift"));
-	($mol_mem(($.$mol_plot_pane.prototype), "scale_limit"));
-	($mol_mem(($.$mol_plot_pane.prototype), "scale_default"));
-	($mol_mem(($.$mol_plot_pane.prototype), "scale"));
-	($mol_mem(($.$mol_plot_pane.prototype), "scale_x"));
-	($mol_mem(($.$mol_plot_pane.prototype), "scale_y"));
-	($mol_mem(($.$mol_plot_pane.prototype), "size"));
-	($mol_mem(($.$mol_plot_pane.prototype), "size_real"));
-	($mol_mem(($.$mol_plot_pane.prototype), "dimensions"));
-	($mol_mem(($.$mol_plot_pane.prototype), "dimensions_viewport"));
 	($mol_mem(($.$mol_plot_pane.prototype), "gap_x"));
 	($mol_mem(($.$mol_plot_pane.prototype), "gap_y"));
 	($mol_mem(($.$mol_plot_pane.prototype), "shift_limit_x"));
@@ -34286,6 +34253,21 @@ var $;
 	($mol_mem(($.$mol_plot_pane.prototype), "draw"));
 	($mol_mem(($.$mol_plot_pane.prototype), "draw_end"));
 	($mol_mem(($.$mol_plot_pane.prototype), "Touch"));
+	($mol_mem(($.$mol_plot_pane.prototype), "hue_base"));
+	($mol_mem(($.$mol_plot_pane.prototype), "hue_shift"));
+	($mol_mem(($.$mol_plot_pane.prototype), "gap"));
+	($mol_mem(($.$mol_plot_pane.prototype), "shift_limit"));
+	($mol_mem(($.$mol_plot_pane.prototype), "shift_default"));
+	($mol_mem(($.$mol_plot_pane.prototype), "shift"));
+	($mol_mem(($.$mol_plot_pane.prototype), "scale_limit"));
+	($mol_mem(($.$mol_plot_pane.prototype), "scale_default"));
+	($mol_mem(($.$mol_plot_pane.prototype), "scale"));
+	($mol_mem(($.$mol_plot_pane.prototype), "scale_x"));
+	($mol_mem(($.$mol_plot_pane.prototype), "scale_y"));
+	($mol_mem(($.$mol_plot_pane.prototype), "size"));
+	($mol_mem(($.$mol_plot_pane.prototype), "size_real"));
+	($mol_mem(($.$mol_plot_pane.prototype), "dimensions"));
+	($mol_mem(($.$mol_plot_pane.prototype), "dimensions_viewport"));
 
 
 ;
@@ -34502,30 +34484,6 @@ var $;
 
 ;
 	($.$mol_chart) = class $mol_chart extends ($.$mol_view) {
-		gap_hor(){
-			return 48;
-		}
-		gap_vert(){
-			return 24;
-		}
-		gap_left(){
-			return (this.gap_hor());
-		}
-		gap_right(){
-			return (this.gap_hor());
-		}
-		gap_bottom(){
-			return (this.gap_vert());
-		}
-		gap_top(){
-			return (this.gap_vert());
-		}
-		graphs(){
-			return [];
-		}
-		sub(){
-			return [(this.Legend()), (this.Plot())];
-		}
 		Legend(){
 			const obj = new this.$.$mol_chart_legend();
 			(obj.graphs) = () => ((this.graphs_colored()));
@@ -34555,6 +34513,30 @@ var $;
 			(obj.hue_shift) = () => ((this.hue_shift()));
 			return obj;
 		}
+		gap_hor(){
+			return 48;
+		}
+		gap_vert(){
+			return 24;
+		}
+		gap_left(){
+			return (this.gap_hor());
+		}
+		gap_right(){
+			return (this.gap_hor());
+		}
+		gap_bottom(){
+			return (this.gap_vert());
+		}
+		gap_top(){
+			return (this.gap_vert());
+		}
+		graphs(){
+			return [];
+		}
+		sub(){
+			return [(this.Legend()), (this.Plot())];
+		}
 	};
 	($mol_mem(($.$mol_chart.prototype), "Legend"));
 	($mol_mem(($.$mol_chart.prototype), "Plot"));
@@ -34572,17 +34554,6 @@ var $;
 
 ;
 	($.$mol_plot_bar) = class $mol_plot_bar extends ($.$mol_plot_graph) {
-		style(){
-			return {...(super.style()), "stroke-width": (this.stroke_width())};
-		}
-		sub(){
-			return [(this.Hint()), (this.Curve())];
-		}
-		Sample(){
-			const obj = new this.$.$mol_plot_graph_sample();
-			(obj.color) = () => ((this.color()));
-			return obj;
-		}
 		stroke_width(){
 			return "1rem";
 		}
@@ -34594,9 +34565,20 @@ var $;
 			(obj.geometry) = () => ((this.curve()));
 			return obj;
 		}
+		style(){
+			return {...(super.style()), "stroke-width": (this.stroke_width())};
+		}
+		sub(){
+			return [(this.Hint()), (this.Curve())];
+		}
+		Sample(){
+			const obj = new this.$.$mol_plot_graph_sample();
+			(obj.color) = () => ((this.color()));
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_plot_bar.prototype), "Sample"));
 	($mol_mem(($.$mol_plot_bar.prototype), "Curve"));
+	($mol_mem(($.$mol_plot_bar.prototype), "Sample"));
 
 
 ;
@@ -34693,6 +34675,9 @@ var $;
 
 ;
 	($.$mol_plot_line) = class $mol_plot_line extends ($.$mol_plot_graph) {
+		curve(){
+			return "";
+		}
 		threshold(){
 			return 1;
 		}
@@ -34716,9 +34701,6 @@ var $;
 			(obj.color) = () => ((this.color()));
 			(obj.type) = () => ((this.type()));
 			return obj;
-		}
-		curve(){
-			return "";
 		}
 	};
 	($mol_mem(($.$mol_plot_line.prototype), "Sample"));
@@ -34795,6 +34777,17 @@ var $;
 
 ;
 	($.$mol_plot_dot) = class $mol_plot_dot extends ($.$mol_plot_graph) {
+		diameter(){
+			return 8;
+		}
+		curve(){
+			return "";
+		}
+		Curve(){
+			const obj = new this.$.$mol_svg_path();
+			(obj.geometry) = () => ((this.curve()));
+			return obj;
+		}
 		points_max(){
 			return +Infinity;
 		}
@@ -34812,20 +34805,9 @@ var $;
 			(obj.color) = () => ((this.color()));
 			return obj;
 		}
-		diameter(){
-			return 8;
-		}
-		curve(){
-			return "";
-		}
-		Curve(){
-			const obj = new this.$.$mol_svg_path();
-			(obj.geometry) = () => ((this.curve()));
-			return obj;
-		}
 	};
-	($mol_mem(($.$mol_plot_dot.prototype), "Sample"));
 	($mol_mem(($.$mol_plot_dot.prototype), "Curve"));
+	($mol_mem(($.$mol_plot_dot.prototype), "Sample"));
 
 
 ;
@@ -34944,14 +34926,6 @@ var $;
 
 ;
 	($.$mol_plot_group) = class $mol_plot_group extends ($.$mol_plot_graph) {
-		sub(){
-			return (this.graphs_enriched());
-		}
-		Sample(){
-			const obj = new this.$.$mol_plot_graph_sample();
-			(obj.sub) = () => ((this.graph_samples()));
-			return obj;
-		}
 		graphs(){
 			return [];
 		}
@@ -34960,6 +34934,14 @@ var $;
 		}
 		graph_samples(){
 			return [];
+		}
+		sub(){
+			return (this.graphs_enriched());
+		}
+		Sample(){
+			const obj = new this.$.$mol_plot_graph_sample();
+			(obj.sub) = () => ((this.graph_samples()));
+			return obj;
 		}
 	};
 	($mol_mem(($.$mol_plot_group.prototype), "Sample"));
@@ -35034,9 +35016,21 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_svg_text) = class $mol_svg_text extends ($.$mol_svg) {
+	($.$mol_svg_rect) = class $mol_svg_rect extends ($.$mol_svg) {
+		width(){
+			return "0";
+		}
+		height(){
+			return "0";
+		}
+		pos_x(){
+			return "";
+		}
+		pos_y(){
+			return "";
+		}
 		dom_name(){
-			return "text";
+			return "rect";
 		}
 		pos(){
 			return [];
@@ -35044,15 +35038,38 @@ var $;
 		attr(){
 			return {
 				...(super.attr()), 
+				"width": (this.width()), 
+				"height": (this.height()), 
 				"x": (this.pos_x()), 
-				"y": (this.pos_y()), 
-				"text-anchor": (this.align_hor()), 
-				"alignment-baseline": (this.align_vert())
+				"y": (this.pos_y())
 			};
 		}
-		sub(){
-			return [(this.text())];
-		}
+	};
+
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_svg_rect extends $.$mol_svg_rect {
+            pos_x() {
+                return this.pos()[0];
+            }
+            pos_y() {
+                return this.pos()[1];
+            }
+        }
+        $$.$mol_svg_rect = $mol_svg_rect;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+	($.$mol_svg_text) = class $mol_svg_text extends ($.$mol_svg) {
 		pos_x(){
 			return "";
 		}
@@ -35070,6 +35087,24 @@ var $;
 		}
 		text(){
 			return "";
+		}
+		dom_name(){
+			return "text";
+		}
+		pos(){
+			return [];
+		}
+		attr(){
+			return {
+				...(super.attr()), 
+				"x": (this.pos_x()), 
+				"y": (this.pos_y()), 
+				"text-anchor": (this.align_hor()), 
+				"alignment-baseline": (this.align_vert())
+			};
+		}
+		sub(){
+			return [(this.text())];
 		}
 	};
 
@@ -35103,105 +35138,7 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_svg_rect) = class $mol_svg_rect extends ($.$mol_svg) {
-		dom_name(){
-			return "rect";
-		}
-		pos(){
-			return [];
-		}
-		attr(){
-			return {
-				...(super.attr()), 
-				"width": (this.width()), 
-				"height": (this.height()), 
-				"x": (this.pos_x()), 
-				"y": (this.pos_y())
-			};
-		}
-		width(){
-			return "0";
-		}
-		height(){
-			return "0";
-		}
-		pos_x(){
-			return "";
-		}
-		pos_y(){
-			return "";
-		}
-	};
-
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_svg_rect extends $.$mol_svg_rect {
-            pos_x() {
-                return this.pos()[0];
-            }
-            pos_y() {
-                return this.pos()[1];
-            }
-        }
-        $$.$mol_svg_rect = $mol_svg_rect;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
 	($.$mol_plot_ruler) = class $mol_plot_ruler extends ($.$mol_plot_graph) {
-		step(){
-			return 0;
-		}
-		scale_axis(){
-			return 1;
-		}
-		scale_step(){
-			return 1;
-		}
-		shift_axis(){
-			return 1;
-		}
-		dimensions_axis(){
-			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
-			return obj;
-		}
-		viewport_axis(){
-			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
-			return obj;
-		}
-		axis_points(){
-			return [];
-		}
-		normalize(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		precision(){
-			return 1;
-		}
-		sub(){
-			return [
-				(this.Background()), 
-				(this.Curve()), 
-				(this.labels_formatted()), 
-				(this.Title())
-			];
-		}
-		Label(id){
-			const obj = new this.$.$mol_svg_text();
-			(obj.pos) = () => ((this.label_pos(id)));
-			(obj.text) = () => ((this.label_text(id)));
-			(obj.align) = () => ((this.label_align()));
-			return obj;
-		}
 		background_x(){
 			return "0";
 		}
@@ -35265,14 +35202,59 @@ var $;
 		label_align(){
 			return "";
 		}
+		step(){
+			return 0;
+		}
+		scale_axis(){
+			return 1;
+		}
+		scale_step(){
+			return 1;
+		}
+		shift_axis(){
+			return 1;
+		}
+		dimensions_axis(){
+			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+			return obj;
+		}
+		viewport_axis(){
+			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
+			return obj;
+		}
+		axis_points(){
+			return [];
+		}
+		normalize(next){
+			if(next !== undefined) return next;
+			return 0;
+		}
+		precision(){
+			return 1;
+		}
+		sub(){
+			return [
+				(this.Background()), 
+				(this.Curve()), 
+				(this.labels_formatted()), 
+				(this.Title())
+			];
+		}
+		Label(id){
+			const obj = new this.$.$mol_svg_text();
+			(obj.pos) = () => ((this.label_pos(id)));
+			(obj.text) = () => ((this.label_text(id)));
+			(obj.align) = () => ((this.label_align()));
+			return obj;
+		}
 	};
+	($mol_mem(($.$mol_plot_ruler.prototype), "Background"));
+	($mol_mem(($.$mol_plot_ruler.prototype), "Curve"));
+	($mol_mem(($.$mol_plot_ruler.prototype), "Title"));
 	($mol_mem(($.$mol_plot_ruler.prototype), "dimensions_axis"));
 	($mol_mem(($.$mol_plot_ruler.prototype), "viewport_axis"));
 	($mol_mem(($.$mol_plot_ruler.prototype), "normalize"));
 	($mol_mem_key(($.$mol_plot_ruler.prototype), "Label"));
-	($mol_mem(($.$mol_plot_ruler.prototype), "Background"));
-	($mol_mem(($.$mol_plot_ruler.prototype), "Curve"));
-	($mol_mem(($.$mol_plot_ruler.prototype), "Title"));
 
 
 ;
@@ -35657,15 +35639,6 @@ var $;
 
 ;
 	($.$mol_svg_text_box) = class $mol_svg_text_box extends ($.$mol_svg_group) {
-		font_size(){
-			return 16;
-		}
-		width(){
-			return 0;
-		}
-		sub(){
-			return [(this.Back()), (this.Text())];
-		}
 		box_width(){
 			return "0.5rem";
 		}
@@ -35703,6 +35676,15 @@ var $;
 			(obj.align) = () => ((this.align()));
 			(obj.sub) = () => ([(this.text())]);
 			return obj;
+		}
+		font_size(){
+			return 16;
+		}
+		width(){
+			return 0;
+		}
+		sub(){
+			return [(this.Back()), (this.Text())];
 		}
 	};
 	($mol_mem(($.$mol_svg_text_box.prototype), "Back"));
@@ -35778,32 +35760,6 @@ var $;
 
 ;
 	($.$mol_plot_mark_cross) = class $mol_plot_mark_cross extends ($.$mol_plot_graph) {
-		labels(){
-			return [];
-		}
-		title_x_gap(){
-			return 4;
-		}
-		title_y_gap(){
-			return 22;
-		}
-		threshold(){
-			return 16;
-		}
-		graphs(){
-			return [];
-		}
-		dimensions(){
-			const obj = new this.$.$mol_vector_2d((this.dimensions_x()), (this.dimensions_y()));
-			return obj;
-		}
-		sub(){
-			return [
-				(this.Curve()), 
-				(this.Label_x()), 
-				(this.Label_y())
-			];
-		}
 		dimensions_x(){
 			const obj = new this.$.$mol_vector_range(Infinity, -Infinity);
 			return obj;
@@ -35852,13 +35808,39 @@ var $;
 			(obj.text) = () => ((this.title_y()));
 			return obj;
 		}
+		labels(){
+			return [];
+		}
+		title_x_gap(){
+			return 4;
+		}
+		title_y_gap(){
+			return 22;
+		}
+		threshold(){
+			return 16;
+		}
+		graphs(){
+			return [];
+		}
+		dimensions(){
+			const obj = new this.$.$mol_vector_2d((this.dimensions_x()), (this.dimensions_y()));
+			return obj;
+		}
+		sub(){
+			return [
+				(this.Curve()), 
+				(this.Label_x()), 
+				(this.Label_y())
+			];
+		}
 	};
-	($mol_mem(($.$mol_plot_mark_cross.prototype), "dimensions"));
 	($mol_mem(($.$mol_plot_mark_cross.prototype), "dimensions_x"));
 	($mol_mem(($.$mol_plot_mark_cross.prototype), "dimensions_y"));
 	($mol_mem(($.$mol_plot_mark_cross.prototype), "Curve"));
 	($mol_mem(($.$mol_plot_mark_cross.prototype), "Label_x"));
 	($mol_mem(($.$mol_plot_mark_cross.prototype), "Label_y"));
+	($mol_mem(($.$mol_plot_mark_cross.prototype), "dimensions"));
 
 
 ;
@@ -35967,26 +35949,6 @@ var $;
 
 ;
 	($.$mol_chart_demo_simple) = class $mol_chart_demo_simple extends ($.$mol_example_large) {
-		title(){
-			return "Simple chart with hadcoded series";
-		}
-		sub(){
-			return [(this.Chart())];
-		}
-		tags(){
-			return [
-				"plot", 
-				"visualization", 
-				"dashboard"
-			];
-		}
-		aspects(){
-			return [
-				"Widget/Draw/Chart/Line", 
-				"Widget/Draw/Chart/Dot", 
-				"Widget/Draw/Chart/Bar"
-			];
-		}
 		plan_title(){
 			return "Plan";
 		}
@@ -36071,6 +36033,26 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Simple chart with hadcoded series";
+		}
+		sub(){
+			return [(this.Chart())];
+		}
+		tags(){
+			return [
+				"plot", 
+				"visualization", 
+				"dashboard"
+			];
+		}
+		aspects(){
+			return [
+				"Widget/Draw/Chart/Line", 
+				"Widget/Draw/Chart/Dot", 
+				"Widget/Draw/Chart/Bar"
+			];
+		}
 	};
 	($mol_mem(($.$mol_chart_demo_simple.prototype), "Plan"));
 	($mol_mem(($.$mol_chart_demo_simple.prototype), "Fact_line"));
@@ -36131,30 +36113,6 @@ var $;
 
 ;
 	($.$mol_chart_demo_styles) = class $mol_chart_demo_styles extends ($.$mol_example_large) {
-		title(){
-			return "Chart with various styles of graphs.";
-		}
-		samples_count(){
-			return 15;
-		}
-		sub(){
-			return [(this.Chart())];
-		}
-		tags(){
-			return [
-				"plot", 
-				"visualization", 
-				"dashboard"
-			];
-		}
-		aspects(){
-			return [
-				"Widget/Draw/Chart/Line", 
-				"Widget/Draw/Chart/Dot", 
-				"Widget/Draw/Chart/Bar", 
-				"Widget/Draw/Chart/Fill"
-			];
-		}
 		receipts_title(){
 			return "Receipts";
 		}
@@ -36306,6 +36264,30 @@ var $;
 			(obj.graphs) = () => ((this.graphs()));
 			return obj;
 		}
+		title(){
+			return "Chart with various styles of graphs.";
+		}
+		samples_count(){
+			return 15;
+		}
+		sub(){
+			return [(this.Chart())];
+		}
+		tags(){
+			return [
+				"plot", 
+				"visualization", 
+				"dashboard"
+			];
+		}
+		aspects(){
+			return [
+				"Widget/Draw/Chart/Line", 
+				"Widget/Draw/Chart/Dot", 
+				"Widget/Draw/Chart/Bar", 
+				"Widget/Draw/Chart/Fill"
+			];
+		}
 	};
 	($mol_mem(($.$mol_chart_demo_styles.prototype), "Receipts"));
 	($mol_mem(($.$mol_chart_demo_styles.prototype), "Receipts_confirmed"));
@@ -36398,28 +36380,6 @@ var $;
 
 ;
 	($.$mol_chart_demo_forces) = class $mol_chart_demo_forces extends ($.$mol_example_large) {
-		title(){
-			return "Fake wheel forces";
-		}
-		samples_count(){
-			return 5000;
-		}
-		points_max(){
-			return 2500;
-		}
-		sub(){
-			return [(this.Chart())];
-		}
-		tags(){
-			return [
-				"plot", 
-				"visualization", 
-				"dashboard"
-			];
-		}
-		aspects(){
-			return ["Widget/Draw/Chart/Line", "Widget/Draw/Chart/Dot"];
-		}
 		forces_left_title(){
 			return "Left wheel";
 		}
@@ -36486,6 +36446,28 @@ var $;
 				(this.Cross())
 			]);
 			return obj;
+		}
+		title(){
+			return "Fake wheel forces";
+		}
+		samples_count(){
+			return 5000;
+		}
+		points_max(){
+			return 2500;
+		}
+		sub(){
+			return [(this.Chart())];
+		}
+		tags(){
+			return [
+				"plot", 
+				"visualization", 
+				"dashboard"
+			];
+		}
+		aspects(){
+			return ["Widget/Draw/Chart/Line", "Widget/Draw/Chart/Dot"];
 		}
 	};
 	($mol_mem(($.$mol_chart_demo_forces.prototype), "Forces_left"));
@@ -36554,6 +36536,14 @@ var $;
 
 ;
 	($.$mol_chat_demo) = class $mol_chat_demo extends ($.$mol_example_small) {
+		chat_pages(){
+			return (this.Chat().pages());
+		}
+		Chat(){
+			const obj = new this.$.$mol_chat();
+			(obj.seed) = () => ("mol_chat_demo");
+			return obj;
+		}
 		title(){
 			return "Feed of comments for this page";
 		}
@@ -36565,14 +36555,6 @@ var $;
 		}
 		aspects(){
 			return ["Integration", "Widget/Button"];
-		}
-		chat_pages(){
-			return (this.Chat().pages());
-		}
-		Chat(){
-			const obj = new this.$.$mol_chat();
-			(obj.seed) = () => ("mol_chat_demo");
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_chat_demo.prototype), "Chat"));
@@ -36590,18 +36572,6 @@ var $;
 
 ;
 	($.$mol_check_box_demo) = class $mol_check_box_demo extends ($.$mol_example_small) {
-		title(){
-			return "Checkboxes in various states";
-		}
-		sub(){
-			return [(this.Demo_items())];
-		}
-		tags(){
-			return ["switch", "toggle"];
-		}
-		aspects(){
-			return ["Widget/Control/Button", "Type/Boolean"];
-		}
 		base_checked(next){
 			if(next !== undefined) return next;
 			return false;
@@ -36666,6 +36636,18 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Checkboxes in various states";
+		}
+		sub(){
+			return [(this.Demo_items())];
+		}
+		tags(){
+			return ["switch", "toggle"];
+		}
+		aspects(){
+			return ["Widget/Control/Button", "Type/Boolean"];
+		}
 	};
 	($mol_mem(($.$mol_check_box_demo.prototype), "base_checked"));
 	($mol_mem(($.$mol_check_box_demo.prototype), "Labeled_base"));
@@ -36683,22 +36665,6 @@ var $;
 
 ;
 	($.$mol_check_list_demo) = class $mol_check_list_demo extends ($.$mol_example_small) {
-		title(){
-			return "Set of toggles";
-		}
-		sub(){
-			return [(this.Rights())];
-		}
-		tags(){
-			return [
-				"option", 
-				"switch", 
-				"toggle"
-			];
-		}
-		aspects(){
-			return ["Widget/Control/Button"];
-		}
 		right(id, next){
 			if(next !== undefined) return next;
 			return false;
@@ -36718,6 +36684,22 @@ var $;
 			});
 			return obj;
 		}
+		title(){
+			return "Set of toggles";
+		}
+		sub(){
+			return [(this.Rights())];
+		}
+		tags(){
+			return [
+				"option", 
+				"switch", 
+				"toggle"
+			];
+		}
+		aspects(){
+			return ["Widget/Control/Button"];
+		}
 	};
 	($mol_mem_key(($.$mol_check_list_demo.prototype), "right"));
 	($mol_mem(($.$mol_check_list_demo.prototype), "Rights"));
@@ -36728,18 +36710,6 @@ var $;
 
 ;
 	($.$mol_check_expand_demo) = class $mol_check_expand_demo extends ($.$mol_example_small) {
-		title(){
-			return "Checkbox-expand in various states";
-		}
-		sub(){
-			return [(this.Demo_items())];
-		}
-		tags(){
-			return ["fold"];
-		}
-		aspects(){
-			return ["Widget/Control/Button", "Type/Boolean"];
-		}
 		base_expanded(next){
 			if(next !== undefined) return next;
 			return false;
@@ -36796,6 +36766,18 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Checkbox-expand in various states";
+		}
+		sub(){
+			return [(this.Demo_items())];
+		}
+		tags(){
+			return ["fold"];
+		}
+		aspects(){
+			return ["Widget/Control/Button", "Type/Boolean"];
+		}
 	};
 	($mol_mem(($.$mol_check_expand_demo.prototype), "base_expanded"));
 	($mol_mem(($.$mol_check_expand_demo.prototype), "Labeled_base"));
@@ -36812,18 +36794,6 @@ var $;
 
 ;
 	($.$mol_check_group_demo) = class $mol_check_group_demo extends ($.$mol_example_small) {
-		title(){
-			return "Group of checkboxes";
-		}
-		sub(){
-			return [(this.Demo_items())];
-		}
-		tags(){
-			return ["multi", "group"];
-		}
-		aspects(){
-			return ["Widget/Control/Button"];
-		}
 		All(){
 			const obj = new this.$.$mol_check_group();
 			(obj.title) = () => ("SPECIAL");
@@ -36947,6 +36917,18 @@ var $;
 			(obj.rows) = () => ([(this.All()), (this.Partial())]);
 			return obj;
 		}
+		title(){
+			return "Group of checkboxes";
+		}
+		sub(){
+			return [(this.Demo_items())];
+		}
+		tags(){
+			return ["multi", "group"];
+		}
+		aspects(){
+			return ["Widget/Control/Button"];
+		}
 	};
 	($mol_mem(($.$mol_check_group_demo.prototype), "All"));
 	($mol_mem(($.$mol_check_group_demo.prototype), "strength"));
@@ -36990,22 +36972,6 @@ var $;
 
 ;
 	($.$mol_check_icon_demo) = class $mol_check_icon_demo extends ($.$mol_example_small) {
-		title(){
-			return "Iconic checkboxes in various states";
-		}
-		sub(){
-			return [
-				(this.Base()), 
-				(this.Checked()), 
-				(this.Disabled())
-			];
-		}
-		tags(){
-			return ["switch", "toggle"];
-		}
-		aspects(){
-			return ["Widget/Control/Button"];
-		}
 		Base_icon(){
 			const obj = new this.$.$mol_icon_microphone();
 			return obj;
@@ -37045,6 +37011,22 @@ var $;
 			(obj.enabled) = () => (false);
 			return obj;
 		}
+		title(){
+			return "Iconic checkboxes in various states";
+		}
+		sub(){
+			return [
+				(this.Base()), 
+				(this.Checked()), 
+				(this.Disabled())
+			];
+		}
+		tags(){
+			return ["switch", "toggle"];
+		}
+		aspects(){
+			return ["Widget/Control/Button"];
+		}
 	};
 	($mol_mem(($.$mol_check_icon_demo.prototype), "Base_icon"));
 	($mol_mem(($.$mol_check_icon_demo.prototype), "base_checked"));
@@ -37061,9 +37043,6 @@ var $;
 
 ;
 	($.$mol_code) = class $mol_code extends ($.$mol_view) {
-		sub(){
-			return [(this.Manual()), (this.Scan())];
-		}
 		value(next){
 			if(next !== undefined) return next;
 			return "";
@@ -37092,6 +37071,9 @@ var $;
 			(obj.event_click) = (next) => ((this.event_scan(next)));
 			(obj.sub) = () => ([(this.scan_label())]);
 			return obj;
+		}
+		sub(){
+			return [(this.Manual()), (this.Scan())];
 		}
 	};
 	($mol_mem(($.$mol_code.prototype), "value"));
@@ -37158,33 +37140,6 @@ var $;
 
 ;
 	($.$mol_code_demo) = class $mol_code_demo extends ($.$mol_example_small) {
-		title(){
-			return "Barcode scanner with various formats support";
-		}
-		sub(){
-			return [
-				(this.Qr()), 
-				(this.Matrix()), 
-				(this.Upc_e()), 
-				(this.Upc_a()), 
-				(this.Ean_8()), 
-				(this.Ean_13()), 
-				(this.Code_128()), 
-				(this.Code_39()), 
-				(this.Itf())
-			];
-		}
-		tags(){
-			return [
-				"qrcode", 
-				"barcode", 
-				"scan", 
-				"cordova"
-			];
-		}
-		aspects(){
-			return ["Widget/Control"];
-		}
 		Qr(){
 			const obj = new this.$.$mol_code();
 			(obj.format) = () => ("QR_CODE");
@@ -37229,6 +37184,33 @@ var $;
 			const obj = new this.$.$mol_code();
 			(obj.format) = () => ("ITF");
 			return obj;
+		}
+		title(){
+			return "Barcode scanner with various formats support";
+		}
+		sub(){
+			return [
+				(this.Qr()), 
+				(this.Matrix()), 
+				(this.Upc_e()), 
+				(this.Upc_a()), 
+				(this.Ean_8()), 
+				(this.Ean_13()), 
+				(this.Code_128()), 
+				(this.Code_39()), 
+				(this.Itf())
+			];
+		}
+		tags(){
+			return [
+				"qrcode", 
+				"barcode", 
+				"scan", 
+				"cordova"
+			];
+		}
+		aspects(){
+			return ["Widget/Control"];
 		}
 	};
 	($mol_mem(($.$mol_code_demo.prototype), "Qr"));
@@ -38026,23 +38008,6 @@ var $;
 
 ;
 	($.$mol_date_demo) = class $mol_date_demo extends ($.$mol_example_small) {
-		sub(){
-			return [
-				(this.Current()), 
-				(this.Formatted()), 
-				(this.Empty())
-			];
-		}
-		tags(){
-			return [
-				"time", 
-				"datepicker", 
-				"format"
-			];
-		}
-		aspects(){
-			return ["Widget/Control/Button/Picker", "Type/Date"];
-		}
 		date_current(next){
 			if(next !== undefined) return next;
 			const obj = new this.$.$mol_time_moment();
@@ -38069,6 +38034,23 @@ var $;
 			const obj = new this.$.$mol_date();
 			(obj.value_moment) = (next) => ((this.date_empty(next)));
 			return obj;
+		}
+		sub(){
+			return [
+				(this.Current()), 
+				(this.Formatted()), 
+				(this.Empty())
+			];
+		}
+		tags(){
+			return [
+				"time", 
+				"datepicker", 
+				"format"
+			];
+		}
+		aspects(){
+			return ["Widget/Control/Button/Picker", "Type/Date"];
 		}
 	};
 	($mol_mem(($.$mol_date_demo.prototype), "date_current"));
@@ -38105,18 +38087,6 @@ var $;
 
 ;
 	($.$mol_deck_demo) = class $mol_deck_demo extends ($.$mol_example_small) {
-		title(){
-			return "Simple deck with tabbar";
-		}
-		sub(){
-			return [(this.Deck())];
-		}
-		tags(){
-			return ["tabs", "container"];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		Greeting(){
 			const obj = new this.$.$mol_card();
 			(obj.title) = () => ("Greeting");
@@ -38162,6 +38132,18 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Simple deck with tabbar";
+		}
+		sub(){
+			return [(this.Deck())];
+		}
+		tags(){
+			return ["tabs", "container"];
+		}
+		aspects(){
+			return ["Widget/Layout"];
+		}
 	};
 	($mol_mem(($.$mol_deck_demo.prototype), "Greeting"));
 	($mol_mem(($.$mol_deck_demo.prototype), "Question"));
@@ -38177,18 +38159,6 @@ var $;
 
 ;
 	($.$mol_dimmer_demo) = class $mol_dimmer_demo extends ($.$mol_example_small) {
-		title(){
-			return "Text with highlighted found substring";
-		}
-		sub(){
-			return [(this.Cases())];
-		}
-		tags(){
-			return ["search", "highlight"];
-		}
-		aspects(){
-			return ["Widget/Text", "Type/String"];
-		}
 		One(){
 			const obj = new this.$.$mol_dimmer();
 			(obj.haystack) = () => ("Don't put all your eggs in one basket");
@@ -38237,6 +38207,18 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Text with highlighted found substring";
+		}
+		sub(){
+			return [(this.Cases())];
+		}
+		tags(){
+			return ["search", "highlight"];
+		}
+		aspects(){
+			return ["Widget/Text", "Type/String"];
+		}
 	};
 	($mol_mem(($.$mol_dimmer_demo.prototype), "One"));
 	($mol_mem(($.$mol_dimmer_demo.prototype), "Two"));
@@ -38259,33 +38241,6 @@ var $;
 
 ;
 	($.$mol_drag_demo) = class $mol_drag_demo extends ($.$mol_example_large) {
-		task_count(){
-			return 100;
-		}
-		sub(){
-			return [(this.List_drop())];
-		}
-		Task_row(id){
-			const obj = new this.$.$mol_drag();
-			(obj.transfer) = () => ({
-				"text/plain": (this.task_title(id)), 
-				"text/html": (this.task_html(id)), 
-				"text/uri-list": (this.task_uri(id))
-			});
-			(obj.Sub) = () => ((this.Task_drop(id)));
-			return obj;
-		}
-		tags(){
-			return [
-				"drag", 
-				"dragndrop", 
-				"reorder", 
-				"transfer"
-			];
-		}
-		aspects(){
-			return ["Widget/Plugin", "Drag'n'Drop"];
-		}
 		transfer_adopt(next){
 			if(next !== undefined) return next;
 			return null;
@@ -38361,8 +38316,34 @@ var $;
 			(obj.Sub) = () => ((this.Task_link(id)));
 			return obj;
 		}
+		task_count(){
+			return 100;
+		}
+		sub(){
+			return [(this.List_drop())];
+		}
+		Task_row(id){
+			const obj = new this.$.$mol_drag();
+			(obj.transfer) = () => ({
+				"text/plain": (this.task_title(id)), 
+				"text/html": (this.task_html(id)), 
+				"text/uri-list": (this.task_uri(id))
+			});
+			(obj.Sub) = () => ((this.Task_drop(id)));
+			return obj;
+		}
+		tags(){
+			return [
+				"drag", 
+				"dragndrop", 
+				"reorder", 
+				"transfer"
+			];
+		}
+		aspects(){
+			return ["Widget/Plugin", "Drag'n'Drop"];
+		}
 	};
-	($mol_mem_key(($.$mol_drag_demo.prototype), "Task_row"));
 	($mol_mem(($.$mol_drag_demo.prototype), "transfer_adopt"));
 	($mol_mem(($.$mol_drag_demo.prototype), "receive"));
 	($mol_mem(($.$mol_drag_demo.prototype), "receive_trash"));
@@ -38375,6 +38356,7 @@ var $;
 	($mol_mem_key(($.$mol_drag_demo.prototype), "receive_before"));
 	($mol_mem_key(($.$mol_drag_demo.prototype), "Task_link"));
 	($mol_mem_key(($.$mol_drag_demo.prototype), "Task_drop"));
+	($mol_mem_key(($.$mol_drag_demo.prototype), "Task_row"));
 
 
 ;
@@ -38499,23 +38481,6 @@ var $;
 
 ;
 	($.$mol_dump_demo) = class $mol_dump_demo extends ($.$mol_example_small) {
-		title(){
-			return "Attach files an show them";
-		}
-		sub(){
-			return [(this.Dump_list())];
-		}
-		tags(){
-			return [
-				"dump", 
-				"json", 
-				"javascript", 
-				"debug"
-			];
-		}
-		aspects(){
-			return ["Widget"];
-		}
 		value(){
 			return null;
 		}
@@ -38534,6 +38499,23 @@ var $;
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([(this.Dump_short()), (this.Dump_long())]);
 			return obj;
+		}
+		title(){
+			return "Attach files an show them";
+		}
+		sub(){
+			return [(this.Dump_list())];
+		}
+		tags(){
+			return [
+				"dump", 
+				"json", 
+				"javascript", 
+				"debug"
+			];
+		}
+		aspects(){
+			return ["Widget"];
 		}
 	};
 	($mol_mem(($.$mol_dump_demo.prototype), "Dump_short"));
@@ -38579,6 +38561,16 @@ var $;
 
 ;
 	($.$mol_expander_demo) = class $mol_expander_demo extends ($.$mol_example_small) {
+		Content(){
+			const obj = new this.$.$mol_filler();
+			return obj;
+		}
+		Expander(){
+			const obj = new this.$.$mol_expander();
+			(obj.title) = () => ("Lorem Ipsum");
+			(obj.content) = () => ([(this.Content())]);
+			return obj;
+		}
 		title(){
 			return "Simple spoiler";
 		}
@@ -38597,16 +38589,6 @@ var $;
 		aspects(){
 			return ["Widget/Layout"];
 		}
-		Content(){
-			const obj = new this.$.$mol_filler();
-			return obj;
-		}
-		Expander(){
-			const obj = new this.$.$mol_expander();
-			(obj.title) = () => ("Lorem Ipsum");
-			(obj.content) = () => ([(this.Content())]);
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_expander_demo.prototype), "Content"));
 	($mol_mem(($.$mol_expander_demo.prototype), "Expander"));
@@ -38617,24 +38599,6 @@ var $;
 
 ;
 	($.$mol_fetch_demo) = class $mol_fetch_demo extends ($.$mol_example_small) {
-		title(){
-			return "Simple spoiler";
-		}
-		sub(){
-			return [(this.Content())];
-		}
-		tags(){
-			return [
-				"fetch", 
-				"load", 
-				"api", 
-				"response", 
-				"request"
-			];
-		}
-		aspects(){
-			return ["Network/HTTP"];
-		}
 		url(next){
 			if(next !== undefined) return next;
 			return "https://jsonplaceholder.typicode.com/users";
@@ -38672,6 +38636,24 @@ var $;
 			(obj.rows) = () => ([(this.Request()), (this.Data())]);
 			return obj;
 		}
+		title(){
+			return "Simple spoiler";
+		}
+		sub(){
+			return [(this.Content())];
+		}
+		tags(){
+			return [
+				"fetch", 
+				"load", 
+				"api", 
+				"response", 
+				"request"
+			];
+		}
+		aspects(){
+			return ["Network/HTTP"];
+		}
 	};
 	($mol_mem(($.$mol_fetch_demo.prototype), "url"));
 	($mol_mem(($.$mol_fetch_demo.prototype), "Url"));
@@ -38703,6 +38685,11 @@ var $;
 
 ;
 	($.$mol_filler_demo) = class $mol_filler_demo extends ($.$mol_example_small) {
+		Filler(){
+			const obj = new this.$.$mol_filler();
+			(obj.min_symbols) = () => (6000);
+			return obj;
+		}
 		title(){
 			return "Prints large bulk of text";
 		}
@@ -38721,11 +38708,6 @@ var $;
 		aspects(){
 			return ["Widget/Text"];
 		}
-		Filler(){
-			const obj = new this.$.$mol_filler();
-			(obj.min_symbols) = () => (6000);
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_filler_demo.prototype), "Filler"));
 
@@ -38735,18 +38717,6 @@ var $;
 
 ;
 	($.$mol_float_demo) = class $mol_float_demo extends ($.$mol_example_large) {
-		title(){
-			return "Floating header example";
-		}
-		sub(){
-			return [(this.Scroll())];
-		}
-		tags(){
-			return ["scroll", "container"];
-		}
-		aspects(){
-			return ["Widget/Float"];
-		}
 		Head_content(){
 			const obj = new this.$.$mol_paragraph();
 			(obj.title) = () => ("Float header");
@@ -38780,6 +38750,18 @@ var $;
 			(obj.sub) = () => ([(this.Head()), (this.Content())]);
 			return obj;
 		}
+		title(){
+			return "Floating header example";
+		}
+		sub(){
+			return [(this.Scroll())];
+		}
+		tags(){
+			return ["scroll", "container"];
+		}
+		aspects(){
+			return ["Widget/Float"];
+		}
 	};
 	($mol_mem(($.$mol_float_demo.prototype), "Head_content"));
 	($mol_mem(($.$mol_float_demo.prototype), "Head_row"));
@@ -38809,41 +38791,6 @@ var $;
 
 ;
 	($.$mol_form_demo) = class $mol_form_demo extends ($.$mol_example) {
-		title(){
-			return "Sign Up form demo";
-		}
-		message(){
-			return {
-				"required": "Required", 
-				"adult": "18+ only", 
-				"no_spaces": "No spaces!", 
-				"need_more_letters": "{count} or more letters", 
-				"need_at": "@ is required", 
-				"only_one_at": "At most one @", 
-				"no_tld": "At least 2 level domain", 
-				"dots_inside": "Dots can't be at edge", 
-				"no_space_domain": "No space in domain name", 
-				"need_username": "Username required"
-			};
-		}
-		sub(){
-			return [(this.Form())];
-		}
-		tags(){
-			return [
-				"$mol_form_field", 
-				"$mol_button", 
-				"$mol_row", 
-				"$mol_string", 
-				"form", 
-				"bids", 
-				"validation", 
-				"field"
-			];
-		}
-		aspects(){
-			return ["Widget/Form"];
-		}
 		avatars_bid(){
 			return "";
 		}
@@ -39070,6 +39017,41 @@ var $;
 			(obj.submit) = (next) => ((this.signup(next)));
 			(obj.buttons) = () => ([(this.Signup()), (this.Result())]);
 			return obj;
+		}
+		title(){
+			return "Sign Up form demo";
+		}
+		message(){
+			return {
+				"required": "Required", 
+				"adult": "18+ only", 
+				"no_spaces": "No spaces!", 
+				"need_more_letters": "{count} or more letters", 
+				"need_at": "@ is required", 
+				"only_one_at": "At most one @", 
+				"no_tld": "At least 2 level domain", 
+				"dots_inside": "Dots can't be at edge", 
+				"no_space_domain": "No space in domain name", 
+				"need_username": "Username required"
+			};
+		}
+		sub(){
+			return [(this.Form())];
+		}
+		tags(){
+			return [
+				"$mol_form_field", 
+				"$mol_button", 
+				"$mol_row", 
+				"$mol_string", 
+				"form", 
+				"bids", 
+				"validation", 
+				"field"
+			];
+		}
+		aspects(){
+			return ["Widget/Form"];
 		}
 	};
 	($mol_mem(($.$mol_form_demo.prototype), "avatars"));
@@ -39411,42 +39393,6 @@ var $;
 	($mol_mem(($.$mol_form_draft_demo_article.prototype), "friends"));
 	($mol_mem(($.$mol_form_draft_demo_article.prototype), "hobbies"));
 	($.$mol_form_draft_demo) = class $mol_form_draft_demo extends ($.$mol_example) {
-		title(){
-			return "Article draft form demo";
-		}
-		message_done(){
-			return "Done";
-		}
-		bid_required(id){
-			return "Required";
-		}
-		bid_swearing(id){
-			return "No swearing";
-		}
-		bid_short(id){
-			return "> 5 letters";
-		}
-		bid_long(id){
-			return "> 100 letters";
-		}
-		sub(){
-			return [(this.Form())];
-		}
-		tags(){
-			return [
-				"$mol_form_field", 
-				"$mol_button", 
-				"$mol_string", 
-				"$mol_switch", 
-				"form", 
-				"bids", 
-				"validation", 
-				"field"
-			];
-		}
-		aspects(){
-			return ["Widget/Form"];
-		}
 		model(){
 			const obj = new this.$.$mol_form_draft_demo_article();
 			return obj;
@@ -39619,6 +39565,42 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Article draft form demo";
+		}
+		message_done(){
+			return "Done";
+		}
+		bid_required(id){
+			return "Required";
+		}
+		bid_swearing(id){
+			return "No swearing";
+		}
+		bid_short(id){
+			return "> 5 letters";
+		}
+		bid_long(id){
+			return "> 100 letters";
+		}
+		sub(){
+			return [(this.Form())];
+		}
+		tags(){
+			return [
+				"$mol_form_field", 
+				"$mol_button", 
+				"$mol_string", 
+				"$mol_switch", 
+				"form", 
+				"bids", 
+				"validation", 
+				"field"
+			];
+		}
+		aspects(){
+			return ["Widget/Form"];
+		}
 	};
 	($mol_mem(($.$mol_form_draft_demo.prototype), "model"));
 	($mol_mem(($.$mol_form_draft_demo.prototype), "Title"));
@@ -39784,29 +39766,6 @@ var $;
 
 ;
 	($.$mol_format_demo) = class $mol_format_demo extends ($.$mol_example_small) {
-		title(){
-			return "Formatted string input/output";
-		}
-		sub(){
-			return [
-				(this.Ip_card()), 
-				(this.Phone_card()), 
-				(this.Card_card()), 
-				(this.Moment_card())
-			];
-		}
-		tags(){
-			return [
-				"phone", 
-				"ip", 
-				"car", 
-				"datetime", 
-				"input"
-			];
-		}
-		aspects(){
-			return ["Widget/Control", "Type/String"];
-		}
 		ip(next){
 			if(next !== undefined) return next;
 			return "";
@@ -39870,6 +39829,29 @@ var $;
 			(obj.Content) = () => ((this.Moment()));
 			return obj;
 		}
+		title(){
+			return "Formatted string input/output";
+		}
+		sub(){
+			return [
+				(this.Ip_card()), 
+				(this.Phone_card()), 
+				(this.Card_card()), 
+				(this.Moment_card())
+			];
+		}
+		tags(){
+			return [
+				"phone", 
+				"ip", 
+				"car", 
+				"datetime", 
+				"input"
+			];
+		}
+		aspects(){
+			return ["Widget/Control", "Type/String"];
+		}
 	};
 	($mol_mem(($.$mol_format_demo.prototype), "ip"));
 	($mol_mem(($.$mol_format_demo.prototype), "Ip"));
@@ -39890,6 +39872,12 @@ var $;
 
 ;
 	($.$mol_frame_demo) = class $mol_frame_demo extends ($.$mol_example_large) {
+		Frame(){
+			const obj = new this.$.$mol_frame();
+			(obj.title) = () => ("Another page inside that");
+			(obj.uri) = () => ("https://mol.hyoo.ru/");
+			return obj;
+		}
 		sub(){
 			return [(this.Frame())];
 		}
@@ -39898,12 +39886,6 @@ var $;
 		}
 		aspects(){
 			return ["Widget/Integration", "Widget/Island"];
-		}
-		Frame(){
-			const obj = new this.$.$mol_frame();
-			(obj.title) = () => ("Another page inside that");
-			(obj.uri) = () => ("https://mol.hyoo.ru/");
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_frame_demo.prototype), "Frame"));
@@ -39914,6 +39896,22 @@ var $;
 
 ;
 	($.$mol_gallery_demo) = class $mol_gallery_demo extends ($.$mol_example) {
+		items(){
+			return [];
+		}
+		App(){
+			const obj = new this.$.$mol_gallery();
+			(obj.items) = () => ((this.items()));
+			return obj;
+		}
+		item_title(id){
+			return "";
+		}
+		Item_image(id){
+			const obj = new this.$.$mol_avatar();
+			(obj.id) = () => ((this.item_title(id)));
+			return obj;
+		}
 		title(){
 			return "Gallery of cards";
 		}
@@ -39939,26 +39937,10 @@ var $;
 		aspects(){
 			return ["Widget/Layout"];
 		}
-		items(){
-			return [];
-		}
-		App(){
-			const obj = new this.$.$mol_gallery();
-			(obj.items) = () => ((this.items()));
-			return obj;
-		}
-		item_title(id){
-			return "";
-		}
-		Item_image(id){
-			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this.item_title(id)));
-			return obj;
-		}
 	};
-	($mol_mem_key(($.$mol_gallery_demo.prototype), "Item"));
 	($mol_mem(($.$mol_gallery_demo.prototype), "App"));
 	($mol_mem_key(($.$mol_gallery_demo.prototype), "Item_image"));
+	($mol_mem_key(($.$mol_gallery_demo.prototype), "Item"));
 
 
 ;
@@ -39994,6 +39976,24 @@ var $;
 
 ;
 	($.$mol_html_view) = class $mol_html_view extends ($.$mol_list) {
+		heading_level(id){
+			return 1;
+		}
+		content(id){
+			return [];
+		}
+		link_uri(id){
+			return "";
+		}
+		image_uri(id){
+			return "";
+		}
+		highlight(){
+			return "";
+		}
+		text(id){
+			return "";
+		}
 		html(){
 			return "";
 		}
@@ -40074,24 +40074,6 @@ var $;
 			(obj.haystack) = () => ((this.text(id)));
 			return obj;
 		}
-		heading_level(id){
-			return 1;
-		}
-		content(id){
-			return [];
-		}
-		link_uri(id){
-			return "";
-		}
-		image_uri(id){
-			return "";
-		}
-		highlight(){
-			return "";
-		}
-		text(id){
-			return "";
-		}
 	};
 	($mol_mem_key(($.$mol_html_view.prototype), "Heading"));
 	($mol_mem_key(($.$mol_html_view.prototype), "Paragraph"));
@@ -40107,11 +40089,11 @@ var $;
 	($mol_mem_key(($.$mol_html_view.prototype), "Break"));
 	($mol_mem_key(($.$mol_html_view.prototype), "Text"));
 	($.$mol_html_view_heading) = class $mol_html_view_heading extends ($.$mol_paragraph) {
-		attr(){
-			return {...(super.attr()), "mol_html_view_heading": (this.level())};
-		}
 		level(){
 			return 1;
+		}
+		attr(){
+			return {...(super.attr()), "mol_html_view_heading": (this.level())};
 		}
 	};
 
@@ -40355,6 +40337,11 @@ var $;
 
 ;
 	($.$mol_html_view_demo) = class $mol_html_view_demo extends ($.$mol_example) {
+		Html(){
+			const obj = new this.$.$mol_html_view();
+			(obj.html) = () => (" <h1>HTML Example</h1>\n <h2>Headings</h2>\n \t<h3>Level 3</h3>\n \t<h4>Level 4</h4>\n \t<h5>Level 5</h5>\n \t<h6>Level 6</h6>\n <h2>Inline elements</h2>\n <p>\n \t<strong>strong</strong>,\n \t<em>emphasis</em>,\n \t<ins>inserted</ins>,\n \t<del>deleted</del>,\n \t<br />\n \t<b>bold</b>,\n \t<i>italic</i>,\n \t<u>underlined</u>,\n \t<s>strikethrough</s>,\n \t<br />\n \t<code>code</code>,\n \t<a href=\"#\">safe link</a>,\n \t<a href=\"javascript:alert(1)\">unsafe link</a>,\n \tnormal text.\n </p>\n <h2>Media elements</h2>\n <p>\n \t<img src=\"https://mol.hyoo.ru/mol/logo/logo.svg\" />\n </p>\n <h2>Block elements</h2>\n <blockquote><p>Block quotation</p></blockquote>\n <pre><code>Block code</code></pre>");
+			return obj;
+		}
 		title(){
 			return "View raw HTML";
 		}
@@ -40367,11 +40354,6 @@ var $;
 		aspects(){
 			return ["Widget", "Type/HTML"];
 		}
-		Html(){
-			const obj = new this.$.$mol_html_view();
-			(obj.html) = () => (" <h1>HTML Example</h1>\n <h2>Headings</h2>\n \t<h3>Level 3</h3>\n \t<h4>Level 4</h4>\n \t<h5>Level 5</h5>\n \t<h6>Level 6</h6>\n <h2>Inline elements</h2>\n <p>\n \t<strong>strong</strong>,\n \t<em>emphasis</em>,\n \t<ins>inserted</ins>,\n \t<del>deleted</del>,\n \t<br />\n \t<b>bold</b>,\n \t<i>italic</i>,\n \t<u>underlined</u>,\n \t<s>strikethrough</s>,\n \t<br />\n \t<code>code</code>,\n \t<a href=\"#\">safe link</a>,\n \t<a href=\"javascript:alert(1)\">unsafe link</a>,\n \tnormal text.\n </p>\n <h2>Media elements</h2>\n <p>\n \t<img src=\"https://mol.hyoo.ru/mol/logo/logo.svg\" />\n </p>\n <h2>Block elements</h2>\n <blockquote><p>Block quotation</p></blockquote>\n <pre><code>Block code</code></pre>");
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_html_view_demo.prototype), "Html"));
 
@@ -40381,6 +40363,12 @@ var $;
 
 ;
 	($.$mol_infinite) = class $mol_infinite extends ($.$mol_list) {
+		before_load(id){
+			return null;
+		}
+		after_load(id){
+			return null;
+		}
 		before(id){
 			return [];
 		}
@@ -40411,12 +40399,6 @@ var $;
 			(obj.minimal_height) = () => (0);
 			(obj.sub) = () => ([(this.after_load(id))]);
 			return obj;
-		}
-		before_load(id){
-			return null;
-		}
-		after_load(id){
-			return null;
 		}
 	};
 	($mol_mem(($.$mol_infinite.prototype), "row_ids"));
@@ -40492,27 +40474,6 @@ var $;
 
 ;
 	($.$mol_infinite_demo) = class $mol_infinite_demo extends ($.$mol_example_large) {
-		title(){
-			return "Infinite list demo";
-		}
-		chunk_size(){
-			return 20;
-		}
-		sub(){
-			return [(this.Scroll())];
-		}
-		tags(){
-			return [
-				"avatar", 
-				"infinite", 
-				"scroll", 
-				"virtual", 
-				"container"
-			];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		before(id){
 			return [];
 		}
@@ -40564,6 +40525,27 @@ var $;
 			const obj = new this.$.$mol_scroll();
 			(obj.sub) = () => ([(this.List())]);
 			return obj;
+		}
+		title(){
+			return "Infinite list demo";
+		}
+		chunk_size(){
+			return 20;
+		}
+		sub(){
+			return [(this.Scroll())];
+		}
+		tags(){
+			return [
+				"avatar", 
+				"infinite", 
+				"scroll", 
+				"virtual", 
+				"container"
+			];
+		}
+		aspects(){
+			return ["Widget/Layout"];
 		}
 	};
 	($mol_mem_key(($.$mol_infinite_demo.prototype), "Photo"));
@@ -40779,23 +40761,6 @@ var $;
 
 ;
 	($.$mol_labeler_demo) = class $mol_labeler_demo extends ($.$mol_example_small) {
-		title(){
-			return "Labeled content of some types";
-		}
-		sub(){
-			return [(this.Provider()), (this.Name())];
-		}
-		tags(){
-			return [
-				"label", 
-				"form", 
-				"field", 
-				"caption"
-			];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		Provider(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Provider");
@@ -40817,6 +40782,23 @@ var $;
 			(obj.title) = () => ("User name");
 			(obj.Content) = () => ((this.Name_control()));
 			return obj;
+		}
+		title(){
+			return "Labeled content of some types";
+		}
+		sub(){
+			return [(this.Provider()), (this.Name())];
+		}
+		tags(){
+			return [
+				"label", 
+				"form", 
+				"field", 
+				"caption"
+			];
+		}
+		aspects(){
+			return ["Widget/Layout"];
 		}
 	};
 	($mol_mem(($.$mol_labeler_demo.prototype), "Provider"));
@@ -40872,6 +40854,12 @@ var $;
 
 ;
 	($.$mol_canvas) = class $mol_canvas extends ($.$mol_view) {
+		width(){
+			return 0;
+		}
+		height(){
+			return 0;
+		}
 		dom_name(){
 			return "canvas";
 		}
@@ -40888,12 +40876,6 @@ var $;
 		}
 		paint(){
 			return null;
-		}
-		width(){
-			return 0;
-		}
-		height(){
-			return 0;
 		}
 	};
 	($mol_mem(($.$mol_canvas.prototype), "context"));
@@ -40955,15 +40937,6 @@ var $;
 
 ;
 	($.$mol_layout_demo) = class $mol_layout_demo extends ($.$mol_example_large) {
-		title(){
-			return "Custom flex layout engine";
-		}
-		sub(){
-			return [(this.Sample())];
-		}
-		aspects(){
-			return ["Algorithm/Constraint"];
-		}
 		paint(){
 			return null;
 		}
@@ -40980,6 +40953,15 @@ var $;
 			const obj = new this.$.$mol_canvas();
 			(obj.paint) = () => ((this.paint()));
 			return obj;
+		}
+		title(){
+			return "Custom flex layout engine";
+		}
+		sub(){
+			return [(this.Sample())];
+		}
+		aspects(){
+			return ["Algorithm/Constraint"];
 		}
 	};
 	($mol_mem(($.$mol_layout_demo.prototype), "Sample"));
@@ -41331,27 +41313,6 @@ var $;
 
 ;
 	($.$mol_link_demo) = class $mol_link_demo extends ($.$mol_example_small) {
-		title(){
-			return "Some hyperlinks";
-		}
-		sub(){
-			return [(this.Demo_items())];
-		}
-		tags(){
-			return [
-				"$mol_icon", 
-				"file", 
-				"download", 
-				"link", 
-				"icon", 
-				"navigation", 
-				"router", 
-				"url"
-			];
-		}
-		aspects(){
-			return ["Navigation", "Widget/Button"];
-		}
 		this_label(){
 			return "This page";
 		}
@@ -41426,6 +41387,27 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Some hyperlinks";
+		}
+		sub(){
+			return [(this.Demo_items())];
+		}
+		tags(){
+			return [
+				"$mol_icon", 
+				"file", 
+				"download", 
+				"link", 
+				"icon", 
+				"navigation", 
+				"router", 
+				"url"
+			];
+		}
+		aspects(){
+			return ["Navigation", "Widget/Button"];
+		}
 	};
 	($mol_mem(($.$mol_link_demo.prototype), "This"));
 	($mol_mem(($.$mol_link_demo.prototype), "Red"));
@@ -41461,22 +41443,6 @@ var $;
 
 ;
 	($.$mol_link_iconed_demo) = class $mol_link_iconed_demo extends ($.$mol_example_small) {
-		title(){
-			return "Link with icon";
-		}
-		sub(){
-			return [(this.Blocks())];
-		}
-		tags(){
-			return [
-				"link", 
-				"icon", 
-				"url"
-			];
-		}
-		aspects(){
-			return ["Navigation", "Widget/Button"];
-		}
 		uri(next){
 			if(next !== undefined) return next;
 			return "https://www.google.com/search?q=%24mol";
@@ -41495,6 +41461,22 @@ var $;
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([(this.Input()), (this.Output())]);
 			return obj;
+		}
+		title(){
+			return "Link with icon";
+		}
+		sub(){
+			return [(this.Blocks())];
+		}
+		tags(){
+			return [
+				"link", 
+				"icon", 
+				"url"
+			];
+		}
+		aspects(){
+			return ["Navigation", "Widget/Button"];
 		}
 	};
 	($mol_mem(($.$mol_link_iconed_demo.prototype), "uri"));
@@ -41515,6 +41497,10 @@ var $;
 
 ;
 	($.$mol_link_lazy) = class $mol_link_lazy extends ($.$mol_link) {
+		generate(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		uri(next){
 			if(next !== undefined) return next;
 			return "";
@@ -41528,13 +41514,9 @@ var $;
 		event(){
 			return {...(super.event()), "mousedown": (next) => (this.generate(next))};
 		}
-		generate(next){
-			if(next !== undefined) return next;
-			return null;
-		}
 	};
-	($mol_mem(($.$mol_link_lazy.prototype), "uri"));
 	($mol_mem(($.$mol_link_lazy.prototype), "generate"));
+	($mol_mem(($.$mol_link_lazy.prototype), "uri"));
 
 
 ;
@@ -41557,23 +41539,6 @@ var $;
 
 ;
 	($.$mol_link_lazy_demo) = class $mol_link_lazy_demo extends ($.$mol_example_small) {
-		title(){
-			return "Lazy generated link";
-		}
-		sub(){
-			return [(this.Download())];
-		}
-		tags(){
-			return [
-				"icon", 
-				"link", 
-				"lazy", 
-				"download"
-			];
-		}
-		aspects(){
-			return ["Widget/Button"];
-		}
 		uri_generated(){
 			return "";
 		}
@@ -41594,6 +41559,23 @@ var $;
 			(obj.file_name) = () => ((this.download_file()));
 			(obj.sub) = () => ([(this.Download_icon()), (this.download_label())]);
 			return obj;
+		}
+		title(){
+			return "Lazy generated link";
+		}
+		sub(){
+			return [(this.Download())];
+		}
+		tags(){
+			return [
+				"icon", 
+				"link", 
+				"lazy", 
+				"download"
+			];
+		}
+		aspects(){
+			return ["Widget/Button"];
 		}
 	};
 	($mol_mem(($.$mol_link_lazy_demo.prototype), "Download_icon"));
@@ -41621,24 +41603,6 @@ var $;
 
 ;
 	($.$mol_link_source_demo) = class $mol_link_source_demo extends ($.$mol_example_small) {
-		title(){
-			return "Link with icon";
-		}
-		sub(){
-			return [(this.Blocks())];
-		}
-		tags(){
-			return [
-				"link", 
-				"icon", 
-				"source", 
-				"github", 
-				"url"
-			];
-		}
-		aspects(){
-			return ["Navigation", "Widget/Button"];
-		}
 		uri(next){
 			if(next !== undefined) return next;
 			return "https://github.com/hyoo-ru/mam_mol/";
@@ -41658,6 +41622,24 @@ var $;
 			(obj.rows) = () => ([(this.Input()), (this.Output())]);
 			return obj;
 		}
+		title(){
+			return "Link with icon";
+		}
+		sub(){
+			return [(this.Blocks())];
+		}
+		tags(){
+			return [
+				"link", 
+				"icon", 
+				"source", 
+				"github", 
+				"url"
+			];
+		}
+		aspects(){
+			return ["Navigation", "Widget/Button"];
+		}
 	};
 	($mol_mem(($.$mol_link_source_demo.prototype), "uri"));
 	($mol_mem(($.$mol_link_source_demo.prototype), "Input"));
@@ -41670,19 +41652,6 @@ var $;
 
 ;
 	($.$mol_list_demo) = class $mol_list_demo extends ($.$mol_example_small) {
-		sub(){
-			return [(this.Items_count_label()), (this.Items())];
-		}
-		tags(){
-			return [
-				"list", 
-				"rows", 
-				"stack"
-			];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		items_count(next){
 			if(next !== undefined) return next;
 			return 50;
@@ -41722,6 +41691,19 @@ var $;
 			(obj.Empty) = () => ((this.List_empty()));
 			return obj;
 		}
+		sub(){
+			return [(this.Items_count_label()), (this.Items())];
+		}
+		tags(){
+			return [
+				"list", 
+				"rows", 
+				"stack"
+			];
+		}
+		aspects(){
+			return ["Widget/Layout"];
+		}
 	};
 	($mol_mem(($.$mol_list_demo.prototype), "items_count"));
 	($mol_mem(($.$mol_list_demo.prototype), "Items_count"));
@@ -41758,27 +41740,6 @@ var $;
 
 ;
 	($.$mol_list_demo_table) = class $mol_list_demo_table extends ($.$mol_example) {
-		title(){
-			return "Large list of rows with dynamic content";
-		}
-		count(){
-			return 9999;
-		}
-		sub(){
-			return [(this.Head()), (this.Rows())];
-		}
-		tags(){
-			return [
-				"list", 
-				"table", 
-				"scroll", 
-				"divider", 
-				"grid"
-			];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		check_list(){
 			return [];
 		}
@@ -41928,6 +41889,27 @@ var $;
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ((this.rows()));
 			return obj;
+		}
+		title(){
+			return "Large list of rows with dynamic content";
+		}
+		count(){
+			return 9999;
+		}
+		sub(){
+			return [(this.Head()), (this.Rows())];
+		}
+		tags(){
+			return [
+				"list", 
+				"table", 
+				"scroll", 
+				"divider", 
+				"grid"
+			];
+		}
+		aspects(){
+			return ["Widget/Layout"];
 		}
 	};
 	($mol_mem(($.$mol_list_demo_table.prototype), "Check"));
@@ -42232,32 +42214,6 @@ var $;
 
 ;
 	($.$mol_list_demo_tree) = class $mol_list_demo_tree extends ($.$mol_example_large) {
-		title(){
-			return "Large list of rows with dynamic content";
-		}
-		sub(){
-			return [(this.Content())];
-		}
-		Row(id){
-			const obj = new this.$.$mol_expander();
-			(obj.label) = () => ([(this.Row_title(id))]);
-			(obj.expanded) = (next) => ((this.row_expanded(id, next)));
-			(obj.expandable) = () => (true);
-			(obj.Content) = () => ((this.Row_content(id)));
-			return obj;
-		}
-		tags(){
-			return [
-				"list", 
-				"tree", 
-				"hierarchy", 
-				"container", 
-				"nested"
-			];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		root_rows(){
 			return [];
 		}
@@ -42286,12 +42242,38 @@ var $;
 			(obj.rows) = () => ((this.row_content(id)));
 			return obj;
 		}
+		title(){
+			return "Large list of rows with dynamic content";
+		}
+		sub(){
+			return [(this.Content())];
+		}
+		Row(id){
+			const obj = new this.$.$mol_expander();
+			(obj.label) = () => ([(this.Row_title(id))]);
+			(obj.expanded) = (next) => ((this.row_expanded(id, next)));
+			(obj.expandable) = () => (true);
+			(obj.Content) = () => ((this.Row_content(id)));
+			return obj;
+		}
+		tags(){
+			return [
+				"list", 
+				"tree", 
+				"hierarchy", 
+				"container", 
+				"nested"
+			];
+		}
+		aspects(){
+			return ["Widget/Layout"];
+		}
 	};
-	($mol_mem_key(($.$mol_list_demo_tree.prototype), "Row"));
 	($mol_mem(($.$mol_list_demo_tree.prototype), "Content"));
 	($mol_mem_key(($.$mol_list_demo_tree.prototype), "Row_title"));
 	($mol_mem_key(($.$mol_list_demo_tree.prototype), "row_expanded"));
 	($mol_mem_key(($.$mol_list_demo_tree.prototype), "Row_content"));
+	($mol_mem_key(($.$mol_list_demo_tree.prototype), "Row"));
 
 
 ;
@@ -42448,6 +42430,17 @@ var $;
 
 ;
 	($.$mol_map_yandex_mark) = class $mol_map_yandex_mark extends ($.$mol_object) {
+		box_lat(){
+			const obj = new this.$.$mol_vector_range(0, 0);
+			return obj;
+		}
+		box_lon(){
+			const obj = new this.$.$mol_vector_range(0, 0);
+			return obj;
+		}
+		address(){
+			return "";
+		}
 		pos(){
 			const obj = new this.$.$mol_vector_2d(0, 0);
 			return obj;
@@ -42468,22 +42461,11 @@ var $;
 		object(){
 			return null;
 		}
-		box_lat(){
-			const obj = new this.$.$mol_vector_range(0, 0);
-			return obj;
-		}
-		box_lon(){
-			const obj = new this.$.$mol_vector_range(0, 0);
-			return obj;
-		}
-		address(){
-			return "";
-		}
 	};
-	($mol_mem(($.$mol_map_yandex_mark.prototype), "pos"));
-	($mol_mem(($.$mol_map_yandex_mark.prototype), "box"));
 	($mol_mem(($.$mol_map_yandex_mark.prototype), "box_lat"));
 	($mol_mem(($.$mol_map_yandex_mark.prototype), "box_lon"));
+	($mol_mem(($.$mol_map_yandex_mark.prototype), "pos"));
+	($mol_mem(($.$mol_map_yandex_mark.prototype), "box"));
 
 
 ;
@@ -42619,15 +42601,6 @@ var $;
 
 ;
 	($.$mol_map_yandex_demo) = class $mol_map_yandex_demo extends ($.$mol_example_large) {
-		title(){
-			return "Simple Yandex Maps wrapper";
-		}
-		sub(){
-			return [(this.Map())];
-		}
-		aspects(){
-			return ["Integration", "Widget/Map"];
-		}
 		place_title(){
 			return "";
 		}
@@ -42648,6 +42621,15 @@ var $;
 			const obj = new this.$.$mol_map_yandex();
 			(obj.objects) = () => ([(this.Place())]);
 			return obj;
+		}
+		title(){
+			return "Simple Yandex Maps wrapper";
+		}
+		sub(){
+			return [(this.Map())];
+		}
+		aspects(){
+			return ["Integration", "Widget/Map"];
 		}
 	};
 	($mol_mem(($.$mol_map_yandex_demo.prototype), "Place"));
@@ -42703,22 +42685,6 @@ var $;
 
 ;
 	($.$hyoo_marked_app) = class $hyoo_marked_app extends ($.$mol_book2) {
-		plugins(){
-			return [(this.Theme())];
-		}
-		pages(){
-			return [
-				(this.Marked()), 
-				(this.Html()), 
-				(this.View())
-			];
-		}
-		Preview_close(){
-			const obj = new this.$.$mol_link();
-			(obj.sub) = () => ([(this.Preview_close_icon())]);
-			(obj.arg) = () => ({"preview": null});
-			return obj;
-		}
 		Theme(){
 			const obj = new this.$.$mol_theme_auto();
 			return obj;
@@ -42794,8 +42760,23 @@ var $;
 			const obj = new this.$.$mol_icon_cross();
 			return obj;
 		}
+		plugins(){
+			return [(this.Theme())];
+		}
+		pages(){
+			return [
+				(this.Marked()), 
+				(this.Html()), 
+				(this.View())
+			];
+		}
+		Preview_close(){
+			const obj = new this.$.$mol_link();
+			(obj.sub) = () => ([(this.Preview_close_icon())]);
+			(obj.arg) = () => ({"preview": null});
+			return obj;
+		}
 	};
-	($mol_mem(($.$hyoo_marked_app.prototype), "Preview_close"));
 	($mol_mem(($.$hyoo_marked_app.prototype), "Theme"));
 	($mol_mem(($.$hyoo_marked_app.prototype), "Lights"));
 	($mol_mem(($.$hyoo_marked_app.prototype), "Source"));
@@ -42809,6 +42790,7 @@ var $;
 	($mol_mem(($.$hyoo_marked_app.prototype), "View_text"));
 	($mol_mem(($.$hyoo_marked_app.prototype), "View"));
 	($mol_mem(($.$hyoo_marked_app.prototype), "Preview_close_icon"));
+	($mol_mem(($.$hyoo_marked_app.prototype), "Preview_close"));
 
 
 ;
@@ -42859,6 +42841,10 @@ var $;
 
 ;
 	($.$hyoo_marked_demo) = class $hyoo_marked_demo extends ($.$mol_example_large) {
+		Sandbox(){
+			const obj = new this.$.$hyoo_marked_app();
+			return obj;
+		}
 		title(){
 			return "CROWD Text Merge";
 		}
@@ -42876,10 +42862,6 @@ var $;
 				"Algorithm/Transform"
 			];
 		}
-		Sandbox(){
-			const obj = new this.$.$hyoo_marked_app();
-			return obj;
-		}
 	};
 	($mol_mem(($.$hyoo_marked_demo.prototype), "Sandbox"));
 
@@ -42889,18 +42871,6 @@ var $;
 
 ;
 	($.$hyoo_harp_app) = class $hyoo_harp_app extends ($.$mol_page) {
-		title(){
-			return "HARP - Humane API REST Protocol";
-		}
-		plugins(){
-			return [(this.Theme())];
-		}
-		tools(){
-			return [(this.Source()), (this.Lights())];
-		}
-		body(){
-			return [(this.Content())];
-		}
 		Theme(){
 			const obj = new this.$.$mol_theme_auto();
 			return obj;
@@ -42949,6 +42919,18 @@ var $;
 				(this.Json())
 			]);
 			return obj;
+		}
+		title(){
+			return "HARP - Humane API REST Protocol";
+		}
+		plugins(){
+			return [(this.Theme())];
+		}
+		tools(){
+			return [(this.Source()), (this.Lights())];
+		}
+		body(){
+			return [(this.Content())];
 		}
 	};
 	($mol_mem(($.$hyoo_harp_app.prototype), "Theme"));
@@ -43137,6 +43119,14 @@ var $;
 
 ;
 	($.$hyoo_harp_demo) = class $hyoo_harp_demo extends ($.$mol_example_large) {
+		title(){
+			return (this.Sandbox().title());
+		}
+		Sandbox(){
+			const obj = new this.$.$hyoo_harp_app();
+			(obj.Lights) = () => (null);
+			return obj;
+		}
 		sub(){
 			return [(this.Sandbox())];
 		}
@@ -43154,14 +43144,6 @@ var $;
 				"Algorithm/Parse"
 			];
 		}
-		title(){
-			return (this.Sandbox().title());
-		}
-		Sandbox(){
-			const obj = new this.$.$hyoo_harp_app();
-			(obj.Lights) = () => (null);
-			return obj;
-		}
 	};
 	($mol_mem(($.$hyoo_harp_demo.prototype), "Sandbox"));
 
@@ -43171,21 +43153,6 @@ var $;
 
 ;
 	($.$mol_nav_demo) = class $mol_nav_demo extends ($.$mol_example) {
-		title(){
-			return "Number input control with various configuration";
-		}
-		plugins(){
-			return [(this.Nav())];
-		}
-		sub(){
-			return [(this.Demo_items())];
-		}
-		tags(){
-			return ["navigation"];
-		}
-		aspects(){
-			return ["Widget/Plugin", "Controler/Keyboard"];
-		}
 		Nav(){
 			const obj = new this.$.$mol_nav();
 			(obj.keys_x) = () => ((this.tab_list()));
@@ -43234,6 +43201,21 @@ var $;
 			(obj.status) = () => ("Select option and use keys to switch");
 			return obj;
 		}
+		title(){
+			return "Number input control with various configuration";
+		}
+		plugins(){
+			return [(this.Nav())];
+		}
+		sub(){
+			return [(this.Demo_items())];
+		}
+		tags(){
+			return ["navigation"];
+		}
+		aspects(){
+			return ["Widget/Plugin", "Controler/Keyboard"];
+		}
 	};
 	($mol_mem(($.$mol_nav_demo.prototype), "Nav"));
 	($mol_mem(($.$mol_nav_demo.prototype), "tab_current"));
@@ -43262,27 +43244,6 @@ var $;
 
 ;
 	($.$mol_number_demo) = class $mol_number_demo extends ($.$mol_example_small) {
-		title(){
-			return "Number input control with various configuration";
-		}
-		value(next){
-			if(next !== undefined) return next;
-			return +NaN;
-		}
-		sub(){
-			return [(this.Rows())];
-		}
-		tags(){
-			return [
-				"number", 
-				"field", 
-				"label", 
-				"section"
-			];
-		}
-		aspects(){
-			return ["Widget/Control", "Type/Number"];
-		}
 		value_string(){
 			return "";
 		}
@@ -43735,8 +43696,28 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Number input control with various configuration";
+		}
+		value(next){
+			if(next !== undefined) return next;
+			return +NaN;
+		}
+		sub(){
+			return [(this.Rows())];
+		}
+		tags(){
+			return [
+				"number", 
+				"field", 
+				"label", 
+				"section"
+			];
+		}
+		aspects(){
+			return ["Widget/Control", "Type/Number"];
+		}
 	};
-	($mol_mem(($.$mol_number_demo.prototype), "value"));
 	($mol_mem(($.$mol_number_demo.prototype), "Value_string"));
 	($mol_mem(($.$mol_number_demo.prototype), "reset_value"));
 	($mol_mem(($.$mol_number_demo.prototype), "Reset"));
@@ -43810,6 +43791,7 @@ var $;
 	($mol_mem(($.$mol_number_demo.prototype), "Section_range_row"));
 	($mol_mem(($.$mol_number_demo.prototype), "Section_range"));
 	($mol_mem(($.$mol_number_demo.prototype), "Rows"));
+	($mol_mem(($.$mol_number_demo.prototype), "value"));
 
 
 ;
@@ -43844,27 +43826,6 @@ var $;
 
 ;
 	($.$mol_page_demo) = class $mol_page_demo extends ($.$mol_example_large) {
-		title(){
-			return "Page with header, body and footer";
-		}
-		sub(){
-			return [(this.Page())];
-		}
-		tags(){
-			return [
-				"container", 
-				"header", 
-				"footer", 
-				"toolbar", 
-				"app", 
-				"bar", 
-				"bottom", 
-				"navigator"
-			];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		Button_tools(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.title) = () => ("Toolbar Button");
@@ -43886,6 +43847,27 @@ var $;
 			(obj.foot) = () => ([(this.Button_foot())]);
 			return obj;
 		}
+		title(){
+			return "Page with header, body and footer";
+		}
+		sub(){
+			return [(this.Page())];
+		}
+		tags(){
+			return [
+				"container", 
+				"header", 
+				"footer", 
+				"toolbar", 
+				"app", 
+				"bar", 
+				"bottom", 
+				"navigator"
+			];
+		}
+		aspects(){
+			return ["Widget/Layout"];
+		}
 	};
 	($mol_mem(($.$mol_page_demo.prototype), "Button_tools"));
 	($mol_mem(($.$mol_page_demo.prototype), "Text"));
@@ -43898,6 +43880,15 @@ var $;
 
 ;
 	($.$mol_paginator_demo) = class $mol_paginator_demo extends ($.$mol_example_small) {
+		page(next){
+			if(next !== undefined) return next;
+			return 0;
+		}
+		Pages(){
+			const obj = new this.$.$mol_paginator();
+			(obj.value) = (next) => ((this.page(next)));
+			return obj;
+		}
 		title(){
 			return "Page switcher";
 		}
@@ -43910,15 +43901,6 @@ var $;
 		aspects(){
 			return ["Widget/Control", "Type/Number/Integer"];
 		}
-		page(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		Pages(){
-			const obj = new this.$.$mol_paginator();
-			(obj.value) = (next) => ((this.page(next)));
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_paginator_demo.prototype), "page"));
 	($mol_mem(($.$mol_paginator_demo.prototype), "Pages"));
@@ -43929,34 +43911,6 @@ var $;
 
 ;
 	($.$mol_plot_demo) = class $mol_plot_demo extends ($.$mol_example_large) {
-		title(){
-			return "Dynamic lightweight graphs";
-		}
-		count(next){
-			if(next !== undefined) return next;
-			return 20;
-		}
-		frequency(){
-			return 8;
-		}
-		sub(){
-			return [(this.Plot())];
-		}
-		tags(){
-			return [
-				"visualization", 
-				"chart", 
-				"graph", 
-				"dashboard"
-			];
-		}
-		aspects(){
-			return [
-				"Widget/Draw/Chart/Line", 
-				"Widget/Draw/Chart/Fill", 
-				"Widget/Draw/Chart/Dot"
-			];
-		}
 		saturation_series(){
 			return [];
 		}
@@ -44027,8 +43981,35 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Dynamic lightweight graphs";
+		}
+		count(next){
+			if(next !== undefined) return next;
+			return 20;
+		}
+		frequency(){
+			return 8;
+		}
+		sub(){
+			return [(this.Plot())];
+		}
+		tags(){
+			return [
+				"visualization", 
+				"chart", 
+				"graph", 
+				"dashboard"
+			];
+		}
+		aspects(){
+			return [
+				"Widget/Draw/Chart/Line", 
+				"Widget/Draw/Chart/Fill", 
+				"Widget/Draw/Chart/Dot"
+			];
+		}
 	};
-	($mol_mem(($.$mol_plot_demo.prototype), "count"));
 	($mol_mem(($.$mol_plot_demo.prototype), "Saturation_fill"));
 	($mol_mem(($.$mol_plot_demo.prototype), "Saturation_line"));
 	($mol_mem(($.$mol_plot_demo.prototype), "Saturation"));
@@ -44039,6 +44020,7 @@ var $;
 	($mol_mem(($.$mol_plot_demo.prototype), "Voltage"));
 	($mol_mem(($.$mol_plot_demo.prototype), "Time"));
 	($mol_mem(($.$mol_plot_demo.prototype), "Plot"));
+	($mol_mem(($.$mol_plot_demo.prototype), "count"));
 
 
 ;
@@ -44099,6 +44081,24 @@ var $;
 
 ;
 	($.$mol_plot_map_heat) = class $mol_plot_map_heat extends ($.$mol_plot_group) {
+		level_graphs(){
+			return [];
+		}
+		level_hint(id){
+			return "";
+		}
+		level_points(id){
+			return [];
+		}
+		level_opacity(id){
+			return "1";
+		}
+		level_diameter(){
+			return 10;
+		}
+		level_aspect(){
+			return 1;
+		}
 		series_z(){
 			return [];
 		}
@@ -44119,33 +44119,15 @@ var $;
 			(obj.color) = () => ((this.color()));
 			return obj;
 		}
-		level_graphs(){
-			return [];
-		}
-		level_hint(id){
-			return "";
-		}
-		level_points(id){
-			return [];
-		}
-		level_opacity(id){
-			return "1";
-		}
-		level_diameter(){
-			return 10;
-		}
-		level_aspect(){
-			return 1;
-		}
 	};
 	($mol_mem_key(($.$mol_plot_map_heat.prototype), "Level"));
 	($mol_mem(($.$mol_plot_map_heat.prototype), "Sample"));
 	($.$mol_plot_map_heat_level) = class $mol_plot_map_heat_level extends ($.$mol_plot_dot) {
-		style(){
-			return {...(super.style()), "opacity": (this.opacity())};
-		}
 		opacity(){
 			return "1";
+		}
+		style(){
+			return {...(super.style()), "opacity": (this.opacity())};
 		}
 	};
 
@@ -44225,6 +44207,31 @@ var $;
 
 ;
 	($.$mol_plot_map_heat_demo) = class $mol_plot_map_heat_demo extends ($.$mol_example_large) {
+		zoom(next){
+			return (this.Plot().scale_y(next));
+		}
+		terrain_x(){
+			return [];
+		}
+		terrain_y(){
+			return [];
+		}
+		terrain_z(){
+			return [];
+		}
+		Terrain(){
+			const obj = new this.$.$mol_plot_map_heat();
+			(obj.series_x) = () => ((this.terrain_x()));
+			(obj.series_y) = () => ((this.terrain_y()));
+			(obj.series_z) = () => ((this.terrain_z()));
+			return obj;
+		}
+		Plot(){
+			const obj = new this.$.$mol_plot_pane();
+			(obj.zoom) = (next) => ((this.zoom(next)));
+			(obj.graphs) = () => ([(this.Terrain())]);
+			return obj;
+		}
 		title(){
 			return "Dynamic Heat Map Graphs";
 		}
@@ -44251,31 +44258,6 @@ var $;
 		}
 		aspects(){
 			return ["Widget/Draw/Chart/Heat"];
-		}
-		zoom(next){
-			return (this.Plot().scale_y(next));
-		}
-		terrain_x(){
-			return [];
-		}
-		terrain_y(){
-			return [];
-		}
-		terrain_z(){
-			return [];
-		}
-		Terrain(){
-			const obj = new this.$.$mol_plot_map_heat();
-			(obj.series_x) = () => ((this.terrain_x()));
-			(obj.series_y) = () => ((this.terrain_y()));
-			(obj.series_z) = () => ((this.terrain_z()));
-			return obj;
-		}
-		Plot(){
-			const obj = new this.$.$mol_plot_pane();
-			(obj.zoom) = (next) => ((this.zoom(next)));
-			(obj.graphs) = () => ([(this.Terrain())]);
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_plot_map_heat_demo.prototype), "Terrain"));
@@ -44335,24 +44317,6 @@ var $;
 
 ;
 	($.$mol_pop_demo) = class $mol_pop_demo extends ($.$mol_example) {
-		title(){
-			return "Pop up block with various alignment";
-		}
-		sub(){
-			return [(this.Manage()), (this.Pop_area())];
-		}
-		tags(){
-			return [
-				"popup", 
-				"menu", 
-				"align", 
-				"container", 
-				"modal"
-			];
-		}
-		aspects(){
-			return ["Widget/Float"];
-		}
 		show_title(){
 			return "Showed";
 		}
@@ -44450,6 +44414,24 @@ var $;
 			(obj.sub) = () => ([(this.Pop())]);
 			return obj;
 		}
+		title(){
+			return "Pop up block with various alignment";
+		}
+		sub(){
+			return [(this.Manage()), (this.Pop_area())];
+		}
+		tags(){
+			return [
+				"popup", 
+				"menu", 
+				"align", 
+				"container", 
+				"modal"
+			];
+		}
+		aspects(){
+			return ["Widget/Float"];
+		}
 	};
 	($mol_mem(($.$mol_pop_demo.prototype), "pop_showed"));
 	($mol_mem(($.$mol_pop_demo.prototype), "Show_check"));
@@ -44495,6 +44477,18 @@ var $;
 
 ;
 	($.$mol_pop_over) = class $mol_pop_over extends ($.$mol_pop) {
+		hovered(next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		event_show(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		event_hide(next){
+			if(next !== undefined) return next;
+			return null;
+		}
 		showed(){
 			return (this.hovered());
 		}
@@ -44507,18 +44501,6 @@ var $;
 				"mouseenter": (next) => (this.event_show(next)), 
 				"mouseleave": (next) => (this.event_hide(next))
 			};
-		}
-		hovered(next){
-			if(next !== undefined) return next;
-			return false;
-		}
-		event_show(next){
-			if(next !== undefined) return next;
-			return null;
-		}
-		event_hide(next){
-			if(next !== undefined) return next;
-			return null;
 		}
 	};
 	($mol_mem(($.$mol_pop_over.prototype), "hovered"));
@@ -44559,24 +44541,6 @@ var $;
 
 ;
 	($.$mol_pop_over_demo) = class $mol_pop_over_demo extends ($.$mol_example_small) {
-		title(){
-			return "Menu that opens on mouse over";
-		}
-		sub(){
-			return [(this.Menu())];
-		}
-		tags(){
-			return [
-				"popover", 
-				"pop", 
-				"menu", 
-				"hover", 
-				"tooltip"
-			];
-		}
-		aspects(){
-			return ["Widget/Float"];
-		}
 		file_title(){
 			return "File";
 		}
@@ -44656,6 +44620,24 @@ var $;
 			(obj.sub) = () => ([(this.File()), (this.Help())]);
 			return obj;
 		}
+		title(){
+			return "Menu that opens on mouse over";
+		}
+		sub(){
+			return [(this.Menu())];
+		}
+		tags(){
+			return [
+				"popover", 
+				"pop", 
+				"menu", 
+				"hover", 
+				"tooltip"
+			];
+		}
+		aspects(){
+			return ["Widget/Float"];
+		}
 	};
 	($mol_mem(($.$mol_pop_over_demo.prototype), "Open"));
 	($mol_mem(($.$mol_pop_over_demo.prototype), "Export"));
@@ -44681,22 +44663,6 @@ var $;
 
 ;
 	($.$mol_portion_demo) = class $mol_portion_demo extends ($.$mol_example_small) {
-		title(){
-			return "Progress bar in various states";
-		}
-		sub(){
-			return [
-				(this.Empty()), 
-				(this.Partial()), 
-				(this.Full())
-			];
-		}
-		tags(){
-			return ["progress", "slider"];
-		}
-		aspects(){
-			return ["Widget/Draw/Chart/Bar"];
-		}
 		fist(){
 			return 0;
 		}
@@ -44721,6 +44687,22 @@ var $;
 			(obj.portion) = () => ((this.third()));
 			return obj;
 		}
+		title(){
+			return "Progress bar in various states";
+		}
+		sub(){
+			return [
+				(this.Empty()), 
+				(this.Partial()), 
+				(this.Full())
+			];
+		}
+		tags(){
+			return ["progress", "slider"];
+		}
+		aspects(){
+			return ["Widget/Draw/Chart/Bar"];
+		}
 	};
 	($mol_mem(($.$mol_portion_demo.prototype), "Empty"));
 	($mol_mem(($.$mol_portion_demo.prototype), "Partial"));
@@ -44743,27 +44725,6 @@ var $;
 
 ;
 	($.$mol_pick_demo) = class $mol_pick_demo extends ($.$mol_example_small) {
-		title(){
-			return "Simple and complex popups";
-		}
-		sub(){
-			return [(this.Info_pop()), (this.Options_pop())];
-		}
-		tags(){
-			return [
-				"pick", 
-				"popup", 
-				"info", 
-				"menu", 
-				"icon", 
-				"container", 
-				"confirm", 
-				"modal"
-			];
-		}
-		aspects(){
-			return ["Widget/Float", "Widget/Control/Button/Picker"];
-		}
 		info_content_text(){
 			return "## Info Pop-up\n**Markdown text content**";
 		}
@@ -44839,6 +44800,27 @@ var $;
 			(obj.bubble_content) = () => ([(this.Options_content())]);
 			return obj;
 		}
+		title(){
+			return "Simple and complex popups";
+		}
+		sub(){
+			return [(this.Info_pop()), (this.Options_pop())];
+		}
+		tags(){
+			return [
+				"pick", 
+				"popup", 
+				"info", 
+				"menu", 
+				"icon", 
+				"container", 
+				"confirm", 
+				"modal"
+			];
+		}
+		aspects(){
+			return ["Widget/Float", "Widget/Control/Button/Picker"];
+		}
 	};
 	($mol_mem(($.$mol_pick_demo.prototype), "Info_content"));
 	($mol_mem(($.$mol_pick_demo.prototype), "Info_pop"));
@@ -44896,21 +44878,6 @@ var $;
 
 ;
 	($.$mol_pick_time) = class $mol_pick_time extends ($.$mol_pick) {
-		Icon(){
-			const obj = new this.$.$mol_icon_clock_outline();
-			return obj;
-		}
-		trigger_enabled(){
-			return (this.enabled());
-		}
-		bubble_content(){
-			return [(this.Input()), (this.Pickers())];
-		}
-		value_moment(next){
-			if(next !== undefined) return next;
-			const obj = new this.$.$mol_time_moment();
-			return obj;
-		}
 		enabled(){
 			return true;
 		}
@@ -44966,9 +44933,22 @@ var $;
 			]);
 			return obj;
 		}
+		Icon(){
+			const obj = new this.$.$mol_icon_clock_outline();
+			return obj;
+		}
+		trigger_enabled(){
+			return (this.enabled());
+		}
+		bubble_content(){
+			return [(this.Input()), (this.Pickers())];
+		}
+		value_moment(next){
+			if(next !== undefined) return next;
+			const obj = new this.$.$mol_time_moment();
+			return obj;
+		}
 	};
-	($mol_mem(($.$mol_pick_time.prototype), "Icon"));
-	($mol_mem(($.$mol_pick_time.prototype), "value_moment"));
 	($mol_mem(($.$mol_pick_time.prototype), "value"));
 	($mol_mem(($.$mol_pick_time.prototype), "Input"));
 	($mol_mem(($.$mol_pick_time.prototype), "hour_selected"));
@@ -44977,6 +44957,8 @@ var $;
 	($mol_mem(($.$mol_pick_time.prototype), "minute_selected"));
 	($mol_mem(($.$mol_pick_time.prototype), "Minutes"));
 	($mol_mem(($.$mol_pick_time.prototype), "Pickers"));
+	($mol_mem(($.$mol_pick_time.prototype), "Icon"));
+	($mol_mem(($.$mol_pick_time.prototype), "value_moment"));
 
 
 ;
@@ -45086,6 +45068,16 @@ var $;
 
 ;
 	($.$mol_pick_time_demo) = class $mol_pick_time_demo extends ($.$mol_example_small) {
+		moment(next){
+			if(next !== undefined) return next;
+			const obj = new this.$.$mol_time_moment("T01:23");
+			return obj;
+		}
+		Picker(){
+			const obj = new this.$.$mol_pick_time();
+			(obj.value_moment) = (next) => ((this.moment(next)));
+			return obj;
+		}
 		sub(){
 			return [(this.Picker())];
 		}
@@ -45100,16 +45092,6 @@ var $;
 		aspects(){
 			return ["Widget/Control/Button/Picker", "Type/Time"];
 		}
-		moment(next){
-			if(next !== undefined) return next;
-			const obj = new this.$.$mol_time_moment("T01:23");
-			return obj;
-		}
-		Picker(){
-			const obj = new this.$.$mol_pick_time();
-			(obj.value_moment) = (next) => ((this.moment(next)));
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_pick_time_demo.prototype), "moment"));
 	($mol_mem(($.$mol_pick_time_demo.prototype), "Picker"));
@@ -45120,22 +45102,6 @@ var $;
 
 ;
 	($.$mol_row_demo_form) = class $mol_row_demo_form extends ($.$mol_example) {
-		title(){
-			return "Some controls in one row with equal paddings and wrapping support";
-		}
-		sub(){
-			return [(this.Row())];
-		}
-		tags(){
-			return [
-				"row", 
-				"container", 
-				"flex"
-			];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		name_hint(){
 			return "Jack Sparrow";
 		}
@@ -45209,6 +45175,22 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Some controls in one row with equal paddings and wrapping support";
+		}
+		sub(){
+			return [(this.Row())];
+		}
+		tags(){
+			return [
+				"row", 
+				"container", 
+				"flex"
+			];
+		}
+		aspects(){
+			return ["Widget/Layout"];
+		}
 	};
 	($mol_mem(($.$mol_row_demo_form.prototype), "name"));
 	($mol_mem(($.$mol_row_demo_form.prototype), "Name"));
@@ -45226,6 +45208,17 @@ var $;
 
 ;
 	($.$mol_row_demo_products) = class $mol_row_demo_products extends ($.$mol_example) {
+		product_title(id){
+			return "";
+		}
+		products(){
+			return [];
+		}
+		Products(){
+			const obj = new this.$.$mol_row();
+			(obj.sub) = () => ((this.products()));
+			return obj;
+		}
 		title(){
 			return "Product catalog";
 		}
@@ -45252,20 +45245,9 @@ var $;
 		aspects(){
 			return ["Widget/Layout"];
 		}
-		product_title(id){
-			return "";
-		}
-		products(){
-			return [];
-		}
-		Products(){
-			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ((this.products()));
-			return obj;
-		}
 	};
-	($mol_mem_key(($.$mol_row_demo_products.prototype), "Product"));
 	($mol_mem(($.$mol_row_demo_products.prototype), "Products"));
+	($mol_mem_key(($.$mol_row_demo_products.prototype), "Product"));
 
 
 ;
@@ -45301,18 +45283,6 @@ var $;
 
 ;
 	($.$mol_scroll_demo) = class $mol_scroll_demo extends ($.$mol_example_large) {
-		title(){
-			return "Simple scroll pane";
-		}
-		sub(){
-			return [(this.Scroll())];
-		}
-		tags(){
-			return ["scroll", "container"];
-		}
-		aspects(){
-			return ["Widget/Scroll"];
-		}
 		Filler0(){
 			const obj = new this.$.$mol_filler();
 			return obj;
@@ -45374,6 +45344,18 @@ var $;
 			(obj.sub) = () => ([(this.Content())]);
 			return obj;
 		}
+		title(){
+			return "Simple scroll pane";
+		}
+		sub(){
+			return [(this.Scroll())];
+		}
+		tags(){
+			return ["scroll", "container"];
+		}
+		aspects(){
+			return ["Widget/Scroll"];
+		}
 	};
 	($mol_mem(($.$mol_scroll_demo.prototype), "Filler0"));
 	($mol_mem(($.$mol_scroll_demo.prototype), "Filler1"));
@@ -45394,6 +45376,17 @@ var $;
 
 ;
 	($.$mol_search_demo) = class $mol_search_demo extends ($.$mol_example_small) {
+		query(){
+			return (this.Search().query());
+		}
+		suggests(){
+			return [];
+		}
+		Search(){
+			const obj = new this.$.$mol_search();
+			(obj.suggests) = () => ((this.suggests()));
+			return obj;
+		}
 		title(){
 			return "Search field with suggest ";
 		}
@@ -45412,17 +45405,6 @@ var $;
 		}
 		aspects(){
 			return ["Widget/Control", "Type/String"];
-		}
-		query(){
-			return (this.Search().query());
-		}
-		suggests(){
-			return [];
-		}
-		Search(){
-			const obj = new this.$.$mol_search();
-			(obj.suggests) = () => ((this.suggests()));
-			return obj;
 		}
 	};
 	($mol_mem(($.$mol_search_demo.prototype), "Search"));
@@ -45456,6 +45438,16 @@ var $;
 
 ;
 	($.$mol_section_demo) = class $mol_section_demo extends ($.$mol_example_small) {
+		Section_content(){
+			const obj = new this.$.$mol_filler();
+			return obj;
+		}
+		Section(){
+			const obj = new this.$.$mol_section();
+			(obj.title) = () => ("Section header");
+			(obj.content) = () => ([(this.Section_content())]);
+			return obj;
+		}
 		title(){
 			return "Section with header";
 		}
@@ -45468,16 +45460,6 @@ var $;
 		aspects(){
 			return ["Widget/Layout"];
 		}
-		Section_content(){
-			const obj = new this.$.$mol_filler();
-			return obj;
-		}
-		Section(){
-			const obj = new this.$.$mol_section();
-			(obj.title) = () => ("Section header");
-			(obj.content) = () => ([(this.Section_content())]);
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_section_demo.prototype), "Section_content"));
 	($mol_mem(($.$mol_section_demo.prototype), "Section"));
@@ -45488,6 +45470,41 @@ var $;
 
 ;
 	($.$mol_section_demo_level) = class $mol_section_demo_level extends ($.$mol_example_small) {
+		Section1_text(){
+			const obj = new this.$.$mol_filler();
+			(obj.min_symbols) = () => (250);
+			return obj;
+		}
+		Section2_text(){
+			const obj = new this.$.$mol_filler();
+			(obj.min_symbols) = () => (250);
+			return obj;
+		}
+		Section3_text(){
+			const obj = new this.$.$mol_filler();
+			(obj.min_symbols) = () => (250);
+			return obj;
+		}
+		Section4_text(){
+			const obj = new this.$.$mol_filler();
+			(obj.min_symbols) = () => (250);
+			return obj;
+		}
+		Section5_text(){
+			const obj = new this.$.$mol_filler();
+			(obj.min_symbols) = () => (250);
+			return obj;
+		}
+		Section6_text(){
+			const obj = new this.$.$mol_filler();
+			(obj.min_symbols) = () => (250);
+			return obj;
+		}
+		Section7_text(){
+			const obj = new this.$.$mol_filler();
+			(obj.min_symbols) = () => (250);
+			return obj;
+		}
 		title(){
 			return "Section with header";
 		}
@@ -45553,49 +45570,7 @@ var $;
 		aspects(){
 			return ["Widget/Layout"];
 		}
-		Section1_text(){
-			const obj = new this.$.$mol_filler();
-			(obj.min_symbols) = () => (250);
-			return obj;
-		}
-		Section2_text(){
-			const obj = new this.$.$mol_filler();
-			(obj.min_symbols) = () => (250);
-			return obj;
-		}
-		Section3_text(){
-			const obj = new this.$.$mol_filler();
-			(obj.min_symbols) = () => (250);
-			return obj;
-		}
-		Section4_text(){
-			const obj = new this.$.$mol_filler();
-			(obj.min_symbols) = () => (250);
-			return obj;
-		}
-		Section5_text(){
-			const obj = new this.$.$mol_filler();
-			(obj.min_symbols) = () => (250);
-			return obj;
-		}
-		Section6_text(){
-			const obj = new this.$.$mol_filler();
-			(obj.min_symbols) = () => (250);
-			return obj;
-		}
-		Section7_text(){
-			const obj = new this.$.$mol_filler();
-			(obj.min_symbols) = () => (250);
-			return obj;
-		}
 	};
-	($mol_mem(($.$mol_section_demo_level.prototype), "Section1"));
-	($mol_mem(($.$mol_section_demo_level.prototype), "Section2"));
-	($mol_mem(($.$mol_section_demo_level.prototype), "Section3"));
-	($mol_mem(($.$mol_section_demo_level.prototype), "Section4"));
-	($mol_mem(($.$mol_section_demo_level.prototype), "Section5"));
-	($mol_mem(($.$mol_section_demo_level.prototype), "Section6"));
-	($mol_mem(($.$mol_section_demo_level.prototype), "Section7"));
 	($mol_mem(($.$mol_section_demo_level.prototype), "Section1_text"));
 	($mol_mem(($.$mol_section_demo_level.prototype), "Section2_text"));
 	($mol_mem(($.$mol_section_demo_level.prototype), "Section3_text"));
@@ -45603,6 +45578,13 @@ var $;
 	($mol_mem(($.$mol_section_demo_level.prototype), "Section5_text"));
 	($mol_mem(($.$mol_section_demo_level.prototype), "Section6_text"));
 	($mol_mem(($.$mol_section_demo_level.prototype), "Section7_text"));
+	($mol_mem(($.$mol_section_demo_level.prototype), "Section1"));
+	($mol_mem(($.$mol_section_demo_level.prototype), "Section2"));
+	($mol_mem(($.$mol_section_demo_level.prototype), "Section3"));
+	($mol_mem(($.$mol_section_demo_level.prototype), "Section4"));
+	($mol_mem(($.$mol_section_demo_level.prototype), "Section5"));
+	($mol_mem(($.$mol_section_demo_level.prototype), "Section6"));
+	($mol_mem(($.$mol_section_demo_level.prototype), "Section7"));
 
 
 ;
@@ -45610,23 +45592,6 @@ var $;
 
 ;
 	($.$mol_select_demo_colors) = class $mol_select_demo_colors extends ($.$mol_example_small) {
-		title(){
-			return "Color picker with filter and custom rows";
-		}
-		sub(){
-			return [(this.Color())];
-		}
-		tags(){
-			return [
-				"select", 
-				"color", 
-				"picker", 
-				"filter"
-			];
-		}
-		aspects(){
-			return ["Widget/Control"];
-		}
 		color_filter(){
 			return (this.Color().filter_pattern());
 		}
@@ -45671,6 +45636,23 @@ var $;
 			(obj.option_content) = (id) => ((this.option_content(id)));
 			return obj;
 		}
+		title(){
+			return "Color picker with filter and custom rows";
+		}
+		sub(){
+			return [(this.Color())];
+		}
+		tags(){
+			return [
+				"select", 
+				"color", 
+				"picker", 
+				"filter"
+			];
+		}
+		aspects(){
+			return ["Widget/Control"];
+		}
 	};
 	($mol_mem(($.$mol_select_demo_colors.prototype), "color"));
 	($mol_mem_key(($.$mol_select_demo_colors.prototype), "Color_preview"));
@@ -45678,11 +45660,11 @@ var $;
 	($mol_mem_key(($.$mol_select_demo_colors.prototype), "Color_option"));
 	($mol_mem(($.$mol_select_demo_colors.prototype), "Color"));
 	($.$mol_select_colors_color_preview) = class $mol_select_colors_color_preview extends ($.$mol_view) {
-		style(){
-			return {...(super.style()), "background": (this.color())};
-		}
 		color(){
 			return "";
+		}
+		style(){
+			return {...(super.style()), "background": (this.color())};
 		}
 	};
 
@@ -45720,18 +45702,6 @@ var $;
 
 ;
 	($.$mol_select_demo_month) = class $mol_select_demo_month extends ($.$mol_example_small) {
-		title(){
-			return "Month picker with filter";
-		}
-		sub(){
-			return [(this.Month())];
-		}
-		tags(){
-			return ["select", "month"];
-		}
-		aspects(){
-			return ["Widget/Control"];
-		}
 		month(next){
 			if(next !== undefined) return next;
 			return "jan";
@@ -45759,6 +45729,18 @@ var $;
 			(obj.dictionary) = () => ((this.months()));
 			return obj;
 		}
+		title(){
+			return "Month picker with filter";
+		}
+		sub(){
+			return [(this.Month())];
+		}
+		tags(){
+			return ["select", "month"];
+		}
+		aspects(){
+			return ["Widget/Control"];
+		}
 	};
 	($mol_mem(($.$mol_select_demo_month.prototype), "month"));
 	($mol_mem(($.$mol_select_demo_month.prototype), "Month"));
@@ -45769,18 +45751,6 @@ var $;
 
 ;
 	($.$mol_select_demo_priority) = class $mol_select_demo_priority extends ($.$mol_example_small) {
-		title(){
-			return "Priority picker";
-		}
-		sub(){
-			return [(this.Priority())];
-		}
-		tags(){
-			return ["select", "priority"];
-		}
-		aspects(){
-			return ["Widget/Control"];
-		}
 		priority(next){
 			if(next !== undefined) return next;
 			return "Lowest";
@@ -45798,6 +45768,18 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Priority picker";
+		}
+		sub(){
+			return [(this.Priority())];
+		}
+		tags(){
+			return ["select", "priority"];
+		}
+		aspects(){
+			return ["Widget/Control"];
+		}
 	};
 	($mol_mem(($.$mol_select_demo_priority.prototype), "priority"));
 	($mol_mem(($.$mol_select_demo_priority.prototype), "Priority"));
@@ -45808,22 +45790,6 @@ var $;
 
 ;
 	($.$mol_select_list_demo) = class $mol_select_list_demo extends ($.$mol_example_small) {
-		title(){
-			return "Friends picker";
-		}
-		sub(){
-			return [(this.Demo_items())];
-		}
-		tags(){
-			return [
-				"select", 
-				"tags", 
-				"multiselect"
-			];
-		}
-		aspects(){
-			return ["Widget/Control", "Type/List"];
-		}
 		friends(next){
 			if(next !== undefined) return next;
 			return [];
@@ -45883,6 +45849,22 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Friends picker";
+		}
+		sub(){
+			return [(this.Demo_items())];
+		}
+		tags(){
+			return [
+				"select", 
+				"tags", 
+				"multiselect"
+			];
+		}
+		aspects(){
+			return ["Widget/Control", "Type/List"];
+		}
 	};
 	($mol_mem(($.$mol_select_list_demo.prototype), "friends"));
 	($mol_mem(($.$mol_select_list_demo.prototype), "Friends"));
@@ -45922,24 +45904,6 @@ var $;
 
 ;
 	($.$mol_speck_demo) = class $mol_speck_demo extends ($.$mol_example_small) {
-		sub(){
-			return [
-				(this.Link()), 
-				(this.String()), 
-				(this.Button()), 
-				(this.Message())
-			];
-		}
-		tags(){
-			return [
-				"speck", 
-				"highlight", 
-				"badge"
-			];
-		}
-		aspects(){
-			return ["Widget"];
-		}
 		Link_speck(){
 			const obj = new this.$.$mol_speck();
 			(obj.value) = () => ("β");
@@ -45999,6 +45963,24 @@ var $;
 			const obj = new this.$.$mol_paragraph();
 			(obj.sub) = () => ([(this.Message_speck()), (this.message_text())]);
 			return obj;
+		}
+		sub(){
+			return [
+				(this.Link()), 
+				(this.String()), 
+				(this.Button()), 
+				(this.Message())
+			];
+		}
+		tags(){
+			return [
+				"speck", 
+				"highlight", 
+				"badge"
+			];
+		}
+		aspects(){
+			return ["Widget"];
 		}
 	};
 	($mol_mem(($.$mol_speck_demo.prototype), "Link_speck"));
@@ -46241,24 +46223,6 @@ var $;
 
 ;
 	($.$mol_speech_demo) = class $mol_speech_demo extends ($.$mol_example_small) {
-		sub(){
-			return [
-				(this.Toggle()), 
-				(this.Message()), 
-				(this.Speak())
-			];
-		}
-		tags(){
-			return [
-				"speech", 
-				"voice", 
-				"recognition", 
-				"dictation"
-			];
-		}
-		aspects(){
-			return ["Widget/Plugin", "Media/Audio"];
-		}
 		Toggle_icon(){
 			const obj = new this.$.$mol_icon_microphone();
 			return obj;
@@ -46290,6 +46254,24 @@ var $;
 			(obj.click) = (next) => ((this.speak(next)));
 			(obj.sub) = () => (["Speak"]);
 			return obj;
+		}
+		sub(){
+			return [
+				(this.Toggle()), 
+				(this.Message()), 
+				(this.Speak())
+			];
+		}
+		tags(){
+			return [
+				"speech", 
+				"voice", 
+				"recognition", 
+				"dictation"
+			];
+		}
+		aspects(){
+			return ["Widget/Plugin", "Media/Audio"];
 		}
 	};
 	($mol_mem(($.$mol_speech_demo.prototype), "Toggle_icon"));
@@ -46424,19 +46406,6 @@ var $;
 
 ;
 	($.$mol_spell_demo) = class $mol_spell_demo extends ($.$mol_example_small) {
-		sub(){
-			return [(this.List())];
-		}
-		tags(){
-			return [
-				"$mol_spell_check", 
-				"$mol_textarea", 
-				"spellcheck"
-			];
-		}
-		aspects(){
-			return ["Algorithm/Validate"];
-		}
 		article(next){
 			if(next !== undefined) return next;
 			return "Я весьма сегдян недоперепила, вттак.";
@@ -46458,6 +46427,19 @@ var $;
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([(this.Article()), (this.Report())]);
 			return obj;
+		}
+		sub(){
+			return [(this.List())];
+		}
+		tags(){
+			return [
+				"$mol_spell_check", 
+				"$mol_textarea", 
+				"spellcheck"
+			];
+		}
+		aspects(){
+			return ["Algorithm/Validate"];
 		}
 	};
 	($mol_mem(($.$mol_spell_demo.prototype), "article"));
@@ -46528,12 +46510,6 @@ var $;
 
 ;
 	($.$mol_stack_demo) = class $mol_stack_demo extends ($.$mol_example_small) {
-		sub(){
-			return [(this.Collage())];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		Back(){
 			const obj = new this.$.$mol_image();
 			(obj.uri) = () => ("https://cataas.com/cat");
@@ -46548,6 +46524,12 @@ var $;
 			const obj = new this.$.$mol_stack();
 			(obj.sub) = () => ([(this.Back()), (this.Front())]);
 			return obj;
+		}
+		sub(){
+			return [(this.Collage())];
+		}
+		aspects(){
+			return ["Widget/Layout"];
 		}
 	};
 	($mol_mem(($.$mol_stack_demo.prototype), "Back"));
@@ -46567,29 +46549,6 @@ var $;
 
 ;
 	($.$mol_string_demo) = class $mol_string_demo extends ($.$mol_example_small) {
-		title(){
-			return "String input field in various states";
-		}
-		sub(){
-			return [
-				(this.Simple()), 
-				(this.Hint()), 
-				(this.Broken()), 
-				(this.Filled()), 
-				(this.Disabled()), 
-				(this.Button())
-			];
-		}
-		tags(){
-			return [
-				"input", 
-				"text", 
-				"field"
-			];
-		}
-		aspects(){
-			return ["Widget/Control", "Type/String"];
-		}
 		name(next){
 			if(next !== undefined) return next;
 			return "";
@@ -46635,6 +46594,29 @@ var $;
 			(obj.value) = (next) => ((this.name2(next)));
 			return obj;
 		}
+		title(){
+			return "String input field in various states";
+		}
+		sub(){
+			return [
+				(this.Simple()), 
+				(this.Hint()), 
+				(this.Broken()), 
+				(this.Filled()), 
+				(this.Disabled()), 
+				(this.Button())
+			];
+		}
+		tags(){
+			return [
+				"input", 
+				"text", 
+				"field"
+			];
+		}
+		aspects(){
+			return ["Widget/Control", "Type/String"];
+		}
 	};
 	($mol_mem(($.$mol_string_demo.prototype), "name"));
 	($mol_mem(($.$mol_string_demo.prototype), "Simple"));
@@ -46667,22 +46649,6 @@ var $;
 
 ;
 	($.$mol_switch_demo) = class $mol_switch_demo extends ($.$mol_example) {
-		title(){
-			return "Color switchers in various state";
-		}
-		sub(){
-			return [(this.Demo_items())];
-		}
-		tags(){
-			return [
-				"option", 
-				"group", 
-				"radio"
-			];
-		}
-		aspects(){
-			return ["Widget/Control"];
-		}
 		color(next){
 			if(next !== undefined) return next;
 			return "red";
@@ -46738,6 +46704,22 @@ var $;
 			(obj.sub) = () => ([(this.Enabled_labeler()), (this.Disabled_labeler())]);
 			return obj;
 		}
+		title(){
+			return "Color switchers in various state";
+		}
+		sub(){
+			return [(this.Demo_items())];
+		}
+		tags(){
+			return [
+				"option", 
+				"group", 
+				"radio"
+			];
+		}
+		aspects(){
+			return ["Widget/Control"];
+		}
 	};
 	($mol_mem(($.$mol_switch_demo.prototype), "color"));
 	($mol_mem(($.$mol_switch_demo.prototype), "Enabled"));
@@ -46752,18 +46734,6 @@ var $;
 
 ;
 	($.$mol_tag_tree_demo) = class $mol_tag_tree_demo extends ($.$mol_example) {
-		title(){
-			return "Autoatic tag tree";
-		}
-		sub(){
-			return [(this.Tree())];
-		}
-		tags(){
-			return ["taxonomy", "menu"];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		item_title(id){
 			return "";
 		}
@@ -46855,6 +46825,18 @@ var $;
 			});
 			return obj;
 		}
+		title(){
+			return "Autoatic tag tree";
+		}
+		sub(){
+			return [(this.Tree())];
+		}
+		tags(){
+			return ["taxonomy", "menu"];
+		}
+		aspects(){
+			return ["Widget/Layout"];
+		}
 	};
 	($mol_mem_key(($.$mol_tag_tree_demo.prototype), "Item"));
 	($mol_mem(($.$mol_tag_tree_demo.prototype), "Tree"));
@@ -46880,22 +46862,6 @@ var $;
 
 ;
 	($.$mol_text_code_demo) = class $mol_text_code_demo extends ($.$mol_example_small) {
-		title(){
-			return "Markdow visualization example";
-		}
-		sub(){
-			return [(this.Text())];
-		}
-		tags(){
-			return [
-				"text", 
-				"code", 
-				"syntax highlighting"
-			];
-		}
-		aspects(){
-			return ["Widget/Text", "Type/String"];
-		}
 		source(){
 			return "";
 		}
@@ -46912,6 +46878,22 @@ var $;
 			(obj.syntax) = () => ((this.syntax()));
 			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
 			return obj;
+		}
+		title(){
+			return "Markdow visualization example";
+		}
+		sub(){
+			return [(this.Text())];
+		}
+		tags(){
+			return [
+				"text", 
+				"code", 
+				"syntax highlighting"
+			];
+		}
+		aspects(){
+			return ["Widget/Text", "Type/String"];
 		}
 	};
 	($mol_mem(($.$mol_text_code_demo.prototype), "Text"));
@@ -46952,18 +46934,6 @@ var $;
 
 ;
 	($.$mol_text_demo) = class $mol_text_demo extends ($.$mol_example_large) {
-		title(){
-			return "Markdown visualization example";
-		}
-		sub(){
-			return [(this.Book())];
-		}
-		tags(){
-			return ["markdown", "marked"];
-		}
-		aspects(){
-			return ["Widget/Text", "Type/String"];
-		}
 		search(next){
 			if(next !== undefined) return next;
 			return "";
@@ -47032,6 +47002,18 @@ var $;
 			(obj.pages) = () => ((this.pages()));
 			return obj;
 		}
+		title(){
+			return "Markdown visualization example";
+		}
+		sub(){
+			return [(this.Book())];
+		}
+		tags(){
+			return ["markdown", "marked"];
+		}
+		aspects(){
+			return ["Widget/Text", "Type/String"];
+		}
 	};
 	($mol_mem(($.$mol_text_demo.prototype), "search"));
 	($mol_mem(($.$mol_text_demo.prototype), "Search"));
@@ -47083,22 +47065,6 @@ var $;
 
 ;
 	($.$mol_textarea_demo) = class $mol_textarea_demo extends ($.$mol_example) {
-		title(){
-			return "Text input field in various states";
-		}
-		sub(){
-			return [(this.Content())];
-		}
-		tags(){
-			return [
-				"code", 
-				"syntax", 
-				"highlight"
-			];
-		}
-		aspects(){
-			return ["Widget/Control", "Type/String"];
-		}
 		filled_descr(next){
 			if(next !== undefined) return next;
 			return "function hello( name = 'World' ) {\n\treturn `Hello, ${ name }!`\n}";
@@ -47122,6 +47088,22 @@ var $;
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([(this.Filled_descr()), (this.Disabled())]);
 			return obj;
+		}
+		title(){
+			return "Text input field in various states";
+		}
+		sub(){
+			return [(this.Content())];
+		}
+		tags(){
+			return [
+				"code", 
+				"syntax", 
+				"highlight"
+			];
+		}
+		aspects(){
+			return ["Widget/Control", "Type/String"];
 		}
 	};
 	($mol_mem(($.$mol_textarea_demo.prototype), "filled_descr"));
@@ -47169,18 +47151,6 @@ var $;
 
 ;
 	($.$mol_theme_demo) = class $mol_theme_demo extends ($.$mol_example_large) {
-		style(){
-			return {"--mol_theme_hue": (this.hue_deg()), "--mol_theme_hue_spread": (this.hue_spread_deg())};
-		}
-		sub(){
-			return [(this.Config()), (this.Scroll())];
-		}
-		tags(){
-			return ["theme", "skin"];
-		}
-		aspects(){
-			return ["Type/Color"];
-		}
 		hue_deg(){
 			return "";
 		}
@@ -47260,6 +47230,18 @@ var $;
 			(obj.sub) = () => ([(this.Cases())]);
 			return obj;
 		}
+		style(){
+			return {"--mol_theme_hue": (this.hue_deg()), "--mol_theme_hue_spread": (this.hue_spread_deg())};
+		}
+		sub(){
+			return [(this.Config()), (this.Scroll())];
+		}
+		tags(){
+			return ["theme", "skin"];
+		}
+		aspects(){
+			return ["Type/Color"];
+		}
 	};
 	($mol_mem(($.$mol_theme_demo.prototype), "hue"));
 	($mol_mem(($.$mol_theme_demo.prototype), "Hue"));
@@ -47275,15 +47257,6 @@ var $;
 	($mol_mem(($.$mol_theme_demo.prototype), "Cases"));
 	($mol_mem(($.$mol_theme_demo.prototype), "Scroll"));
 	($.$mol_theme_demo_case) = class $mol_theme_demo_case extends ($.$mol_view) {
-		title(){
-			return (this.theme());
-		}
-		sub(){
-			return [(this.Self()), ...(this.inner())];
-		}
-		inner(){
-			return [];
-		}
 		theme(){
 			return "";
 		}
@@ -47373,6 +47346,15 @@ var $;
 				(this.Special())
 			]);
 			return obj;
+		}
+		title(){
+			return (this.theme());
+		}
+		sub(){
+			return [(this.Self()), ...(this.inner())];
+		}
+		inner(){
+			return [];
 		}
 	};
 	($mol_mem(($.$mol_theme_demo_case.prototype), "Card2_text"));
@@ -47567,12 +47549,6 @@ var $;
 
 ;
 	($.$mol_toolbar) = class $mol_toolbar extends ($.$mol_view) {
-		attr(){
-			return {...(super.attr()), "mol_toolbar_expanded": (this.expanded())};
-		}
-		sub(){
-			return [(this.Bar()), (this.Expand())];
-		}
 		items(){
 			return [];
 		}
@@ -47589,6 +47565,12 @@ var $;
 			const obj = new this.$.$mol_check_expand();
 			(obj.checked) = (next) => ((this.expanded(next)));
 			return obj;
+		}
+		attr(){
+			return {...(super.attr()), "mol_toolbar_expanded": (this.expanded())};
+		}
+		sub(){
+			return [(this.Bar()), (this.Expand())];
 		}
 	};
 	($mol_mem(($.$mol_toolbar.prototype), "Bar"));
@@ -47715,15 +47697,6 @@ var $;
 
 ;
 	($.$mol_toolbar_demo) = class $mol_toolbar_demo extends ($.$mol_example_small) {
-		title(){
-			return "Foldable toolbar demo";
-		}
-		sub(){
-			return [(this.Toolbar())];
-		}
-		aspects(){
-			return ["Widget/Layout"];
-		}
 		search_hint(){
 			return "Search...";
 		}
@@ -47806,6 +47779,15 @@ var $;
 			]);
 			return obj;
 		}
+		title(){
+			return "Foldable toolbar demo";
+		}
+		sub(){
+			return [(this.Toolbar())];
+		}
+		aspects(){
+			return ["Widget/Layout"];
+		}
 	};
 	($mol_mem(($.$mol_toolbar_demo.prototype), "Search"));
 	($mol_mem(($.$mol_toolbar_demo.prototype), "Replace"));
@@ -47839,47 +47821,6 @@ var $;
 
 ;
 	($.$mol_video_player) = class $mol_video_player extends ($.$mol_view) {
-		dom_name(){
-			return "video";
-		}
-		playing(next){
-			if(next !== undefined) return next;
-			return false;
-		}
-		volume(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		time(next){
-			if(next !== undefined) return next;
-			return 0;
-		}
-		duration(){
-			return 0;
-		}
-		attr(){
-			return {
-				"src": (this.uri()), 
-				"controls": (this.controls()), 
-				"autoplay": (this.autoplay()), 
-				"playsinline": (this.inline()), 
-				"loop": (this.loop()), 
-				"poster": (this.poster())
-			};
-		}
-		field(){
-			return {"srcObject": (this.stream())};
-		}
-		event(){
-			return {
-				"volumechange": (next) => (this.revolume(next)), 
-				"timeupdate": (next) => (this.retime(next)), 
-				"durationchange": (next) => (this.redurate(next)), 
-				"playing": (next) => (this.play_started(next)), 
-				"play": (next) => (this.play(next)), 
-				"pause": (next) => (this.pause(next))
-			};
-		}
 		uri(){
 			return "";
 		}
@@ -47925,16 +47866,57 @@ var $;
 			if(next !== undefined) return next;
 			return null;
 		}
+		dom_name(){
+			return "video";
+		}
+		playing(next){
+			if(next !== undefined) return next;
+			return false;
+		}
+		volume(next){
+			if(next !== undefined) return next;
+			return 0;
+		}
+		time(next){
+			if(next !== undefined) return next;
+			return 0;
+		}
+		duration(){
+			return 0;
+		}
+		attr(){
+			return {
+				"src": (this.uri()), 
+				"controls": (this.controls()), 
+				"autoplay": (this.autoplay()), 
+				"playsinline": (this.inline()), 
+				"loop": (this.loop()), 
+				"poster": (this.poster())
+			};
+		}
+		field(){
+			return {"srcObject": (this.stream())};
+		}
+		event(){
+			return {
+				"volumechange": (next) => (this.revolume(next)), 
+				"timeupdate": (next) => (this.retime(next)), 
+				"durationchange": (next) => (this.redurate(next)), 
+				"playing": (next) => (this.play_started(next)), 
+				"play": (next) => (this.play(next)), 
+				"pause": (next) => (this.pause(next))
+			};
+		}
 	};
-	($mol_mem(($.$mol_video_player.prototype), "playing"));
-	($mol_mem(($.$mol_video_player.prototype), "volume"));
-	($mol_mem(($.$mol_video_player.prototype), "time"));
 	($mol_mem(($.$mol_video_player.prototype), "revolume"));
 	($mol_mem(($.$mol_video_player.prototype), "retime"));
 	($mol_mem(($.$mol_video_player.prototype), "redurate"));
 	($mol_mem(($.$mol_video_player.prototype), "play_started"));
 	($mol_mem(($.$mol_video_player.prototype), "play"));
 	($mol_mem(($.$mol_video_player.prototype), "pause"));
+	($mol_mem(($.$mol_video_player.prototype), "playing"));
+	($mol_mem(($.$mol_video_player.prototype), "volume"));
+	($mol_mem(($.$mol_video_player.prototype), "time"));
 
 
 ;
@@ -48018,18 +48000,6 @@ var $;
 
 ;
 	($.$mol_video_player_demo) = class $mol_video_player_demo extends ($.$mol_example_large) {
-		title(){
-			return "Reactive video player";
-		}
-		sub(){
-			return [(this.Controls()), (this.Player())];
-		}
-		tags(){
-			return ["palyback"];
-		}
-		aspects(){
-			return ["Media/Video"];
-		}
 		files(){
 			return (this.Open().files());
 		}
@@ -48113,6 +48083,18 @@ var $;
 			(obj.uri) = () => ((this.uri()));
 			return obj;
 		}
+		title(){
+			return "Reactive video player";
+		}
+		sub(){
+			return [(this.Controls()), (this.Player())];
+		}
+		tags(){
+			return ["palyback"];
+		}
+		aspects(){
+			return ["Media/Video"];
+		}
 	};
 	($mol_mem(($.$mol_video_player_demo.prototype), "Open"));
 	($mol_mem(($.$mol_video_player_demo.prototype), "Playing_icon"));
@@ -48150,29 +48132,6 @@ var $;
 
 ;
 	($.$mol_video_camera) = class $mol_video_camera extends ($.$mol_video_player) {
-		controls(){
-			return false;
-		}
-		style(){
-			return {"transform": (this.transform())};
-		}
-		video_constraints(){
-			return {
-				"facingMode": (this.facing()), 
-				"aspectRatio": (this.aspect()), 
-				"width": {"ideal": (this.width())}, 
-				"height": {"ideal": (this.height())}
-			};
-		}
-		video_settings(){
-			return {
-				"brightness": (this.brightness()), 
-				"sharpness": (this.sharpness()), 
-				"contrast": (this.contrast()), 
-				"saturation": (this.saturation()), 
-				"advanced": [{"colorTemperature": (this.temperature())}, {"torch": (this.torch())}]
-			};
-		}
 		transform(){
 			return "";
 		}
@@ -48208,6 +48167,29 @@ var $;
 		}
 		torch(){
 			return false;
+		}
+		controls(){
+			return false;
+		}
+		style(){
+			return {"transform": (this.transform())};
+		}
+		video_constraints(){
+			return {
+				"facingMode": (this.facing()), 
+				"aspectRatio": (this.aspect()), 
+				"width": {"ideal": (this.width())}, 
+				"height": {"ideal": (this.height())}
+			};
+		}
+		video_settings(){
+			return {
+				"brightness": (this.brightness()), 
+				"sharpness": (this.sharpness()), 
+				"contrast": (this.contrast()), 
+				"saturation": (this.saturation()), 
+				"advanced": [{"colorTemperature": (this.temperature())}, {"torch": (this.torch())}]
+			};
 		}
 	};
 
@@ -48287,18 +48269,6 @@ var $;
 
 ;
 	($.$mol_video_camera_demo) = class $mol_video_camera_demo extends ($.$mol_example_large) {
-		title(){
-			return "Reactive video camera";
-		}
-		sub(){
-			return [(this.Scroll())];
-		}
-		tags(){
-			return ["capture"];
-		}
-		aspects(){
-			return ["Media/Video"];
-		}
 		Player(){
 			const obj = new this.$.$mol_video_camera();
 			(obj.torch) = () => ((this.torch()));
@@ -48430,6 +48400,18 @@ var $;
 			(obj.sub) = () => ([(this.View()), (this.Controls())]);
 			return obj;
 		}
+		title(){
+			return "Reactive video camera";
+		}
+		sub(){
+			return [(this.Scroll())];
+		}
+		tags(){
+			return ["capture"];
+		}
+		aspects(){
+			return ["Media/Video"];
+		}
 	};
 	($mol_mem(($.$mol_video_camera_demo.prototype), "Player"));
 	($mol_mem(($.$mol_video_camera_demo.prototype), "View"));
@@ -48461,18 +48443,6 @@ var $;
 
 ;
 	($.$mol_password_demo) = class $mol_password_demo extends ($.$mol_example_small) {
-		title(){
-			return "Password input field based on $mol_string";
-		}
-		sub(){
-			return [(this.Simple()), (this.Hint())];
-		}
-		tags(){
-			return ["input"];
-		}
-		aspects(){
-			return ["Widget/Control", "Type/String"];
-		}
 		pass(next){
 			if(next !== undefined) return next;
 			return "Hello world";
@@ -48492,6 +48462,18 @@ var $;
 			(obj.hint) = () => ("Top secret");
 			return obj;
 		}
+		title(){
+			return "Password input field based on $mol_string";
+		}
+		sub(){
+			return [(this.Simple()), (this.Hint())];
+		}
+		tags(){
+			return ["input"];
+		}
+		aspects(){
+			return ["Widget/Control", "Type/String"];
+		}
 	};
 	($mol_mem(($.$mol_password_demo.prototype), "pass"));
 	($mol_mem(($.$mol_password_demo.prototype), "Simple"));
@@ -48504,6 +48486,20 @@ var $;
 
 ;
 	($.$mol_lights_demo) = class $mol_lights_demo extends ($.$mol_example_small) {
+		Theme(){
+			const obj = new this.$.$mol_theme_auto();
+			return obj;
+		}
+		Lighter(){
+			const obj = new this.$.$mol_lights_toggle();
+			return obj;
+		}
+		Sample(){
+			const obj = new this.$.$mol_view();
+			(obj.plugins) = () => ([(this.Theme())]);
+			(obj.sub) = () => ([(this.Lighter())]);
+			return obj;
+		}
 		title(){
 			return "Switcher between light/dark themes (usually for `$mol_theme_auto` plugin).";
 		}
@@ -48522,20 +48518,6 @@ var $;
 		aspects(){
 			return ["Widget/Control/Button", "Theme"];
 		}
-		Theme(){
-			const obj = new this.$.$mol_theme_auto();
-			return obj;
-		}
-		Lighter(){
-			const obj = new this.$.$mol_lights_toggle();
-			return obj;
-		}
-		Sample(){
-			const obj = new this.$.$mol_view();
-			(obj.plugins) = () => ([(this.Theme())]);
-			(obj.sub) = () => ([(this.Lighter())]);
-			return obj;
-		}
 	};
 	($mol_mem(($.$mol_lights_demo.prototype), "Theme"));
 	($mol_mem(($.$mol_lights_demo.prototype), "Lighter"));
@@ -48547,18 +48529,6 @@ var $;
 
 ;
 	($.$mol_locale_demo) = class $mol_locale_demo extends ($.$mol_example_small) {
-		title(){
-			return "Example usages of $mol_locale component";
-		}
-		sub(){
-			return [(this.All_languages_labeler()), (this.List_of_languages_labeler())];
-		}
-		tags(){
-			return ["language", "l10n"];
-		}
-		aspects(){
-			return ["Widget/Control"];
-		}
 		All_languages(){
 			const obj = new this.$.$mol_locale_select();
 			return obj;
@@ -48579,6 +48549,18 @@ var $;
 			(obj.title) = () => ("Or you can give user select from your list");
 			(obj.content) = () => ([(this.List_of_languages())]);
 			return obj;
+		}
+		title(){
+			return "Example usages of $mol_locale component";
+		}
+		sub(){
+			return [(this.All_languages_labeler()), (this.List_of_languages_labeler())];
+		}
+		tags(){
+			return ["language", "l10n"];
+		}
+		aspects(){
+			return ["Widget/Control"];
 		}
 	};
 	($mol_mem(($.$mol_locale_demo.prototype), "All_languages"));

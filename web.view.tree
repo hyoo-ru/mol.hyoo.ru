@@ -15,27 +15,6 @@ $mol_book2 $mol_scroll
 	Placeholder $mol_view
 	Gap* $mol_view title \
 
-$mol_link $mol_view
-	uri \
-	dom_name \a
-	uri_off \
-	uri_native null
-	external false
-	attr *
-		^
-		href <= uri_toggle \
-		title <= hint_safe <= hint \
-		target <= target \_self
-		download <= file_name \
-		mol_link_current <= current false
-		rel <= relation \
-	sub /$mol_view_content
-		<= title
-	arg *
-	event *
-		^
-		click?event <=> click?event <=> event_click?event null
-
 $mol_pop $mol_view
 	showed? false
 	align_vert \
@@ -59,42 +38,6 @@ $mol_pop_bubble $mol_view
 		^
 		mol_pop_align <= align \
 		tabindex 0
-
-$mol_speck $mol_view
-	attr *
-		^
-		mol_theme <= theme \$mol_theme_accent
-	style *
-		^
-		minHeight \1em
-	sub /
-		<= value null
-
-$mol_button $mol_view
-	enabled true
-	click?event null
-	event_click?event null
-	event *
-		^
-		click?event <=> event_activate?event null
-		dblclick?event <=> clicks?event null
-		keydown?event <=> event_key_press?event null 
-	attr *
-		^
-		disabled <= disabled false
-		role \button
-		tabindex <= tab_index 0
-		title <= hint_safe <= hint \
-	sub /$mol_view_content
-		<= title
-	Speck $mol_speck
-		value <= error \
-
-$mol_button_typed $mol_button
-	minimal_height 40
-	minimal_width 40
-
-$mol_button_minor $mol_button_typed
 
 $mol_hotkey $mol_plugin
 	event *
@@ -191,6 +134,42 @@ $mol_icon $mol_svg_root
 
 $mol_icon_cross $mol_icon path \M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z
 
+$mol_speck $mol_view
+	attr *
+		^
+		mol_theme <= theme \$mol_theme_accent
+	style *
+		^
+		minHeight \1em
+	sub /
+		<= value null
+
+$mol_button $mol_view
+	enabled true
+	click?event null
+	event_click?event null
+	event *
+		^
+		click?event <=> event_activate?event null
+		dblclick?event <=> clicks?event null
+		keydown?event <=> event_key_press?event null 
+	attr *
+		^
+		disabled <= disabled false
+		role \button
+		tabindex <= tab_index 0
+		title <= hint_safe <= hint \
+	sub /$mol_view_content
+		<= title
+	Speck $mol_speck
+		value <= error \
+
+$mol_button_typed $mol_button
+	minimal_height 40
+	minimal_width 40
+
+$mol_button_minor $mol_button_typed
+
 $mol_list $mol_view
 	render_visible_only true
 	render_over 0
@@ -256,6 +235,27 @@ $mol_search $mol_pop
 			<= Suggest_label* $mol_dimmer
 				haystack <= suggest_label* \
 				needle <= query? \
+
+$mol_link $mol_view
+	uri \
+	dom_name \a
+	uri_off \
+	uri_native null
+	external false
+	attr *
+		^
+		href <= uri_toggle \
+		title <= hint_safe <= hint \
+		target <= target \_self
+		download <= file_name \
+		mol_link_current <= current false
+		rel <= relation \
+	sub /$mol_view_content
+		<= title
+	arg *
+	event *
+		^
+		click?event <=> click?event <=> event_click?event null
 
 $mol_page $mol_view
 	dom_name \article
@@ -1194,8 +1194,6 @@ $hyoo_page_side_view $mol_page
 				<= Following $hyoo_meta_link
 					meta <= following
 
-$mol_string_button $mol_string
-
 $mol_icon_publish $mol_icon path \M5,4V6H19V4H5M5,14H9V20H15V14H19L12,7L5,14Z
 
 $mol_icon_export $mol_icon path \M23,12L19,8V11H10V13H19V16M1,18V6C1,4.89 1.9,4 3,4H15C16.1,4 17,4.9 17,6V9H15V6H3V18H15V15H17V18C17,19.1 16.1,20 15,20H3C1.9,20 1,19.1 1,18Z
@@ -1287,6 +1285,8 @@ $mol_textarea_edit $mol_string
 	field *
 		^
 		scrollTop 0
+
+$mol_string_button $mol_string
 
 $mol_labeler $mol_list
 	rows /
@@ -1911,14 +1911,6 @@ $hyoo_apps $mol_book2
 			title @ \RDF Browser
 			uri \http://rdf.hyoo.ru/
 
-$mol_example $mol_view
-	tags /string
-	aspects /string
-
-$mol_example_small $mol_example
-
-$mol_example_large $mol_example
-
 $mol_tag_tree $mol_list
 	path /string
 	ids_tags *
@@ -2023,6 +2015,14 @@ $mol_app_demo_detail $mol_page
 	body /
 		<= Demo $mol_view
 
+$mol_example $mol_view
+	tags /string
+	aspects /string
+
+$mol_example_small $mol_example
+
+$mol_example_large $mol_example
+
 $mol_app_demo_readme $mol_page
 	readme_link_template \https://raw.githubusercontent.com/{repo}/HEAD/{module}/readme.md
 	source_link_template \https://github.com/{repo}/tree/HEAD/{module}
@@ -2106,11 +2106,6 @@ $mol_app_demo_main $mol_page
 			text <= description \
 			uri_base <= project_uri
 
-$mol_icon_tick $mol_icon path \M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z
-
-$mol_check_box $mol_check
-	Icon $mol_icon_tick
-
 $mol_icon_sort $mol_icon path \M10,13V11H18V13H10M10,19V17H14V19H10M10,7V5H22V7H10M6,17H8.5L5,20.5L1.5,17H4V7H1.5L5,3.5L8.5,7H6V17Z
 
 $mol_icon_sort_asc $mol_icon path \M10,11V13H18V11H10M10,5V7H14V5H10M10,17V19H22V17H10M6,7H8.5L5,3.5L1.5,7H4V20H6V7Z
@@ -2178,6 +2173,11 @@ $mol_number $mol_view
 			enabled <= inc_enabled <= enabled
 			sub / <= inc_icon $mol_icon_plus
 
+$mol_icon_tick $mol_icon path \M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z
+
+$mol_check_box $mol_check
+	Icon $mol_icon_tick
+
 $hyoo_bench_app $mol_book2
 	samples? /string
 	pages /
@@ -2232,6 +2232,53 @@ $mol_icon_help_circle $mol_icon path \M15.07,11.25L14.17,12.17C13.45,12.89 13,13
 $mol_icon_help_circle_outline $mol_icon path \M11,18H13V16H11V18M12,2C6.48,2 2,6.48 2,12C2,17.52 6.48,22 12,22C17.52,22 22,17.52 22,12C22,6.48 17.52,2 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6C9.79,6 8,7.79 8,10H10C10,8.9 10.9,8 12,8C13.1,8 14,8.9 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10C16,7.79 14.21,6 12,6Z
 
 $mol_icon_play $mol_icon path \M8,5.14V19.14L19,12.14L8,5.14Z
+
+$mol_icon_chevron_double_down $mol_icon path \M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z
+
+$mol_icon_unfold_more_horizontal $mol_icon path \M12,18.17L8.83,15L7.42,16.41L12,21L16.59,16.41L15.17,15M12,5.83L15.17,9L16.58,7.59L12,3L7.41,7.59L8.83,9L12,5.83Z
+
+$hyoo_js_perf_case_result $mol_view
+	result $hyoo_js_perf_stats
+	sub /
+		<= Portions $mol_view sub <= portions /
+			<= Frequency_portion $mol_portion portion <= frequency_portion 0
+			<= Memory_portion $mol_portion portion <= memory_portion 0
+			<= Size_portion $mol_portion portion <= size_portion 0
+			<= Deps_portion $mol_portion portion <= deps_portion 0
+		<= Stats $mol_view sub <= stats /
+			<= Stats_main $mol_view sub /
+				<= title \
+				<= Frequency $mol_view
+					attr * title <= frequency_hint @ \Iterations per Second
+					sub / <= frequency \
+				\≈
+				<= Time $mol_view
+					attr * title <= time_hint @ \Seconds per Iteration
+					sub / <= time_total \
+				\×
+				<= Iterations $mol_view
+					attr * title <= iterations_hint @ \Iterations Count
+					sub / <= iterations \
+			<= Stats_mem $mol_view sub /
+				\×
+				<= Memory_per_iteration $mol_view
+					attr * title <= memory_per_iteration_hint @ \Bytes per Itaration
+					sub / <= memory_per_iteration \
+				\=
+				<= Memory $mol_view
+					attr * title <= memory_hint @ \Bytes for All Iterations
+					sub / <= memory_total \
+			<= Stats_size $mol_view sub /
+				<= title \
+				<= Size $mol_view
+					attr * title <= size_hint @ \Case Size
+					sub / <= size 0
+			<= Stats_deps $mol_view sub /
+				\📦
+				<= Deps $mol_view
+					attr * title <= deps_hint @ \Deps Size
+					sub / <= deps \
+		<= Error $mol_view sub / <= error \
 
 $mol_icon_flash $mol_icon path \M7,2V13H10V22L17,10H13L17,2H7Z
 
@@ -2367,53 +2414,6 @@ $hyoo_js_eval $mol_book2
 						<= Log*0 $mol_dump_list
 							values <= log* /
 							prototypes true
-
-$mol_icon_chevron_double_down $mol_icon path \M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z
-
-$mol_icon_unfold_more_horizontal $mol_icon path \M12,18.17L8.83,15L7.42,16.41L12,21L16.59,16.41L15.17,15M12,5.83L15.17,9L16.58,7.59L12,3L7.41,7.59L8.83,9L12,5.83Z
-
-$hyoo_js_perf_case_result $mol_view
-	result $hyoo_js_perf_stats
-	sub /
-		<= Portions $mol_view sub <= portions /
-			<= Frequency_portion $mol_portion portion <= frequency_portion 0
-			<= Memory_portion $mol_portion portion <= memory_portion 0
-			<= Size_portion $mol_portion portion <= size_portion 0
-			<= Deps_portion $mol_portion portion <= deps_portion 0
-		<= Stats $mol_view sub <= stats /
-			<= Stats_main $mol_view sub /
-				<= title \
-				<= Frequency $mol_view
-					attr * title <= frequency_hint @ \Iterations per Second
-					sub / <= frequency \
-				\≈
-				<= Time $mol_view
-					attr * title <= time_hint @ \Seconds per Iteration
-					sub / <= time_total \
-				\×
-				<= Iterations $mol_view
-					attr * title <= iterations_hint @ \Iterations Count
-					sub / <= iterations \
-			<= Stats_mem $mol_view sub /
-				\×
-				<= Memory_per_iteration $mol_view
-					attr * title <= memory_per_iteration_hint @ \Bytes per Itaration
-					sub / <= memory_per_iteration \
-				\=
-				<= Memory $mol_view
-					attr * title <= memory_hint @ \Bytes for All Iterations
-					sub / <= memory_total \
-			<= Stats_size $mol_view sub /
-				<= title \
-				<= Size $mol_view
-					attr * title <= size_hint @ \Case Size
-					sub / <= size 0
-			<= Stats_deps $mol_view sub /
-				\📦
-				<= Deps $mol_view
-					attr * title <= deps_hint @ \Deps Size
-					sub / <= deps \
-		<= Error $mol_view sub / <= error \
 
 $hyoo_js_perf_case_row $mol_view
 	results /
@@ -4240,6 +4240,16 @@ $mol_plot_group $mol_plot_graph
 	Sample $mol_plot_graph_sample
 		sub <= graph_samples /$mol_view
 
+$mol_svg_rect $mol_svg
+	dom_name \rect
+	pos /
+	attr *
+		^
+		width <= width \0
+		height <= height \0
+		x <= pos_x \
+		y <= pos_y \
+
 $mol_svg_text $mol_svg
 	dom_name \text
 	pos /
@@ -4251,16 +4261,6 @@ $mol_svg_text $mol_svg
 		alignment-baseline <= align_vert \baseline
 	sub /
 		<= text \
-
-$mol_svg_rect $mol_svg
-	dom_name \rect
-	pos /
-	attr *
-		^
-		width <= width \0
-		height <= height \0
-		x <= pos_x \
-		y <= pos_y \
 
 $mol_plot_ruler $mol_plot_graph
 	step 0
