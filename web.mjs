@@ -7215,12 +7215,14 @@ var $;
     class $mol_error_mix extends AggregateError {
         cause;
         name = $$.$mol_func_name(this.constructor).replace(/^\$/, '') + '_Error';
-        constructor(message, cause, ...errors) {
+        constructor(message, cause = {}, ...errors) {
             super(errors, message, { cause });
             this.cause = cause;
             const stack_get = Object.getOwnPropertyDescriptor(this, 'stack')?.get ?? (() => super.stack);
             Object.defineProperty(this, 'stack', {
-                get: () => stack_get.call(this) + '\n' + this.errors.map(e => e.stack.trim().replace(/at /gm, '   at ').replace(/^(?!    )(.*)/gm, '    at [$1] (#)')).join('\n')
+                get: () => stack_get.call(this) + '\n' + [JSON.stringify(this.cause, null, '  ') ?? 'no cause', ...this.errors.map(e => e.stack)].map(e => e.trim()
+                    .replace(/at /gm, '   at ')
+                    .replace(/^(?!    +at )(.*)/gm, '    at | $1 (#)')).join('\n')
             });
         }
     }
@@ -19150,7 +19152,7 @@ var $;
 			return false;
 		}
 		View_details(id){
-			return (this.View("0_0").Details());
+			return (this.View(id).Details());
 		}
 		View(id){
 			const obj = new this.$.$hyoo_page_side_view();
@@ -22850,17 +22852,6 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_icon_play) = class $mol_icon_play extends ($.$mol_icon) {
-		path(){
-			return "M8,5.14V19.14L19,12.14L8,5.14Z";
-		}
-	};
-
-
-;
-"use strict";
-
-;
 	($.$mol_icon_chevron_double_down) = class $mol_icon_chevron_double_down extends ($.$mol_icon) {
 		path(){
 			return "M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z";
@@ -23207,6 +23198,17 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/js/perf/case/result/result.view.css", "[hyoo_js_perf_case_result] {\n\tpadding: .5rem .75rem .25rem;\n\tflex-direction: column;\n\tflex: 1 1 24rem;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\t/* margin: 0 .5rem; */\n}\n\n[hyoo_js_perf_case_result_stats_main],\n[hyoo_js_perf_case_result_stats_mem] {\n\tdisplay: contents;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portions] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: dimgray;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
 })($ || ($ = {}));
+
+;
+"use strict";
+
+;
+	($.$mol_icon_play) = class $mol_icon_play extends ($.$mol_icon) {
+		path(){
+			return "M8,5.14V19.14L19,12.14L8,5.14Z";
+		}
+	};
+
 
 ;
 "use strict";
@@ -24404,15 +24406,10 @@ var $;
 			if(next !== undefined) return next;
 			return true;
 		}
-		Measurable_icon(){
-			const obj = new this.$.$mol_icon_play();
-			return obj;
-		}
 		Measurable(){
-			const obj = new this.$.$mol_check_icon();
+			const obj = new this.$.$mol_check_box();
 			(obj.checked) = (next) => ((this.measurable(next)));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Measurable_hint")));
-			(obj.Icon) = () => ((this.Measurable_icon()));
 			return obj;
 		}
 		changable(){
@@ -24610,7 +24607,6 @@ var $;
 	};
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "prefix_showed"));
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "measurable"));
-	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "Measurable_icon"));
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "Measurable"));
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "title"));
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "Title"));
@@ -25213,7 +25209,7 @@ var $;
 			return true;
 		}
 		Case_measurable(id){
-			return (this.Case("0").Measurable());
+			return (this.Case(id).Measurable());
 		}
 		case_sample(id){
 			return "";
@@ -27074,7 +27070,7 @@ var $;
             '=': bind => [bind.struct('()', [
                     bind.struct('this'),
                     call_method_name.call(this, bind.kids[0]),
-                    args_of.call(this, bind.kids[0]),
+                    params_of.call(this, bind.kids[0]),
                     call_method_name.call(this, bind.kids[0].kids[0]),
                     args_of.call(this, bind.kids[0].kids[0]),
                 ])],
@@ -37922,7 +37918,7 @@ var $;
                     }
                 }
             }
-            return $mol_fail(new $mol_data_error(`${val} is not any of variants`, null, ...errors));
+            return $mol_fail(new $mol_data_error(`${val} is not any of variants`, {}, ...errors));
         }, sub);
     }
     $.$mol_data_variant = $mol_data_variant;
