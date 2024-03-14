@@ -26755,7 +26755,7 @@ var $;
 		tools(){
 			return [(this.Analysis()), (this.Close())];
 		}
-		body(){
+		body_content(){
 			return [(this.Deck())];
 		}
 	};
@@ -26781,7 +26781,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("hyoo/mol/bench/bench.view.css", "[hyoo_mol_bench_menu] {\n\tflex: 0 0 15rem;\n}\n\n[hyoo_mol_bench_perf_title] {\n\tflex-grow: 1;\n}\n\n[hyoo_mol_bench_visual] {\n\tflex: 1 0 auto;\n}\n\n[hyoo_mol_bench_visual_body] {\n\tpadding: 0;\n}\n\n[hyoo_mol_bench_visual_deck_switch] {\n\tflex-grow: 1000;\n}\n\n[hyoo_mol_bench_visual_title] {\n\tflex-grow: 1;\n}\n\n[hyoo_mol_bench_visual_deck] {\n\tflex: 1 1 auto;\n}\n");
+    $mol_style_attach("hyoo/mol/bench/bench.view.css", "[hyoo_mol_bench_menu] {\n\tflex: 0 0 15rem;\n}\n\n[hyoo_mol_bench_perf_title] {\n\tflex-grow: 1;\n}\n\n[hyoo_mol_bench_visual] {\n\tflex: 1 0 auto;\n}\n\n[hyoo_mol_bench_visual_body] {\n\tpadding: 0;\n}\n\n[hyoo_mol_bench_visual_deck_switch] {\n\tflex-grow: 1000;\n}\n\n[hyoo_mol_bench_visual_title] {\n\tflex-grow: 1;\n}\n\n[hyoo_mol_bench_visual_deck] {\n\tflex: 1 1 auto;\n\talign-self: stretch;\n}\n");
 })($ || ($ = {}));
 
 ;
