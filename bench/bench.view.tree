@@ -143,7 +143,7 @@ $hyoo_mol_bench_visual $mol_page
 		<= Analysis $hyoo_mol_bench_analysis
 			uri <= analysis_uri \
 		<= Close $mol_view
-	body /
+	body_content /
 		<= Deck $mol_deck
 			Switch => Switch
 			Content => Content

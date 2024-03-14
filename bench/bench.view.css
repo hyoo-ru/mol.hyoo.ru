@@ -24,4 +24,5 @@
 
 [hyoo_mol_bench_visual_deck] {
 	flex: 1 1 auto;
+	align-self: stretch;
 }
