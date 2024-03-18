@@ -31547,17 +31547,16 @@ var $;
         }
         node() {
             const node = super.node();
-            node.onended = $mol_wire_async((e) => this.end(e));
+            node.onended = $mol_wire_async((e) => {
+                this.active(false, false);
+                this.end(e);
+            });
             return node;
         }
-        promise = $mol_promise();
-        wait() {
-            return this.promise;
-        }
-        end(e) {
-            this.active(false);
-        }
-        active(next) {
+        end(e) { }
+        active(next, cached) {
+            if (cached !== undefined)
+                return cached;
             $mol_wire_solid();
             const node = next === false ? this.node_raw() : this.node();
             const prev = $mol_wire_probe(() => this.active());
@@ -31568,8 +31567,6 @@ var $;
             }
             else if (prev === true) {
                 node.stop();
-                this.promise.done();
-                this.promise = $mol_promise();
             }
             return next ?? false;
         }
@@ -31585,9 +31582,6 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_audio_instrument.prototype, "node", null);
-    __decorate([
-        $mol_mem
-    ], $mol_audio_instrument.prototype, "wait", null);
     __decorate([
         $mol_mem
     ], $mol_audio_instrument.prototype, "active", null);
