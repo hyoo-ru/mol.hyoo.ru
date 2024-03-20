@@ -1998,7 +1998,10 @@ var $node = new Proxy({ require }, {
         }
         catch (error) {
             if (error.code === 'ERR_REQUIRE_ESM') {
-                return importSync(name);
+                const module = cache.get(name);
+                if (module)
+                    return module;
+                throw import(name).then(module => cache.set(name, module));
             }
             $.$mol_fail_log(error);
             return null;
@@ -2009,8 +2012,7 @@ var $node = new Proxy({ require }, {
         return true;
     },
 });
-const importAsync = async (uri) => import(uri);
-const importSync = $.$mol_wire_sync(importAsync);
+const cache = new Map();
 require = (req => Object.assign(function require(name) {
     return $node[name];
 }, req))(require);
@@ -53182,6 +53184,7 @@ var $;
         return $mol_crypto_native.getRandomValues(new Uint8Array(16));
     }
     $.$mol_crypto_salt = $mol_crypto_salt;
+    $.$mol_crypto_salt_once = new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6]);
 })($ || ($ = {}));
 
 ;
