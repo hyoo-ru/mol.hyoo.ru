@@ -19613,7 +19613,7 @@ var $;
 			return false;
 		}
 		View_details(id){
-			return (this.View(id).Details());
+			return (this.View("0_0").Details());
 		}
 		View(id){
 			const obj = new this.$.$hyoo_page_side_view();
@@ -25424,7 +25424,7 @@ var $;
 			return true;
 		}
 		Case_measurable(id){
-			return (this.Case(id).Measurable());
+			return (this.Case("0").Measurable());
 		}
 		case_sample(id){
 			return "";
@@ -27278,16 +27278,17 @@ var $;
                         ref.struct('[]', [
                             ref.data(ref.kids[0]?.type ? name_of.call(this, ref.kids[0]) : name),
                         ]),
-                        ref.kids[0]?.type ? params_of.call(this, ref.kids[0]) : ref.struct('(,)')
+                        ref.kids[0]?.type ? args_of.call(this, ref.kids[0]) : ref.struct('(,)')
                     ]),
                 ]),
             ],
             '=': bind => [bind.struct('()', [
                     bind.struct('this'),
-                    call_method_name.call(this, bind.kids[0]),
-                    params_of.call(this, bind.kids[0]),
-                    call_method_name.call(this, bind.kids[0].kids[0]),
-                    args_of.call(this, bind.kids[0].kids[0]),
+                    ...bind.hack({ '': (method, belt) => [
+                            call_method_name.call(this, method),
+                            args_of.call(this, method),
+                            ...method.hack(belt),
+                        ] }),
                 ])],
             '': (input, belt, context) => {
                 if (input.type[0] === '*') {
@@ -55192,7 +55193,7 @@ var $;
 ;
 	($.$mol_view_tree2_to_js_test_ex_right_hierarchy_foo) = class $mol_view_tree2_to_js_test_ex_right_hierarchy_foo extends ($.$mol_object) {
 		indexed_title(id, next){
-			return (this.Indexed(id).title(next));
+			return (this.Indexed("xxx").title(next));
 		}
 		indexed_id(id){
 			return 0;
