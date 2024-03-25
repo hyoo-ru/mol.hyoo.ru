@@ -47950,6 +47950,9 @@ var $;
 		loop(){
 			return false;
 		}
+		muted(){
+			return false;
+		}
 		poster(){
 			return "";
 		}
@@ -48011,6 +48014,7 @@ var $;
 				"autoplay": (this.autoplay()), 
 				"playsinline": (this.inline()), 
 				"loop": (this.loop()), 
+				"muted": (this.muted()), 
 				"poster": (this.poster())
 			};
 		}
