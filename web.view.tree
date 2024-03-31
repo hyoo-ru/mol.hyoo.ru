@@ -1175,9 +1175,6 @@ $hyoo_page_side_view $mol_page
 			hint @ \Bookmark page
 			checked? <=> bookmark? false
 			Icon <= Bookmark_icon $mol_icon_bookmark_outline
-	slides_content \
-		\# {title}
-		\{details}
 	body /
 		<= Details $mol_text
 			text <= details \
@@ -1327,6 +1324,7 @@ $hyoo_page_side_edit $mol_page
 		title? => title?
 		details? => details?
 		details_selection? => details_selection?
+		content_full => content_full
 		aura? => aura?
 		editable => editable
 		released => released
