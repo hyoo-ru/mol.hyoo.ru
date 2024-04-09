@@ -46038,13 +46038,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_defer = $mol_after_frame;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
     class $mol_speech extends $mol_plugin {
         static speaker_make() {
             return new Promise(done => {
@@ -46180,10 +46173,9 @@ var $;
                     const found = commands[i].match(matcher);
                     if (!found)
                         continue;
-                    new $mol_defer(() => {
-                        if (this.event_catch(found.slice(1))) {
-                            this.commands_skip(i + 1);
-                        }
+                    new $mol_after_work(16, () => {
+                        this.commands_skip(i + 1);
+                        $mol_wire_async(this).event_catch(found.slice(1));
                     });
                     return null;
                 }
@@ -46205,7 +46197,7 @@ var $;
             return '';
         }
         suffix() {
-            return '[,\\s]+(?:please|would you kindly|пожалуйста|пожалуй 100|будь любезен|будь любезна|будь добра?)\.?$';
+            return '[,\\s]+(?:please|would you kindly|пожалуйста|пожалуй 100|будь любезен|будь любезна|будь добра?|плиз)\.?$';
         }
     }
     __decorate([
