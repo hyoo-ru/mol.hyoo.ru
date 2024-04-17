@@ -136,6 +136,8 @@
 	deploy \/mol/app/quine/quine.view.ts
 	deploy \/mol/app/quine/index.html
 	deploy \/mol/app/quine/quine.locale=ru.json
+\/mol/audio/demo/sample
+	deploy \/mol/audio/demo/sample/drumloop.ogg
 \/hyoo/marked/app
 	deploy \/hyoo/marked/readme.md
 	deploy \/hyoo/marked/logo/logo.svg
@@ -159,6 +161,8 @@
 	include \/mol/attach/demo
 	include \/mol/audio/demo
 	include \/mol/audio/demo/vibe
+	include \/mol/audio/demo/sample
+	include \/mol/audio/demo/sequencer
 	include \/mol/avatar/demo
 	include \/mol/bar/demo
 	include \/mol/bench/demo
