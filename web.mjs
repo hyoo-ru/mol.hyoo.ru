@@ -10727,17 +10727,6 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_icon_cross) = class $mol_icon_cross extends ($.$mol_icon) {
-		path(){
-			return "M10.5,2H13.5V8H19V11H13.5V22H10.5V11H5V8H10.5V2Z";
-		}
-	};
-
-
-;
-"use strict";
-
-;
 	($.$mol_icon_pin) = class $mol_icon_pin extends ($.$mol_icon) {
 		path(){
 			return "M16,12V4H17V2H7V4H8V12L6,14V16H11.2V22H12.8V16H18V14L16,12Z";
@@ -10843,7 +10832,7 @@ var $;
 			return null;
 		}
 		Item_remove_icon(id){
-			const obj = new this.$.$mol_icon_cross();
+			const obj = new this.$.$mol_icon_close();
 			return obj;
 		}
 		Item_remove(id){
@@ -21931,6 +21920,17 @@ var $;
 (function ($) {
     $mol_style_attach("mol/app/demo/demo.view.css", "\n[mol_app_demo_main],\n[mol_app_demo_detail],\n[mol_app_empty_message] {\n\tflex: 1000 0 40rem;\n}\n\n[mol_app_demo_nav_table] {\n\twidth: 100%;\n\tbox-sizing: border-box;\n}\n\n[mol_app_demo_nav_row] {\n\tdisplay: flex;\n}\n\n[mol_app_demo_nav_option] {\n\tpadding: 0 .5rem 0 0;\n\tdisplay: flex;\n\tflex: 1;\n\talign-items: center;\n\tbox-shadow: none;\n}\n\n[mol_app_demo_nav_expand] {\n\talign-self: stretch;\n\talign-items: center;\n\tpadding-right: .25rem;\n}\n\n[mol_app_demo_nav_content] {\n\tflex-grow: 1;\n}\n\n[mol_app_demo_list] {\n\tdisplay: flex;\n\tflex-wrap: wrap;\n\talign-content: flex-start;\n\talign-items: flex-start;\n}\n\n[mol_app_demo_screen] {\n\tmax-height: 45%;\n}\n\n[mol_app_demo_detail_body] {\n\tdisplay: flex;\n\talign-items: stretch;\n\tjustify-content: flex-start;\n\tflex-direction: column;\n}\n\n[mol_app_demo_detail_list] {\n\tflex: 1 0 100%;\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[mol_app_demo_page_close] {\n\tcolor: inherit;\n\talign-items: center;\n\tpadding: 1rem;\n}\n\n[mol_app_demo_welcome] {\n\tflex: 1 1 auto;\n}\n\n[mol_app_demo_option_link] {\n\tpadding: 0;\n}\n\n[mol_app_demo_sample_large] {\n\tbox-sizing: border-box;\n}\n\n[mol_app_demo_detail_empty_message] {\n\tmargin: auto;\n}\n\n[mol_app_demo_chat] {\n\tflex: none;\n}\n\n[mol_app_demo_readme] {\n\tflex: 1 0 40rem;\n}\n\n[mol_app_demo_readme_not_found] {\n\tdisplay: flex;\n\tflex: 1 0;\n\talign-items: center;\n\tjustify-content: center;\n\tfont-size: 2rem;\n\tcolor: var(--mol_theme_shade);\n}\n");
 })($ || ($ = {}));
+
+;
+	($.$mol_icon_cross) = class $mol_icon_cross extends ($.$mol_icon) {
+		path(){
+			return "M10.5,2H13.5V8H19V11H13.5V22H10.5V11H5V8H10.5V2Z";
+		}
+	};
+
+
+;
+"use strict";
 
 ;
 	($.$mol_icon_sort) = class $mol_icon_sort extends ($.$mol_icon) {
