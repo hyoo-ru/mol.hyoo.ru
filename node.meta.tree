@@ -274,6 +274,7 @@
 	include \/mol/time/interval/demo
 	include \/mol/time/moment/demo
 	include \/mol/toolbar/demo
+	include \/mol/transit/demo
 	include \/mol/video/player/demo
 	include \/mol/video/camera/demo
 	include \/mol/password/demo

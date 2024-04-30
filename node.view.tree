@@ -7381,6 +7381,33 @@ $mol_toolbar_demo $mol_example_small
 	aspects /
 		\Widget/Layout
 
+$mol_transit $mol_ghost
+	style * animationName <= animation_name \
+	event * animationend? <=> reset? null
+
+$mol_transit_demo $mol_example_large
+	title \Layout transition
+	style *
+		justify-content <= justify
+		align-items <= align
+	sub /
+		<= Transit $mol_transit
+			Sub <= Float $mol_list rows /
+				<= Align $mol_switch
+					value? <=> align? \center
+					options *
+						flex-start \left
+						center \center
+						flex-end \right
+				<= Justify $mol_switch
+					value? <=> justify? \center
+					options *
+						flex-start \top
+						center \center
+						flex-end \bottom
+	aspects /
+		\Widget/Layout
+
 $mol_video_player $mol_view
 	dom_name \video
 	playing? false
