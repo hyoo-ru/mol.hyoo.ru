@@ -22053,17 +22053,6 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_icon_cross) = class $mol_icon_cross extends ($.$mol_icon) {
-		path(){
-			return "M10.5,2H13.5V8H19V11H13.5V22H10.5V11H5V8H10.5V2Z";
-		}
-	};
-
-
-;
-"use strict";
-
-;
 	($.$mol_icon_sort) = class $mol_icon_sort extends ($.$mol_icon) {
 		path(){
 			return "M18 21L14 17H17V7H14L18 3L22 7H19V17H22M2 19V17H12V19M2 13V11H9V13M2 7V5H6V7H2Z";
@@ -23112,6 +23101,17 @@ var $;
     ], $hyoo_js_perf_case.prototype, "steal", null);
     $.$hyoo_js_perf_case = $hyoo_js_perf_case;
 })($ || ($ = {}));
+
+;
+	($.$mol_icon_cross) = class $mol_icon_cross extends ($.$mol_icon) {
+		path(){
+			return "M10.5,2H13.5V8H19V11H13.5V22H10.5V11H5V8H10.5V2Z";
+		}
+	};
+
+
+;
+"use strict";
 
 ;
 	($.$mol_icon_chevron_double_down) = class $mol_icon_chevron_double_down extends ($.$mol_icon) {
@@ -26544,7 +26544,7 @@ var $;
 ;
 	($.$hyoo_mol_bench) = class $hyoo_mol_bench extends ($.$mol_book2_catalog) {
 		Close_item_icon(){
-			const obj = new this.$.$mol_icon_cross();
+			const obj = new this.$.$mol_icon_close();
 			return obj;
 		}
 		Init(){
@@ -48932,7 +48932,7 @@ var $;
 
 ;
 	($.$mol_transit) = class $mol_transit extends ($.$mol_ghost) {
-		animation_name(){
+		animation_name_style(){
 			return "";
 		}
 		reset(next){
@@ -48940,7 +48940,7 @@ var $;
 			return null;
 		}
 		style(){
-			return {"animationName": (this.animation_name())};
+			return {"animationName": (this.animation_name_style())};
 		}
 		event(){
 			return {"animationend": (next) => (this.reset(next))};
@@ -48967,6 +48967,9 @@ var $;
             }
             animation_name() {
                 return 'mol_transit_aniation_' + $mol_key(this).slice(1, -1);
+            }
+            animation_name_style() {
+                return this.animation_stylesheet() ? this.animation_name() : '';
             }
             animation_stylesheet(next) {
                 const rect_next = this.view_rect();
@@ -49012,6 +49015,9 @@ var $;
         __decorate([
             $mol_memo.method
         ], $mol_transit.prototype, "animation_name", null);
+        __decorate([
+            $mol_mem
+        ], $mol_transit.prototype, "animation_name_style", null);
         __decorate([
             $mol_mem
         ], $mol_transit.prototype, "animation_stylesheet", null);

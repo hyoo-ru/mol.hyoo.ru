@@ -2103,8 +2103,6 @@ $mol_app_demo_main $mol_page
 			text <= description \
 			uri_base <= project_uri
 
-$mol_icon_cross $mol_icon path \M10.5,2H13.5V8H19V11H13.5V22H10.5V11H5V8H10.5V2Z
-
 $mol_icon_sort $mol_icon path \M18 21L14 17H17V7H14L18 3L22 7H19V17H22M2 19V17H12V19M2 13V11H9V13M2 7V5H6V7H2Z
 
 $mol_icon_sort_asc $mol_icon path \M10,11V13H18V11H10M10,5V7H14V5H10M10,17V19H22V17H10M6,7H8.5L5,3.5L1.5,7H4V20H6V7Z
@@ -2229,6 +2227,8 @@ $mol_icon_help $mol_icon path \M10,19H13V22H10V19M12,2C17.35,2.22 19.68,7.62 16.
 $mol_icon_help_circle $mol_icon path \M15.07,11.25L14.17,12.17C13.45,12.89 13,13.5 13,15H11V14.5C11,13.39 11.45,12.39 12.17,11.67L13.41,10.41C13.78,10.05 14,9.55 14,9C14,7.89 13.1,7 12,7A2,2 0 0,0 10,9H8A4,4 0 0,1 12,5A4,4 0 0,1 16,9C16,9.88 15.64,10.67 15.07,11.25M13,19H11V17H13M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12C22,6.47 17.5,2 12,2Z
 
 $mol_icon_help_circle_outline $mol_icon path \M11,18H13V16H11V18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2M12,20C7.59,20 4,16.41 4,12C4,7.59 7.59,4 12,4C16.41,4 20,7.59 20,12C20,16.41 16.41,20 12,20M12,6A4,4 0 0,0 8,10H10A2,2 0 0,1 12,8A2,2 0 0,1 14,10C14,12 11,11.75 11,15H13C13,12.75 16,12.5 16,10A4,4 0 0,0 12,6Z
+
+$mol_icon_cross $mol_icon path \M10.5,2H13.5V8H19V11H13.5V22H10.5V11H5V8H10.5V2Z
 
 $mol_icon_chevron_double_down $mol_icon path \M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z
 
@@ -2661,7 +2661,7 @@ $hyoo_mol_bench $mol_book2_catalog
 	Placeholder null
 	Close_item $mol_link
 		arg * bench null
-		sub / <= Close_item_icon $mol_icon_cross
+		sub / <= Close_item_icon $mol_icon_close
 	param \bench
 	spreads *
 		reactivity <= Init $hyoo_mol_bench_perf
@@ -7382,7 +7382,7 @@ $mol_toolbar_demo $mol_example_small
 		\Widget/Layout
 
 $mol_transit $mol_ghost
-	style * animationName <= animation_name \
+	style * animationName <= animation_name_style \
 	event * animationend? <=> reset? null
 
 $mol_transit_demo $mol_example_large
