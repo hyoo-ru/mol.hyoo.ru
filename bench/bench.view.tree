@@ -3,7 +3,7 @@ $hyoo_mol_bench $mol_book2_catalog
 	Placeholder null
 	Close_item $mol_link
 		arg * bench null
-		sub / <= Close_item_icon $mol_icon_cross
+		sub / <= Close_item_icon $mol_icon_close
 	param \bench
 	spreads *
 		reactivity <= Init $hyoo_mol_bench_perf
