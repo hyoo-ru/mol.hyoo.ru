@@ -19263,7 +19263,7 @@ var $;
 			return false;
 		}
 		View_details(id){
-			return (this?.View("0_0")?.Details());
+			return (this?.View(id)?.Details());
 		}
 		View(id){
 			const obj = new this.$.$hyoo_page_side_view();
@@ -22965,17 +22965,6 @@ var $;
 })($ || ($ = {}));
 
 ;
-	($.$mol_icon_cross) = class $mol_icon_cross extends ($.$mol_icon) {
-		path(){
-			return "M10.5,2H13.5V8H19V11H13.5V22H10.5V11H5V8H10.5V2Z";
-		}
-	};
-
-
-;
-"use strict";
-
-;
 	($.$mol_icon_chevron_double_down) = class $mol_icon_chevron_double_down extends ($.$mol_icon) {
 		path(){
 			return "M16.59,5.59L18,7L12,13L6,7L7.41,5.59L12,10.17L16.59,5.59M16.59,11.59L18,13L12,19L6,13L7.41,11.59L12,16.17L16.59,11.59Z";
@@ -24640,7 +24629,7 @@ var $;
 			return null;
 		}
 		Drop_icon(){
-			const obj = new this.$.$mol_icon_cross();
+			const obj = new this.$.$mol_icon_close();
 			return obj;
 		}
 		Drop(){
@@ -25374,7 +25363,7 @@ var $;
 			return true;
 		}
 		Case_measurable(id){
-			return (this?.Case("0")?.Measurable());
+			return (this?.Case(id)?.Measurable());
 		}
 		case_sample(id){
 			return "";
@@ -27034,7 +27023,7 @@ var $;
                         this.$mol_fail(err `Need a parent ${left.span}`);
                     add_inner(right.clone([
                         right.struct('=', [
-                            context.factory.clone([left.clone([])]),
+                            context.factory.struct(context.factory.type.replace(/\*.*/, '*'), [left.clone([])]),
                         ]),
                     ]));
                 }
