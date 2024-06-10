@@ -625,20 +625,6 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_after_frame extends $mol_after_timeout {
-        task;
-        constructor(task) {
-            super(16, task);
-            this.task = task;
-        }
-    }
-    $.$mol_after_frame = $mol_after_frame;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
     function $mol_promise_like(val) {
         return val && typeof val === 'object' && 'then' in val && typeof val.then === 'function';
     }
@@ -660,7 +646,7 @@ var $;
         static plan() {
             if (this.plan_task)
                 return;
-            this.plan_task = new $mol_after_frame(() => {
+            this.plan_task = new $mol_after_timeout(0, () => {
                 try {
                     this.sync();
                 }
@@ -932,6 +918,20 @@ var $;
         });
     }
     $.$mol_key = $mol_key;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_after_frame extends $mol_after_timeout {
+        task;
+        constructor(task) {
+            super(16, task);
+            this.task = task;
+        }
+    }
+    $.$mol_after_frame = $mol_after_frame;
 })($ || ($ = {}));
 
 ;
@@ -50851,15 +50851,6 @@ var $;
 ;
 "use strict";
 var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_after_frame = $mol_after_mock_commmon;
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
 (function ($) {
     $mol_test({
         'Sync execution'() {
@@ -51837,6 +51828,15 @@ var $;
             $mol_assert_equal($mol_key(/./), '"/./"');
             $mol_assert_equal($mol_key(/\./gimsu), '"/\\\\./gimsu"');
         },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_after_frame = $mol_after_mock_commmon;
     });
 })($ || ($ = {}));
 
