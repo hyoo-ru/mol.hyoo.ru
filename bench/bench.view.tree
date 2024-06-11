@@ -8,7 +8,7 @@ $hyoo_mol_bench $mol_book2_catalog
 	spreads *
 		reactivity <= Init $hyoo_mol_bench_perf
 			bench_title \State Management
-			analysis_uri \https://github.com/nin-jin/HabHub/issues/48
+			analysis_uri \https://page.hyoo.ru/#!=3ia3ll_rcpl7b
 			Close <= Close_item
 			bench_id \9h2as6_u0mfnn
 		equals <= equals $hyoo_mol_bench_perf
