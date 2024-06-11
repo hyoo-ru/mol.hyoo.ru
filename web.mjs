@@ -26403,7 +26403,7 @@ var $;
 		Init(){
 			const obj = new this.$.$hyoo_mol_bench_perf();
 			(obj.bench_title) = () => ("State Management");
-			(obj.analysis_uri) = () => ("https://github.com/nin-jin/HabHub/issues/48");
+			(obj.analysis_uri) = () => ("https://page.hyoo.ru/#!=3ia3ll_rcpl7b");
 			(obj.Close) = () => ((this?.Close_item()));
 			(obj.bench_id) = () => ("9h2as6_u0mfnn");
 			return obj;
@@ -34637,8 +34637,12 @@ var $;
                 }
                 next.x.max = this.repos_x(next.x.max);
                 next.x.min = this.repos_x(next.x.min);
+                if (next.x.max < next.x.min)
+                    next.x = next.x.inversed;
                 next.y.max = this.repos_y(next.y.max);
                 next.y.min = this.repos_y(next.y.min);
+                if (next.y.max < next.y.min)
+                    next.y = next.y.inversed;
                 return next;
             }
             color() {
