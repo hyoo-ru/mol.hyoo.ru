@@ -903,6 +903,19 @@ $mol_embed_any $mol_view
 		title <= title \
 		uri <= uri \
 
+$mol_expander $mol_list
+	rows /
+		<= Label $mol_view
+			sub /
+				<= Trigger $mol_check_expand
+					checked? <=> expanded? false
+					expandable <= expandable true
+					label <= label /
+						<= title
+				<= Tools null
+		<= Content $mol_list
+			rows <= content /
+
 $mol_text $mol_list
 	uri_base \
 	text \
@@ -981,6 +994,14 @@ $mol_text $mol_list
 	Embed* $mol_embed_any
 		uri <= link_uri* \
 		title <= line_text* \
+	- \Spoilers
+	Spoiler* $mol_expander
+		label /
+			<= Spoiler_label* $mol_text
+				text <= spoiler_label* \
+		content /
+			<= Spoiler_content* $mol_text
+				text <= spoiler_content* \
 
 $mol_text_header $mol_paragraph
 	level 1
@@ -1379,19 +1400,6 @@ $hyoo_page_side_edit $mol_page
 				hint @ \hyper link
 				value? <=> aura?
 				enabled <= editable
-
-$mol_expander $mol_list
-	rows /
-		<= Label $mol_view
-			sub /
-				<= Trigger $mol_check_expand
-					checked? <=> expanded? false
-					expandable <= expandable true
-					label <= label /
-						<= title
-				<= Tools null
-		<= Content $mol_list
-			rows <= content /
 
 $hyoo_page_side_info $mol_page
 	Text $mol_text
@@ -4132,7 +4140,7 @@ $mol_plot_graph $mol_svg_group
 	back /$mol_svg
 	Hint $mol_svg_title
 		title <= hint <= title \
-	hue +NaN
+	hue? +NaN
 	Sample null
 
 $mol_plot_graph_sample $mol_view
@@ -5596,6 +5604,7 @@ $mol_html_view $mol_list
 	html \
 	dom null
 	safe_link* \
+	views* /
 	xss_uri \https://en.wikipedia.org/wiki/XSS#
 	Heading* $mol_html_view_heading
 		level <= heading_level* 1
@@ -5614,6 +5623,10 @@ $mol_html_view $mol_list
 		sub <= content* /
 	Inserted* $mol_paragraph
 		sub <= content* /
+	Subscript* $mol_view
+		sub <= content*
+	Superscript* $mol_view
+		sub <= content*
 	Code* $mol_paragraph
 		sub <= content* /
 	Link* $mol_link_iconed
