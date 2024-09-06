@@ -408,6 +408,20 @@ var $;
             b['self'] = b;
             $mol_assert_ok($mol_compare_deep(a, b));
         },
+        'same POJOs with cyclic reference with cache warmup'() {
+            const obj1 = { test: 1, obj3: null };
+            const obj1_copy = { test: 1, obj3: null };
+            const obj2 = { test: 2, obj1 };
+            const obj2_copy = { test: 2, obj1: obj1_copy };
+            const obj3 = { test: 3, obj2 };
+            const obj3_copy = { test: 3, obj2: obj2_copy };
+            obj1.obj3 = obj3;
+            obj1_copy.obj3 = obj3_copy;
+            $mol_assert_not($mol_compare_deep(obj1, {}));
+            $mol_assert_not($mol_compare_deep(obj2, {}));
+            $mol_assert_not($mol_compare_deep(obj3, {}));
+            $mol_assert_ok($mol_compare_deep(obj3, obj3_copy));
+        },
         'Date'() {
             $mol_assert_ok($mol_compare_deep(new Date(12345), new Date(12345)));
             $mol_assert_not($mol_compare_deep(new Date(12345), new Date(12346)));
@@ -726,7 +740,7 @@ var $;
 var $;
 (function ($_1) {
     $mol_test_mocks.push($ => {
-        $.$mol_after_timeout = $mol_after_mock_timeout;
+        $.$mol_after_tick = $mol_after_mock_commmon;
     });
 })($ || ($ = {}));
 
@@ -814,6 +828,15 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_after_timeout = $mol_after_mock_timeout;
+    });
+})($ || ($ = {}));
 
 ;
 "use strict";
@@ -1585,15 +1608,6 @@ var $;
 var $;
 (function ($) {
     $mol_wire_log.active();
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_after_tick = $mol_after_mock_commmon;
-    });
 })($ || ($ = {}));
 
 ;
@@ -6904,7 +6918,7 @@ var $;
 ;
 	($.$mol_view_tree2_to_js_test_ex_structural_quoted_props_foo) = class $mol_view_tree2_to_js_test_ex_structural_quoted_props_foo extends ($.$mol_object) {
 		bar(){
-			return {"$a": 1, "b-t": {}};
+			return {"a$": 1, "b-t": {}};
 		}
 	};
 
@@ -7723,7 +7737,7 @@ var $;
         'Structural channel quoted props'($) {
             const _foo = $mol_view_tree2_to_js_test_ex_structural_quoted_props_foo;
             $mol_assert_like(_foo.make({ $ }).bar(), {
-                '$a': 1,
+                'a$': 1,
                 'b-t': {},
             });
         },
@@ -8312,7 +8326,7 @@ var $;
         'arithmetic'() {
             var usd1 = new $mol_unit_money_usd(2);
             var usd2 = new $mol_unit_money_usd(3);
-            var rur = new $mol_unit_money_rur(2);
+            var rur = new $mol_unit_money_rub(2);
             $mol_assert_equal($mol_unit.summ(usd1, usd2).toString(), '$5');
             $mol_assert_equal(usd1.mult(2).toString(), '$4');
         },
