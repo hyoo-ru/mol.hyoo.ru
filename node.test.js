@@ -3001,9 +3001,7 @@ var $;
             const win = this.$.$mol_dom_context;
             if (win.parent !== win.self && !win.document.hasFocus())
                 return;
-            new this.$.$mol_after_timeout(500, () => {
-                this.focused(true);
-            });
+            this.focused(true);
         }
         destructor() {
             const node = $mol_wire_probe(() => this.dom_node());
@@ -3502,14 +3500,14 @@ var $;
                         continue;
                     if (n === placeholder)
                         continue;
-                    n.bring();
-                    new this.$.$mol_after_frame(() => {
+                    new this.$.$mol_after_tick(() => {
                         const b = this.dom_node();
                         const p = n.dom_node();
                         b.scroll({
                             left: p.offsetLeft + p.offsetWidth - b.offsetWidth,
                             behavior: 'smooth',
                         });
+                        new this.$.$mol_after_timeout(1000, () => n.bring());
                     });
                     break;
                 }
