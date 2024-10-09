@@ -349,8 +349,6 @@ $mol_check $mol_button_minor
 
 $mol_check_icon $mol_check
 
-$mol_icon_brightness_6 $mol_icon path \M12,18V6A6,6 0 0,1 18,12A6,6 0 0,1 12,18M20,15.31L23.31,12L20,8.69V4H15.31L12,0.69L8.69,4H4V8.69L0.69,12L4,15.31V20H8.69L12,23.31L15.31,20H20V15.31Z
-
 $mol_lights_toggle $mol_check_icon
 	Icon <= Lights_icon $mol_icon_brightness_6
 	hint @ \Toggle lights
@@ -369,8 +367,6 @@ $mol_pick $mol_pop
 		sub <= trigger_content /$mol_view_content
 			<= title
 		hint <= hint \
-
-$mol_icon_dots_vertical $mol_icon path \M12,16A2,2 0 0,1 14,18A2,2 0 0,1 12,20A2,2 0 0,1 10,18A2,2 0 0,1 12,16M12,10A2,2 0 0,1 14,12A2,2 0 0,1 12,14A2,2 0 0,1 10,12A2,2 0 0,1 12,10M12,4A2,2 0 0,1 14,6A2,2 0 0,1 12,8A2,2 0 0,1 10,6A2,2 0 0,1 12,4Z
 
 $mol_select $mol_pick
 	dictionary? *
