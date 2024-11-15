@@ -3276,10 +3276,10 @@ var $;
 			return 0;
 		}
 		field(){
-			return {...(super.field()), "tabIndex": (this?.tabindex())};
+			return {...(super.field()), "tabIndex": (this.tabindex())};
 		}
 		event(){
-			return {...(super.event()), "scroll": (next) => (this?.event_scroll(next))};
+			return {...(super.event()), "scroll": (next) => (this.event_scroll(next))};
 		}
 	};
 	($mol_mem(($.$mol_scroll.prototype), "event_scroll"));
@@ -3573,7 +3573,7 @@ var $;
 			return "";
 		}
 		sub(){
-			return (this?.pages());
+			return (this.pages());
 		}
 		minimal_width(){
 			return 0;
@@ -3709,9 +3709,9 @@ var $;
 		}
 		Bubble(){
 			const obj = new this.$.$mol_pop_bubble();
-			(obj.align) = () => ((this?.align()));
-			(obj.content) = () => ((this?.bubble_content()));
-			(obj.height_max) = () => ((this?.height_max()));
+			(obj.align) = () => ((this.align()));
+			(obj.content) = () => ((this.bubble_content()));
+			(obj.height_max) = () => ((this.height_max()));
 			return obj;
 		}
 		showed(next){
@@ -3728,10 +3728,10 @@ var $;
 			return "vert";
 		}
 		sub(){
-			return [(this?.Anchor())];
+			return [(this.Anchor())];
 		}
 		sub_visible(){
-			return [(this?.Anchor()), (this?.Bubble())];
+			return [(this.Anchor()), (this.Bubble())];
 		}
 	};
 	($mol_mem(($.$mol_pop.prototype), "Bubble"));
@@ -3747,15 +3747,15 @@ var $;
 			return "";
 		}
 		sub(){
-			return (this?.content());
+			return (this.content());
 		}
 		style(){
-			return {...(super.style()), "maxHeight": (this?.height_max())};
+			return {...(super.style()), "maxHeight": (this.height_max())};
 		}
 		attr(){
 			return {
 				...(super.attr()), 
-				"mol_pop_align": (this?.align()), 
+				"mol_pop_align": (this.align()), 
 				"tabindex": 0
 			};
 		}
@@ -3871,7 +3871,7 @@ var $;
 			return null;
 		}
 		event(){
-			return {...(super.event()), "keydown": (next) => (this?.keydown(next))};
+			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
 		}
 		key(){
 			return {};
@@ -4084,7 +4084,7 @@ var $;
 			return null;
 		}
 		event(){
-			return {...(super.event()), "keydown": (next) => (this?.event_key(next))};
+			return {...(super.event()), "keydown": (next) => (this.event_key(next))};
 		}
 	};
 	($mol_mem(($.$mol_nav.prototype), "event_key"));
@@ -4817,13 +4817,13 @@ var $;
 			return "";
 		}
 		value_changed(next){
-			return (this?.value(next));
+			return (this.value(next));
 		}
 		hint(){
 			return "";
 		}
 		hint_visible(){
-			return (this?.hint());
+			return (this.hint());
 		}
 		spellcheck(){
 			return true;
@@ -4863,8 +4863,8 @@ var $;
 		}
 		Submit(){
 			const obj = new this.$.$mol_hotkey();
-			(obj.mod_ctrl) = () => ((this?.submit_with_ctrl()));
-			(obj.key) = () => ({"enter": (next) => (this?.submit(next))});
+			(obj.mod_ctrl) = () => ((this.submit_with_ctrl()));
+			(obj.key) = () => ({"enter": (next) => (this.submit(next))});
 			return obj;
 		}
 		dom_name(){
@@ -4884,34 +4884,34 @@ var $;
 			return [0, 0];
 		}
 		auto(){
-			return [(this?.selection_watcher()), (this?.error_report())];
+			return [(this.selection_watcher()), (this.error_report())];
 		}
 		field(){
 			return {
 				...(super.field()), 
-				"disabled": (this?.disabled()), 
-				"value": (this?.value_changed()), 
-				"placeholder": (this?.hint_visible()), 
-				"spellcheck": (this?.spellcheck()), 
-				"autocomplete": (this?.autocomplete_native()), 
-				"selectionEnd": (this?.selection_end()), 
-				"selectionStart": (this?.selection_start()), 
-				"inputMode": (this?.keyboard()), 
-				"enterkeyhint": (this?.enter())
+				"disabled": (this.disabled()), 
+				"value": (this.value_changed()), 
+				"placeholder": (this.hint_visible()), 
+				"spellcheck": (this.spellcheck()), 
+				"autocomplete": (this.autocomplete_native()), 
+				"selectionEnd": (this.selection_end()), 
+				"selectionStart": (this.selection_start()), 
+				"inputMode": (this.keyboard()), 
+				"enterkeyhint": (this.enter())
 			};
 		}
 		attr(){
 			return {
 				...(super.attr()), 
-				"maxlength": (this?.length_max()), 
-				"type": (this?.type())
+				"maxlength": (this.length_max()), 
+				"type": (this.type())
 			};
 		}
 		event(){
-			return {...(super.event()), "input": (next) => (this?.event_change(next))};
+			return {...(super.event()), "input": (next) => (this.event_change(next))};
 		}
 		plugins(){
-			return [(this?.Submit())];
+			return [(this.Submit())];
 		}
 	};
 	($mol_mem(($.$mol_string.prototype), "value"));
@@ -5125,8 +5125,8 @@ var $;
 		attr(){
 			return {
 				...(super.attr()), 
-				"viewBox": (this?.view_box()), 
-				"preserveAspectRatio": (this?.aspect())
+				"viewBox": (this.view_box()), 
+				"preserveAspectRatio": (this.aspect())
 			};
 		}
 	};
@@ -5151,7 +5151,7 @@ var $;
 			return "path";
 		}
 		attr(){
-			return {...(super.attr()), "d": (this?.geometry())};
+			return {...(super.attr()), "d": (this.geometry())};
 		}
 	};
 
@@ -5166,7 +5166,7 @@ var $;
 		}
 		Path(){
 			const obj = new this.$.$mol_svg_path();
-			(obj.geometry) = () => ((this?.path()));
+			(obj.geometry) = () => ((this.path()));
 			return obj;
 		}
 		view_box(){
@@ -5179,7 +5179,7 @@ var $;
 			return 16;
 		}
 		sub(){
-			return [(this?.Path())];
+			return [(this.Path())];
 		}
 	};
 	($mol_mem(($.$mol_icon.prototype), "Path"));
@@ -5215,13 +5215,13 @@ var $;
 			return null;
 		}
 		attr(){
-			return {...(super.attr()), "mol_theme": (this?.theme())};
+			return {...(super.attr()), "mol_theme": (this.theme())};
 		}
 		style(){
 			return {...(super.style()), "minHeight": "1em"};
 		}
 		sub(){
-			return [(this?.value())];
+			return [(this.value())];
 		}
 	};
 
@@ -5260,7 +5260,7 @@ var $;
 			return "";
 		}
 		hint_safe(){
-			return (this?.hint());
+			return (this.hint());
 		}
 		error(){
 			return "";
@@ -5279,26 +5279,26 @@ var $;
 		event(){
 			return {
 				...(super.event()), 
-				"click": (next) => (this?.event_activate(next)), 
-				"dblclick": (next) => (this?.clicks(next)), 
-				"keydown": (next) => (this?.event_key_press(next))
+				"click": (next) => (this.event_activate(next)), 
+				"dblclick": (next) => (this.clicks(next)), 
+				"keydown": (next) => (this.event_key_press(next))
 			};
 		}
 		attr(){
 			return {
 				...(super.attr()), 
-				"disabled": (this?.disabled()), 
+				"disabled": (this.disabled()), 
 				"role": "button", 
-				"tabindex": (this?.tab_index()), 
-				"title": (this?.hint_safe())
+				"tabindex": (this.tab_index()), 
+				"title": (this.hint_safe())
 			};
 		}
 		sub(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 		Speck(){
 			const obj = new this.$.$mol_speck();
-			(obj.value) = () => ((this?.error()));
+			(obj.value) = () => ((this.error()));
 			return obj;
 		}
 	};
@@ -5439,7 +5439,7 @@ var $;
 			return 0;
 		}
 		sub(){
-			return (this?.rows());
+			return (this.rows());
 		}
 		Empty(){
 			const obj = new this.$.$mol_view();
@@ -5447,12 +5447,12 @@ var $;
 		}
 		Gap_before(){
 			const obj = new this.$.$mol_view();
-			(obj.style) = () => ({"paddingTop": (this?.gap_before())});
+			(obj.style) = () => ({"paddingTop": (this.gap_before())});
 			return obj;
 		}
 		Gap_after(){
 			const obj = new this.$.$mol_view();
-			(obj.style) = () => ({"paddingTop": (this?.gap_after())});
+			(obj.style) = () => ({"paddingTop": (this.gap_after())});
 			return obj;
 		}
 		view_window(){
@@ -5632,7 +5632,7 @@ var $;
 			return 0;
 		}
 		sub(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 	};
 
@@ -5710,16 +5710,16 @@ var $;
 			return "";
 		}
 		sub(){
-			return (this?.parts());
+			return (this.parts());
 		}
 		Low(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ([(this?.string(id))]);
+			(obj.sub) = () => ([(this.string(id))]);
 			return obj;
 		}
 		High(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ([(this?.string(id))]);
+			(obj.sub) = () => ([(this.string(id))]);
 			return obj;
 		}
 	};
@@ -6076,7 +6076,7 @@ var $;
 		}
 		Hotkey(){
 			const obj = new this.$.$mol_hotkey();
-			(obj.key) = () => ({"escape": (next) => (this?.clear(next))});
+			(obj.key) = () => ({"escape": (next) => (this.clear(next))});
 			return obj;
 		}
 		nav_components(){
@@ -6088,8 +6088,8 @@ var $;
 		}
 		Nav(){
 			const obj = new this.$.$mol_nav();
-			(obj.keys_y) = () => ((this?.nav_components()));
-			(obj.current_y) = (next) => ((this?.nav_focused(next)));
+			(obj.keys_y) = () => ((this.nav_components()));
+			(obj.current_y) = (next) => ((this.nav_focused(next)));
 			return obj;
 		}
 		suggests_showed(next){
@@ -6117,16 +6117,16 @@ var $;
 			return "search";
 		}
 		bring(){
-			return (this?.Query()?.bring());
+			return (this.Query().bring());
 		}
 		Query(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = (next) => ((this?.query(next)));
-			(obj.hint) = () => ((this?.hint()));
-			(obj.submit) = (next) => ((this?.submit(next)));
-			(obj.enabled) = () => ((this?.enabled()));
-			(obj.keyboard) = () => ((this?.keyboard()));
-			(obj.enter) = () => ((this?.enter()));
+			(obj.value) = (next) => ((this.query(next)));
+			(obj.hint) = () => ((this.hint()));
+			(obj.submit) = (next) => ((this.submit(next)));
+			(obj.enabled) = () => ((this.enabled()));
+			(obj.keyboard) = () => ((this.keyboard()));
+			(obj.enter) = () => ((this.enter()));
 			return obj;
 		}
 		Clear_icon(){
@@ -6136,19 +6136,19 @@ var $;
 		Clear(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_search_Clear_hint")));
-			(obj.click) = (next) => ((this?.clear(next)));
-			(obj.sub) = () => ([(this?.Clear_icon())]);
+			(obj.click) = (next) => ((this.clear(next)));
+			(obj.sub) = () => ([(this.Clear_icon())]);
 			return obj;
 		}
 		anchor_content(){
-			return [(this?.Query()), (this?.Clear())];
+			return [(this.Query()), (this.Clear())];
 		}
 		menu_items(){
 			return [];
 		}
 		Menu(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.menu_items()));
+			(obj.rows) = () => ((this.menu_items()));
 			return obj;
 		}
 		suggest_select(id, next){
@@ -6160,12 +6160,12 @@ var $;
 		}
 		Suggest_label(id){
 			const obj = new this.$.$mol_dimmer();
-			(obj.haystack) = () => ((this?.suggest_label(id)));
-			(obj.needle) = () => ((this?.query()));
+			(obj.haystack) = () => ((this.suggest_label(id)));
+			(obj.needle) = () => ((this.query()));
 			return obj;
 		}
 		suggest_content(id){
-			return [(this?.Suggest_label(id))];
+			return [(this.Suggest_label(id))];
 		}
 		suggests(){
 			return [];
@@ -6173,28 +6173,28 @@ var $;
 		plugins(){
 			return [
 				...(super.plugins()), 
-				(this?.Hotkey()), 
-				(this?.Nav())
+				(this.Hotkey()), 
+				(this.Nav())
 			];
 		}
 		showed(next){
-			return (this?.suggests_showed(next));
+			return (this.suggests_showed(next));
 		}
 		align_hor(){
 			return "right";
 		}
 		Anchor(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.anchor_content()));
+			(obj.sub) = () => ((this.anchor_content()));
 			return obj;
 		}
 		bubble_content(){
-			return [(this?.Menu())];
+			return [(this.Menu())];
 		}
 		Suggest(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.suggest_select(id, next)));
-			(obj.sub) = () => ((this?.suggest_content(id)));
+			(obj.click) = (next) => ((this.suggest_select(id, next)));
+			(obj.sub) = () => ((this.suggest_content(id)));
 			return obj;
 		}
 	};
@@ -6312,7 +6312,7 @@ var $;
 			return "";
 		}
 		hint_safe(){
-			return (this?.hint());
+			return (this.hint());
 		}
 		target(){
 			return "_self";
@@ -6331,7 +6331,7 @@ var $;
 			return null;
 		}
 		click(next){
-			return (this?.event_click(next));
+			return (this.event_click(next));
 		}
 		uri(){
 			return "";
@@ -6351,22 +6351,22 @@ var $;
 		attr(){
 			return {
 				...(super.attr()), 
-				"href": (this?.uri_toggle()), 
-				"title": (this?.hint_safe()), 
-				"target": (this?.target()), 
-				"download": (this?.file_name()), 
-				"mol_link_current": (this?.current()), 
-				"rel": (this?.relation())
+				"href": (this.uri_toggle()), 
+				"title": (this.hint_safe()), 
+				"target": (this.target()), 
+				"download": (this.file_name()), 
+				"mol_link_current": (this.current()), 
+				"rel": (this.relation())
 			};
 		}
 		sub(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 		arg(){
 			return {};
 		}
 		event(){
-			return {...(super.event()), "click": (next) => (this?.click(next))};
+			return {...(super.event()), "click": (next) => (this.click(next))};
 		}
 	};
 	($mol_mem(($.$mol_link.prototype), "event_click"));
@@ -6430,7 +6430,7 @@ var $;
             return chunks.join(' ');
         }
         static go(next) {
-            this.href(this.make_link(next));
+            this.href(this.link(next));
         }
         constructor(prefix = '') {
             super();
@@ -6603,12 +6603,12 @@ var $;
 			return null;
 		}
 		title_content(){
-			return [(this?.Logo()), (this?.title())];
+			return [(this.Logo()), (this.title())];
 		}
 		Title(){
 			const obj = new this.$.$mol_view();
 			(obj.dom_name) = () => ("h1");
-			(obj.sub) = () => ((this?.title_content()));
+			(obj.sub) = () => ((this.title_content()));
 			return obj;
 		}
 		tools(){
@@ -6616,36 +6616,36 @@ var $;
 		}
 		Tools(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.tools()));
+			(obj.sub) = () => ((this.tools()));
 			return obj;
 		}
 		head(){
-			return [(this?.Title()), (this?.Tools())];
+			return [(this.Title()), (this.Tools())];
 		}
 		Head(){
 			const obj = new this.$.$mol_view();
 			(obj.minimal_height) = () => (64);
 			(obj.dom_name) = () => ("header");
-			(obj.sub) = () => ((this?.head()));
+			(obj.sub) = () => ((this.head()));
 			return obj;
 		}
 		body_scroll_top(next){
-			return (this?.Body()?.scroll_top(next));
+			return (this.Body().scroll_top(next));
 		}
 		body(){
 			return [];
 		}
 		Body_content(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.body()));
+			(obj.sub) = () => ((this.body()));
 			return obj;
 		}
 		body_content(){
-			return [(this?.Body_content())];
+			return [(this.Body_content())];
 		}
 		Body(){
 			const obj = new this.$.$mol_scroll();
-			(obj.sub) = () => ((this?.body_content()));
+			(obj.sub) = () => ((this.body_content()));
 			return obj;
 		}
 		foot(){
@@ -6654,20 +6654,20 @@ var $;
 		Foot(){
 			const obj = new this.$.$mol_view();
 			(obj.dom_name) = () => ("footer");
-			(obj.sub) = () => ((this?.foot()));
+			(obj.sub) = () => ((this.foot()));
 			return obj;
 		}
 		dom_name(){
 			return "article";
 		}
 		field(){
-			return {...(super.field()), "tabIndex": (this?.tabindex())};
+			return {...(super.field()), "tabIndex": (this.tabindex())};
 		}
 		sub(){
 			return [
-				(this?.Head()), 
-				(this?.Body()), 
-				(this?.Foot())
+				(this.Head()), 
+				(this.Body()), 
+				(this.Foot())
 			];
 		}
 	};
@@ -6798,19 +6798,19 @@ var $;
 ;
 	($.$mol_book2_catalog) = class $mol_book2_catalog extends ($.$mol_book2) {
 		Menu_title(){
-			return (this?.Menu()?.Title());
+			return (this.Menu().Title());
 		}
 		menu_title(){
 			return "";
 		}
 		Menu_tools(){
-			return (this?.Menu()?.Tools());
+			return (this.Menu().Tools());
 		}
 		Menu_logo(){
 			return null;
 		}
 		menu_head(){
-			return [(this?.Menu_title()), (this?.Menu_tools())];
+			return [(this.Menu_title()), (this.Menu_tools())];
 		}
 		menu_filter(next){
 			if(next !== undefined) return next;
@@ -6818,7 +6818,11 @@ var $;
 		}
 		Menu_filter(){
 			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this?.menu_filter(next)));
+			(obj.query) = (next) => ((this.menu_filter(next)));
+			return obj;
+		}
+		Menu_links_empty(){
+			const obj = new this.$.$mol_view();
 			return obj;
 		}
 		arg(id){
@@ -6829,41 +6833,42 @@ var $;
 		}
 		Menu_link_title(id){
 			const obj = new this.$.$mol_dimmer();
-			(obj.needle) = () => ((this?.menu_filter()));
-			(obj.haystack) = () => ((this?.spread_title(id)));
+			(obj.needle) = () => ((this.menu_filter()));
+			(obj.haystack) = () => ((this.spread_title(id)));
 			return obj;
 		}
 		menu_link_content(id){
-			return [(this?.Menu_link_title(id))];
+			return [(this.Menu_link_title(id))];
 		}
 		Menu_link(id){
 			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this?.arg(id)));
-			(obj.sub) = () => ((this?.menu_link_content(id)));
+			(obj.arg) = () => ((this.arg(id)));
+			(obj.sub) = () => ((this.menu_link_content(id)));
 			return obj;
 		}
 		menu_links(){
-			return [(this?.Menu_link("0"))];
+			return [(this.Menu_link("0"))];
 		}
 		Menu_links(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.menu_links()));
+			(obj.Empty) = () => ((this.Menu_links_empty()));
+			(obj.rows) = () => ((this.menu_links()));
 			return obj;
 		}
 		menu_body(){
-			return [(this?.Menu_filter()), (this?.Menu_links())];
+			return [(this.Menu_filter()), (this.Menu_links())];
 		}
 		menu_foot(){
 			return [];
 		}
 		Menu(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.menu_title()));
-			(obj.Logo) = () => ((this?.Menu_logo()));
+			(obj.title) = () => ((this.menu_title()));
+			(obj.Logo) = () => ((this.Menu_logo()));
 			(obj.tools) = () => ([...(this.menu_tools()), ...(this.addon_tools())]);
-			(obj.head) = () => ((this?.menu_head()));
-			(obj.body) = () => ((this?.menu_body()));
-			(obj.foot) = () => ((this?.menu_foot()));
+			(obj.head) = () => ((this.menu_head()));
+			(obj.body) = () => ((this.menu_body()));
+			(obj.foot) = () => ((this.menu_foot()));
 			return obj;
 		}
 		spread_close_arg(){
@@ -6906,18 +6911,19 @@ var $;
 			return [];
 		}
 		pages(){
-			return [(this?.Menu())];
+			return [(this.Menu())];
 		}
 		Spread_close(){
 			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this?.spread_close_arg()));
+			(obj.arg) = () => ((this.spread_close_arg()));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_book2_catalog_Spread_close_hint")));
-			(obj.sub) = () => ([(this?.Spread_close_icon())]);
+			(obj.sub) = () => ([(this.Spread_close_icon())]);
 			return obj;
 		}
 	};
 	($mol_mem(($.$mol_book2_catalog.prototype), "menu_filter"));
 	($mol_mem(($.$mol_book2_catalog.prototype), "Menu_filter"));
+	($mol_mem(($.$mol_book2_catalog.prototype), "Menu_links_empty"));
 	($mol_mem_key(($.$mol_book2_catalog.prototype), "Menu_link_title"));
 	($mol_mem_key(($.$mol_book2_catalog.prototype), "Menu_link"));
 	($mol_mem(($.$mol_book2_catalog.prototype), "Menu_links"));
@@ -7043,7 +7049,7 @@ var $;
 			return "";
 		}
 		attr(){
-			return {"mol_theme": (this?.theme())};
+			return {"mol_theme": (this.theme())};
 		}
 	};
 
@@ -7147,7 +7153,7 @@ var $;
 			return (this.$.$mol_locale.text("$mol_link_source_hint"));
 		}
 		sub(){
-			return [(this?.Icon())];
+			return [(this.Icon())];
 		}
 	};
 	($mol_mem(($.$mol_link_source.prototype), "Icon"));
@@ -7176,22 +7182,22 @@ var $;
 		}
 		Title(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.title())]);
+			(obj.sub) = () => ([(this.title())]);
 			return obj;
 		}
 		label(){
-			return [(this?.Title())];
+			return [(this.Title())];
 		}
 		attr(){
 			return {
 				...(super.attr()), 
-				"mol_check_checked": (this?.checked()), 
-				"aria-checked": (this?.aria_checked()), 
-				"role": (this?.aria_role())
+				"mol_check_checked": (this.checked()), 
+				"aria-checked": (this.aria_checked()), 
+				"role": (this.aria_role())
 			};
 		}
 		sub(){
-			return [(this?.Icon()), (this?.label())];
+			return [(this.Icon()), (this.label())];
 		}
 	};
 	($mol_mem(($.$mol_check.prototype), "checked"));
@@ -7285,13 +7291,13 @@ var $;
 			return false;
 		}
 		Icon(){
-			return (this?.Lights_icon());
+			return (this.Lights_icon());
 		}
 		hint(){
 			return (this.$.$mol_locale.text("$mol_lights_toggle_hint"));
 		}
 		checked(next){
-			return (this?.lights(next));
+			return (this.lights(next));
 		}
 	};
 	($mol_mem(($.$mol_lights_toggle.prototype), "Lights_icon"));
@@ -7330,7 +7336,7 @@ var $;
 			return null;
 		}
 		trigger_content(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 		hint(){
 			return "";
@@ -7339,18 +7345,18 @@ var $;
 			const obj = new this.$.$mol_check();
 			(obj.minimal_width) = () => (40);
 			(obj.minimal_height) = () => (40);
-			(obj.enabled) = () => ((this?.trigger_enabled()));
-			(obj.checked) = (next) => ((this?.showed(next)));
-			(obj.clicks) = (next) => ((this?.clicks(next)));
-			(obj.sub) = () => ((this?.trigger_content()));
-			(obj.hint) = () => ((this?.hint()));
+			(obj.enabled) = () => ((this.trigger_enabled()));
+			(obj.checked) = (next) => ((this.showed(next)));
+			(obj.clicks) = (next) => ((this.clicks(next)));
+			(obj.sub) = () => ((this.trigger_content()));
+			(obj.hint) = () => ((this.hint()));
 			return obj;
 		}
 		event(){
-			return {...(super.event()), "keydown": (next) => (this?.keydown(next))};
+			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
 		}
 		Anchor(){
-			return (this?.Trigger());
+			return (this.Trigger());
 		}
 	};
 	($mol_mem(($.$mol_pick.prototype), "keydown"));
@@ -7418,12 +7424,12 @@ var $;
 		}
 		Option_label(id){
 			const obj = new this.$.$mol_dimmer();
-			(obj.haystack) = () => ((this?.option_label(id)));
-			(obj.needle) = () => ((this?.filter_pattern()));
+			(obj.haystack) = () => ((this.option_label(id)));
+			(obj.needle) = () => ((this.filter_pattern()));
 			return obj;
 		}
 		option_content(id){
-			return [(this?.Option_label(id))];
+			return [(this.Option_label(id))];
 		}
 		no_options_message(){
 			return (this.$.$mol_locale.text("$mol_select_no_options_message"));
@@ -7441,9 +7447,9 @@ var $;
 		}
 		Nav(){
 			const obj = new this.$.$mol_nav();
-			(obj.keys_y) = () => ((this?.nav_components()));
-			(obj.current_y) = (next) => ((this?.option_focused(next)));
-			(obj.cycle) = (next) => ((this?.nav_cycle(next)));
+			(obj.keys_y) = () => ((this.nav_components()));
+			(obj.current_y) = (next) => ((this.option_focused(next)));
+			(obj.cycle) = (next) => ((this.nav_cycle(next)));
 			return obj;
 		}
 		menu_content(){
@@ -7451,12 +7457,12 @@ var $;
 		}
 		Menu(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.menu_content()));
+			(obj.rows) = () => ((this.menu_content()));
 			return obj;
 		}
 		Bubble_pane(){
 			const obj = new this.$.$mol_scroll();
-			(obj.sub) = () => ([(this?.Menu())]);
+			(obj.sub) = () => ([(this.Menu())]);
 			return obj;
 		}
 		filter_hint(){
@@ -7485,30 +7491,30 @@ var $;
 		}
 		Option_row(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.event_click) = (next) => ((this?.event_select(id, next)));
-			(obj.sub) = () => ((this?.option_content(id)));
+			(obj.event_click) = (next) => ((this.event_select(id, next)));
+			(obj.sub) = () => ((this.option_content(id)));
 			return obj;
 		}
 		No_options(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.no_options_message())]);
+			(obj.sub) = () => ([(this.no_options_message())]);
 			return obj;
 		}
 		plugins(){
-			return [...(super.plugins()), (this?.Nav())];
+			return [...(super.plugins()), (this.Nav())];
 		}
 		hint(){
 			return (this.$.$mol_locale.text("$mol_select_hint"));
 		}
 		bubble_content(){
-			return [(this?.Filter()), (this?.Bubble_pane())];
+			return [(this.Filter()), (this.Bubble_pane())];
 		}
 		Filter(){
 			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this?.filter_pattern(next)));
-			(obj.hint) = () => ((this?.filter_hint()));
-			(obj.submit) = (next) => ((this?.submit(next)));
-			(obj.enabled) = () => ((this?.enabled()));
+			(obj.query) = (next) => ((this.filter_pattern(next)));
+			(obj.hint) = () => ((this.filter_hint()));
+			(obj.submit) = (next) => ((this.submit(next)));
+			(obj.enabled) = () => ((this.enabled()));
 			return obj;
 		}
 		Trigger_icon(){
@@ -10734,14 +10740,14 @@ var $;
 ;
 	($.$hyoo_meta_link) = class $hyoo_meta_link extends ($.$mol_link) {
 		id(){
-			return (this?.meta()?.id());
+			return (this.meta().id());
 		}
 		title(){
-			return (this?.meta()?.title());
+			return (this.meta().title());
 		}
 		Avatar(){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.id()));
+			(obj.id) = () => ((this.id()));
 			return obj;
 		}
 		highlight(){
@@ -10749,8 +10755,8 @@ var $;
 		}
 		Title(){
 			const obj = new this.$.$mol_dimmer();
-			(obj.haystack) = () => ((this?.title()));
-			(obj.needle) = () => ((this?.highlight()));
+			(obj.haystack) = () => ((this.title()));
+			(obj.needle) = () => ((this.highlight()));
 			return obj;
 		}
 		minimal_height(){
@@ -10767,7 +10773,7 @@ var $;
 			return (this.$.$mol_locale.text("$hyoo_meta_link_all_title"));
 		}
 		sub(){
-			return [(this?.Avatar()), (this?.Title())];
+			return [(this.Avatar()), (this.Title())];
 		}
 	};
 	($mol_mem(($.$hyoo_meta_link.prototype), "Avatar"));
@@ -10820,7 +10826,7 @@ var $;
 ;
 	($.$hyoo_page_side_news) = class $hyoo_page_side_news extends ($.$mol_page) {
 		news(){
-			return (this?.side()?.news());
+			return (this.side().news());
 		}
 		item(id){
 			const obj = new this.$.$hyoo_page_side();
@@ -10831,17 +10837,17 @@ var $;
 		}
 		Item(id){
 			const obj = new this.$.$hyoo_meta_link();
-			(obj.meta) = () => ((this?.item(id)));
-			(obj.title) = () => ((this?.item_title(id)));
+			(obj.meta) = () => ((this.item(id)));
+			(obj.title) = () => ((this.item_title(id)));
 			(obj.Avatar) = () => (null);
 			return obj;
 		}
 		items(){
-			return [(this?.Item("0"))];
+			return [(this.Item("0"))];
 		}
 		Section_list(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.items()));
+			(obj.rows) = () => ((this.items()));
 			return obj;
 		}
 		side(){
@@ -10855,7 +10861,7 @@ var $;
 			return {...(super.attr()), "mol_theme": "$mol_theme_special"};
 		}
 		body(){
-			return [(this?.Section_list())];
+			return [(this.Section_list())];
 		}
 	};
 	($mol_mem_key(($.$hyoo_page_side_news.prototype), "item"));
@@ -10979,13 +10985,13 @@ var $;
 			return 0;
 		}
 		style(){
-			return {...(super.style()), "paddingLeft": (this?.level_style())};
+			return {...(super.style()), "paddingLeft": (this.level_style())};
 		}
 		checked(next){
-			return (this?.expanded(next));
+			return (this.expanded(next));
 		}
 		enabled(){
-			return (this?.expandable());
+			return (this.expandable());
 		}
 	};
 	($mol_mem(($.$mol_check_expand.prototype), "expanded"));
@@ -11090,21 +11096,21 @@ var $;
 			return null;
 		}
 		drag_start(next){
-			return (this?.start(next));
+			return (this.start(next));
 		}
 		move(next){
 			if(next !== undefined) return next;
 			return null;
 		}
 		drag_move(next){
-			return (this?.move(next));
+			return (this.move(next));
 		}
 		end(next){
 			if(next !== undefined) return next;
 			return null;
 		}
 		drag_end(next){
-			return (this?.end(next));
+			return (this.end(next));
 		}
 		status(next){
 			if(next !== undefined) return next;
@@ -11112,13 +11118,13 @@ var $;
 		}
 		event(){
 			return {
-				"dragstart": (next) => (this?.drag_start(next)), 
-				"drag": (next) => (this?.drag_move(next)), 
-				"dragend": (next) => (this?.drag_end(next))
+				"dragstart": (next) => (this.drag_start(next)), 
+				"drag": (next) => (this.drag_move(next)), 
+				"dragend": (next) => (this.drag_end(next))
 			};
 		}
 		attr(){
-			return {"draggable": true, "mol_drag_status": (this?.status())};
+			return {"draggable": true, "mol_drag_status": (this.status())};
 		}
 		transfer(){
 			return {
@@ -11137,7 +11143,7 @@ var $;
 			return true;
 		}
 		image(){
-			return (this?.dom_node());
+			return (this.dom_node());
 		}
 	};
 	($mol_mem(($.$mol_drag.prototype), "start"));
@@ -11217,14 +11223,14 @@ var $;
 		}
 		event(){
 			return {
-				"dragenter": (next) => (this?.enter(next)), 
-				"dragover": (next) => (this?.move(next)), 
-				"dragleave": (next) => (this?.leave(next)), 
-				"drop": (next) => (this?.drop(next))
+				"dragenter": (next) => (this.enter(next)), 
+				"dragover": (next) => (this.move(next)), 
+				"dragleave": (next) => (this.leave(next)), 
+				"drop": (next) => (this.drop(next))
 			};
 		}
 		attr(){
-			return {"mol_drop_status": (this?.status())};
+			return {"mol_drop_status": (this.status())};
 		}
 		adopt(next){
 			if(next !== undefined) return next;
@@ -11346,10 +11352,10 @@ var $;
 ;
 	($.$hyoo_meta_menu_items) = class $hyoo_meta_menu_items extends ($.$mol_list) {
 		ids(){
-			return (this?.list()?.list());
+			return (this.list().list());
 		}
 		item_title(id){
-			return (this?.item(id)?.title());
+			return (this.item(id).title());
 		}
 		item_expandable(id){
 			return false;
@@ -11360,8 +11366,8 @@ var $;
 		}
 		Item_expand(id){
 			const obj = new this.$.$mol_check_expand();
-			(obj.expandable) = () => ((this?.item_expandable(id)));
-			(obj.expanded) = (next) => ((this?.item_expanded(id, next)));
+			(obj.expandable) = () => ((this.item_expandable(id)));
+			(obj.expanded) = (next) => ((this.item_expanded(id, next)));
 			return obj;
 		}
 		editable(){
@@ -11396,30 +11402,30 @@ var $;
 		}
 		Item_link(id){
 			const obj = new this.$.$hyoo_meta_link();
-			(obj.meta) = () => ((this?.item(id)));
-			(obj.param) = () => ((this?.param()));
-			(obj.highlight) = () => ((this?.highlight()));
+			(obj.meta) = () => ((this.item(id)));
+			(obj.param) = () => ((this.param()));
+			(obj.highlight) = () => ((this.highlight()));
 			(obj.Avatar) = () => (null);
 			return obj;
 		}
 		Item_drag(id){
 			const obj = new this.$.$mol_drag();
-			(obj.end) = (next) => ((this?.item_drag_end(id, next)));
+			(obj.end) = (next) => ((this.item_drag_end(id, next)));
 			(obj.transfer) = () => ({
-				"text/plain": (this?.item_text(id)), 
-				"text/html": (this?.item_html(id)), 
-				"text/uri-list": (this?.item_uri(id))
+				"text/plain": (this.item_text(id)), 
+				"text/html": (this.item_html(id)), 
+				"text/uri-list": (this.item_uri(id))
 			});
-			(obj.Sub) = () => ((this?.Item_link(id)));
+			(obj.Sub) = () => ((this.Item_link(id)));
 			return obj;
 		}
 		Item_drop_after(id){
 			const obj = new this.$.$mol_drop();
-			(obj.enabled) = () => ((this?.editable()));
-			(obj.adopt) = (next) => ((this?.transfer_adopt(next)));
-			(obj.receive) = (next) => ((this?.receive_after(id, next)));
-			(obj.allow) = () => ((this?.drop_allow()));
-			(obj.Sub) = () => ((this?.Item_drag(id)));
+			(obj.enabled) = () => ((this.editable()));
+			(obj.adopt) = (next) => ((this.transfer_adopt(next)));
+			(obj.receive) = (next) => ((this.receive_after(id, next)));
+			(obj.allow) = () => ((this.drop_allow()));
+			(obj.Sub) = () => ((this.Item_drag(id)));
 			return obj;
 		}
 		item_remove(id, next){
@@ -11433,8 +11439,8 @@ var $;
 		Item_remove(id){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_remove_hint")));
-			(obj.click) = (next) => ((this?.item_remove(id, next)));
-			(obj.sub) = () => ([(this?.Item_remove_icon(id))]);
+			(obj.click) = (next) => ((this.item_remove(id, next)));
+			(obj.sub) = () => ([(this.Item_remove_icon(id))]);
 			return obj;
 		}
 		item_pin(id, next){
@@ -11448,8 +11454,8 @@ var $;
 		Item_pin(id){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_pin_hint")));
-			(obj.click) = (next) => ((this?.item_pin(id, next)));
-			(obj.sub) = () => ([(this?.Item_pin_icon(id))]);
+			(obj.click) = (next) => ((this.item_pin(id, next)));
+			(obj.sub) = () => ([(this.Item_pin_icon(id))]);
 			return obj;
 		}
 		receive_inside(id, next){
@@ -11467,56 +11473,56 @@ var $;
 		Item_add(id){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_items_Item_add_hint")));
-			(obj.click) = (next) => ((this?.item_add(id, next)));
-			(obj.sub) = () => ([(this?.Item_add_icon(id))]);
+			(obj.click) = (next) => ((this.item_add(id, next)));
+			(obj.sub) = () => ([(this.Item_add_icon(id))]);
 			return obj;
 		}
 		Item_drop_inside(id){
 			const obj = new this.$.$mol_drop();
-			(obj.enabled) = () => ((this?.editable()));
-			(obj.adopt) = (next) => ((this?.transfer_adopt(next)));
-			(obj.receive) = (next) => ((this?.receive_inside(id, next)));
-			(obj.allow) = () => ((this?.drop_allow()));
-			(obj.Sub) = () => ((this?.Item_add(id)));
+			(obj.enabled) = () => ((this.editable()));
+			(obj.adopt) = (next) => ((this.transfer_adopt(next)));
+			(obj.receive) = (next) => ((this.receive_inside(id, next)));
+			(obj.allow) = () => ((this.drop_allow()));
+			(obj.Sub) = () => ((this.Item_add(id)));
 			return obj;
 		}
 		item_row(id){
 			return [
-				(this?.Item_expand(id)), 
-				(this?.Item_drop_after(id)), 
-				(this?.Item_remove(id)), 
-				(this?.Item_pin(id)), 
-				(this?.Item_drop_inside(id))
+				(this.Item_expand(id)), 
+				(this.Item_drop_after(id)), 
+				(this.Item_remove(id)), 
+				(this.Item_pin(id)), 
+				(this.Item_drop_inside(id))
 			];
 		}
 		Item_row(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.item_row(id)));
+			(obj.sub) = () => ((this.item_row(id)));
 			return obj;
 		}
 		Item_items(id){
 			const obj = new this.$.$hyoo_meta_menu_items();
-			(obj.editing) = () => ((this?.editing()));
-			(obj.list) = () => ((this?.item_list(id)));
-			(obj.item) = (id) => ((this?.item(id)));
-			(obj.item_moved) = (id, next) => ((this?.item_moved(id, next)));
-			(obj.item_expanded) = (id, next) => ((this?.item_expanded(id, next)));
-			(obj.item_list) = (id) => ((this?.item_list(id)));
-			(obj.item_uri) = (id) => ((this?.item_uri(id)));
-			(obj.highlight) = () => ((this?.highlight()));
-			(obj.item_add) = (id, next) => ((this?.item_add(id, next)));
+			(obj.editing) = () => ((this.editing()));
+			(obj.list) = () => ((this.item_list(id)));
+			(obj.item) = (id) => ((this.item(id)));
+			(obj.item_moved) = (id, next) => ((this.item_moved(id, next)));
+			(obj.item_expanded) = (id, next) => ((this.item_expanded(id, next)));
+			(obj.item_list) = (id) => ((this.item_list(id)));
+			(obj.item_uri) = (id) => ((this.item_uri(id)));
+			(obj.highlight) = () => ((this.highlight()));
+			(obj.item_add) = (id, next) => ((this.item_add(id, next)));
 			return obj;
 		}
 		item_content(id){
-			return [(this?.Item_row(id)), (this?.Item_items(id))];
+			return [(this.Item_row(id)), (this.Item_items(id))];
 		}
 		Item(id){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.item_content(id)));
+			(obj.rows) = () => ((this.item_content(id)));
 			return obj;
 		}
 		items(){
-			return [(this?.Item("0_0"))];
+			return [(this.Item("0_0"))];
 		}
 		id(){
 			return "";
@@ -11544,7 +11550,7 @@ var $;
 			return null;
 		}
 		rows(){
-			return (this?.items());
+			return (this.items());
 		}
 	};
 	($mol_mem_key(($.$hyoo_meta_menu_items.prototype), "item_expanded"));
@@ -12219,13 +12225,13 @@ var $;
 ;
 	($.$hyoo_meta_menu) = class $hyoo_meta_menu extends ($.$mol_page) {
 		item_title(id){
-			return (this?.item(id)?.title());
+			return (this.item(id).title());
 		}
 		ids(){
-			return (this?.list()?.list());
+			return (this.list().list());
 		}
 		world(){
-			return (this?.list()?.world());
+			return (this.list().world());
 		}
 		id(){
 			return "";
@@ -12236,7 +12242,7 @@ var $;
 		}
 		Search(){
 			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this?.search(next)));
+			(obj.query) = (next) => ((this.search(next)));
 			return obj;
 		}
 		search_show(next){
@@ -12250,8 +12256,8 @@ var $;
 		Search_toggle(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_Search_toggle_hint")));
-			(obj.checked) = (next) => ((this?.search_show(next)));
-			(obj.Icon) = () => ((this?.Search_icon()));
+			(obj.checked) = (next) => ((this.search_show(next)));
+			(obj.Icon) = () => ((this.Search_icon()));
 			return obj;
 		}
 		editing(next){
@@ -12265,8 +12271,8 @@ var $;
 		Editing(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_Editing_hint")));
-			(obj.checked) = (next) => ((this?.editing(next)));
-			(obj.Icon) = () => ((this?.Editing_icon()));
+			(obj.checked) = (next) => ((this.editing(next)));
+			(obj.Icon) = () => ((this.Editing_icon()));
 			return obj;
 		}
 		add(next){
@@ -12280,8 +12286,8 @@ var $;
 		Add(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_menu_Add_hint")));
-			(obj.click) = (next) => ((this?.add(next)));
-			(obj.sub) = () => ([(this?.Add_icon())]);
+			(obj.click) = (next) => ((this.add(next)));
+			(obj.sub) = () => ([(this.Add_icon())]);
 			return obj;
 		}
 		found(){
@@ -12296,14 +12302,14 @@ var $;
 		}
 		Found(){
 			const obj = new this.$.$hyoo_meta_menu_items();
-			(obj.editing) = () => ((this?.editing()));
+			(obj.editing) = () => ((this.editing()));
 			(obj.drop_allow) = () => ([]);
-			(obj.list) = () => ((this?.list()));
-			(obj.ids) = () => ((this?.found()));
-			(obj.highlight) = () => ((this?.search()));
-			(obj.item_uri) = (id) => ((this?.item_uri(id)));
-			(obj.item_moved) = (id, next) => ((this?.item_moved(id, next)));
-			(obj.item_add) = (id, next) => ((this?.item_add(id, next)));
+			(obj.list) = () => ((this.list()));
+			(obj.ids) = () => ((this.found()));
+			(obj.highlight) = () => ((this.search()));
+			(obj.item_uri) = (id) => ((this.item_uri(id)));
+			(obj.item_moved) = (id, next) => ((this.item_moved(id, next)));
+			(obj.item_add) = (id, next) => ((this.item_add(id, next)));
 			return obj;
 		}
 		item_expanded(id, next){
@@ -12312,14 +12318,14 @@ var $;
 		}
 		Content(){
 			const obj = new this.$.$hyoo_meta_menu_items();
-			(obj.editing) = () => ((this?.editing()));
-			(obj.drop_allow) = () => ((this?.drop_allow()));
-			(obj.list) = () => ((this?.list()));
-			(obj.item_uri) = (id) => ((this?.item_uri(id)));
-			(obj.item_expanded) = (id, next) => ((this?.item_expanded(id, next)));
-			(obj.item_moved) = (id, next) => ((this?.item_moved(id, next)));
-			(obj.item_list) = (id) => ((this?.item_list(id)));
-			(obj.item_add) = (id, next) => ((this?.item_add(id, next)));
+			(obj.editing) = () => ((this.editing()));
+			(obj.drop_allow) = () => ((this.drop_allow()));
+			(obj.list) = () => ((this.list()));
+			(obj.item_uri) = (id) => ((this.item_uri(id)));
+			(obj.item_expanded) = (id, next) => ((this.item_expanded(id, next)));
+			(obj.item_moved) = (id, next) => ((this.item_moved(id, next)));
+			(obj.item_list) = (id) => ((this.item_list(id)));
+			(obj.item_add) = (id, next) => ((this.item_add(id, next)));
 			return obj;
 		}
 		transfer_adopt(next){
@@ -12336,11 +12342,11 @@ var $;
 		}
 		Drop_end(){
 			const obj = new this.$.$mol_drop();
-			(obj.enabled) = () => ((this?.editable()));
-			(obj.adopt) = (next) => ((this?.transfer_adopt(next)));
-			(obj.receive) = (next) => ((this?.receive_end(next)));
-			(obj.Sub) = () => ((this?.Drop_zone()));
-			(obj.allow) = () => ((this?.drop_allow()));
+			(obj.enabled) = () => ((this.editable()));
+			(obj.adopt) = (next) => ((this.transfer_adopt(next)));
+			(obj.receive) = (next) => ((this.receive_end(next)));
+			(obj.Sub) = () => ((this.Drop_zone()));
+			(obj.allow) = () => ((this.drop_allow()));
 			return obj;
 		}
 		editable(){
@@ -12371,7 +12377,7 @@ var $;
 		}
 		Logo(){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.id()));
+			(obj.id) = () => ((this.id()));
 			return obj;
 		}
 		tools_ext(){
@@ -12379,24 +12385,24 @@ var $;
 		}
 		head(){
 			return [
-				(this?.Title()), 
-				(this?.Tools()), 
-				(this?.Search())
+				(this.Title()), 
+				(this.Tools()), 
+				(this.Search())
 			];
 		}
 		tools(){
 			return [
-				(this?.Search_toggle()), 
-				(this?.Editing()), 
-				(this?.Add()), 
+				(this.Search_toggle()), 
+				(this.Editing()), 
+				(this.Add()), 
 				...(this.tools_ext())
 			];
 		}
 		body(){
 			return [
-				(this?.Found()), 
-				(this?.Content()), 
-				(this?.Drop_end())
+				(this.Found()), 
+				(this.Content()), 
+				(this.Drop_end())
 			];
 		}
 	};
@@ -12561,7 +12567,7 @@ var $;
 ;
 	($.$hyoo_page_side_menu) = class $hyoo_page_side_menu extends ($.$hyoo_meta_menu) {
 		title(){
-			return (this?.side()?.title());
+			return (this.side().title());
 		}
 		side(){
 			const obj = new this.$.$hyoo_page_side();
@@ -12573,7 +12579,7 @@ var $;
 		}
 		Title(){
 			const obj = new this.$.$hyoo_meta_link();
-			(obj.meta) = () => ((this?.side()));
+			(obj.meta) = () => ((this.side()));
 			return obj;
 		}
 	};
@@ -12682,9 +12688,9 @@ var $;
 		}
 		Backward(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => ((this?.backward_hint()));
-			(obj.click) = (next) => ((this?.backward(next)));
-			(obj.sub) = () => ([(this?.Backward_icon())]);
+			(obj.hint) = () => ((this.backward_hint()));
+			(obj.click) = (next) => ((this.backward(next)));
+			(obj.sub) = () => ([(this.Backward_icon())]);
 			return obj;
 		}
 		value(next){
@@ -12693,7 +12699,7 @@ var $;
 		}
 		Value(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.value())]);
+			(obj.sub) = () => ([(this.value())]);
 			return obj;
 		}
 		forward_hint(){
@@ -12709,16 +12715,16 @@ var $;
 		}
 		Forward(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => ((this?.forward_hint()));
-			(obj.click) = (next) => ((this?.forward(next)));
-			(obj.sub) = () => ([(this?.Forward_icon())]);
+			(obj.hint) = () => ((this.forward_hint()));
+			(obj.click) = (next) => ((this.forward(next)));
+			(obj.sub) = () => ([(this.Forward_icon())]);
 			return obj;
 		}
 		sub(){
 			return [
-				(this?.Backward()), 
-				(this?.Value()), 
-				(this?.Forward())
+				(this.Backward()), 
+				(this.Value()), 
+				(this.Forward())
 			];
 		}
 	};
@@ -12773,15 +12779,15 @@ var $;
 			return 0;
 		}
 		forward(next){
-			return (this?.Index()?.forward(next));
+			return (this.Index().forward(next));
 		}
 		backward(next){
-			return (this?.Index()?.backward(next));
+			return (this.Index().backward(next));
 		}
 		Backward(){
 			const obj = new this.$.$mol_hotkey();
 			(obj.mod_shift) = () => (true);
-			(obj.key) = () => ({"enter": (next) => (this?.backward(next))});
+			(obj.key) = () => ({"enter": (next) => (this.backward(next))});
 			return obj;
 		}
 		escape(next){
@@ -12790,7 +12796,7 @@ var $;
 		}
 		Forward(){
 			const obj = new this.$.$mol_hotkey();
-			(obj.key) = () => ({"enter": (next) => (this?.forward(next)), "escape": (next) => (this?.escape(next))});
+			(obj.key) = () => ({"enter": (next) => (this.forward(next)), "escape": (next) => (this.escape(next))});
 			return obj;
 		}
 		Root(){
@@ -12799,14 +12805,14 @@ var $;
 		}
 		Index(){
 			const obj = new this.$.$mol_paginator();
-			(obj.value) = (next) => ((this?.index(next)));
+			(obj.value) = (next) => ((this.index(next)));
 			return obj;
 		}
 		plugins(){
 			return [
 				...(super.plugins()), 
-				(this?.Backward()), 
-				(this?.Forward())
+				(this.Backward()), 
+				(this.Forward())
 			];
 		}
 	};
@@ -12945,7 +12951,7 @@ var $;
 			return "";
 		}
 		attr(){
-			return {...(super.attr()), "mol_text_code_token_type": (this?.type())};
+			return {...(super.attr()), "mol_text_code_token_type": (this.type())};
 		}
 	};
 	($.$mol_text_code_token_link) = class $mol_text_code_token_link extends ($.$mol_text_code_token) {
@@ -12961,7 +12967,7 @@ var $;
 		attr(){
 			return {
 				...(super.attr()), 
-				"href": (this?.uri()), 
+				"href": (this.uri()), 
 				"target": "_blank"
 			};
 		}
@@ -13062,21 +13068,21 @@ var $;
 		}
 		Numb(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.numb())]);
+			(obj.sub) = () => ([(this.numb())]);
 			return obj;
 		}
 		Token(id){
 			const obj = new this.$.$mol_text_code_token();
-			(obj.type) = () => ((this?.token_type(id)));
-			(obj.haystack) = () => ((this?.token_text(id)));
-			(obj.needle) = () => ((this?.highlight()));
+			(obj.type) = () => ((this.token_type(id)));
+			(obj.haystack) = () => ((this.token_text(id)));
+			(obj.needle) = () => ((this.highlight()));
 			return obj;
 		}
 		Token_link(id){
 			const obj = new this.$.$mol_text_code_token_link();
-			(obj.haystack) = () => ((this?.token_text(id)));
-			(obj.needle) = () => ((this?.highlight()));
-			(obj.uri) = () => ((this?.token_uri(id)));
+			(obj.haystack) = () => ((this.token_text(id)));
+			(obj.needle) = () => ((this.highlight()));
+			(obj.uri) = () => ((this.token_uri(id)));
 			return obj;
 		}
 		find_pos(id){
@@ -13360,11 +13366,11 @@ var $;
 ;
 	($.$mol_button_copy) = class $mol_button_copy extends ($.$mol_button_minor) {
 		text(){
-			return (this?.title());
+			return (this.title());
 		}
 		text_blob(next){
 			if(next !== undefined) return next;
-			const obj = new this.$.$mol_blob([(this?.text())], {"type": "text/plain"});
+			const obj = new this.$.$mol_blob([(this.text())], {"type": "text/plain"});
 			return obj;
 		}
 		html(){
@@ -13372,7 +13378,7 @@ var $;
 		}
 		html_blob(next){
 			if(next !== undefined) return next;
-			const obj = new this.$.$mol_blob([(this?.html())], {"type": "text/html"});
+			const obj = new this.$.$mol_blob([(this.html())], {"type": "text/html"});
 			return obj;
 		}
 		Icon(){
@@ -13383,13 +13389,13 @@ var $;
 			return "";
 		}
 		blobs(){
-			return [(this?.text_blob()), (this?.html_blob())];
+			return [(this.text_blob()), (this.html_blob())];
 		}
 		data(){
 			return {};
 		}
 		sub(){
-			return [(this?.Icon()), (this?.title())];
+			return [(this.Icon()), (this.title())];
 		}
 	};
 	($mol_mem(($.$mol_button_copy.prototype), "text_blob"));
@@ -13476,21 +13482,21 @@ var $;
 		}
 		Row(id){
 			const obj = new this.$.$mol_text_code_row();
-			(obj.numb_showed) = () => ((this?.sidebar_showed()));
-			(obj.numb) = () => ((this?.row_numb(id)));
-			(obj.text) = () => ((this?.row_text(id)));
-			(obj.syntax) = () => ((this?.syntax()));
-			(obj.uri_resolve) = (id) => ((this?.uri_resolve(id)));
-			(obj.highlight) = () => ((this?.highlight()));
+			(obj.numb_showed) = () => ((this.sidebar_showed()));
+			(obj.numb) = () => ((this.row_numb(id)));
+			(obj.text) = () => ((this.row_text(id)));
+			(obj.syntax) = () => ((this.syntax()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.highlight) = () => ((this.highlight()));
 			return obj;
 		}
 		rows(){
-			return [(this?.Row("0"))];
+			return [(this.Row("0"))];
 		}
 		Rows(){
 			const obj = new this.$.$mol_list();
-			(obj.render_visible_only) = () => ((this?.render_visible_only()));
-			(obj.rows) = () => ((this?.rows()));
+			(obj.render_visible_only) = () => ((this.render_visible_only()));
+			(obj.rows) = () => ((this.rows()));
 			return obj;
 		}
 		text_export(){
@@ -13499,11 +13505,11 @@ var $;
 		Copy(){
 			const obj = new this.$.$mol_button_copy();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_text_code_Copy_hint")));
-			(obj.text) = () => ((this?.text_export()));
+			(obj.text) = () => ((this.text_export()));
 			return obj;
 		}
 		attr(){
-			return {...(super.attr()), "mol_text_code_sidebar_showed": (this?.sidebar_showed())};
+			return {...(super.attr()), "mol_text_code_sidebar_showed": (this.sidebar_showed())};
 		}
 		text(){
 			return "";
@@ -13518,7 +13524,7 @@ var $;
 			return "";
 		}
 		sub(){
-			return [(this?.Rows()), (this?.Copy())];
+			return [(this.Rows()), (this.Copy())];
 		}
 	};
 	($mol_mem_key(($.$mol_text_code.prototype), "Row"));
@@ -13671,7 +13677,7 @@ var $;
 		}
 		Table(){
 			const obj = new this.$.$mol_grid_table();
-			(obj.sub) = () => ((this?.rows()));
+			(obj.sub) = () => ((this.rows()));
 			return obj;
 		}
 		head_cells(){
@@ -13684,10 +13690,10 @@ var $;
 			return [];
 		}
 		cell_content_text(id){
-			return (this?.cell_content(id));
+			return (this.cell_content(id));
 		}
 		cell_content_number(id){
-			return (this?.cell_content(id));
+			return (this.cell_content(id));
 		}
 		col_head_content(id){
 			return [];
@@ -13707,8 +13713,8 @@ var $;
 		}
 		Cell_dimmer(id){
 			const obj = new this.$.$mol_dimmer();
-			(obj.needle) = () => ((this?.needle()));
-			(obj.haystack) = () => ((this?.cell_value(id)));
+			(obj.needle) = () => ((this.needle()));
+			(obj.haystack) = () => ((this.cell_value(id)));
 			return obj;
 		}
 		row_height(){
@@ -13739,18 +13745,18 @@ var $;
 			return 0;
 		}
 		sub(){
-			return [(this?.Head()), (this?.Table())];
+			return [(this.Head()), (this.Table())];
 		}
 		Head(){
 			const obj = new this.$.$mol_grid_row();
-			(obj.cells) = () => ((this?.head_cells()));
+			(obj.cells) = () => ((this.head_cells()));
 			return obj;
 		}
 		Row(id){
 			const obj = new this.$.$mol_grid_row();
-			(obj.minimal_height) = () => ((this?.row_height()));
-			(obj.minimal_width) = () => ((this?.minimal_width()));
-			(obj.cells) = () => ((this?.cells(id)));
+			(obj.minimal_height) = () => ((this.row_height()));
+			(obj.minimal_width) = () => ((this.minimal_width()));
+			(obj.cells) = () => ((this.cells(id)));
 			return obj;
 		}
 		Cell(id){
@@ -13762,29 +13768,29 @@ var $;
 		}
 		Cell_text(id){
 			const obj = new this.$.$mol_grid_cell();
-			(obj.sub) = () => ((this?.cell_content_text(id)));
+			(obj.sub) = () => ((this.cell_content_text(id)));
 			return obj;
 		}
 		Cell_number(id){
 			const obj = new this.$.$mol_grid_number();
-			(obj.sub) = () => ((this?.cell_content_number(id)));
+			(obj.sub) = () => ((this.cell_content_number(id)));
 			return obj;
 		}
 		Col_head(id){
 			const obj = new this.$.$mol_float();
 			(obj.dom_name) = () => ("th");
-			(obj.sub) = () => ((this?.col_head_content(id)));
+			(obj.sub) = () => ((this.col_head_content(id)));
 			return obj;
 		}
 		Cell_branch(id){
 			const obj = new this.$.$mol_check_expand();
-			(obj.level) = () => ((this?.cell_level(id)));
-			(obj.label) = () => ((this?.cell_content(id)));
-			(obj.expanded) = (next) => ((this?.cell_expanded(id, next)));
+			(obj.level) = () => ((this.cell_level(id)));
+			(obj.label) = () => ((this.cell_content(id)));
+			(obj.expanded) = (next) => ((this.cell_expanded(id, next)));
 			return obj;
 		}
 		Cell_content(id){
-			return [(this?.Cell_dimmer(id))];
+			return [(this.Cell_dimmer(id))];
 		}
 	};
 	($mol_mem(($.$mol_grid.prototype), "Table"));
@@ -13803,7 +13809,7 @@ var $;
 			return [];
 		}
 		sub(){
-			return (this?.cells());
+			return (this.cells());
 		}
 	};
 	($.$mol_grid_cell) = class $mol_grid_cell extends ($.$mol_view) {
@@ -14040,22 +14046,22 @@ var $;
 		field(){
 			return {
 				...(super.field()), 
-				"src": (this?.uri()), 
-				"alt": (this?.title()), 
-				"loading": (this?.loading()), 
-				"decoding": (this?.decoding()), 
-				"crossOrigin": (this?.cors())
+				"src": (this.uri()), 
+				"alt": (this.title()), 
+				"loading": (this.loading()), 
+				"decoding": (this.decoding()), 
+				"crossOrigin": (this.cors())
 			};
 		}
 		attr(){
 			return {
 				...(super.attr()), 
-				"width": (this?.natural_width()), 
-				"height": (this?.natural_height())
+				"width": (this.natural_width()), 
+				"height": (this.natural_height())
 			};
 		}
 		event(){
-			return {"load": (next) => (this?.load(next))};
+			return {"load": (next) => (this.load(next))};
 		}
 		minimal_width(){
 			return 16;
@@ -14120,18 +14126,18 @@ var $;
 		}
 		Icon(){
 			const obj = new this.$.$mol_image();
-			(obj.uri) = () => ((this?.icon()));
+			(obj.uri) = () => ((this.icon()));
 			(obj.title) = () => ("");
 			return obj;
 		}
 		title(){
-			return (this?.uri());
+			return (this.uri());
 		}
 		sub(){
-			return [(this?.Icon())];
+			return [(this.Icon())];
 		}
 		content(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 		host(){
 			return "";
@@ -14204,8 +14210,8 @@ var $;
 		}
 		Fallback(){
 			const obj = new this.$.$mol_link();
-			(obj.uri) = () => ((this?.uri()));
-			(obj.sub) = () => ([(this?.title())]);
+			(obj.uri) = () => ((this.uri()));
+			(obj.sub) = () => ([(this.title())]);
 			return obj;
 		}
 		uri_change(next){
@@ -14225,15 +14231,15 @@ var $;
 		attr(){
 			return {
 				...(super.attr()), 
-				"data": (this?.uri()), 
-				"type": (this?.mime())
+				"data": (this.uri()), 
+				"type": (this.mime())
 			};
 		}
 		sub(){
-			return [(this?.Fallback())];
+			return [(this.Fallback())];
 		}
 		message(){
-			return {"hashchange": (next) => (this?.uri_change(next))};
+			return {"hashchange": (next) => (this.uri_change(next))};
 		}
 	};
 	($mol_mem(($.$mol_embed_native.prototype), "Fallback"));
@@ -14348,9 +14354,9 @@ var $;
 				...(super.attr()), 
 				"data": null, 
 				"type": null, 
-				"allow": (this?.allow()), 
-				"src": (this?.uri()), 
-				"srcdoc": (this?.html())
+				"allow": (this.allow()), 
+				"src": (this.uri()), 
+				"srcdoc": (this.html())
 			};
 		}
 		fullscreen(){
@@ -14437,8 +14443,8 @@ var $;
 		}
 		Image(){
 			const obj = new this.$.$mol_image();
-			(obj.title) = () => ((this?.title()));
-			(obj.uri) = () => ((this?.video_preview()));
+			(obj.title) = () => ((this.title()));
+			(obj.uri) = () => ((this.video_preview()));
 			return obj;
 		}
 		Hint(){
@@ -14450,8 +14456,8 @@ var $;
 		}
 		Frame(){
 			const obj = new this.$.$mol_frame();
-			(obj.title) = () => ((this?.title()));
-			(obj.uri) = () => ((this?.video_embed()));
+			(obj.title) = () => ((this.title()));
+			(obj.uri) = () => ((this.video_embed()));
 			return obj;
 		}
 		uri(){
@@ -14461,13 +14467,13 @@ var $;
 			return "";
 		}
 		checked(next){
-			return (this?.active(next));
+			return (this.active(next));
 		}
 		sub(){
 			return [
-				(this?.Image()), 
-				(this?.Hint()), 
-				(this?.Frame())
+				(this.Image()), 
+				(this.Hint()), 
+				(this.Frame())
 			];
 		}
 	};
@@ -14593,26 +14599,26 @@ var $;
 		}
 		Image(){
 			const obj = new this.$.$mol_image();
-			(obj.title) = () => ((this?.title()));
-			(obj.uri) = () => ((this?.uri()));
+			(obj.title) = () => ((this.title()));
+			(obj.uri) = () => ((this.uri()));
 			return obj;
 		}
 		Object(){
 			const obj = new this.$.$mol_embed_native();
-			(obj.title) = () => ((this?.title()));
-			(obj.uri) = () => ((this?.uri()));
+			(obj.title) = () => ((this.title()));
+			(obj.uri) = () => ((this.uri()));
 			return obj;
 		}
 		Youtube(){
 			const obj = new this.$.$mol_embed_youtube();
-			(obj.title) = () => ((this?.title()));
-			(obj.uri) = () => ((this?.uri()));
+			(obj.title) = () => ((this.title()));
+			(obj.uri) = () => ((this.uri()));
 			return obj;
 		}
 		Rutube(){
 			const obj = new this.$.$mol_embed_rutube();
-			(obj.title) = () => ((this?.title()));
-			(obj.uri) = () => ((this?.uri()));
+			(obj.title) = () => ((this.title()));
+			(obj.uri) = () => ((this.uri()));
 			return obj;
 		}
 	};
@@ -14679,13 +14685,13 @@ var $;
 			return true;
 		}
 		label(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 		Trigger(){
 			const obj = new this.$.$mol_check_expand();
-			(obj.checked) = (next) => ((this?.expanded(next)));
-			(obj.expandable) = () => ((this?.expandable()));
-			(obj.label) = () => ((this?.label()));
+			(obj.checked) = (next) => ((this.expanded(next)));
+			(obj.expandable) = () => ((this.expandable()));
+			(obj.label) = () => ((this.label()));
 			return obj;
 		}
 		Tools(){
@@ -14693,7 +14699,7 @@ var $;
 		}
 		Label(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Trigger()), (this?.Tools())]);
+			(obj.sub) = () => ([(this.Trigger()), (this.Tools())]);
 			return obj;
 		}
 		content(){
@@ -14701,11 +14707,11 @@ var $;
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.content()));
+			(obj.rows) = () => ((this.content()));
 			return obj;
 		}
 		rows(){
-			return [(this?.Label()), (this?.Content())];
+			return [(this.Label()), (this.Content())];
 		}
 	};
 	($mol_mem(($.$mol_expander.prototype), "expanded"));
@@ -14784,7 +14790,7 @@ var $;
 			return true;
 		}
 		pre_sidebar_showed(){
-			return (this?.code_sidebar_showed());
+			return (this.code_sidebar_showed());
 		}
 		table_head_cells(id){
 			return [];
@@ -14830,7 +14836,7 @@ var $;
 		}
 		Spoiler_label(id){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.spoiler_label(id)));
+			(obj.text) = () => ((this.spoiler_label(id)));
 			return obj;
 		}
 		spoiler_content(id){
@@ -14838,7 +14844,7 @@ var $;
 		}
 		Spoiler_content(id){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.spoiler_content(id)));
+			(obj.text) = () => ((this.spoiler_content(id)));
 			return obj;
 		}
 		uri_base(){
@@ -14857,27 +14863,27 @@ var $;
 			return "";
 		}
 		auto(){
-			return [(this?.auto_scroll())];
+			return [(this.auto_scroll())];
 		}
 		Paragraph(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ((this?.block_content(id)));
+			(obj.sub) = () => ((this.block_content(id)));
 			return obj;
 		}
 		Quote(id){
 			const obj = new this.$.$mol_text();
-			(obj.uri_resolve) = (id) => ((this?.uri_resolve(id)));
-			(obj.text) = () => ((this?.quote_text(id)));
-			(obj.highlight) = () => ((this?.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.text) = () => ((this.quote_text(id)));
+			(obj.highlight) = () => ((this.highlight()));
 			(obj.auto_scroll) = () => (null);
 			return obj;
 		}
 		List(id){
 			const obj = new this.$.$mol_text_list();
-			(obj.uri_resolve) = (id) => ((this?.uri_resolve(id)));
-			(obj.type) = () => ((this?.list_type(id)));
-			(obj.text) = () => ((this?.list_text(id)));
-			(obj.highlight) = () => ((this?.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.type) = () => ((this.list_type(id)));
+			(obj.text) = () => ((this.list_text(id)));
+			(obj.highlight) = () => ((this.highlight()));
 			return obj;
 		}
 		item_index(id){
@@ -14886,17 +14892,17 @@ var $;
 		Header(id){
 			const obj = new this.$.$mol_text_header();
 			(obj.minimal_height) = () => (40);
-			(obj.level) = () => ((this?.header_level(id)));
-			(obj.content) = () => ((this?.block_content(id)));
-			(obj.arg) = () => ((this?.header_arg(id)));
+			(obj.level) = () => ((this.header_level(id)));
+			(obj.content) = () => ((this.block_content(id)));
+			(obj.arg) = () => ((this.header_arg(id)));
 			return obj;
 		}
 		Pre(id){
 			const obj = new this.$.$mol_text_code();
-			(obj.text) = () => ((this?.pre_text(id)));
-			(obj.highlight) = () => ((this?.highlight()));
-			(obj.uri_resolve) = (id) => ((this?.uri_resolve(id)));
-			(obj.sidebar_showed) = () => ((this?.pre_sidebar_showed()));
+			(obj.text) = () => ((this.pre_text(id)));
+			(obj.highlight) = () => ((this.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.sidebar_showed) = () => ((this.pre_sidebar_showed()));
 			return obj;
 		}
 		Cut(id){
@@ -14906,86 +14912,86 @@ var $;
 		}
 		Table(id){
 			const obj = new this.$.$mol_grid();
-			(obj.head_cells) = () => ((this?.table_head_cells(id)));
-			(obj.rows) = () => ((this?.table_rows(id)));
+			(obj.head_cells) = () => ((this.table_head_cells(id)));
+			(obj.rows) = () => ((this.table_rows(id)));
 			return obj;
 		}
 		Table_row(id){
 			const obj = new this.$.$mol_grid_row();
-			(obj.cells) = () => ((this?.table_cells(id)));
+			(obj.cells) = () => ((this.table_cells(id)));
 			return obj;
 		}
 		Table_cell(id){
 			const obj = new this.$.$mol_text();
 			(obj.auto_scroll) = () => (null);
-			(obj.highlight) = () => ((this?.highlight()));
-			(obj.uri_resolve) = (id) => ((this?.uri_resolve(id)));
-			(obj.text) = () => ((this?.table_cell_text(id)));
+			(obj.highlight) = () => ((this.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.text) = () => ((this.table_cell_text(id)));
 			return obj;
 		}
 		Grid(id){
 			const obj = new this.$.$mol_grid();
-			(obj.rows) = () => ((this?.grid_rows(id)));
+			(obj.rows) = () => ((this.grid_rows(id)));
 			return obj;
 		}
 		Grid_row(id){
 			const obj = new this.$.$mol_grid_row();
-			(obj.cells) = () => ((this?.grid_cells(id)));
+			(obj.cells) = () => ((this.grid_cells(id)));
 			return obj;
 		}
 		Grid_cell(id){
 			const obj = new this.$.$mol_text();
 			(obj.auto_scroll) = () => (null);
-			(obj.highlight) = () => ((this?.highlight()));
-			(obj.uri_resolve) = (id) => ((this?.uri_resolve(id)));
-			(obj.text) = () => ((this?.grid_cell_text(id)));
+			(obj.highlight) = () => ((this.highlight()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.text) = () => ((this.grid_cell_text(id)));
 			return obj;
 		}
 		String(id){
 			const obj = new this.$.$mol_dimmer();
 			(obj.dom_name) = () => ("span");
-			(obj.needle) = () => ((this?.highlight()));
-			(obj.haystack) = () => ((this?.line_text(id)));
+			(obj.needle) = () => ((this.highlight()));
+			(obj.haystack) = () => ((this.line_text(id)));
 			return obj;
 		}
 		Span(id){
 			const obj = new this.$.$mol_text_span();
 			(obj.dom_name) = () => ("span");
-			(obj.type) = () => ((this?.line_type(id)));
-			(obj.sub) = () => ((this?.line_content(id)));
+			(obj.type) = () => ((this.line_type(id)));
+			(obj.sub) = () => ((this.line_content(id)));
 			return obj;
 		}
 		Code_line(id){
 			const obj = new this.$.$mol_text_code_row();
 			(obj.numb_showed) = () => (false);
-			(obj.highlight) = () => ((this?.highlight()));
-			(obj.text) = () => ((this?.line_text(id)));
-			(obj.uri_resolve) = (id) => ((this?.uri_resolve(id)));
-			(obj.syntax) = () => ((this?.code_syntax()));
+			(obj.highlight) = () => ((this.highlight()));
+			(obj.text) = () => ((this.line_text(id)));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
+			(obj.syntax) = () => ((this.code_syntax()));
 			return obj;
 		}
 		Link(id){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.uri) = () => ((this?.link_uri(id)));
-			(obj.content) = () => ((this?.line_content(id)));
+			(obj.uri) = () => ((this.link_uri(id)));
+			(obj.content) = () => ((this.line_content(id)));
 			return obj;
 		}
 		Link_http(id){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.uri) = () => ((this?.link_uri(id)));
-			(obj.content) = () => ([(this?.link_host(id))]);
+			(obj.uri) = () => ((this.link_uri(id)));
+			(obj.content) = () => ([(this.link_host(id))]);
 			return obj;
 		}
 		Embed(id){
 			const obj = new this.$.$mol_embed_any();
-			(obj.uri) = () => ((this?.link_uri(id)));
-			(obj.title) = () => ((this?.line_text(id)));
+			(obj.uri) = () => ((this.link_uri(id)));
+			(obj.title) = () => ((this.line_text(id)));
 			return obj;
 		}
 		Spoiler(id){
 			const obj = new this.$.$mol_expander();
-			(obj.label) = () => ([(this?.Spoiler_label(id))]);
-			(obj.content) = () => ([(this?.Spoiler_content(id))]);
+			(obj.label) = () => ([(this.Spoiler_label(id))]);
+			(obj.content) = () => ([(this.Spoiler_content(id))]);
 			return obj;
 		}
 	};
@@ -15019,16 +15025,16 @@ var $;
 		}
 		Link(){
 			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this?.arg()));
+			(obj.arg) = () => ((this.arg()));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_text_header_Link_hint")));
-			(obj.sub) = () => ((this?.content()));
+			(obj.sub) = () => ((this.content()));
 			return obj;
 		}
 		level(){
 			return 1;
 		}
 		sub(){
-			return [(this?.Link())];
+			return [(this.Link())];
 		}
 	};
 	($mol_mem(($.$mol_text_header.prototype), "Link"));
@@ -15040,7 +15046,7 @@ var $;
 			return "span";
 		}
 		attr(){
-			return {...(super.attr()), "mol_text_type": (this?.type())};
+			return {...(super.attr()), "mol_text_type": (this.type())};
 		}
 	};
 
@@ -15407,7 +15413,7 @@ var $;
 			return "0123456789";
 		}
 		hint(){
-			return (this?.mask("0"));
+			return (this.mask("0"));
 		}
 		keyboard(){
 			return "numeric";
@@ -15562,15 +15568,15 @@ var $;
 		Title(){
 			const obj = new this.$.$mol_view();
 			(obj.minimal_height) = () => (24);
-			(obj.sub) = () => ([(this?.title())]);
+			(obj.sub) = () => ([(this.title())]);
 			return obj;
 		}
 		head(){
-			return [(this?.Title())];
+			return [(this.Title())];
 		}
 		Head(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.head()));
+			(obj.sub) = () => ((this.head()));
 			return obj;
 		}
 		weekdays(){
@@ -15578,7 +15584,7 @@ var $;
 		}
 		Weekdays(){
 			const obj = new this.$.$mol_hor();
-			(obj.sub) = () => ((this?.weekdays()));
+			(obj.sub) = () => ((this.weekdays()));
 			return obj;
 		}
 		weekend(id){
@@ -15609,10 +15615,10 @@ var $;
 			return "";
 		}
 		day_content(id){
-			return [(this?.day_text(id))];
+			return [(this.day_text(id))];
 		}
 		sub(){
-			return [(this?.Head()), (this?.Weekdays())];
+			return [(this.Head()), (this.Weekdays())];
 		}
 		weeks(){
 			return [];
@@ -15622,23 +15628,23 @@ var $;
 		}
 		Weekday(id){
 			const obj = new this.$.$mol_calendar_day();
-			(obj.holiday) = () => ((this?.weekend(id)));
-			(obj.sub) = () => ([(this?.weekday(id))]);
+			(obj.holiday) = () => ((this.weekend(id)));
+			(obj.sub) = () => ([(this.weekday(id))]);
 			return obj;
 		}
 		Week(id){
 			const obj = new this.$.$mol_hor();
-			(obj.sub) = () => ((this?.week_days(id)));
+			(obj.sub) = () => ((this.week_days(id)));
 			return obj;
 		}
 		Day(id){
 			const obj = new this.$.$mol_calendar_day();
-			(obj.ghost) = () => ((this?.day_ghost(id)));
-			(obj.holiday) = () => ((this?.day_holiday(id)));
-			(obj.selected) = () => ((this?.day_selected(id)));
-			(obj.today) = () => ((this?.day_today(id)));
-			(obj.theme) = () => ((this?.day_theme(id)));
-			(obj.sub) = () => ((this?.day_content(id)));
+			(obj.ghost) = () => ((this.day_ghost(id)));
+			(obj.holiday) = () => ((this.day_holiday(id)));
+			(obj.selected) = () => ((this.day_selected(id)));
+			(obj.today) = () => ((this.day_today(id)));
+			(obj.theme) = () => ((this.day_theme(id)));
+			(obj.sub) = () => ((this.day_content(id)));
 			return obj;
 		}
 		month_string(){
@@ -15680,11 +15686,11 @@ var $;
 		}
 		attr(){
 			return {
-				"mol_calendar_holiday": (this?.holiday()), 
-				"mol_calendar_ghost": (this?.ghost()), 
-				"mol_calendar_selected": (this?.selected()), 
-				"mol_calendar_today": (this?.today()), 
-				"mol_theme": (this?.theme())
+				"mol_calendar_holiday": (this.holiday()), 
+				"mol_calendar_ghost": (this.ghost()), 
+				"mol_calendar_selected": (this.selected()), 
+				"mol_calendar_today": (this.today()), 
+				"mol_theme": (this.theme())
 			};
 		}
 	};
@@ -15840,9 +15846,9 @@ var $;
 		Today(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_date_Today_hint")));
-			(obj.enabled) = () => ((this?.enabled()));
-			(obj.click) = (next) => ((this?.today_click(next)));
-			(obj.sub) = () => ([(this?.Today_icon())]);
+			(obj.enabled) = () => ((this.enabled()));
+			(obj.click) = (next) => ((this.today_click(next)));
+			(obj.sub) = () => ([(this.Today_icon())]);
 			return obj;
 		}
 		value(next){
@@ -15850,16 +15856,16 @@ var $;
 			return "";
 		}
 		value_changed(next){
-			return (this?.Input()?.value_changed(next));
+			return (this.Input().value_changed(next));
 		}
 		input_mask(id){
 			return "";
 		}
 		Input(){
 			const obj = new this.$.$mol_format();
-			(obj.value) = (next) => ((this?.value(next)));
-			(obj.mask) = (id) => ((this?.input_mask(id)));
-			(obj.enabled) = () => ((this?.enabled()));
+			(obj.value) = (next) => ((this.value(next)));
+			(obj.mask) = (id) => ((this.input_mask(id)));
+			(obj.enabled) = () => ((this.enabled()));
 			return obj;
 		}
 		clear(next){
@@ -15873,25 +15879,25 @@ var $;
 		Clear(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_date_Clear_hint")));
-			(obj.enabled) = () => ((this?.enabled()));
-			(obj.click) = (next) => ((this?.clear(next)));
-			(obj.sub) = () => ([(this?.Clear_icon())]);
+			(obj.enabled) = () => ((this.enabled()));
+			(obj.click) = (next) => ((this.clear(next)));
+			(obj.sub) = () => ([(this.Clear_icon())]);
 			return obj;
 		}
 		input_content(){
 			return [
-				(this?.Today()), 
-				(this?.Input()), 
-				(this?.Clear())
+				(this.Today()), 
+				(this.Input()), 
+				(this.Clear())
 			];
 		}
 		Input_row(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.input_content()));
+			(obj.sub) = () => ((this.input_content()));
 			return obj;
 		}
 		month_moment(){
-			return (this?.value_moment());
+			return (this.value_moment());
 		}
 		day_selected(id){
 			return false;
@@ -15901,7 +15907,7 @@ var $;
 			return null;
 		}
 		Calendar_title(){
-			return (this?.Calendar()?.Title());
+			return (this.Calendar().Title());
 		}
 		prev_hint(){
 			return (this.$.$mol_locale.text("$mol_date_prev_hint"));
@@ -15916,9 +15922,9 @@ var $;
 		}
 		Prev(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => ((this?.prev_hint()));
-			(obj.click) = (next) => ((this?.prev(next)));
-			(obj.sub) = () => ([(this?.Prev_icon())]);
+			(obj.hint) = () => ((this.prev_hint()));
+			(obj.click) = (next) => ((this.prev(next)));
+			(obj.sub) = () => ([(this.Prev_icon())]);
 			return obj;
 		}
 		next_hint(){
@@ -15934,27 +15940,27 @@ var $;
 		}
 		Next(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.hint) = () => ((this?.next_hint()));
-			(obj.click) = (next) => ((this?.next(next)));
-			(obj.sub) = () => ([(this?.Next_icon())]);
+			(obj.hint) = () => ((this.next_hint()));
+			(obj.click) = (next) => ((this.next(next)));
+			(obj.sub) = () => ([(this.Next_icon())]);
 			return obj;
 		}
 		Calendar_tools(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([
-				(this?.Prev()), 
-				(this?.Calendar_title()), 
-				(this?.Next())
+				(this.Prev()), 
+				(this.Calendar_title()), 
+				(this.Next())
 			]);
 			return obj;
 		}
 		Calendar(){
 			const obj = new this.$.$mol_date_calendar();
-			(obj.enabled) = () => ((this?.enabled()));
-			(obj.month_moment) = () => ((this?.month_moment()));
-			(obj.day_selected) = (id) => ((this?.day_selected(id)));
-			(obj.day_click) = (id, next) => ((this?.day_click(id, next)));
-			(obj.head) = () => ([(this?.Calendar_tools())]);
+			(obj.enabled) = () => ((this.enabled()));
+			(obj.month_moment) = () => ((this.month_moment()));
+			(obj.day_selected) = (id) => ((this.day_selected(id)));
+			(obj.day_click) = (id, next) => ((this.day_click(id, next)));
+			(obj.head) = () => ([(this.Calendar_tools())]);
 			return obj;
 		}
 		Icon(){
@@ -15962,7 +15968,7 @@ var $;
 			return obj;
 		}
 		bubble_content(){
-			return [(this?.Input_row()), (this?.Calendar())];
+			return [(this.Input_row()), (this.Calendar())];
 		}
 		value_number(next){
 			if(next !== undefined) return next;
@@ -16005,14 +16011,14 @@ var $;
 		}
 		Day_button(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.day_text(id)));
-			(obj.event_click) = (next) => ((this?.day_click(id, next)));
+			(obj.title) = () => ((this.day_text(id)));
+			(obj.event_click) = (next) => ((this.day_click(id, next)));
 			(obj.minimal_height) = () => (24);
-			(obj.enabled) = () => ((this?.enabled()));
+			(obj.enabled) = () => ((this.enabled()));
 			return obj;
 		}
 		day_content(id){
-			return [(this?.Day_button(id))];
+			return [(this.Day_button(id))];
 		}
 	};
 	($mol_mem_key(($.$mol_date_calendar.prototype), "day_click"));
@@ -16163,12 +16169,12 @@ var $;
 			return null;
 		}
 		attr(){
-			return {...(super.attr()), "mol_text_list_type": (this?.type())};
+			return {...(super.attr()), "mol_text_list_type": (this.type())};
 		}
 		Paragraph(id){
 			const obj = new this.$.$mol_text_list_item();
-			(obj.index) = () => ((this?.item_index(id)));
-			(obj.sub) = () => ((this?.block_content(id)));
+			(obj.index) = () => ((this.item_index(id)));
+			(obj.sub) = () => ((this.block_content(id)));
 			return obj;
 		}
 	};
@@ -16178,7 +16184,7 @@ var $;
 			return 0;
 		}
 		attr(){
-			return {...(super.attr()), "mol_text_list_item_index": (this?.index())};
+			return {...(super.attr()), "mol_text_list_item_index": (this.index())};
 		}
 	};
 
@@ -16196,31 +16202,31 @@ var $;
 ;
 	($.$hyoo_page_side_view) = class $hyoo_page_side_view extends ($.$mol_page) {
 		id(){
-			return (this?.side()?.id());
+			return (this.side().id());
 		}
 		editable(){
-			return (this?.side()?.editable());
+			return (this.side().editable());
 		}
 		title(next){
-			return (this?.side()?.title(next));
+			return (this.side().title(next));
 		}
 		side_details(next){
-			return (this?.side()?.details(next));
+			return (this.side().details(next));
 		}
 		released(){
-			return (this?.side()?.released());
+			return (this.side().released());
 		}
 		side_release(){
-			return (this?.side()?.release());
+			return (this.side().release());
 		}
 		changed_moment(){
-			return (this?.side()?.changed_moment());
+			return (this.side().changed_moment());
 		}
 		authors(){
-			return (this?.side()?.authors());
+			return (this.side().authors());
 		}
 		following(){
-			return (this?.side()?.following());
+			return (this.side().following());
 		}
 		search_start(next){
 			if(next !== undefined) return next;
@@ -16228,7 +16234,7 @@ var $;
 		}
 		Search_start(){
 			const obj = new this.$.$mol_hotkey();
-			(obj.key) = () => ({"F": (next) => (this?.search_start(next))});
+			(obj.key) = () => ({"F": (next) => (this.search_start(next))});
 			(obj.mod_ctrl) = () => (true);
 			return obj;
 		}
@@ -16244,14 +16250,14 @@ var $;
 		}
 		Avatar(){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.id()));
+			(obj.id) = () => ((this.id()));
 			return obj;
 		}
 		Menu_toggle(){
 			const obj = new this.$.$mol_check();
-			(obj.checked) = (next) => ((this?.menu_showed(next)));
+			(obj.checked) = (next) => ((this.menu_showed(next)));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Menu_toggle_hint")));
-			(obj.sub) = () => ([(this?.Avatar())]);
+			(obj.sub) = () => ([(this.Avatar())]);
 			return obj;
 		}
 		search_query(next){
@@ -16264,9 +16270,9 @@ var $;
 		}
 		Search(){
 			const obj = new this.$.$mol_search_jumper();
-			(obj.query) = (next) => ((this?.search_query(next)));
-			(obj.Root) = () => ((this?.Details()));
-			(obj.clear) = (next) => ((this?.search_stop(next)));
+			(obj.query) = (next) => ((this.search_query(next)));
+			(obj.Root) = () => ((this.Details()));
+			(obj.clear) = (next) => ((this.search_stop(next)));
 			return obj;
 		}
 		editing(next){
@@ -16282,14 +16288,14 @@ var $;
 			return obj;
 		}
 		edit_toggle_label(){
-			return [(this?.Unreleased())];
+			return [(this.Unreleased())];
 		}
 		Edit_toggle(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Edit_toggle_hint")));
-			(obj.checked) = (next) => ((this?.editing(next)));
-			(obj.Icon) = () => ((this?.Edit_icon()));
-			(obj.label) = () => ((this?.edit_toggle_label()));
+			(obj.checked) = (next) => ((this.editing(next)));
+			(obj.Icon) = () => ((this.Edit_icon()));
+			(obj.label) = () => ((this.edit_toggle_label()));
 			return obj;
 		}
 		search_show(next){
@@ -16303,8 +16309,8 @@ var $;
 		Search_toggle(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Search_toggle_hint")));
-			(obj.checked) = (next) => ((this?.search_show(next)));
-			(obj.Icon) = () => ((this?.Search_icon()));
+			(obj.checked) = (next) => ((this.search_show(next)));
+			(obj.Icon) = () => ((this.Search_icon()));
 			return obj;
 		}
 		info(next){
@@ -16318,8 +16324,8 @@ var $;
 		Info_toggle(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Info_toggle_hint")));
-			(obj.checked) = (next) => ((this?.info(next)));
-			(obj.Icon) = () => ((this?.Info_icon()));
+			(obj.checked) = (next) => ((this.info(next)));
+			(obj.Icon) = () => ((this.Info_icon()));
 			return obj;
 		}
 		bookmark(next){
@@ -16333,8 +16339,8 @@ var $;
 		Bookmark_toggle(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_view_Bookmark_toggle_hint")));
-			(obj.checked) = (next) => ((this?.bookmark(next)));
-			(obj.Icon) = () => ((this?.Bookmark_icon()));
+			(obj.checked) = (next) => ((this.bookmark(next)));
+			(obj.Icon) = () => ((this.Bookmark_icon()));
 			return obj;
 		}
 		details(){
@@ -16342,13 +16348,13 @@ var $;
 		}
 		Details(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.details()));
-			(obj.highlight) = () => ((this?.search_query()));
+			(obj.text) = () => ((this.details()));
+			(obj.highlight) = () => ((this.search_query()));
 			return obj;
 		}
 		Changed(){
 			const obj = new this.$.$mol_date();
-			(obj.value_moment) = () => ((this?.changed_moment()));
+			(obj.value_moment) = () => ((this.changed_moment()));
 			return obj;
 		}
 		author_link(id){
@@ -16356,29 +16362,29 @@ var $;
 		}
 		Author_link(id){
 			const obj = new this.$.$hyoo_meta_link();
-			(obj.meta) = () => ((this?.peer(id)));
-			(obj.uri) = () => ((this?.author_link(id)));
+			(obj.meta) = () => ((this.peer(id)));
+			(obj.uri) = () => ((this.author_link(id)));
 			return obj;
 		}
 		author_list(){
-			return [(this?.Author_link("0_0"))];
+			return [(this.Author_link("0_0"))];
 		}
 		Author_list(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.author_list()));
+			(obj.sub) = () => ((this.author_list()));
 			return obj;
 		}
 		Following(){
 			const obj = new this.$.$hyoo_meta_link();
-			(obj.meta) = () => ((this?.following()));
+			(obj.meta) = () => ((this.following()));
 			return obj;
 		}
 		Signature(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([
-				(this?.Changed()), 
-				(this?.Author_list()), 
-				(this?.Following())
+				(this.Changed()), 
+				(this.Author_list()), 
+				(this.Following())
 			]);
 			return obj;
 		}
@@ -16402,31 +16408,31 @@ var $;
 			return obj;
 		}
 		plugins(){
-			return [(this?.Search_start())];
+			return [(this.Search_start())];
 		}
 		auto(){
-			return [(this?.slides_send()), (this?.history_mark())];
+			return [(this.slides_send()), (this.history_mark())];
 		}
 		Logo(){
-			return (this?.Menu_toggle());
+			return (this.Menu_toggle());
 		}
 		head(){
 			return [
-				(this?.Title()), 
-				(this?.Tools()), 
-				(this?.Search())
+				(this.Title()), 
+				(this.Tools()), 
+				(this.Search())
 			];
 		}
 		tools(){
 			return [
-				(this?.Edit_toggle()), 
-				(this?.Search_toggle()), 
-				(this?.Info_toggle()), 
-				(this?.Bookmark_toggle())
+				(this.Edit_toggle()), 
+				(this.Search_toggle()), 
+				(this.Info_toggle()), 
+				(this.Bookmark_toggle())
 			];
 		}
 		body(){
-			return [(this?.Details()), (this?.Signature())];
+			return [(this.Details()), (this.Signature())];
 		}
 	};
 	($mol_mem(($.$hyoo_page_side_view.prototype), "search_start"));
@@ -16770,7 +16776,7 @@ var $;
 			return "blob.bin";
 		}
 		sub(){
-			return [(this?.Icon()), (this?.title())];
+			return [(this.Icon()), (this.title())];
 		}
 	};
 	($mol_mem(($.$mol_button_download.prototype), "Icon"));
@@ -16861,7 +16867,7 @@ var $;
 			return [];
 		}
 		bring(){
-			return (this?.Edit()?.bring());
+			return (this.Edit().bring());
 		}
 		submit(next){
 			if(next !== undefined) return next;
@@ -16872,14 +16878,14 @@ var $;
 		}
 		Edit(){
 			const obj = new this.$.$mol_textarea_edit();
-			(obj.value) = (next) => ((this?.value(next)));
-			(obj.hint) = () => ((this?.hint()));
-			(obj.enabled) = () => ((this?.enabled()));
-			(obj.spellcheck) = () => ((this?.spellcheck()));
-			(obj.length_max) = () => ((this?.length_max()));
-			(obj.selection) = (next) => ((this?.selection(next)));
-			(obj.submit) = (next) => ((this?.submit(next)));
-			(obj.submit_with_ctrl) = () => ((this?.submit_with_ctrl()));
+			(obj.value) = (next) => ((this.value(next)));
+			(obj.hint) = () => ((this.hint()));
+			(obj.enabled) = () => ((this.enabled()));
+			(obj.spellcheck) = () => ((this.spellcheck()));
+			(obj.length_max) = () => ((this.length_max()));
+			(obj.selection) = (next) => ((this.selection(next)));
+			(obj.submit) = (next) => ((this.submit(next)));
+			(obj.submit_with_ctrl) = () => ((this.submit_with_ctrl()));
 			return obj;
 		}
 		row_numb(id){
@@ -16890,25 +16896,25 @@ var $;
 		}
 		View(){
 			const obj = new this.$.$mol_text_code();
-			(obj.text) = () => ((this?.value()));
+			(obj.text) = () => ((this.value()));
 			(obj.render_visible_only) = () => (false);
-			(obj.row_numb) = (id) => ((this?.row_numb(id)));
-			(obj.sidebar_showed) = () => ((this?.sidebar_showed()));
-			(obj.highlight) = () => ((this?.highlight()));
+			(obj.row_numb) = (id) => ((this.row_numb(id)));
+			(obj.sidebar_showed) = () => ((this.sidebar_showed()));
+			(obj.highlight) = () => ((this.highlight()));
 			return obj;
 		}
 		attr(){
 			return {
 				...(super.attr()), 
-				"mol_textarea_clickable": (this?.clickable()), 
-				"mol_textarea_sidebar_showed": (this?.sidebar_showed())
+				"mol_textarea_clickable": (this.clickable()), 
+				"mol_textarea_sidebar_showed": (this.sidebar_showed())
 			};
 		}
 		event(){
-			return {"keydown": (next) => (this?.press(next)), "pointermove": (next) => (this?.hover(next))};
+			return {"keydown": (next) => (this.press(next)), "pointermove": (next) => (this.hover(next))};
 		}
 		sub(){
-			return [(this?.Edit()), (this?.View())];
+			return [(this.Edit()), (this.View())];
 		}
 		symbols_alt(){
 			return {
@@ -17098,12 +17104,12 @@ var $;
 ;
 	($.$mol_labeler) = class $mol_labeler extends ($.$mol_list) {
 		label(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 		Label(){
 			const obj = new this.$.$mol_view();
 			(obj.minimal_height) = () => (32);
-			(obj.sub) = () => ((this?.label()));
+			(obj.sub) = () => ((this.label()));
 			return obj;
 		}
 		content(){
@@ -17112,11 +17118,11 @@ var $;
 		Content(){
 			const obj = new this.$.$mol_view();
 			(obj.minimal_height) = () => (24);
-			(obj.sub) = () => ((this?.content()));
+			(obj.sub) = () => ((this.content()));
 			return obj;
 		}
 		rows(){
-			return [(this?.Label()), (this?.Content())];
+			return [(this.Label()), (this.Content())];
 		}
 	};
 	($mol_mem(($.$mol_labeler.prototype), "Label"));
@@ -17143,7 +17149,7 @@ var $;
 		}
 		Bid(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.bid())]);
+			(obj.sub) = () => ([(this.bid())]);
 			return obj;
 		}
 		control(){
@@ -17153,10 +17159,10 @@ var $;
 			return [];
 		}
 		label(){
-			return [(this?.name()), (this?.Bid())];
+			return [(this.name()), (this.Bid())];
 		}
 		content(){
-			return [(this?.control())];
+			return [(this.control())];
 		}
 	};
 	($mol_mem(($.$mol_form_field.prototype), "Bid"));
@@ -17214,22 +17220,22 @@ var $;
 			return [];
 		}
 		body(){
-			return (this?.form_fields());
+			return (this.form_fields());
 		}
 		Body(){
 			const obj = new this.$.$mol_list();
-			(obj.sub) = () => ((this?.body()));
+			(obj.sub) = () => ((this.body()));
 			return obj;
 		}
 		buttons(){
 			return [];
 		}
 		foot(){
-			return (this?.buttons());
+			return (this.buttons());
 		}
 		Foot(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ((this?.foot()));
+			(obj.sub) = () => ((this.foot()));
 			return obj;
 		}
 		submit_allowed(){
@@ -17239,14 +17245,14 @@ var $;
 			return false;
 		}
 		event(){
-			return {...(super.event()), "keydown": (next) => (this?.keydown(next))};
+			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
 		}
 		submit(next){
 			if(next !== undefined) return next;
 			return null;
 		}
 		rows(){
-			return [(this?.Body()), (this?.Foot())];
+			return [(this.Body()), (this.Foot())];
 		}
 	};
 	($mol_mem(($.$mol_form.prototype), "keydown"));
@@ -17300,25 +17306,25 @@ var $;
 ;
 	($.$hyoo_page_side_edit) = class $hyoo_page_side_edit extends ($.$mol_page) {
 		title(next){
-			return (this?.side()?.title(next));
+			return (this.side().title(next));
 		}
 		details(next){
-			return (this?.side()?.details(next));
+			return (this.side().details(next));
 		}
 		details_selection(next){
-			return (this?.side()?.details_selection(next));
+			return (this.side().details_selection(next));
 		}
 		content_full(){
-			return (this?.side()?.content_full());
+			return (this.side().content_full());
 		}
 		aura(next){
-			return (this?.side()?.aura(next));
+			return (this.side().aura(next));
 		}
 		editable(){
-			return (this?.side()?.editable());
+			return (this.side().editable());
 		}
 		released(){
-			return (this?.side()?.released());
+			return (this.side().released());
 		}
 		Syntax(){
 			const obj = new this.$.$mol_link_iconed();
@@ -17338,10 +17344,10 @@ var $;
 		}
 		Publish(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.publish(next)));
-			(obj.disabled) = () => ((this?.released()));
+			(obj.click) = (next) => ((this.publish(next)));
+			(obj.disabled) = () => ((this.released()));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Publish_hint")));
-			(obj.sub) = () => ([(this?.Publish_icon())]);
+			(obj.sub) = () => ([(this.Publish_icon())]);
 			return obj;
 		}
 		Export_icon(){
@@ -17358,8 +17364,8 @@ var $;
 		Download(){
 			const obj = new this.$.$mol_button_download();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Download_title")));
-			(obj.file_name) = () => ((this?.download_name()));
-			(obj.blob) = () => ((this?.download_blob()));
+			(obj.file_name) = () => ((this.download_name()));
+			(obj.blob) = () => ((this.download_blob()));
 			return obj;
 		}
 		copy_text(){
@@ -17371,15 +17377,15 @@ var $;
 		Copy_html(){
 			const obj = new this.$.$mol_button_copy();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Copy_html_title")));
-			(obj.text) = () => ((this?.copy_text()));
-			(obj.html) = () => ((this?.copy_html()));
+			(obj.text) = () => ((this.copy_text()));
+			(obj.html) = () => ((this.copy_html()));
 			return obj;
 		}
 		Export(){
 			const obj = new this.$.$mol_pick();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Export_hint")));
-			(obj.trigger_content) = () => ([(this?.Export_icon())]);
-			(obj.bubble_content) = () => ([(this?.Download()), (this?.Copy_html())]);
+			(obj.trigger_content) = () => ([(this.Export_icon())]);
+			(obj.bubble_content) = () => ([(this.Download()), (this.Copy_html())]);
 			return obj;
 		}
 		rights(next){
@@ -17393,8 +17399,8 @@ var $;
 		Rights_toggle(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Rights_toggle_hint")));
-			(obj.checked) = (next) => ((this?.rights(next)));
-			(obj.Icon) = () => ((this?.Rights_icon()));
+			(obj.checked) = (next) => ((this.rights(next)));
+			(obj.Icon) = () => ((this.Rights_icon()));
 			return obj;
 		}
 		close(next){
@@ -17407,29 +17413,29 @@ var $;
 		}
 		Close(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.close(next)));
-			(obj.sub) = () => ([(this?.Close_icon())]);
+			(obj.click) = (next) => ((this.close(next)));
+			(obj.sub) = () => ([(this.Close_icon())]);
 			return obj;
 		}
 		Details_edit(){
 			const obj = new this.$.$mol_textarea();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Details_edit_hint")));
-			(obj.value) = (next) => ((this?.details(next)));
-			(obj.selection) = (next) => ((this?.details_selection(next)));
-			(obj.enabled) = () => ((this?.editable()));
+			(obj.value) = (next) => ((this.details(next)));
+			(obj.selection) = (next) => ((this.details_selection(next)));
+			(obj.enabled) = () => ((this.editable()));
 			return obj;
 		}
 		Aura(){
 			const obj = new this.$.$mol_string_button();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Aura_hint")));
-			(obj.value) = (next) => ((this?.aura(next)));
-			(obj.enabled) = () => ((this?.editable()));
+			(obj.value) = (next) => ((this.aura(next)));
+			(obj.enabled) = () => ((this.editable()));
 			return obj;
 		}
 		Aura_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Aura_field_name")));
-			(obj.Content) = () => ((this?.Aura()));
+			(obj.Content) = () => ((this.Aura()));
 			return obj;
 		}
 		side(){
@@ -17439,8 +17445,8 @@ var $;
 		Title(){
 			const obj = new this.$.$mol_string_button();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_edit_Title_hint")));
-			(obj.value) = (next) => ((this?.title(next)));
-			(obj.enabled) = () => ((this?.editable()));
+			(obj.value) = (next) => ((this.title(next)));
+			(obj.enabled) = () => ((this.editable()));
 			return obj;
 		}
 		export_sign(){
@@ -17448,15 +17454,15 @@ var $;
 		}
 		tools(){
 			return [
-				(this?.Syntax()), 
-				(this?.Publish()), 
-				(this?.Export()), 
-				(this?.Rights_toggle()), 
-				(this?.Close())
+				(this.Syntax()), 
+				(this.Publish()), 
+				(this.Export()), 
+				(this.Rights_toggle()), 
+				(this.Close())
 			];
 		}
 		body(){
-			return [(this?.Details_edit()), (this?.Aura_field())];
+			return [(this.Details_edit()), (this.Aura_field())];
 		}
 	};
 	($mol_mem(($.$hyoo_page_side_edit.prototype), "Syntax"));
@@ -17874,28 +17880,28 @@ var $;
 ;
 	($.$hyoo_page_side_info) = class $hyoo_page_side_info extends ($.$mol_page) {
 		text_tokens(){
-			return (this?.Text()?.flow_tokens());
+			return (this.Text().flow_tokens());
 		}
 		text_header_title(id){
-			return (this?.Text()?.block_text(id));
+			return (this.Text().block_text(id));
 		}
 		section_arg(id){
-			return (this?.Text()?.header_arg(id));
+			return (this.Text().header_arg(id));
 		}
 		section_level(id){
-			return (this?.Text()?.header_level(id));
+			return (this.Text().header_level(id));
 		}
 		details(){
-			return (this?.side()?.details());
+			return (this.side().details());
 		}
 		details_node(){
-			return (this?.side()?.details_node());
+			return (this.side().details_node());
 		}
 		referrers_list(){
-			return (this?.side()?.referrers_list());
+			return (this.side().referrers_list());
 		}
 		referrers_stat(id){
-			return (this?.side()?.referrers_stat(id));
+			return (this.side().referrers_stat(id));
 		}
 		slides_uri(){
 			return "https://slides.hyoo.ru/#!slides={source}";
@@ -17903,7 +17909,7 @@ var $;
 		Slides(){
 			const obj = new this.$.$mol_link_iconed();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Slides_hint")));
-			(obj.uri) = () => ((this?.slides_uri()));
+			(obj.uri) = () => ((this.slides_uri()));
 			(obj.title) = () => ("");
 			return obj;
 		}
@@ -17917,8 +17923,8 @@ var $;
 		}
 		Close(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.close(next)));
-			(obj.sub) = () => ([(this?.Close_icon())]);
+			(obj.click) = (next) => ((this.close(next)));
+			(obj.sub) = () => ([(this.Close_icon())]);
 			return obj;
 		}
 		size(){
@@ -17927,7 +17933,7 @@ var $;
 		Size(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Size_title")));
-			(obj.content) = () => ([(this?.size())]);
+			(obj.content) = () => ([(this.size())]);
 			return obj;
 		}
 		chars(){
@@ -17936,7 +17942,7 @@ var $;
 		Chars(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Chars_title")));
-			(obj.content) = () => ([(this?.chars())]);
+			(obj.content) = () => ([(this.chars())]);
 			return obj;
 		}
 		words(){
@@ -17945,7 +17951,7 @@ var $;
 		Words(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Words_title")));
-			(obj.content) = () => ([(this?.words())]);
+			(obj.content) = () => ([(this.words())]);
 			return obj;
 		}
 		weight(){
@@ -17954,16 +17960,16 @@ var $;
 		Weight(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Weight_title")));
-			(obj.content) = () => ([(this?.weight())]);
+			(obj.content) = () => ([(this.weight())]);
 			return obj;
 		}
 		Stat(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([
-				(this?.Size()), 
-				(this?.Chars()), 
-				(this?.Words()), 
-				(this?.Weight())
+				(this.Size()), 
+				(this.Chars()), 
+				(this.Words()), 
+				(this.Weight())
 			]);
 			return obj;
 		}
@@ -17976,18 +17982,18 @@ var $;
 		}
 		Section_link(id){
 			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this?.section_arg(id)));
-			(obj.title) = () => ((this?.section_title(id)));
+			(obj.arg) = () => ((this.section_arg(id)));
+			(obj.title) = () => ((this.section_title(id)));
 			return obj;
 		}
 		section_list(){
-			return [(this?.Section_link("0"))];
+			return [(this.Section_link("0"))];
 		}
 		Section_list(){
 			const obj = new this.$.$mol_expander();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Section_list_title")));
-			(obj.expanded) = (next) => ((this?.section_expanded(next)));
-			(obj.content) = () => ((this?.section_list()));
+			(obj.expanded) = (next) => ((this.section_expanded(next)));
+			(obj.content) = () => ((this.section_list()));
 			return obj;
 		}
 		ref_expanded(next){
@@ -17999,7 +18005,7 @@ var $;
 		}
 		Ref_item_link(id){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.uri) = () => ((this?.ref_uri(id)));
+			(obj.uri) = () => ((this.ref_uri(id)));
 			return obj;
 		}
 		ref_stat(id){
@@ -18007,22 +18013,22 @@ var $;
 		}
 		Ref_item_stat(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.ref_stat(id))]);
+			(obj.sub) = () => ([(this.ref_stat(id))]);
 			return obj;
 		}
 		Ref_item(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Ref_item_link(id)), (this?.Ref_item_stat(id))]);
+			(obj.sub) = () => ([(this.Ref_item_link(id)), (this.Ref_item_stat(id))]);
 			return obj;
 		}
 		ref_list(){
-			return [(this?.Ref_item("0_0"))];
+			return [(this.Ref_item("0_0"))];
 		}
 		Ref_list(){
 			const obj = new this.$.$mol_expander();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Ref_list_title")));
-			(obj.expanded) = (next) => ((this?.ref_expanded(next)));
-			(obj.content) = () => ((this?.ref_list()));
+			(obj.expanded) = (next) => ((this.ref_expanded(next)));
+			(obj.content) = () => ((this.ref_list()));
 			return obj;
 		}
 		word_item_text(id){
@@ -18030,7 +18036,7 @@ var $;
 		}
 		Word_item_text(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.word_item_text(id))]);
+			(obj.sub) = () => ([(this.word_item_text(id))]);
 			return obj;
 		}
 		word_item_stat(id){
@@ -18038,27 +18044,27 @@ var $;
 		}
 		Word_item_stat(id){
 			const obj = new this.$.$mol_speck();
-			(obj.value) = () => ((this?.word_item_stat(id)));
+			(obj.value) = () => ((this.word_item_stat(id)));
 			(obj.theme) = () => ("$mol_theme_special");
 			return obj;
 		}
 		Word_item(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Word_item_text(id)), (this?.Word_item_stat(id))]);
+			(obj.sub) = () => ([(this.Word_item_text(id)), (this.Word_item_stat(id))]);
 			return obj;
 		}
 		word_list_items(){
-			return [(this?.Word_item("0_0"))];
+			return [(this.Word_item("0_0"))];
 		}
 		Word_list_items(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ((this?.word_list_items()));
+			(obj.sub) = () => ((this.word_list_items()));
 			return obj;
 		}
 		Word_list(){
 			const obj = new this.$.$mol_expander();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_page_side_info_Word_list_title")));
-			(obj.content) = () => ([(this?.Word_list_items())]);
+			(obj.content) = () => ([(this.Word_list_items())]);
 			return obj;
 		}
 		Text(){
@@ -18073,14 +18079,14 @@ var $;
 			return (this.$.$mol_locale.text("$hyoo_page_side_info_title"));
 		}
 		tools(){
-			return [(this?.Slides()), (this?.Close())];
+			return [(this.Slides()), (this.Close())];
 		}
 		body(){
 			return [
-				(this?.Stat()), 
-				(this?.Section_list()), 
-				(this?.Ref_list()), 
-				(this?.Word_list())
+				(this.Stat()), 
+				(this.Section_list()), 
+				(this.Ref_list()), 
+				(this.Word_list())
 			];
 		}
 	};
@@ -18375,7 +18381,7 @@ var $;
 ;
 	($.$hyoo_meta_rights) = class $hyoo_meta_rights extends ($.$mol_page) {
 		editors(){
-			return (this?.meta()?.editors());
+			return (this.meta().editors());
 		}
 		peer(id){
 			const obj = new this.$.$hyoo_meta_person();
@@ -18383,15 +18389,15 @@ var $;
 		}
 		Editor_link(id){
 			const obj = new this.$.$hyoo_meta_link();
-			(obj.meta) = () => ((this?.peer(id)));
+			(obj.meta) = () => ((this.peer(id)));
 			return obj;
 		}
 		editor_list(){
-			return [(this?.Editor_link("0_0"))];
+			return [(this.Editor_link("0_0"))];
 		}
 		Editor_list(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.editor_list()));
+			(obj.rows) = () => ((this.editor_list()));
 			return obj;
 		}
 		editor_add_bid(){
@@ -18407,8 +18413,8 @@ var $;
 		Editor_add_id(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_meta_rights_Editor_add_id_hint")));
-			(obj.value) = (next) => ((this?.editor_add_id(next)));
-			(obj.enabled) = () => ((this?.editable()));
+			(obj.value) = (next) => ((this.editor_add_id(next)));
+			(obj.enabled) = () => ((this.editable()));
 			return obj;
 		}
 		editor_add_allowed(){
@@ -18424,14 +18430,14 @@ var $;
 		}
 		Editor_add_submit(){
 			const obj = new this.$.$mol_button_major();
-			(obj.enabled) = () => ((this?.editor_add_allowed()));
-			(obj.click) = (next) => ((this?.editor_add_submit(next)));
-			(obj.sub) = () => ([(this?.Editor_add_icon())]);
+			(obj.enabled) = () => ((this.editor_add_allowed()));
+			(obj.click) = (next) => ((this.editor_add_submit(next)));
+			(obj.sub) = () => ([(this.Editor_add_icon())]);
 			return obj;
 		}
 		Editor_add_bar(){
 			const obj = new this.$.$mol_bar();
-			(obj.sub) = () => ([(this?.Editor_add_id()), (this?.Editor_add_submit())]);
+			(obj.sub) = () => ([(this.Editor_add_id()), (this.Editor_add_submit())]);
 			return obj;
 		}
 		editor_add_preview(){
@@ -18440,7 +18446,7 @@ var $;
 		}
 		Editor_add_preview(){
 			const obj = new this.$.$hyoo_meta_link();
-			(obj.meta) = () => ((this?.editor_add_preview()));
+			(obj.meta) = () => ((this.editor_add_preview()));
 			return obj;
 		}
 		editor_fill_all(next){
@@ -18450,34 +18456,34 @@ var $;
 		Editor_fill_all(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_meta_rights_Editor_fill_all_title")));
-			(obj.click) = (next) => ((this?.editor_fill_all(next)));
+			(obj.click) = (next) => ((this.editor_fill_all(next)));
 			return obj;
 		}
 		editor_add_rows(){
 			return [
-				(this?.Editor_add_bar()), 
-				(this?.Editor_add_preview()), 
-				(this?.Editor_fill_all())
+				(this.Editor_add_bar()), 
+				(this.Editor_add_preview()), 
+				(this.Editor_fill_all())
 			];
 		}
 		Editor_add_form(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.editor_add_rows()));
+			(obj.rows) = () => ((this.editor_add_rows()));
 			return obj;
 		}
 		Editor_add(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ((this.$.$mol_locale.text("$hyoo_meta_rights_Editor_add_name")));
-			(obj.bid) = () => ((this?.editor_add_bid()));
-			(obj.Content) = () => ((this?.Editor_add_form()));
+			(obj.bid) = () => ((this.editor_add_bid()));
+			(obj.Content) = () => ((this.Editor_add_form()));
 			return obj;
 		}
 		blocks(){
-			return [(this?.Editor_list()), (this?.Editor_add())];
+			return [(this.Editor_list()), (this.Editor_add())];
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.blocks()));
+			(obj.rows) = () => ((this.blocks()));
 			return obj;
 		}
 		title(){
@@ -18488,7 +18494,7 @@ var $;
 			return obj;
 		}
 		body(){
-			return [(this?.Content())];
+			return [(this.Content())];
 		}
 	};
 	($mol_mem_key(($.$hyoo_meta_rights.prototype), "peer"));
@@ -18629,11 +18635,11 @@ var $;
 		}
 		Pass(){
 			const obj = new this.$.$mol_string();
-			(obj.type) = () => ((this?.type()));
-			(obj.hint) = () => ((this?.hint()));
-			(obj.value) = (next) => ((this?.value(next)));
-			(obj.submit) = (next) => ((this?.submit(next)));
-			(obj.enabled) = () => ((this?.enabled()));
+			(obj.type) = () => ((this.type()));
+			(obj.hint) = () => ((this.hint()));
+			(obj.value) = (next) => ((this.value(next)));
+			(obj.submit) = (next) => ((this.submit(next)));
+			(obj.enabled) = () => ((this.enabled()));
 			return obj;
 		}
 		checked(next){
@@ -18646,19 +18652,19 @@ var $;
 		}
 		Show(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.checked) = (next) => ((this?.checked(next)));
-			(obj.Icon) = () => ((this?.Show_icon()));
+			(obj.checked) = (next) => ((this.checked(next)));
+			(obj.Icon) = () => ((this.Show_icon()));
 			return obj;
 		}
 		content(){
-			return [(this?.Pass()), (this?.Show())];
+			return [(this.Pass()), (this.Show())];
 		}
 		type(next){
 			if(next !== undefined) return next;
 			return "password";
 		}
 		sub(){
-			return (this?.content());
+			return (this.content());
 		}
 	};
 	($mol_mem(($.$mol_password.prototype), "value"));
@@ -18708,14 +18714,14 @@ var $;
 		}
 		Password(){
 			const obj = new this.$.$mol_password();
-			(obj.value) = (next) => ((this?.password(next)));
+			(obj.value) = (next) => ((this.password(next)));
 			return obj;
 		}
 		Password_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Password_field_name")));
-			(obj.bids) = () => ([(this?.password_bid())]);
-			(obj.Content) = () => ((this?.Password()));
+			(obj.bids) = () => ([(this.password_bid())]);
+			(obj.Content) = () => ((this.Password()));
 			return obj;
 		}
 		recall_enabled(){
@@ -18727,19 +18733,19 @@ var $;
 		}
 		Recall(){
 			const obj = new this.$.$mol_string();
-			(obj.enabled) = () => ((this?.recall_enabled()));
-			(obj.value) = (next) => ((this?.recall(next)));
+			(obj.enabled) = () => ((this.recall_enabled()));
+			(obj.value) = (next) => ((this.recall(next)));
 			return obj;
 		}
 		Recall_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Recall_field_name")));
-			(obj.Content) = () => ((this?.Recall()));
+			(obj.Content) = () => ((this.Recall()));
 			return obj;
 		}
 		Export_pass(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Password_field()), (this?.Recall_field())]);
+			(obj.rows) = () => ([(this.Password_field()), (this.Recall_field())]);
 			return obj;
 		}
 		export_link(){
@@ -18747,20 +18753,20 @@ var $;
 		}
 		Export_link(){
 			const obj = new this.$.$mol_link();
-			(obj.uri) = () => ((this?.export_link()));
+			(obj.uri) = () => ((this.export_link()));
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_meta_safe_Export_link_title")));
 			return obj;
 		}
 		export_rows(){
 			return [
-				(this?.Expot_bid()), 
-				(this?.Export_pass()), 
-				(this?.Export_link())
+				(this.Expot_bid()), 
+				(this.Export_pass()), 
+				(this.Export_link())
 			];
 		}
 		Export_block(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.export_rows()));
+			(obj.rows) = () => ((this.export_rows()));
 			return obj;
 		}
 		Iport_descr(){
@@ -18770,7 +18776,7 @@ var $;
 		}
 		Import_pass(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Recall_field()), (this?.Password_field())]);
+			(obj.rows) = () => ([(this.Recall_field()), (this.Password_field())]);
 			return obj;
 		}
 		import_switch(next){
@@ -18782,7 +18788,7 @@ var $;
 		}
 		Peer_new(){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.peer_new()));
+			(obj.id) = () => ((this.peer_new()));
 			return obj;
 		}
 		impot_switch_title(){
@@ -18790,28 +18796,28 @@ var $;
 		}
 		Import_switch(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.import_switch(next)));
-			(obj.sub) = () => ([(this?.Peer_new()), (this?.impot_switch_title())]);
+			(obj.click) = (next) => ((this.import_switch(next)));
+			(obj.sub) = () => ([(this.Peer_new()), (this.impot_switch_title())]);
 			return obj;
 		}
 		import_rows(){
 			return [
-				(this?.Iport_descr()), 
-				(this?.Import_pass()), 
-				(this?.Import_switch())
+				(this.Iport_descr()), 
+				(this.Import_pass()), 
+				(this.Import_switch())
 			];
 		}
 		Import_block(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.import_rows()));
+			(obj.rows) = () => ((this.import_rows()));
 			return obj;
 		}
 		content(){
-			return [(this?.Export_block()), (this?.Import_block())];
+			return [(this.Export_block()), (this.Import_block())];
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.content()));
+			(obj.rows) = () => ((this.content()));
 			return obj;
 		}
 		title(){
@@ -18831,7 +18837,7 @@ var $;
 			return {...(super.attr()), "mol_theme": "$mol_theme_special"};
 		}
 		body(){
-			return [(this?.Content())];
+			return [(this.Content())];
 		}
 	};
 	($mol_mem(($.$hyoo_meta_safe.prototype), "Expot_bid"));
@@ -19239,17 +19245,17 @@ var $;
 ;
 	($.$hyoo_sync_online) = class $hyoo_sync_online extends ($.$mol_select) {
 		dictionary(){
-			return (this?.yard()?.master_list());
+			return (this.yard().master_list());
 		}
 		master_cursor(next){
-			return (this?.yard()?.master_cursor(next));
+			return (this.yard().master_cursor(next));
 		}
 		master_id(id){
 			return "";
 		}
 		Option_logo(id){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.master_id(id)));
+			(obj.id) = () => ((this.master_id(id)));
 			return obj;
 		}
 		master_link(){
@@ -19257,7 +19263,7 @@ var $;
 		}
 		Well(){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.master_link()));
+			(obj.id) = () => ((this.master_link()));
 			return obj;
 		}
 		Fail(){
@@ -19265,19 +19271,19 @@ var $;
 			return obj;
 		}
 		link_content(){
-			return [(this?.Well()), (this?.Fail())];
+			return [(this.Well()), (this.Fail())];
 		}
 		hint(){
 			return "$hyoo_sync";
 		}
 		message(){
-			return (this?.hint());
+			return (this.hint());
 		}
 		Link(){
 			const obj = new this.$.$mol_link();
-			(obj.uri) = () => ((this?.master_link()));
-			(obj.sub) = () => ((this?.link_content()));
-			(obj.hint) = () => ((this?.message()));
+			(obj.uri) = () => ((this.master_link()));
+			(obj.sub) = () => ((this.link_content()));
+			(obj.hint) = () => ((this.message()));
 			return obj;
 		}
 		minimal_width(){
@@ -19294,10 +19300,10 @@ var $;
 			return null;
 		}
 		option_content(id){
-			return [(this?.Option_logo(id)), (this?.option_label(id))];
+			return [(this.Option_logo(id)), (this.option_label(id))];
 		}
 		trigger_content(){
-			return [(this?.Link())];
+			return [(this.Link())];
 		}
 	};
 	($mol_mem_key(($.$hyoo_sync_online.prototype), "Option_logo"));
@@ -19421,7 +19427,7 @@ var $;
 		}
 		Profile(){
 			const obj = new this.$.$hyoo_meta_link();
-			(obj.meta) = () => ((this?.side()));
+			(obj.meta) = () => ((this.side()));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_menu_Profile_hint")));
 			(obj.Title) = () => (null);
 			(obj.relation) = () => ("nofollow");
@@ -19429,7 +19435,7 @@ var $;
 		}
 		Online(){
 			const obj = new this.$.$hyoo_sync_online();
-			(obj.yard) = () => ((this?.yard()));
+			(obj.yard) = () => ((this.yard()));
 			return obj;
 		}
 		Safe_icon(){
@@ -19443,8 +19449,8 @@ var $;
 		Safe_showing(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_menu_Safe_showing_hint")));
-			(obj.Icon) = () => ((this?.Safe_icon()));
-			(obj.checked) = (next) => ((this?.safe_showing(next)));
+			(obj.Icon) = () => ((this.Safe_icon()));
+			(obj.checked) = (next) => ((this.safe_showing(next)));
 			return obj;
 		}
 		About(){
@@ -19465,8 +19471,8 @@ var $;
 		Aura_showing(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_page_menu_Aura_showing_hint")));
-			(obj.Icon) = () => ((this?.Aura_icon()));
-			(obj.checked) = (next) => ((this?.aura_showing(next)));
+			(obj.Icon) = () => ((this.Aura_icon()));
+			(obj.checked) = (next) => ((this.aura_showing(next)));
 			return obj;
 		}
 		Lights(){
@@ -19481,9 +19487,9 @@ var $;
 		}
 		head(){
 			return [
-				(this?.Profile()), 
-				(this?.Title()), 
-				(this?.Tools())
+				(this.Profile()), 
+				(this.Title()), 
+				(this.Tools())
 			];
 		}
 		Logo(){
@@ -19491,11 +19497,11 @@ var $;
 		}
 		foot(){
 			return [
-				(this?.Online()), 
-				(this?.Safe_showing()), 
-				(this?.About()), 
-				(this?.Aura_showing()), 
-				(this?.Lights())
+				(this.Online()), 
+				(this.Safe_showing()), 
+				(this.About()), 
+				(this.Aura_showing()), 
+				(this.Lights())
 			];
 		}
 	};
@@ -19909,13 +19915,13 @@ var $;
 ;
 	($.$hyoo_page) = class $hyoo_page extends ($.$mol_book2) {
 		side_title(id){
-			return (this?.side(id)?.title());
+			return (this.side(id).title());
 		}
 		pages_node(id){
-			return (this?.side(id)?.pages_node());
+			return (this.side(id).pages_node());
 		}
 		bookmarks_node(){
-			return (this?.profile()?.bookmarks_node());
+			return (this.profile().bookmarks_node());
 		}
 		aura_image(){
 			return "";
@@ -19929,7 +19935,7 @@ var $;
 		}
 		News(){
 			const obj = new this.$.$hyoo_page_side_news();
-			(obj.side) = () => ((this?.profile()));
+			(obj.side) = () => ((this.profile()));
 			return obj;
 		}
 		book_side(){
@@ -19951,14 +19957,14 @@ var $;
 		}
 		Side_menu(){
 			const obj = new this.$.$hyoo_page_side_menu();
-			(obj.yard) = () => ((this?.yard()));
-			(obj.side) = () => ((this?.book_side()));
-			(obj.side_current) = () => ((this?.side_current()));
-			(obj.list) = () => ((this?.book_pages_node()));
-			(obj.item_list) = (id) => ((this?.pages_node(id)));
-			(obj.item_uri) = (id) => ((this?.side_uri(id)));
-			(obj.item_add) = (id, next) => ((this?.side_add(id, next)));
-			(obj.tools_ext) = () => ((this?.tools_ext()));
+			(obj.yard) = () => ((this.yard()));
+			(obj.side) = () => ((this.book_side()));
+			(obj.side_current) = () => ((this.side_current()));
+			(obj.list) = () => ((this.book_pages_node()));
+			(obj.item_list) = (id) => ((this.pages_node(id)));
+			(obj.item_uri) = (id) => ((this.side_uri(id)));
+			(obj.item_add) = (id, next) => ((this.side_add(id, next)));
+			(obj.tools_ext) = () => ((this.tools_ext()));
 			return obj;
 		}
 		side_menu_showed(next){
@@ -19974,17 +19980,17 @@ var $;
 			return false;
 		}
 		View_details(id){
-			return (this?.View(id)?.Details());
+			return (this.View(id).Details());
 		}
 		View(id){
 			const obj = new this.$.$hyoo_page_side_view();
-			(obj.side) = () => ((this?.side(id)));
-			(obj.peer) = (id) => ((this?.side(id)));
-			(obj.profile) = () => ((this?.profile()));
-			(obj.menu_showed) = (next) => ((this?.side_menu_showed(next)));
-			(obj.editing) = (next) => ((this?.editing(next)));
-			(obj.info) = (next) => ((this?.info(next)));
-			(obj.highlight) = () => ((this?.search()));
+			(obj.side) = () => ((this.side(id)));
+			(obj.peer) = (id) => ((this.side(id)));
+			(obj.profile) = () => ((this.profile()));
+			(obj.menu_showed) = (next) => ((this.side_menu_showed(next)));
+			(obj.editing) = (next) => ((this.editing(next)));
+			(obj.info) = (next) => ((this.info(next)));
+			(obj.highlight) = () => ((this.search()));
 			return obj;
 		}
 		rights(next){
@@ -19997,9 +20003,9 @@ var $;
 		}
 		Edit(id){
 			const obj = new this.$.$hyoo_page_side_edit();
-			(obj.side) = () => ((this?.side(id)));
-			(obj.rights) = (next) => ((this?.rights(next)));
-			(obj.close) = (next) => ((this?.edit_close(id, next)));
+			(obj.side) = () => ((this.side(id)));
+			(obj.rights) = (next) => ((this.rights(next)));
+			(obj.close) = (next) => ((this.edit_close(id, next)));
 			return obj;
 		}
 		info_close(id, next){
@@ -20008,9 +20014,9 @@ var $;
 		}
 		Info(id){
 			const obj = new this.$.$hyoo_page_side_info();
-			(obj.side) = () => ((this?.side(id)));
-			(obj.close) = (next) => ((this?.info_close(id, next)));
-			(obj.Text) = () => ((this?.View_details(id)));
+			(obj.side) = () => ((this.side(id)));
+			(obj.close) = (next) => ((this.info_close(id, next)));
+			(obj.Text) = () => ((this.View_details(id)));
 			return obj;
 		}
 		rights_close(next){
@@ -20023,15 +20029,15 @@ var $;
 		}
 		Rights_close(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.rights_close(next)));
-			(obj.sub) = () => ([(this?.Close_icon())]);
+			(obj.click) = (next) => ((this.rights_close(next)));
+			(obj.sub) = () => ([(this.Close_icon())]);
 			return obj;
 		}
 		Rights(id){
 			const obj = new this.$.$hyoo_meta_rights();
-			(obj.meta) = () => ((this?.side(id)));
-			(obj.peer) = (id) => ((this?.side(id)));
-			(obj.tools) = () => ([(this?.Rights_close())]);
+			(obj.meta) = () => ((this.side(id)));
+			(obj.peer) = (id) => ((this.side(id)));
+			(obj.tools) = () => ([(this.Rights_close())]);
 			return obj;
 		}
 		safe_close(next){
@@ -20044,14 +20050,14 @@ var $;
 		}
 		Safe_close(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.safe_close(next)));
-			(obj.sub) = () => ([(this?.Safe_icon())]);
+			(obj.click) = (next) => ((this.safe_close(next)));
+			(obj.sub) = () => ([(this.Safe_icon())]);
 			return obj;
 		}
 		Safe(){
 			const obj = new this.$.$hyoo_meta_safe();
-			(obj.yard) = () => ((this?.yard()));
-			(obj.tools) = () => ([(this?.Safe_close())]);
+			(obj.yard) = () => ((this.yard()));
+			(obj.tools) = () => ([(this.Safe_close())]);
 			return obj;
 		}
 		page_add(next){
@@ -20067,18 +20073,18 @@ var $;
 			return false;
 		}
 		search(){
-			return (this?.Menu()?.search());
+			return (this.Menu().search());
 		}
 		Menu(){
 			const obj = new this.$.$hyoo_page_menu();
-			(obj.yard) = () => ((this?.yard()));
-			(obj.side) = () => ((this?.profile()));
-			(obj.list) = () => ((this?.bookmarks_node()));
-			(obj.item_uri) = (id) => ((this?.side_uri(id)));
-			(obj.add) = (next) => ((this?.page_add(next)));
-			(obj.item_add) = (id, next) => ((this?.side_add(id, next)));
-			(obj.aura_showing) = (next) => ((this?.aura_showing(next)));
-			(obj.safe_showing) = (next) => ((this?.safe(next)));
+			(obj.yard) = () => ((this.yard()));
+			(obj.side) = () => ((this.profile()));
+			(obj.list) = () => ((this.bookmarks_node()));
+			(obj.item_uri) = (id) => ((this.side_uri(id)));
+			(obj.add) = (next) => ((this.page_add(next)));
+			(obj.item_add) = (id, next) => ((this.side_add(id, next)));
+			(obj.aura_showing) = (next) => ((this.aura_showing(next)));
+			(obj.safe_showing) = (next) => ((this.safe(next)));
 			return obj;
 		}
 		side_main_id(){
@@ -20101,27 +20107,27 @@ var $;
 			return obj;
 		}
 		style(){
-			return {...(super.style()), "backgroundImage": (this?.aura_image())};
+			return {...(super.style()), "backgroundImage": (this.aura_image())};
 		}
 		plugins(){
-			return [(this?.Theme())];
+			return [(this.Theme())];
 		}
 		auto(){
-			return [(this?.ref_track())];
+			return [(this.ref_track())];
 		}
 		pages(){
 			return [
-				(this?.News()), 
-				(this?.Side_menu()), 
-				(this?.View("0_0")), 
-				(this?.Edit("0_0")), 
-				(this?.Info("0_0")), 
-				(this?.Rights("0_0")), 
-				(this?.Safe())
+				(this.News()), 
+				(this.Side_menu()), 
+				(this.View("0_0")), 
+				(this.Edit("0_0")), 
+				(this.Info("0_0")), 
+				(this.Rights("0_0")), 
+				(this.Safe())
 			];
 		}
 		Placeholder(){
-			return (this?.Menu());
+			return (this.Menu());
 		}
 	};
 	($mol_mem(($.$hyoo_page.prototype), "Theme"));
@@ -20411,13 +20417,13 @@ var $;
 			return obj;
 		}
 		tools(){
-			return [(this?.Source()), (this?.Lights())];
+			return [(this.Source()), (this.Lights())];
 		}
 		Menu_title(){
-			return (this?.Menu()?.Title());
+			return (this.Menu().Title());
 		}
 		Menu_tools(){
-			return (this?.Menu()?.Tools());
+			return (this.Menu().Tools());
 		}
 		filter(next){
 			if(next !== undefined) return next;
@@ -20425,7 +20431,7 @@ var $;
 		}
 		Filter(){
 			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this?.filter(next)));
+			(obj.query) = (next) => ((this.filter(next)));
 			return obj;
 		}
 		group_name(id){
@@ -20446,15 +20452,15 @@ var $;
 		}
 		Menu_link_title(id){
 			const obj = new this.$.$mol_dimmer();
-			(obj.haystack) = () => ((this?.app_title(id)));
-			(obj.needle) = () => ((this?.filter()));
+			(obj.haystack) = () => ((this.app_title(id)));
+			(obj.needle) = () => ((this.filter()));
 			return obj;
 		}
 		Menu_link_out(id){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.uri) = () => ((this?.app_uri_default(id)));
-			(obj.arg) = () => ((this?.app_arg(id)));
-			(obj.sub) = () => ([(this?.Menu_link_title(id))]);
+			(obj.uri) = () => ((this.app_uri_default(id)));
+			(obj.arg) = () => ((this.app_arg(id)));
+			(obj.sub) = () => ([(this.Menu_link_title(id))]);
 			return obj;
 		}
 		Menu_link_in_icon(id){
@@ -20463,43 +20469,43 @@ var $;
 		}
 		Menu_link_in(id){
 			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this?.app_arg(id)));
-			(obj.sub) = () => ([(this?.Menu_link_in_icon(id))]);
+			(obj.arg) = () => ((this.app_arg(id)));
+			(obj.sub) = () => ([(this.Menu_link_in_icon(id))]);
 			return obj;
 		}
 		Menu_item(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Menu_link_out(id)), (this?.Menu_link_in(id))]);
+			(obj.sub) = () => ([(this.Menu_link_out(id)), (this.Menu_link_in(id))]);
 			return obj;
 		}
 		group_items(id){
-			return [(this?.Menu_item(id))];
+			return [(this.Menu_item(id))];
 		}
 		Group(id){
 			const obj = new this.$.$mol_expander();
-			(obj.title) = () => ((this?.group_name(id)));
-			(obj.expanded) = (next) => ((this?.group_expanded(id, next)));
-			(obj.content) = () => ((this?.group_items(id)));
+			(obj.title) = () => ((this.group_name(id)));
+			(obj.expanded) = (next) => ((this.group_expanded(id, next)));
+			(obj.content) = () => ((this.group_items(id)));
 			return obj;
 		}
 		group_list(){
-			return [(this?.Group("id"))];
+			return [(this.Group("id"))];
 		}
 		Menu_items(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.group_list()));
+			(obj.rows) = () => ((this.group_list()));
 			return obj;
 		}
 		Menu(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.menu_title()));
-			(obj.tools) = () => ((this?.tools()));
+			(obj.title) = () => ((this.menu_title()));
+			(obj.tools) = () => ((this.tools()));
 			(obj.head) = () => ([
-				(this?.Menu_title()), 
-				(this?.Menu_tools()), 
-				(this?.Filter())
+				(this.Menu_title()), 
+				(this.Menu_tools()), 
+				(this.Filter())
 			]);
-			(obj.body) = () => ([(this?.Menu_items())]);
+			(obj.body) = () => ([(this.Menu_items())]);
 			return obj;
 		}
 		app_uri_embed(id, next){
@@ -20508,17 +20514,17 @@ var $;
 		}
 		App(id){
 			const obj = new this.$.$mol_frame();
-			(obj.uri) = (next) => ((this?.app_uri_embed(id, next)));
+			(obj.uri) = (next) => ((this.app_uri_embed(id, next)));
 			return obj;
 		}
 		Placeholder(){
 			return null;
 		}
 		plugins(){
-			return [(this?.Theme())];
+			return [(this.Theme())];
 		}
 		pages(){
-			return [(this?.Menu()), (this?.App("id"))];
+			return [(this.Menu()), (this.App("id"))];
 		}
 		groups(){
 			return {
@@ -20876,12 +20882,12 @@ var $;
 		}
 		Tag_tree(id){
 			const obj = new this.$.$mol_tag_tree();
-			(obj.ids_tags) = () => ((this?.ids_tags()));
-			(obj.path) = () => ((this?.tag_path(id)));
-			(obj.Item) = (id) => ((this?.Item(id)));
-			(obj.item_title) = (id) => ((this?.item_title(id)));
-			(obj.tag_expanded) = (id, next) => ((this?.tag_expanded(id, next)));
-			(obj.tag_name) = (id) => ((this?.tag_name(id)));
+			(obj.ids_tags) = () => ((this.ids_tags()));
+			(obj.path) = () => ((this.tag_path(id)));
+			(obj.Item) = (id) => ((this.Item(id)));
+			(obj.item_title) = (id) => ((this.item_title(id)));
+			(obj.tag_expanded) = (id, next) => ((this.tag_expanded(id, next)));
+			(obj.tag_name) = (id) => ((this.tag_name(id)));
 			return obj;
 		}
 		path(){
@@ -20904,15 +20910,15 @@ var $;
 		}
 		Item(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.item_title(id))]);
+			(obj.sub) = () => ([(this.item_title(id))]);
 			return obj;
 		}
 		Tag(id){
 			const obj = new this.$.$mol_expander();
 			(obj.expandable) = () => (true);
-			(obj.expanded) = (next) => ((this?.tag_expanded(id, next)));
-			(obj.title) = () => ((this?.tag_name(id)));
-			(obj.content) = () => ([(this?.Tag_tree(id))]);
+			(obj.expanded) = (next) => ((this.tag_expanded(id, next)));
+			(obj.title) = () => ((this.tag_name(id)));
+			(obj.content) = () => ([(this.Tag_tree(id))]);
 			return obj;
 		}
 	};
@@ -21048,7 +21054,7 @@ var $;
 		}
 		Filter(){
 			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this?.filter(next)));
+			(obj.query) = (next) => ((this.filter(next)));
 			return obj;
 		}
 		ids_tags(){
@@ -21058,13 +21064,13 @@ var $;
 			return 0;
 		}
 		levels_expanded(){
-			return (this?.levels_expanded_default());
+			return (this.levels_expanded_default());
 		}
 		Tree(){
 			const obj = new this.$.$mol_tag_tree();
-			(obj.Item) = (id) => ((this?.Option(id)));
-			(obj.ids_tags) = () => ((this?.ids_tags()));
-			(obj.levels_expanded) = () => ((this?.levels_expanded()));
+			(obj.Item) = (id) => ((this.Option(id)));
+			(obj.ids_tags) = () => ((this.ids_tags()));
+			(obj.levels_expanded) = () => ((this.levels_expanded()));
 			return obj;
 		}
 		option_arg(id){
@@ -21075,8 +21081,8 @@ var $;
 		}
 		Option_title(id){
 			const obj = new this.$.$mol_dimmer();
-			(obj.haystack) = () => ((this?.option_title(id)));
-			(obj.needle) = () => ((this?.filter()));
+			(obj.haystack) = () => ((this.option_title(id)));
+			(obj.needle) = () => ((this.filter()));
 			return obj;
 		}
 		names(){
@@ -21096,12 +21102,12 @@ var $;
 			return null;
 		}
 		body(){
-			return [(this?.Filter()), (this?.Tree())];
+			return [(this.Filter()), (this.Tree())];
 		}
 		Option(id){
 			const obj = new this.$.$mol_link();
-			(obj.arg) = () => ((this?.option_arg(id)));
-			(obj.sub) = () => ([(this?.Option_title(id))]);
+			(obj.arg) = () => ((this.option_arg(id)));
+			(obj.sub) = () => ([(this.Option_title(id))]);
 			return obj;
 		}
 	};
@@ -21294,8 +21300,8 @@ var $;
 		}
 		Esternal(){
 			const obj = new this.$.$mol_link();
-			(obj.uri) = () => ((this?.standalone()));
-			(obj.sub) = () => ([(this?.Standalone_icon())]);
+			(obj.uri) = () => ((this.standalone()));
+			(obj.sub) = () => ([(this.Standalone_icon())]);
 			return obj;
 		}
 		Close_icon(){
@@ -21305,7 +21311,7 @@ var $;
 		Close(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"mol_chat": null});
-			(obj.sub) = () => ([(this?.Close_icon())]);
+			(obj.sub) = () => ([(this.Close_icon())]);
 			return obj;
 		}
 		embed(){
@@ -21313,14 +21319,14 @@ var $;
 		}
 		Embed(){
 			const obj = new this.$.$mol_frame();
-			(obj.uri) = () => ((this?.embed()));
+			(obj.uri) = () => ((this.embed()));
 			return obj;
 		}
 		Page(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.title()));
-			(obj.tools) = () => ([(this?.Esternal()), (this?.Close())]);
-			(obj.Body) = () => ((this?.Embed()));
+			(obj.title) = () => ((this.title()));
+			(obj.tools) = () => ([(this.Esternal()), (this.Close())]);
+			(obj.Body) = () => ((this.Embed()));
 			return obj;
 		}
 		seed(){
@@ -21333,13 +21339,13 @@ var $;
 			return {"mol_chat": ""};
 		}
 		hint(){
-			return (this?.title());
+			return (this.title());
 		}
 		sub(){
-			return [(this?.Icon())];
+			return [(this.Icon())];
 		}
 		pages(){
-			return [(this?.Page())];
+			return [(this.Page())];
 		}
 	};
 	($mol_mem(($.$mol_chat.prototype), "Icon"));
@@ -21419,20 +21425,20 @@ var $;
 		}
 		Readme(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.checked) = (next) => ((this?.readme(next)));
+			(obj.checked) = (next) => ((this.readme(next)));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_app_demo_detail_Readme_hint")));
-			(obj.Icon) = () => ((this?.readme_icon()));
+			(obj.Icon) = () => ((this.readme_icon()));
 			return obj;
 		}
 		chat_pages(){
-			return (this?.Chat()?.pages());
+			return (this.Chat().pages());
 		}
 		chat_seed(){
 			return "0_0";
 		}
 		Chat(){
 			const obj = new this.$.$mol_chat();
-			(obj.seed) = () => ((this?.chat_seed()));
+			(obj.seed) = () => ((this.chat_seed()));
 			return obj;
 		}
 		edit_hint(){
@@ -21452,9 +21458,9 @@ var $;
 		}
 		Edit(){
 			const obj = new this.$.$mol_link();
-			(obj.hint) = () => ((this?.edit_hint()));
-			(obj.sub) = () => ([(this?.Edit_speck()), (this?.Edit_icon())]);
-			(obj.uri) = () => ((this?.edit_uri()));
+			(obj.hint) = () => ((this.edit_hint()));
+			(obj.sub) = () => ([(this.Edit_speck()), (this.Edit_icon())]);
+			(obj.uri) = () => ((this.edit_uri()));
 			return obj;
 		}
 		close_hint(){
@@ -21469,9 +21475,9 @@ var $;
 		}
 		Close(){
 			const obj = new this.$.$mol_link();
-			(obj.hint) = () => ((this?.close_hint()));
-			(obj.sub) = () => ([(this?.Close_icon())]);
-			(obj.arg) = () => ((this?.close_arg()));
+			(obj.hint) = () => ((this.close_hint()));
+			(obj.sub) = () => ([(this.Close_icon())]);
+			(obj.arg) = () => ((this.close_arg()));
 			return obj;
 		}
 		Demo(){
@@ -21483,14 +21489,14 @@ var $;
 		}
 		tools(){
 			return [
-				(this?.Readme()), 
-				(this?.Chat()), 
-				(this?.Edit()), 
-				(this?.Close())
+				(this.Readme()), 
+				(this.Chat()), 
+				(this.Edit()), 
+				(this.Close())
 			];
 		}
 		body(){
-			return [(this?.Demo())];
+			return [(this.Demo())];
 		}
 	};
 	($mol_mem(($.$mol_app_demo_detail.prototype), "readme"));
@@ -21567,8 +21573,8 @@ var $;
 		}
 		Source_link(){
 			const obj = new this.$.$mol_link_source();
-			(obj.uri) = () => ((this?.source_link()));
-			(obj.hint) = () => ((this?.source_hint()));
+			(obj.uri) = () => ((this.source_link()));
+			(obj.hint) = () => ((this.source_hint()));
 			return obj;
 		}
 		Close_icon(){
@@ -21582,8 +21588,8 @@ var $;
 		Close(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$mol_app_demo_readme_Close_hint")));
-			(obj.sub) = () => ([(this?.Close_icon())]);
-			(obj.click) = (next) => ((this?.close(next)));
+			(obj.sub) = () => ([(this.Close_icon())]);
+			(obj.click) = (next) => ((this.close(next)));
 			return obj;
 		}
 		readme(){
@@ -21616,17 +21622,17 @@ var $;
 			return false;
 		}
 		tools(){
-			return [(this?.Source_link()), (this?.Close())];
+			return [(this.Source_link()), (this.Close())];
 		}
 		Readme(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.readme()));
-			(obj.uri_base) = () => ((this?.uri_base()));
+			(obj.text) = () => ((this.readme()));
+			(obj.uri_base) = () => ((this.uri_base()));
 			return obj;
 		}
 		Not_found(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Not_found_caption())]);
+			(obj.sub) = () => ([(this.Not_found_caption())]);
 			return obj;
 		}
 	};
@@ -21894,7 +21900,7 @@ var $;
 			return "";
 		}
 		status(){
-			return (this?.title());
+			return (this.title());
 		}
 		minimal_height(){
 			return 24;
@@ -21903,7 +21909,7 @@ var $;
 			return 0;
 		}
 		sub(){
-			return [(this?.message())];
+			return [(this.message())];
 		}
 	};
 
@@ -21951,7 +21957,7 @@ var $;
 		}
 		Search_start(){
 			const obj = new this.$.$mol_hotkey();
-			(obj.key) = () => ({"F": (next) => (this?.search_start(next))});
+			(obj.key) = () => ({"F": (next) => (this.search_start(next))});
 			(obj.mod_ctrl) = () => (true);
 			return obj;
 		}
@@ -21971,14 +21977,14 @@ var $;
 			return "";
 		}
 		search_start(next){
-			return (this?.Menu()?.search_start(next));
+			return (this.Menu().search_start(next));
 		}
 		sources_uri(){
 			return "https://github.com/hyoo-ru/mam_mol/";
 		}
 		Sources(){
 			const obj = new this.$.$mol_link_source();
-			(obj.uri) = () => ((this?.sources_uri()));
+			(obj.uri) = () => ((this.sources_uri()));
 			return obj;
 		}
 		Lights(){
@@ -21986,13 +21992,13 @@ var $;
 			return obj;
 		}
 		tools(){
-			return [(this?.Sources()), (this?.Lights())];
+			return [(this.Sources()), (this.Lights())];
 		}
 		chat_seed(id){
 			return "p9zx0v_nsmx1d";
 		}
 		chat_pages(id){
-			return (this?.Detail(id)?.chat_pages());
+			return (this.Detail(id).chat_pages());
 		}
 		detail_description(){
 			return "";
@@ -22024,7 +22030,7 @@ var $;
 			return (this.$.$mol_locale.text("$mol_app_demo_detail_empty_postfix"));
 		}
 		editor_title(){
-			return (this?.detail_title());
+			return (this.detail_title());
 		}
 		meta_bundle_base(){
 			return "";
@@ -22033,44 +22039,44 @@ var $;
 			return {};
 		}
 		plugins(){
-			return [(this?.Theme()), (this?.Search_start())];
+			return [(this.Theme()), (this.Search_start())];
 		}
 		demo_block_list(){
 			return ["$mol_example_small", "$mol_example_large"];
 		}
 		Menu(){
 			const obj = new this.$.$mol_app_demo_menu();
-			(obj.title) = () => ((this?.menu_title()));
-			(obj.names) = () => ((this?.names()));
-			(obj.widget_tags) = (id) => ((this?.widget_tags(id)));
-			(obj.widget_aspects) = (id) => ((this?.widget_aspects(id)));
-			(obj.widget_title) = (id) => ((this?.widget_title(id)));
-			(obj.tools) = () => ((this?.tools()));
+			(obj.title) = () => ((this.menu_title()));
+			(obj.names) = () => ((this.names()));
+			(obj.widget_tags) = (id) => ((this.widget_tags(id)));
+			(obj.widget_aspects) = (id) => ((this.widget_aspects(id)));
+			(obj.widget_title) = (id) => ((this.widget_title(id)));
+			(obj.tools) = () => ((this.tools()));
 			return obj;
 		}
 		Detail(id){
 			const obj = new this.$.$mol_app_demo_detail();
-			(obj.chat_seed) = () => ((this?.chat_seed(id)));
-			(obj.title) = () => ((this?.detail_title()));
-			(obj.description) = () => ((this?.detail_description()));
-			(obj.edit_uri) = () => ((this?.edit_uri()));
-			(obj.readme) = (next) => ((this?.readme_page(next)));
-			(obj.Demo) = () => ((this?.Demo()));
+			(obj.chat_seed) = () => ((this.chat_seed(id)));
+			(obj.title) = () => ((this.detail_title()));
+			(obj.description) = () => ((this.detail_description()));
+			(obj.edit_uri) = () => ((this.edit_uri()));
+			(obj.readme) = (next) => ((this.readme_page(next)));
+			(obj.Demo) = () => ((this.Demo()));
 			return obj;
 		}
 		Readme_page(){
 			const obj = new this.$.$mol_app_demo_readme();
-			(obj.repo) = () => ((this?.repo()));
-			(obj.opened) = (next) => ((this?.readme_page(next)));
-			(obj.module) = () => ((this?.module()));
+			(obj.repo) = () => ((this.repo()));
+			(obj.opened) = (next) => ((this.readme_page(next)));
+			(obj.module) = () => ((this.module()));
 			return obj;
 		}
 		Detail_empty_message(){
 			const obj = new this.$.$mol_status();
 			(obj.sub) = () => ([
-				(this?.detail_empty_prefix()), 
-				(this?.selected()), 
-				(this?.detail_empty_postfix())
+				(this.detail_empty_prefix()), 
+				(this.selected()), 
+				(this.detail_empty_postfix())
 			]);
 			return obj;
 		}
@@ -22108,7 +22114,7 @@ var $;
 		}
 		Project(){
 			const obj = new this.$.$mol_link_source();
-			(obj.uri) = () => ((this?.project_uri()));
+			(obj.uri) = () => ((this.project_uri()));
 			return obj;
 		}
 		description(){
@@ -22116,8 +22122,8 @@ var $;
 		}
 		Description(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.description()));
-			(obj.uri_base) = () => ((this?.project_uri()));
+			(obj.text) = () => ((this.description()));
+			(obj.uri_base) = () => ((this.project_uri()));
 			return obj;
 		}
 		minimal_width(){
@@ -22127,10 +22133,10 @@ var $;
 			return "$mol libs for web ui";
 		}
 		tools(){
-			return [(this?.Lights()), (this?.Project())];
+			return [(this.Lights()), (this.Project())];
 		}
 		body(){
-			return [(this?.Description())];
+			return [(this.Description())];
 		}
 	};
 	($mol_mem(($.$mol_app_demo_main.prototype), "Lights"));
@@ -22370,7 +22376,7 @@ var $;
 			return "0";
 		}
 		style(){
-			return {...(super.style()), "width": (this?.width_style())};
+			return {...(super.style()), "width": (this.width_style())};
 		}
 	};
 	($.$mol_portion) = class $mol_portion extends ($.$mol_view) {
@@ -22379,14 +22385,14 @@ var $;
 		}
 		indicator(){
 			const obj = new this.$.$mol_portion_indicator();
-			(obj.width_style) = () => ((this?.indicator_width_style()));
+			(obj.width_style) = () => ((this.indicator_width_style()));
 			return obj;
 		}
 		portion(){
 			return 0;
 		}
 		sub(){
-			return [(this?.indicator())];
+			return [(this.indicator())];
 		}
 	};
 	($mol_mem(($.$mol_portion.prototype), "indicator"));
@@ -22434,7 +22440,7 @@ var $;
 			return obj;
 		}
 		col_head_content(id){
-			return [(this?.col_head_title(id)), (this?.Col_head_sort(id))];
+			return [(this.col_head_title(id)), (this.Col_head_sort(id))];
 		}
 		result_value(id){
 			return "";
@@ -22444,11 +22450,11 @@ var $;
 		}
 		Result_portion(id){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.result_portion(id)));
+			(obj.portion) = () => ((this.result_portion(id)));
 			return obj;
 		}
 		records(){
-			return (this?.result());
+			return (this.result());
 		}
 		col_sort(next){
 			if(next !== undefined) return next;
@@ -22456,12 +22462,12 @@ var $;
 		}
 		Col_head(id){
 			const obj = new this.$.$mol_bench_head();
-			(obj.event_click) = (next) => ((this?.event_sort_toggle(id, next)));
-			(obj.sub) = () => ((this?.col_head_content(id)));
+			(obj.event_click) = (next) => ((this.event_sort_toggle(id, next)));
+			(obj.sub) = () => ((this.col_head_content(id)));
 			return obj;
 		}
 		cell_content_number(id){
-			return [(this?.result_value(id)), (this?.Result_portion(id))];
+			return [(this.result_value(id)), (this.Result_portion(id))];
 		}
 	};
 	($mol_mem_key(($.$mol_bench.prototype), "event_sort_toggle"));
@@ -22481,10 +22487,10 @@ var $;
 			return false;
 		}
 		event(){
-			return {...(super.event()), "click": (next) => (this?.event_click(next))};
+			return {...(super.event()), "click": (next) => (this.event_click(next))};
 		}
 		attr(){
-			return {...(super.attr()), "title": (this?.hint())};
+			return {...(super.attr()), "title": (this.hint())};
 		}
 	};
 	($mol_mem(($.$mol_bench_head.prototype), "event_click"));
@@ -22611,7 +22617,7 @@ var $;
 			return " ";
 		}
 		string_enabled(){
-			return (this?.enabled());
+			return (this.enabled());
 		}
 		submit(next){
 			if(next !== undefined) return next;
@@ -22619,11 +22625,11 @@ var $;
 		}
 		String(){
 			const obj = new this.$.$mol_string();
-			(obj.type) = () => ((this?.type()));
-			(obj.value) = (next) => ((this?.value_string(next)));
-			(obj.hint) = () => ((this?.hint()));
-			(obj.enabled) = () => ((this?.string_enabled()));
-			(obj.submit) = (next) => ((this?.submit(next)));
+			(obj.type) = () => ((this.type()));
+			(obj.value) = (next) => ((this.value_string(next)));
+			(obj.hint) = () => ((this.hint()));
+			(obj.enabled) = () => ((this.string_enabled()));
+			(obj.submit) = (next) => ((this.submit(next)));
 			return obj;
 		}
 		event_dec(next){
@@ -22631,7 +22637,7 @@ var $;
 			return null;
 		}
 		dec_enabled(){
-			return (this?.enabled());
+			return (this.enabled());
 		}
 		dec_icon(){
 			const obj = new this.$.$mol_icon_minus();
@@ -22639,9 +22645,9 @@ var $;
 		}
 		Dec(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.event_click) = (next) => ((this?.event_dec(next)));
-			(obj.enabled) = () => ((this?.dec_enabled()));
-			(obj.sub) = () => ([(this?.dec_icon())]);
+			(obj.event_click) = (next) => ((this.event_dec(next)));
+			(obj.enabled) = () => ((this.dec_enabled()));
+			(obj.sub) = () => ([(this.dec_icon())]);
 			return obj;
 		}
 		event_inc(next){
@@ -22649,7 +22655,7 @@ var $;
 			return null;
 		}
 		inc_enabled(){
-			return (this?.enabled());
+			return (this.enabled());
 		}
 		inc_icon(){
 			const obj = new this.$.$mol_icon_plus();
@@ -22657,16 +22663,16 @@ var $;
 		}
 		Inc(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.event_click) = (next) => ((this?.event_inc(next)));
-			(obj.enabled) = () => ((this?.inc_enabled()));
-			(obj.sub) = () => ([(this?.inc_icon())]);
+			(obj.event_click) = (next) => ((this.event_inc(next)));
+			(obj.enabled) = () => ((this.inc_enabled()));
+			(obj.sub) = () => ([(this.inc_icon())]);
 			return obj;
 		}
 		precision_view(){
-			return (this?.precision());
+			return (this.precision());
 		}
 		precision_change(){
-			return (this?.precision());
+			return (this.precision());
 		}
 		value_min(){
 			return -Infinity;
@@ -22683,9 +22689,9 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.String()), 
-				(this?.Dec()), 
-				(this?.Inc())
+				(this.String()), 
+				(this.Dec()), 
+				(this.Inc())
 			];
 		}
 	};
@@ -22807,7 +22813,7 @@ var $;
 			return (this.$.$mol_locale.text("$hyoo_bench_app_addon_title"));
 		}
 		Menu_tools(){
-			return (this?.Addon_page()?.Tools());
+			return (this.Addon_page().Tools());
 		}
 		filter(next){
 			if(next !== undefined) return next;
@@ -22815,7 +22821,7 @@ var $;
 		}
 		Filter(){
 			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this?.filter(next)));
+			(obj.query) = (next) => ((this.filter(next)));
 			return obj;
 		}
 		source_link(){
@@ -22823,26 +22829,26 @@ var $;
 		}
 		Source_link(){
 			const obj = new this.$.$mol_link_source();
-			(obj.uri) = () => ((this?.source_link()));
+			(obj.uri) = () => ((this.source_link()));
 			return obj;
 		}
 		menu_tools(){
-			return [(this?.Source_link())];
+			return [(this.Source_link())];
 		}
 		menu_options(){
 			return [];
 		}
 		Menu(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.menu_options()));
+			(obj.rows) = () => ((this.menu_options()));
 			return obj;
 		}
 		Addon_page(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.addon_title()));
-			(obj.head) = () => ([(this?.Filter()), (this?.Menu_tools())]);
-			(obj.tools) = () => ((this?.menu_tools()));
-			(obj.body) = () => ([(this?.Menu())]);
+			(obj.title) = () => ((this.addon_title()));
+			(obj.head) = () => ([(this.Filter()), (this.Menu_tools())]);
+			(obj.tools) = () => ((this.menu_tools()));
+			(obj.body) = () => ([(this.Menu())]);
 			return obj;
 		}
 		description(){
@@ -22850,7 +22856,7 @@ var $;
 		}
 		Descr(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.description()));
+			(obj.text) = () => ((this.description()));
 			return obj;
 		}
 		param_fields(){
@@ -22858,7 +22864,7 @@ var $;
 		}
 		Param_fields(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.param_fields()));
+			(obj.sub) = () => ((this.param_fields()));
 			return obj;
 		}
 		result(){
@@ -22873,18 +22879,18 @@ var $;
 		}
 		Result(){
 			const obj = new this.$.$mol_bench();
-			(obj.result) = () => ((this?.result()));
-			(obj.col_head_title) = (id) => ((this?.result_col_title(id)));
-			(obj.col_sort) = (next) => ((this?.result_col_sort(next)));
+			(obj.result) = () => ((this.result()));
+			(obj.col_head_title) = (id) => ((this.result_col_title(id)));
+			(obj.col_sort) = (next) => ((this.result_col_sort(next)));
 			return obj;
 		}
 		Main_page(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.title()));
+			(obj.title) = () => ((this.title()));
 			(obj.body) = () => ([
-				(this?.Descr()), 
-				(this?.Param_fields()), 
-				(this?.Result())
+				(this.Descr()), 
+				(this.Param_fields()), 
+				(this.Result())
 			]);
 			return obj;
 		}
@@ -22897,13 +22903,13 @@ var $;
 		}
 		Sandbox(){
 			const obj = new this.$.$mol_frame();
-			(obj.uri) = () => ((this?.bench()));
+			(obj.uri) = () => ((this.bench()));
 			return obj;
 		}
 		Sandbox_page(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.sandbox_title()));
-			(obj.Body) = () => ((this?.Sandbox()));
+			(obj.title) = () => ((this.sandbox_title()));
+			(obj.Body) = () => ((this.Sandbox()));
 			return obj;
 		}
 		menu_option_checked(id, next){
@@ -22925,8 +22931,8 @@ var $;
 		}
 		Param_value(id){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.param_value(id, next)));
-			(obj.precision_change) = () => ((this?.param_precision(id)));
+			(obj.value) = (next) => ((this.param_value(id, next)));
+			(obj.precision_change) = () => ((this.param_precision(id)));
 			return obj;
 		}
 		samples(next){
@@ -22935,22 +22941,22 @@ var $;
 		}
 		pages(){
 			return [
-				(this?.Addon_page()), 
-				(this?.Main_page()), 
-				(this?.Sandbox_page())
+				(this.Addon_page()), 
+				(this.Main_page()), 
+				(this.Sandbox_page())
 			];
 		}
 		Menu_option(id){
 			const obj = new this.$.$mol_check_box();
 			(obj.minimal_height) = () => (36);
-			(obj.checked) = (next) => ((this?.menu_option_checked(id, next)));
-			(obj.title) = () => ((this?.sample_title(id)));
+			(obj.checked) = (next) => ((this.menu_option_checked(id, next)));
+			(obj.title) = () => ((this.sample_title(id)));
 			return obj;
 		}
 		Param(id){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => ((this?.param_title(id)));
-			(obj.content) = () => ([(this?.Param_value(id))]);
+			(obj.title) = () => ((this.param_title(id)));
+			(obj.content) = () => ([(this.Param_value(id))]);
 			return obj;
 		}
 		result_col_title_sample(){
@@ -23443,7 +23449,7 @@ var $;
 		}
 		Frequency_portion(){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.frequency_portion()));
+			(obj.portion) = () => ((this.frequency_portion()));
 			return obj;
 		}
 		memory_portion(){
@@ -23451,7 +23457,7 @@ var $;
 		}
 		Memory_portion(){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.memory_portion()));
+			(obj.portion) = () => ((this.memory_portion()));
 			return obj;
 		}
 		size_portion(){
@@ -23459,7 +23465,7 @@ var $;
 		}
 		Size_portion(){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.size_portion()));
+			(obj.portion) = () => ((this.size_portion()));
 			return obj;
 		}
 		deps_portion(){
@@ -23467,20 +23473,20 @@ var $;
 		}
 		Deps_portion(){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.deps_portion()));
+			(obj.portion) = () => ((this.deps_portion()));
 			return obj;
 		}
 		portions(){
 			return [
-				(this?.Frequency_portion()), 
-				(this?.Memory_portion()), 
-				(this?.Size_portion()), 
-				(this?.Deps_portion())
+				(this.Frequency_portion()), 
+				(this.Memory_portion()), 
+				(this.Size_portion()), 
+				(this.Deps_portion())
 			];
 		}
 		Portions(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.portions()));
+			(obj.sub) = () => ((this.portions()));
 			return obj;
 		}
 		title(){
@@ -23494,8 +23500,8 @@ var $;
 		}
 		Frequency(){
 			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this?.frequency_hint())});
-			(obj.sub) = () => ([(this?.frequency())]);
+			(obj.attr) = () => ({"title": (this.frequency_hint())});
+			(obj.sub) = () => ([(this.frequency())]);
 			return obj;
 		}
 		time_hint(){
@@ -23506,8 +23512,8 @@ var $;
 		}
 		Time(){
 			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this?.time_hint())});
-			(obj.sub) = () => ([(this?.time_total())]);
+			(obj.attr) = () => ({"title": (this.time_hint())});
+			(obj.sub) = () => ([(this.time_total())]);
 			return obj;
 		}
 		iterations_hint(){
@@ -23518,19 +23524,19 @@ var $;
 		}
 		Iterations(){
 			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this?.iterations_hint())});
-			(obj.sub) = () => ([(this?.iterations())]);
+			(obj.attr) = () => ({"title": (this.iterations_hint())});
+			(obj.sub) = () => ([(this.iterations())]);
 			return obj;
 		}
 		Stats_main(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([
-				(this?.title()), 
-				(this?.Frequency()), 
+				(this.title()), 
+				(this.Frequency()), 
 				"≈", 
-				(this?.Time()), 
+				(this.Time()), 
 				"×", 
-				(this?.Iterations())
+				(this.Iterations())
 			]);
 			return obj;
 		}
@@ -23542,8 +23548,8 @@ var $;
 		}
 		Memory_per_iteration(){
 			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this?.memory_per_iteration_hint())});
-			(obj.sub) = () => ([(this?.memory_per_iteration())]);
+			(obj.attr) = () => ({"title": (this.memory_per_iteration_hint())});
+			(obj.sub) = () => ([(this.memory_per_iteration())]);
 			return obj;
 		}
 		memory_hint(){
@@ -23554,17 +23560,17 @@ var $;
 		}
 		Memory(){
 			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this?.memory_hint())});
-			(obj.sub) = () => ([(this?.memory_total())]);
+			(obj.attr) = () => ({"title": (this.memory_hint())});
+			(obj.sub) = () => ([(this.memory_total())]);
 			return obj;
 		}
 		Stats_mem(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([
 				"×", 
-				(this?.Memory_per_iteration()), 
+				(this.Memory_per_iteration()), 
 				"=", 
-				(this?.Memory())
+				(this.Memory())
 			]);
 			return obj;
 		}
@@ -23576,13 +23582,13 @@ var $;
 		}
 		Size(){
 			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this?.size_hint())});
-			(obj.sub) = () => ([(this?.size())]);
+			(obj.attr) = () => ({"title": (this.size_hint())});
+			(obj.sub) = () => ([(this.size())]);
 			return obj;
 		}
 		Stats_size(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.title()), (this?.Size())]);
+			(obj.sub) = () => ([(this.title()), (this.Size())]);
 			return obj;
 		}
 		deps_hint(){
@@ -23593,26 +23599,26 @@ var $;
 		}
 		Deps(){
 			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this?.deps_hint())});
-			(obj.sub) = () => ([(this?.deps())]);
+			(obj.attr) = () => ({"title": (this.deps_hint())});
+			(obj.sub) = () => ([(this.deps())]);
 			return obj;
 		}
 		Stats_deps(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => (["📦", (this?.Deps())]);
+			(obj.sub) = () => (["📦", (this.Deps())]);
 			return obj;
 		}
 		stats(){
 			return [
-				(this?.Stats_main()), 
-				(this?.Stats_mem()), 
-				(this?.Stats_size()), 
-				(this?.Stats_deps())
+				(this.Stats_main()), 
+				(this.Stats_mem()), 
+				(this.Stats_size()), 
+				(this.Stats_deps())
 			];
 		}
 		Stats(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.stats()));
+			(obj.sub) = () => ((this.stats()));
 			return obj;
 		}
 		error(){
@@ -23620,7 +23626,7 @@ var $;
 		}
 		Error(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.error())]);
+			(obj.sub) = () => ([(this.error())]);
 			return obj;
 		}
 		result(){
@@ -23629,9 +23635,9 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Portions()), 
-				(this?.Stats()), 
-				(this?.Error())
+				(this.Portions()), 
+				(this.Stats()), 
+				(this.Error())
 			];
 		}
 	};
@@ -23778,7 +23784,7 @@ var $;
 			return [0, 0];
 		}
 		style(){
-			return {...(super.style()), "transform": (this?.transform())};
+			return {...(super.style()), "transform": (this.transform())};
 		}
 	};
 	($mol_mem(($.$mol_follower.prototype), "Anchor"));
@@ -23844,7 +23850,7 @@ var $;
 		}
 		Simple(){
 			const obj = new this.$.$mol_text_code();
-			(obj.text) = () => ((this?.simple()));
+			(obj.text) = () => ((this.simple()));
 			return obj;
 		}
 		expanded(next){
@@ -23863,17 +23869,17 @@ var $;
 		}
 		Expand_title(){
 			const obj = new this.$.$mol_text_code();
-			(obj.text) = () => ((this?.expand_title()));
+			(obj.text) = () => ((this.expand_title()));
 			return obj;
 		}
 		Expand_head(){
 			const obj = new this.$.$mol_check_expand();
 			(obj.minimal_height) = () => (24);
 			(obj.minimal_width) = () => (24);
-			(obj.expanded) = (next) => ((this?.expanded(next)));
-			(obj.expandable) = () => ((this?.expandable()));
-			(obj.clicks) = (next) => ((this?.expand_all(next)));
-			(obj.label) = () => ([(this?.Expand_title())]);
+			(obj.expanded) = (next) => ((this.expanded(next)));
+			(obj.expandable) = () => ((this.expandable()));
+			(obj.clicks) = (next) => ((this.expand_all(next)));
+			(obj.label) = () => ([(this.Expand_title())]);
 			return obj;
 		}
 		preview_dom(){
@@ -23884,13 +23890,13 @@ var $;
 		}
 		Preview_dom(){
 			const obj = new this.$.$mol_view();
-			(obj.dom_node) = () => ((this?.preview_dom()));
-			(obj.render) = () => ((this?.preview()));
+			(obj.dom_node) = () => ((this.preview_dom()));
+			(obj.render) = () => ((this.preview()));
 			return obj;
 		}
 		Preview(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Preview_dom())]);
+			(obj.sub) = () => ([(this.Preview_dom())]);
 			return obj;
 		}
 		row_values(id){
@@ -23901,19 +23907,19 @@ var $;
 		}
 		Row(id){
 			const obj = new this.$.$mol_dump_list();
-			(obj.values) = () => ((this?.row_values(id)));
-			(obj.prototypes) = () => ((this?.prototypes()));
-			(obj.preview_show) = () => ((this?.preview_show()));
+			(obj.values) = () => ((this.row_values(id)));
+			(obj.prototypes) = () => ((this.prototypes()));
+			(obj.preview_show) = () => ((this.preview_show()));
 			return obj;
 		}
 		expand_content(){
-			return [(this?.Preview()), (this?.Row("0"))];
+			return [(this.Preview()), (this.Row("0"))];
 		}
 		Expand(){
 			const obj = new this.$.$mol_expander();
-			(obj.expanded) = (next) => ((this?.expanded(next)));
-			(obj.Trigger) = () => ((this?.Expand_head()));
-			(obj.content) = () => ((this?.expand_content()));
+			(obj.expanded) = (next) => ((this.expanded(next)));
+			(obj.Trigger) = () => ((this.Expand_head()));
+			(obj.content) = () => ((this.expand_content()));
 			return obj;
 		}
 		value(next){
@@ -23925,7 +23931,7 @@ var $;
 			return true;
 		}
 		sub(){
-			return [(this?.Simple()), (this?.Expand())];
+			return [(this.Simple()), (this.Expand())];
 		}
 	};
 	($mol_mem(($.$mol_dump_value.prototype), "Simple"));
@@ -24130,17 +24136,17 @@ var $;
 		}
 		Dump(id){
 			const obj = new this.$.$mol_dump_value();
-			(obj.value) = () => ((this?.dump_value(id)));
-			(obj.expanded) = (next) => ((this?.dump_expanded(id, next)));
-			(obj.prototypes) = () => ((this?.prototypes()));
-			(obj.preview_show) = () => ((this?.preview_show()));
+			(obj.value) = () => ((this.dump_value(id)));
+			(obj.expanded) = (next) => ((this.dump_expanded(id, next)));
+			(obj.prototypes) = () => ((this.prototypes()));
+			(obj.preview_show) = () => ((this.preview_show()));
 			return obj;
 		}
 		values(){
 			return [];
 		}
 		sub(){
-			return [(this?.Dump("0"))];
+			return [(this.Dump("0"))];
 		}
 	};
 	($mol_mem_key(($.$mol_dump_list.prototype), "dump_expanded"));
@@ -24193,7 +24199,7 @@ var $;
 		}
 		Submit(){
 			const obj = new this.$.$mol_hotkey();
-			(obj.key) = () => ({"enter": (next) => (this?.submit(next))});
+			(obj.key) = () => ({"enter": (next) => (this.submit(next))});
 			(obj.mod_ctrl) = () => (true);
 			return obj;
 		}
@@ -24204,7 +24210,7 @@ var $;
 		Clear(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"code": null});
-			(obj.sub) = () => ([(this?.Clear_icon())]);
+			(obj.sub) = () => ([(this.Clear_icon())]);
 			return obj;
 		}
 		Source(){
@@ -24224,27 +24230,27 @@ var $;
 		}
 		Menu_link(id){
 			const obj = new this.$.$mol_link();
-			(obj.title) = () => ((this?.menu_link_title(id)));
-			(obj.arg) = () => ({"code": (this?.menu_link_code(id))});
+			(obj.title) = () => ((this.menu_link_title(id)));
+			(obj.arg) = () => ({"code": (this.menu_link_code(id))});
 			return obj;
 		}
 		menu(){
-			return [(this?.Menu_link("default"))];
+			return [(this.Menu_link("default"))];
 		}
 		Menu(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.menu()));
+			(obj.rows) = () => ((this.menu()));
 			return obj;
 		}
 		Menu_page(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_eval_Menu_page_title")));
 			(obj.tools) = () => ([
-				(this?.Clear()), 
-				(this?.Source()), 
-				(this?.Lights())
+				(this.Clear()), 
+				(this.Source()), 
+				(this.Lights())
 			]);
-			(obj.body) = () => ([(this?.Menu())]);
+			(obj.body) = () => ([(this.Menu())]);
 			return obj;
 		}
 		perf(){
@@ -24254,7 +24260,7 @@ var $;
 			const obj = new this.$.$mol_link_iconed();
 			(obj.title) = () => ("");
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_eval_Perf_hint")));
-			(obj.uri) = () => ((this?.perf()));
+			(obj.uri) = () => ((this.perf()));
 			return obj;
 		}
 		Bookmark_icon(){
@@ -24267,8 +24273,8 @@ var $;
 		}
 		Bookmark(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.Icon) = () => ((this?.Bookmark_icon()));
-			(obj.checked) = (next) => ((this?.bookmark(next)));
+			(obj.Icon) = () => ((this.Bookmark_icon()));
+			(obj.checked) = (next) => ((this.bookmark(next)));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_eval_Bookmark_hint")));
 			return obj;
 		}
@@ -24282,13 +24288,13 @@ var $;
 		}
 		Run(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.Icon) = () => ((this?.Run_icon()));
-			(obj.checked) = (next) => ((this?.run(next)));
-			(obj.hint) = () => ((this?.result_label()));
+			(obj.Icon) = () => ((this.Run_icon()));
+			(obj.checked) = (next) => ((this.run(next)));
+			(obj.hint) = () => ((this.result_label()));
 			return obj;
 		}
 		bring(){
-			return (this?.Code()?.bring());
+			return (this.Code().bring());
 		}
 		code(next){
 			if(next !== undefined) return next;
@@ -24299,7 +24305,7 @@ var $;
 			(obj.hint) = () => ("javascript..");
 			(obj.sidebar_showed) = () => (true);
 			(obj.spellcheck) = () => (false);
-			(obj.value) = (next) => ((this?.code(next)));
+			(obj.value) = (next) => ((this.code(next)));
 			return obj;
 		}
 		error_anchor(){
@@ -24317,27 +24323,27 @@ var $;
 		}
 		Error_view(){
 			const obj = new this.$.$mol_view();
-			(obj.attr) = () => ({"title": (this?.error_message())});
-			(obj.sub) = () => ([(this?.Error_icon())]);
+			(obj.attr) = () => ({"title": (this.error_message())});
+			(obj.sub) = () => ([(this.Error_icon())]);
 			return obj;
 		}
 		Error_mark(){
 			const obj = new this.$.$mol_follower();
-			(obj.Anchor) = () => ((this?.error_anchor()));
-			(obj.offset) = () => ((this?.error_offset()));
-			(obj.Sub) = () => ((this?.Error_view()));
+			(obj.Anchor) = () => ((this.error_anchor()));
+			(obj.offset) = () => ((this.error_offset()));
+			(obj.Sub) = () => ((this.Error_view()));
 			return obj;
 		}
 		Code_page(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_eval_Code_page_title")));
-			(obj.bring) = () => ((this?.bring()));
+			(obj.bring) = () => ((this.bring()));
 			(obj.tools) = () => ([
-				(this?.Perf()), 
-				(this?.Bookmark()), 
-				(this?.Run())
+				(this.Perf()), 
+				(this.Bookmark()), 
+				(this.Run())
 			]);
-			(obj.body) = () => ([(this?.Code()), (this?.Error_mark())]);
+			(obj.body) = () => ([(this.Code()), (this.Error_mark())]);
 			return obj;
 		}
 		result_label(){
@@ -24350,7 +24356,7 @@ var $;
 		Results_close(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"run": "false"});
-			(obj.sub) = () => ([(this?.Results_close_icon())]);
+			(obj.sub) = () => ([(this.Results_close_icon())]);
 			return obj;
 		}
 		UI(){
@@ -24363,30 +24369,30 @@ var $;
 		}
 		Log(id){
 			const obj = new this.$.$mol_dump_list();
-			(obj.values) = () => ((this?.log(id)));
+			(obj.values) = () => ((this.log(id)));
 			(obj.prototypes) = () => (true);
 			return obj;
 		}
 		logs(){
-			return [(this?.Log("0"))];
+			return [(this.Log("0"))];
 		}
 		Result(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.logs()));
+			(obj.rows) = () => ((this.logs()));
 			return obj;
 		}
 		Result_page(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.result_label()));
-			(obj.tools) = () => ([(this?.Results_close())]);
-			(obj.body) = () => ([(this?.UI()), (this?.Result())]);
+			(obj.title) = () => ((this.result_label()));
+			(obj.tools) = () => ([(this.Results_close())]);
+			(obj.body) = () => ([(this.UI()), (this.Result())]);
 			return obj;
 		}
 		Placeholder(){
 			return null;
 		}
 		plugins(){
-			return [(this?.Theme()), (this?.Submit())];
+			return [(this.Theme()), (this.Submit())];
 		}
 		bookmark_list(next){
 			if(next !== undefined) return next;
@@ -24394,9 +24400,9 @@ var $;
 		}
 		pages(){
 			return [
-				(this?.Menu_page()), 
-				(this?.Code_page()), 
-				(this?.Result_page())
+				(this.Menu_page()), 
+				(this.Code_page()), 
+				(this.Result_page())
 			];
 		}
 	};
@@ -24980,7 +24986,7 @@ var $;
 			return "";
 		}
 		Eval_result(){
-			return (this?.Eval()?.Result());
+			return (this.Eval().Result());
 		}
 		prefix_showed(next){
 			if(next !== undefined) return next;
@@ -24992,7 +24998,7 @@ var $;
 		}
 		Measurable(){
 			const obj = new this.$.$mol_check_box();
-			(obj.checked) = (next) => ((this?.measurable(next)));
+			(obj.checked) = (next) => ((this.measurable(next)));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Measurable_hint")));
 			return obj;
 		}
@@ -25006,8 +25012,8 @@ var $;
 		Title(){
 			const obj = new this.$.$mol_string_button();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Title_hint")));
-			(obj.enabled) = () => ((this?.changable()));
-			(obj.value) = (next) => ((this?.title(next)));
+			(obj.enabled) = () => ((this.changable()));
+			(obj.value) = (next) => ((this.title(next)));
 			return obj;
 		}
 		eval_standalone(){
@@ -25017,15 +25023,15 @@ var $;
 			const obj = new this.$.$mol_link_iconed();
 			(obj.title) = () => ("");
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Eval_sandalone_hint")));
-			(obj.uri) = () => ((this?.eval_standalone()));
+			(obj.uri) = () => ((this.eval_standalone()));
 			return obj;
 		}
 		Prefix_tools(){
 			const obj = new this.$.$mol_bar();
 			(obj.sub) = () => ([
-				(this?.Measurable()), 
-				(this?.Title()), 
-				(this?.Eval_sandalone())
+				(this.Measurable()), 
+				(this.Title()), 
+				(this.Eval_sandalone())
 			]);
 			return obj;
 		}
@@ -25035,19 +25041,19 @@ var $;
 		}
 		Prefix_code(){
 			const obj = new this.$.$mol_textarea();
-			(obj.enabled) = () => ((this?.changable()));
+			(obj.enabled) = () => ((this.changable()));
 			(obj.spellcheck) = () => (false);
-			(obj.value) = (next) => ((this?.prefix(next)));
+			(obj.value) = (next) => ((this.prefix(next)));
 			(obj.hint) = () => ("let count = {#}");
 			return obj;
 		}
 		Prefix(){
 			const obj = new this.$.$mol_expander();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Prefix_title")));
-			(obj.expanded) = (next) => ((this?.prefix_showed(next)));
+			(obj.expanded) = (next) => ((this.prefix_showed(next)));
 			(obj.minimal_width) = () => (150);
-			(obj.Tools) = () => ((this?.Prefix_tools()));
-			(obj.content) = () => ([(this?.Prefix_code())]);
+			(obj.Tools) = () => ((this.Prefix_tools()));
+			(obj.content) = () => ([(this.Prefix_code())]);
 			return obj;
 		}
 		source_showed(next){
@@ -25064,9 +25070,9 @@ var $;
 		}
 		Drop(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.drop(next)));
+			(obj.click) = (next) => ((this.drop(next)));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Drop_hint")));
-			(obj.sub) = () => ([(this?.Drop_icon())]);
+			(obj.sub) = () => ([(this.Drop_icon())]);
 			return obj;
 		}
 		dupe(next){
@@ -25079,9 +25085,9 @@ var $;
 		}
 		Dupe(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.dupe(next)));
+			(obj.click) = (next) => ((this.dupe(next)));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Dupe_hint")));
-			(obj.sub) = () => ([(this?.Dupe_icon())]);
+			(obj.sub) = () => ([(this.Dupe_icon())]);
 			return obj;
 		}
 		swap(next){
@@ -25094,21 +25100,21 @@ var $;
 		}
 		Swap(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.swap(next)));
+			(obj.click) = (next) => ((this.swap(next)));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Swap_hint")));
-			(obj.sub) = () => ([(this?.Swap_icon())]);
+			(obj.sub) = () => ([(this.Swap_icon())]);
 			return obj;
 		}
 		edit_tools(){
 			return [
-				(this?.Drop()), 
-				(this?.Dupe()), 
-				(this?.Swap())
+				(this.Drop()), 
+				(this.Dupe()), 
+				(this.Swap())
 			];
 		}
 		Source_tools(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.edit_tools()));
+			(obj.sub) = () => ((this.edit_tools()));
 			return obj;
 		}
 		source(next){
@@ -25117,19 +25123,19 @@ var $;
 		}
 		Source_code(){
 			const obj = new this.$.$mol_textarea();
-			(obj.enabled) = () => ((this?.changable()));
+			(obj.enabled) = () => ((this.changable()));
 			(obj.spellcheck) = () => (false);
-			(obj.value) = (next) => ((this?.source(next)));
+			(obj.value) = (next) => ((this.source(next)));
 			(obj.hint) = () => ("res = {#} % count");
 			return obj;
 		}
 		Source(){
 			const obj = new this.$.$mol_expander();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Source_title")));
-			(obj.expanded) = (next) => ((this?.source_showed(next)));
+			(obj.expanded) = (next) => ((this.source_showed(next)));
 			(obj.minimal_width) = () => (150);
-			(obj.Tools) = () => ((this?.Source_tools()));
-			(obj.content) = () => ([(this?.Source_code())]);
+			(obj.Tools) = () => ((this.Source_tools()));
+			(obj.content) = () => ([(this.Source_code())]);
 			return obj;
 		}
 		eval_showed(next){
@@ -25138,9 +25144,9 @@ var $;
 		}
 		Eval_labeler(){
 			const obj = new this.$.$mol_expander();
-			(obj.expanded) = (next) => ((this?.eval_showed(next)));
+			(obj.expanded) = (next) => ((this.eval_showed(next)));
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_case_row_Eval_labeler_title")));
-			(obj.content) = () => ([(this?.Eval_result())]);
+			(obj.content) = () => ([(this.Eval_result())]);
 			return obj;
 		}
 		result_title(id){
@@ -25152,28 +25158,28 @@ var $;
 		}
 		Result(id){
 			const obj = new this.$.$hyoo_js_perf_case_result();
-			(obj.title) = () => ((this?.result_title(id)));
-			(obj.result) = () => ((this?.result(id)));
+			(obj.title) = () => ((this.result_title(id)));
+			(obj.result) = () => ((this.result(id)));
 			return obj;
 		}
 		result_rows(){
 			return [
-				(this?.Result("0")), 
-				(this?.Result("1")), 
-				(this?.Result("2"))
+				(this.Result("0")), 
+				(this.Result("1")), 
+				(this.Result("2"))
 			];
 		}
 		Results(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.result_rows()));
+			(obj.sub) = () => ((this.result_rows()));
 			return obj;
 		}
 		columns(){
 			return [
-				(this?.Prefix()), 
-				(this?.Source()), 
-				(this?.Eval_labeler()), 
-				(this?.Results())
+				(this.Prefix()), 
+				(this.Source()), 
+				(this.Eval_labeler()), 
+				(this.Results())
 			];
 		}
 		results(){
@@ -25181,12 +25187,12 @@ var $;
 		}
 		Eval(){
 			const obj = new this.$.$hyoo_js_eval();
-			(obj.code) = () => ((this?.sample()));
-			(obj.run) = () => ((this?.eval_showed()));
+			(obj.code) = () => ((this.sample()));
+			(obj.run) = () => ((this.eval_showed()));
 			return obj;
 		}
 		sub(){
-			return (this?.columns());
+			return (this.columns());
 		}
 	};
 	($mol_mem(($.$hyoo_js_perf_case_row.prototype), "prefix_showed"));
@@ -25399,7 +25405,7 @@ var $;
 			return (this.$.$mol_locale.text("$mol_button_share_hint"));
 		}
 		sub(){
-			return [(this?.Icon()), (this?.title())];
+			return [(this.Icon()), (this.title())];
 		}
 	};
 	($mol_mem(($.$mol_button_share.prototype), "Icon"));
@@ -25666,7 +25672,7 @@ var $;
 		Hotkey(){
 			const obj = new this.$.$mol_hotkey();
 			(obj.mod_ctrl) = () => (true);
-			(obj.key) = () => ({"enter": (next) => (this?.run(next))});
+			(obj.key) = () => ({"enter": (next) => (this.run(next))});
 			return obj;
 		}
 		menu_tools(){
@@ -25674,7 +25680,7 @@ var $;
 		}
 		Online(){
 			const obj = new this.$.$hyoo_sync_online();
-			(obj.yard) = () => ((this?.yard()));
+			(obj.yard) = () => ((this.yard()));
 			return obj;
 		}
 		Source(){
@@ -25689,7 +25695,7 @@ var $;
 		About(){
 			const obj = new this.$.$mol_link();
 			(obj.uri) = () => ("https://page.hyoo.ru/#!=btunlj_fp1tum");
-			(obj.sub) = () => ([(this?.About_icon())]);
+			(obj.sub) = () => ([(this.About_icon())]);
 			return obj;
 		}
 		Lights(){
@@ -25705,16 +25711,16 @@ var $;
 		}
 		Prefix_code(){
 			const obj = new this.$.$mol_textarea();
-			(obj.enabled) = () => ((this?.changable()));
+			(obj.enabled) = () => ((this.changable()));
 			(obj.spellcheck) = () => (false);
-			(obj.value) = (next) => ((this?.prefix(next)));
+			(obj.value) = (next) => ((this.prefix(next)));
 			(obj.hint) = () => ("let res = 0");
 			return obj;
 		}
 		Prefix(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Prefix_title")));
-			(obj.Content) = () => ((this?.Prefix_code()));
+			(obj.Content) = () => ((this.Prefix_code()));
 			return obj;
 		}
 		postfix(next){
@@ -25723,16 +25729,16 @@ var $;
 		}
 		Postfix_code(){
 			const obj = new this.$.$mol_textarea();
-			(obj.enabled) = () => ((this?.changable()));
+			(obj.enabled) = () => ((this.changable()));
 			(obj.spellcheck) = () => (false);
-			(obj.value) = (next) => ((this?.postfix(next)));
+			(obj.value) = (next) => ((this.postfix(next)));
 			(obj.hint) = () => ("$mol_assert_like( res, {#} - 1 )");
 			return obj;
 		}
 		Postfix(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Postfix_title")));
-			(obj.Content) = () => ((this?.Postfix_code()));
+			(obj.Content) = () => ((this.Postfix_code()));
 			return obj;
 		}
 		hint(){
@@ -25740,29 +25746,29 @@ var $;
 		}
 		Hint(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.hint()));
+			(obj.text) = () => ((this.hint()));
 			return obj;
 		}
 		Common_content(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Prefix()), 
-				(this?.Postfix()), 
-				(this?.Hint())
+				(this.Prefix()), 
+				(this.Postfix()), 
+				(this.Hint())
 			]);
 			return obj;
 		}
 		Common(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Common_title")));
-			(obj.tools) = () => ((this?.menu_tools()));
+			(obj.tools) = () => ((this.menu_tools()));
 			(obj.foot) = () => ([
-				(this?.Online()), 
-				(this?.Source()), 
-				(this?.About()), 
-				(this?.Lights())
+				(this.Online()), 
+				(this.Source()), 
+				(this.About()), 
+				(this.Lights())
 			]);
-			(obj.body) = () => ([(this?.Common_content())]);
+			(obj.body) = () => ([(this.Common_content())]);
 			return obj;
 		}
 		bench_title(next){
@@ -25771,9 +25777,9 @@ var $;
 		}
 		Title(){
 			const obj = new this.$.$mol_string_button();
-			(obj.value) = (next) => ((this?.bench_title(next)));
-			(obj.hint) = () => ((this?.menu_title()));
-			(obj.enabled) = () => ((this?.changable()));
+			(obj.value) = (next) => ((this.bench_title(next)));
+			(obj.hint) = () => ((this.menu_title()));
+			(obj.enabled) = () => ((this.changable()));
 			return obj;
 		}
 		case_title(id, next){
@@ -25793,7 +25799,7 @@ var $;
 			return true;
 		}
 		Case_measurable(id){
-			return (this?.Case(id)?.Measurable());
+			return (this.Case(id).Measurable());
 		}
 		case_sample(id){
 			return "";
@@ -25816,24 +25822,24 @@ var $;
 		}
 		Case(id){
 			const obj = new this.$.$hyoo_js_perf_case_row();
-			(obj.title) = (next) => ((this?.case_title(id, next)));
-			(obj.prefix) = (next) => ((this?.case_prefix(id, next)));
-			(obj.source) = (next) => ((this?.source(id, next)));
-			(obj.measurable) = (next) => ((this?.case_measurable(id, next)));
-			(obj.sample) = () => ((this?.case_sample(id)));
-			(obj.results) = (next) => ((this?.results(id, next)));
-			(obj.changable) = () => ((this?.changable()));
-			(obj.drop) = (next) => ((this?.case_drop(id, next)));
-			(obj.dupe) = (next) => ((this?.case_dupe(id, next)));
-			(obj.swap) = (next) => ((this?.case_swap(id, next)));
+			(obj.title) = (next) => ((this.case_title(id, next)));
+			(obj.prefix) = (next) => ((this.case_prefix(id, next)));
+			(obj.source) = (next) => ((this.source(id, next)));
+			(obj.measurable) = (next) => ((this.case_measurable(id, next)));
+			(obj.sample) = () => ((this.case_sample(id)));
+			(obj.results) = (next) => ((this.results(id, next)));
+			(obj.changable) = () => ((this.changable()));
+			(obj.drop) = (next) => ((this.case_drop(id, next)));
+			(obj.dupe) = (next) => ((this.case_dupe(id, next)));
+			(obj.swap) = (next) => ((this.case_swap(id, next)));
 			return obj;
 		}
 		cases(){
-			return [(this?.Case("0"))];
+			return [(this.Case("0"))];
 		}
 		Cases(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.cases()));
+			(obj.rows) = () => ((this.cases()));
 			return obj;
 		}
 		measurable_all(){
@@ -25841,7 +25847,7 @@ var $;
 		}
 		Measurable_all(){
 			const obj = new this.$.$mol_check_group();
-			(obj.checks) = () => ((this?.measurable_all()));
+			(obj.checks) = () => ((this.measurable_all()));
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Measurable_all_hint")));
 			return obj;
 		}
@@ -25852,13 +25858,13 @@ var $;
 		Run(){
 			const obj = new this.$.$mol_button_major();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Run_hint")));
-			(obj.click) = (next) => ((this?.run(next)));
-			(obj.sub) = () => ([(this?.Run_icon())]);
+			(obj.click) = (next) => ((this.run(next)));
+			(obj.sub) = () => ([(this.Run_icon())]);
 			return obj;
 		}
 		Share(){
 			const obj = new this.$.$mol_button_share();
-			(obj.capture) = () => ((this?.Cases()));
+			(obj.capture) = () => ((this.Cases()));
 			return obj;
 		}
 		bench_fork(next){
@@ -25872,8 +25878,8 @@ var $;
 		Fork(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_Fork_hint")));
-			(obj.click) = (next) => ((this?.bench_fork(next)));
-			(obj.sub) = () => ([(this?.Fork_icon())]);
+			(obj.click) = (next) => ((this.bench_fork(next)));
+			(obj.sub) = () => ([(this.Fork_icon())]);
 			return obj;
 		}
 		bench_new(next){
@@ -25887,27 +25893,27 @@ var $;
 		New(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_js_perf_New_hint")));
-			(obj.click) = (next) => ((this?.bench_new(next)));
-			(obj.sub) = () => ([(this?.New_icon())]);
+			(obj.click) = (next) => ((this.bench_new(next)));
+			(obj.sub) = () => ([(this.New_icon())]);
 			return obj;
 		}
 		Tool_buttons(){
 			const obj = new this.$.$mol_view();
 			(obj.sub) = () => ([
-				(this?.Measurable_all()), 
-				(this?.Run()), 
-				(this?.Share()), 
-				(this?.Fork()), 
-				(this?.New())
+				(this.Measurable_all()), 
+				(this.Run()), 
+				(this.Share()), 
+				(this.Fork()), 
+				(this.New())
 			]);
 			return obj;
 		}
 		Cases_pane(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.bench_title()));
-			(obj.Title) = () => ((this?.Title()));
-			(obj.body) = () => ([(this?.Cases())]);
-			(obj.tools) = () => ([(this?.Tool_buttons())]);
+			(obj.title) = () => ((this.bench_title()));
+			(obj.Title) = () => ((this.Title()));
+			(obj.body) = () => ([(this.Cases())]);
+			(obj.tools) = () => ([(this.Tool_buttons())]);
 			return obj;
 		}
 		yard(){
@@ -25937,10 +25943,10 @@ var $;
 			return "";
 		}
 		plugins(){
-			return [(this?.Theme()), (this?.Hotkey())];
+			return [(this.Theme()), (this.Hotkey())];
 		}
 		pages(){
-			return [(this?.Common()), (this?.Cases_pane())];
+			return [(this.Common()), (this.Cases_pane())];
 		}
 	};
 	($mol_mem(($.$hyoo_js_perf.prototype), "Theme"));
@@ -26623,13 +26629,13 @@ var $;
 			return "";
 		}
 		option_label(id){
-			return [(this?.option_title(id))];
+			return [(this.option_title(id))];
 		}
 		enabled(){
 			return true;
 		}
 		option_enabled(id){
-			return (this?.enabled());
+			return (this.enabled());
 		}
 		option_hint(id){
 			return "";
@@ -26642,10 +26648,10 @@ var $;
 		}
 		Option(id){
 			const obj = new this.$.$mol_check();
-			(obj.checked) = (next) => ((this?.option_checked(id, next)));
-			(obj.label) = () => ((this?.option_label(id)));
-			(obj.enabled) = () => ((this?.option_enabled(id)));
-			(obj.hint) = () => ((this?.option_hint(id)));
+			(obj.checked) = (next) => ((this.option_checked(id, next)));
+			(obj.label) = () => ((this.option_label(id)));
+			(obj.enabled) = () => ((this.option_enabled(id)));
+			(obj.hint) = () => ((this.option_hint(id)));
 			(obj.minimal_height) = () => (24);
 			return obj;
 		}
@@ -26656,7 +26662,7 @@ var $;
 			return [];
 		}
 		sub(){
-			return (this?.items());
+			return (this.items());
 		}
 	};
 	($mol_mem_key(($.$mol_check_list.prototype), "option_checked"));
@@ -26760,8 +26766,8 @@ var $;
 		}
 		Switch(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.current(next)));
-			(obj.options) = () => ((this?.switch_options()));
+			(obj.value) = (next) => ((this.current(next)));
+			(obj.options) = () => ((this.switch_options()));
 			return obj;
 		}
 		Content(){
@@ -26772,7 +26778,7 @@ var $;
 			return [];
 		}
 		rows(){
-			return [(this?.Switch()), (this?.Content())];
+			return [(this.Switch()), (this.Content())];
 		}
 	};
 	($mol_mem(($.$mol_deck.prototype), "current"));
@@ -26832,7 +26838,7 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_perf();
 			(obj.bench_title) = () => ("State Management");
 			(obj.analysis_uri) = () => ("https://page.hyoo.ru/#!=3ia3ll_rcpl7b");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.bench_id) = () => ("9h2as6_u0mfnn");
 			return obj;
 		}
@@ -26840,7 +26846,7 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_perf();
 			(obj.bench_title) = () => ("Deep Equals");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/31");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.bench_id) = () => ("hwh5lj_gpifwn");
 			return obj;
 		}
@@ -26848,7 +26854,7 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_perf();
 			(obj.bench_title) = () => ("Time Moments");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/10");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.bench_id) = () => ("lrvlhv_jz49k6");
 			return obj;
 		}
@@ -26856,14 +26862,14 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_perf();
 			(obj.bench_title) = () => ("Markdown Parse");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/27");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.bench_id) = () => ("egbl19_e5ljht");
 			return obj;
 		}
 		Runtype(){
 			const obj = new this.$.$hyoo_mol_bench_perf();
 			(obj.bench_title) = () => ("Runtime typing");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.bench_id) = () => ("y4n9yl_ug1hdz");
 			return obj;
 		}
@@ -26871,7 +26877,7 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_perf();
 			(obj.bench_title) = () => ("Immutable Patches");
 			(obj.analysis_uri) = () => ("https://t.me/mam_mol/108985");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.bench_id) = () => ("wqcgji_pkdto1");
 			return obj;
 		}
@@ -26879,7 +26885,7 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_bench();
 			(obj.title) = () => ("Rope Charts");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/24");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.bench) = () => ("https://bench.hyoo.ru/chart/rope/");
 			return obj;
 		}
@@ -26887,7 +26893,7 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_bench();
 			(obj.title) = () => ("ToDoMVC");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/13");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.bench) = () => ("https://hyoo-ru.github.io/todomvc/benchmark/");
 			return obj;
 		}
@@ -26913,11 +26919,11 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_visual();
 			(obj.title) = () => ("Long ChangeLog");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/30");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.items) = () => ([
-				(this?.Chanelog_mol()), 
-				(this?.Changelog_vue()), 
-				(this?.Changelog_vanilla())
+				(this.Chanelog_mol()), 
+				(this.Changelog_vue()), 
+				(this.Changelog_vanilla())
 			]);
 			return obj;
 		}
@@ -26937,8 +26943,8 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_visual();
 			(obj.title) = () => ("Toxic Repos");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/28?single");
-			(obj.Close) = () => ((this?.Close_item()));
-			(obj.items) = () => ([(this?.Toxic_mol()), (this?.Toxic_vue())]);
+			(obj.Close) = () => ((this.Close_item()));
+			(obj.items) = () => ([(this.Toxic_mol()), (this.Toxic_vue())]);
 			return obj;
 		}
 		DBMon_mol(){
@@ -26969,12 +26975,12 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_visual();
 			(obj.title) = () => ("DB Monitor");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/23");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.items) = () => ([
-				(this?.DBMon_mol()), 
-				(this?.DBMon_vue()), 
-				(this?.DBMon_react()), 
-				(this?.DBMon_vanilla())
+				(this.DBMon_mol()), 
+				(this.DBMon_vue()), 
+				(this.DBMon_react()), 
+				(this.DBMon_vanilla())
 			]);
 			return obj;
 		}
@@ -26994,8 +27000,8 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_visual();
 			(obj.title) = () => ("Habr Comments");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/21");
-			(obj.Close) = () => ((this?.Close_item()));
-			(obj.items) = () => ([(this?.Habr_mol()), (this?.Habr_vue())]);
+			(obj.Close) = () => ((this.Close_item()));
+			(obj.items) = () => ([(this.Habr_mol()), (this.Habr_vue())]);
 			return obj;
 		}
 		Sierp_mol(){
@@ -27020,11 +27026,11 @@ var $;
 			const obj = new this.$.$hyoo_mol_bench_visual();
 			(obj.title) = () => ("Sierpinski Triangle");
 			(obj.analysis_uri) = () => ("https://t.me/mol_bench/19");
-			(obj.Close) = () => ((this?.Close_item()));
+			(obj.Close) = () => ((this.Close_item()));
 			(obj.items) = () => ([
-				(this?.Sierp_mol()), 
-				(this?.Sierp_react()), 
-				(this?.Sierp_glimmer())
+				(this.Sierp_mol()), 
+				(this.Sierp_react()), 
+				(this.Sierp_glimmer())
 			]);
 			return obj;
 		}
@@ -27037,7 +27043,7 @@ var $;
 		Close_item(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"bench": null});
-			(obj.sub) = () => ([(this?.Close_item_icon())]);
+			(obj.sub) = () => ([(this.Close_item_icon())]);
 			return obj;
 		}
 		param(){
@@ -27045,19 +27051,19 @@ var $;
 		}
 		spreads(){
 			return {
-				"reactivity": (this?.Init()), 
-				"equals": (this?.equals()), 
-				"moment": (this?.moment()), 
-				"markdown": (this?.Markdown()), 
-				"runtype": (this?.Runtype()), 
-				"imutable": (this?.Immutable()), 
-				"rope": (this?.Rope()), 
-				"todomvc": (this?.Todomvc()), 
-				"changelog": (this?.Chanelog()), 
-				"toxic": (this?.Toxic()), 
-				"dbmon": (this?.DBMon()), 
-				"habr": (this?.Habr()), 
-				"sierp": (this?.Sierp())
+				"reactivity": (this.Init()), 
+				"equals": (this.equals()), 
+				"moment": (this.moment()), 
+				"markdown": (this.Markdown()), 
+				"runtype": (this.Runtype()), 
+				"imutable": (this.Immutable()), 
+				"rope": (this.Rope()), 
+				"todomvc": (this.Todomvc()), 
+				"changelog": (this.Chanelog()), 
+				"toxic": (this.Toxic()), 
+				"dbmon": (this.DBMon()), 
+				"habr": (this.Habr()), 
+				"sierp": (this.Sierp())
 			};
 		}
 	};
@@ -27096,7 +27102,7 @@ var $;
 		}
 		Analysis(){
 			const obj = new this.$.$hyoo_mol_bench_analysis();
-			(obj.uri) = () => ((this?.analysis_uri()));
+			(obj.uri) = () => ((this.analysis_uri()));
 			return obj;
 		}
 		Close(){
@@ -27104,10 +27110,10 @@ var $;
 			return obj;
 		}
 		addon_title(){
-			return (this?.title());
+			return (this.title());
 		}
 		menu_tools(){
-			return [(this?.Analysis()), (this?.Close())];
+			return [(this.Analysis()), (this.Close())];
 		}
 	};
 	($mol_mem(($.$hyoo_mol_bench_bench.prototype), "Analysis"));
@@ -27117,7 +27123,7 @@ var $;
 			const obj = new this.$.$mol_link_iconed();
 			(obj.title) = () => ("");
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_mol_bench_perf_Permalink_hint")));
-			(obj.uri) = () => ((this?.permalink()));
+			(obj.uri) = () => ((this.permalink()));
 			return obj;
 		}
 		analysis_uri(){
@@ -27125,7 +27131,7 @@ var $;
 		}
 		Analysis(){
 			const obj = new this.$.$hyoo_mol_bench_analysis();
-			(obj.uri) = () => ((this?.analysis_uri()));
+			(obj.uri) = () => ((this.analysis_uri()));
 			return obj;
 		}
 		Close(){
@@ -27146,9 +27152,9 @@ var $;
 		}
 		menu_tools(){
 			return [
-				(this?.Permalink()), 
-				(this?.Analysis()), 
-				(this?.Close())
+				(this.Permalink()), 
+				(this.Analysis()), 
+				(this.Close())
 			];
 		}
 	};
@@ -27161,7 +27167,7 @@ var $;
 		}
 		Analysis(){
 			const obj = new this.$.$hyoo_mol_bench_analysis();
-			(obj.uri) = () => ((this?.analysis_uri()));
+			(obj.uri) = () => ((this.analysis_uri()));
 			return obj;
 		}
 		Close(){
@@ -27169,32 +27175,32 @@ var $;
 			return obj;
 		}
 		Switch(){
-			return (this?.Deck()?.Switch());
+			return (this.Deck().Switch());
 		}
 		Content(){
-			return (this?.Deck()?.Content());
+			return (this.Deck().Content());
 		}
 		items(){
 			return [];
 		}
 		Deck(){
 			const obj = new this.$.$mol_deck();
-			(obj.rows) = () => ([(this?.Content())]);
-			(obj.items) = () => ((this?.items()));
+			(obj.rows) = () => ([(this.Content())]);
+			(obj.items) = () => ((this.items()));
 			return obj;
 		}
 		head(){
 			return [
-				(this?.Title()), 
-				(this?.Switch()), 
-				(this?.Tools())
+				(this.Title()), 
+				(this.Switch()), 
+				(this.Tools())
 			];
 		}
 		tools(){
-			return [(this?.Analysis()), (this?.Close())];
+			return [(this.Analysis()), (this.Close())];
 		}
 		body_content(){
-			return [(this?.Deck())];
+			return [(this.Deck())];
 		}
 	};
 	($mol_mem(($.$hyoo_mol_bench_visual.prototype), "Analysis"));
@@ -27209,7 +27215,7 @@ var $;
 			return (this.$.$mol_locale.text("$hyoo_mol_bench_analysis_hint"));
 		}
 		sub(){
-			return [(this?.Icon())];
+			return [(this.Icon())];
 		}
 	};
 	($mol_mem(($.$hyoo_mol_bench_analysis.prototype), "Icon"));
@@ -27583,8 +27589,8 @@ var $;
             ...(bidi && next) ? [prop.struct('next')] : [],
         ]);
     }
-    function call_method_name(child) {
-        return child.struct('?.[]', [
+    function call_method_name(child, optional) {
+        return child.struct(optional ? '?.[]' : '[]', [
             child.data(name_of.call(this, child))
         ]);
     }
@@ -27594,7 +27600,7 @@ var $;
         }
         const chain = [bind.struct('this')];
         for (const child of bind.kids) {
-            chain.push(call_method_name.call(this, child), args_of.call(this, child, bidi));
+            chain.push(call_method_name.call(this, child, chain.length > 1), args_of.call(this, child, bidi));
         }
         return bind.struct('()', chain);
     }
@@ -27653,11 +27659,11 @@ var $;
             ],
             '=': bind => [bind.struct('()', [
                     bind.struct('this'),
-                    ...bind.hack({ '': (method, belt) => [
-                            call_method_name.call(this, method),
+                    ...bind.hack({ '': (method, belt, ctx) => [
+                            call_method_name.call(this, method, (ctx.item_index++) > 0),
                             args_of.call(this, method),
                             ...method.hack(belt),
-                        ] }),
+                        ] }, { item_index: 0 }),
                 ])],
             '': (input, belt, context) => {
                 if (input.type[0] === '*') {
@@ -28074,7 +28080,7 @@ var $;
 			return true;
 		}
 		drop_enabled(){
-			return (this?.enabled());
+			return (this.enabled());
 		}
 		event_select(id, next){
 			if(next !== undefined) return next;
@@ -28087,7 +28093,7 @@ var $;
 			return [];
 		}
 		options_pickable(){
-			return (this?.options());
+			return (this.options());
 		}
 		pick(next){
 			if(next !== undefined) return next;
@@ -28097,13 +28103,13 @@ var $;
 			return "";
 		}
 		pick_enabled(){
-			return (this?.enabled());
+			return (this.enabled());
 		}
 		pick_hint(){
 			return (this.$.$mol_locale.text("$mol_select_list_pick_hint"));
 		}
 		filter_pattern(next){
-			return (this?.Pick()?.filter_pattern(next));
+			return (this.Pick().filter_pattern(next));
 		}
 		Pick_icon(){
 			const obj = new this.$.$mol_icon_plus();
@@ -28111,14 +28117,14 @@ var $;
 		}
 		Pick(){
 			const obj = new this.$.$mol_select();
-			(obj.event_select) = (id, next) => ((this?.event_select(id, next)));
-			(obj.align_hor) = () => ((this?.align_hor()));
-			(obj.options) = () => ((this?.options_pickable()));
-			(obj.value) = (next) => ((this?.pick(next)));
-			(obj.option_label) = (id) => ((this?.option_title(id)));
-			(obj.trigger_enabled) = () => ((this?.pick_enabled()));
-			(obj.hint) = () => ((this?.pick_hint()));
-			(obj.Trigger_icon) = () => ((this?.Pick_icon()));
+			(obj.event_select) = (id, next) => ((this.event_select(id, next)));
+			(obj.align_hor) = () => ((this.align_hor()));
+			(obj.options) = () => ((this.options_pickable()));
+			(obj.value) = (next) => ((this.pick(next)));
+			(obj.option_label) = (id) => ((this.option_title(id)));
+			(obj.trigger_enabled) = () => ((this.pick_enabled()));
+			(obj.hint) = () => ((this.pick_hint()));
+			(obj.Trigger_icon) = () => ((this.Pick_icon()));
 			return obj;
 		}
 		value(next){
@@ -28129,18 +28135,18 @@ var $;
 			return {};
 		}
 		badges_list(){
-			return (this?.Badges());
+			return (this.Badges());
 		}
 		Badge(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.badge_title(id)));
-			(obj.click) = (next) => ((this?.remove(id, next)));
-			(obj.hint) = () => ((this?.badge_hint()));
-			(obj.enabled) = () => ((this?.drop_enabled()));
+			(obj.title) = () => ((this.badge_title(id)));
+			(obj.click) = (next) => ((this.remove(id, next)));
+			(obj.hint) = () => ((this.badge_hint()));
+			(obj.enabled) = () => ((this.drop_enabled()));
 			return obj;
 		}
 		sub(){
-			return [(this?.Pick()), ...(this.badges_list())];
+			return [(this.Pick()), ...(this.badges_list())];
 		}
 	};
 	($mol_mem_key(($.$mol_select_list.prototype), "remove"));
@@ -29263,7 +29269,7 @@ var $;
     }
     function type_enforce(name, a, b) {
         return name.struct('line', [
-            name.data(`type ${name.value.replace(/<.*>/g, '')}__${this.$mol_guid()} = $mol_type_enforce<`),
+            name.data(`type ${name.value.replace(/<.*>/g, '')} = $mol_type_enforce<`),
             name.struct('indent', [
                 a[0].struct('line', a),
                 a[0].data(','),
@@ -29276,10 +29282,12 @@ var $;
         const descr = $mol_view_tree2_classes(tree);
         const types = [];
         for (const klass of descr.kids) {
+            let assert_count = 0;
             const parent = this.$mol_view_tree2_child(klass);
             const props = this.$mol_view_tree2_class_props(klass);
             const aliases = [];
             const context = { objects: [] };
+            const klass_name = klass.type.slice(1);
             types.push(klass.struct('line', [
                 klass.data('export class '),
                 klass.data(klass.type),
@@ -29321,10 +29329,10 @@ var $;
                         const second_main = left_parts.key || left_parts.next ? main : left.struct('line', return_type.call(this, main, left));
                         const second_key = left_parts.next || left_parts.key ? left : right;
                         if (prop_parts.key) {
-                            types.push(type_enforce.call(this, method, parameters.call(this, main, prop, 0), parameters.call(this, second_main, second_key, 0)));
+                            types.push(type_enforce.call(this, method.data(`${method.type}_${klass_name}_${++assert_count}`), parameters.call(this, main, prop, 0), parameters.call(this, second_main, second_key, 0)));
                         }
                         if (prop_parts.next) {
-                            types.push(type_enforce.call(this, method, parameters.call(this, main, prop, prop_parts.key ? 1 : 0), parameters.call(this, second_main, second_key, (left_parts.next ? left_parts : right_parts).key ? 1 : 0)));
+                            types.push(type_enforce.call(this, method.data(`${method.type}_${klass_name}_${++assert_count}`), parameters.call(this, main, prop, prop_parts.key ? 1 : 0), parameters.call(this, second_main, second_key, (left_parts.next ? left_parts : right_parts).key ? 1 : 0)));
                         }
                         return return_type.call(this, left.struct('line', return_type.call(this, main, left)), name_of.call(this, right));
                     },
@@ -29392,7 +29400,7 @@ var $;
                                 }
                                 else
                                     continue;
-                                types.push(type_enforce.call(this, input.data(`${klass.type}_${prop.type.replace(/[\?\*]*/g, '')}`), result, array_type));
+                                types.push(type_enforce.call(this, input.data(`${klass.type}_${prop.type.replace(/[\?\*]*/g, '')}_${++assert_count}`), result, array_type));
                             }
                             return readonly_arr(input, array_type);
                         }
@@ -29405,7 +29413,7 @@ var $;
                                         result.unshift(kid.data(', '));
                                     return kid.struct('line', result);
                                 });
-                                types.push(type_enforce.call(this, first.data(input.type), [
+                                types.push(type_enforce.call(this, first.data(`${input.type}_${klass_name}_${++assert_count}`), [
                                     first.data('[ '),
                                     ...args,
                                     first.data(' ]'),
@@ -29421,7 +29429,7 @@ var $;
                                     const bind = this.$mol_view_tree2_child(over);
                                     if (bind.type === '=>')
                                         continue;
-                                    types.push(type_enforce.call(this, over.data(`${input.type}__${name.value}`), over.hack(belt), return_type.call(this, input.data(input.type), over)));
+                                    types.push(type_enforce.call(this, over.data(`${input.type}__${name.value}_${klass_name}_${++assert_count}`), over.hack(belt), return_type.call(this, input.data(input.type), over)));
                                 }
                             return [
                                 input.data(input.type),
@@ -29816,26 +29824,26 @@ var $;
 		Presets_list(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.View2JS()), 
-				(this?.View2DTS()), 
-				(this?.View2L10n()), 
-				(this?.Json()), 
-				(this?.Xml()), 
-				(this?.XmlTree()), 
-				(this?.Js()), 
-				(this?.Wasm()), 
-				(this?.jack()), 
-				(this?.Mt()), 
-				(this?.Grammar()), 
-				(this?.Span())
+				(this.View2JS()), 
+				(this.View2DTS()), 
+				(this.View2L10n()), 
+				(this.Json()), 
+				(this.Xml()), 
+				(this.XmlTree()), 
+				(this.Js()), 
+				(this.Wasm()), 
+				(this.jack()), 
+				(this.Mt()), 
+				(this.Grammar()), 
+				(this.Span())
 			]);
 			return obj;
 		}
 		Presets(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_tree_Presets_title")));
-			(obj.tools) = () => ([(this?.Lights()), (this?.Github())]);
-			(obj.body) = () => ([(this?.Presets_list())]);
+			(obj.tools) = () => ([(this.Lights()), (this.Github())]);
+			(obj.body) = () => ([(this.Presets_list())]);
 			return obj;
 		}
 		source_tools(){
@@ -29846,27 +29854,27 @@ var $;
 		}
 		source(next){
 			if(next !== undefined) return next;
-			return (this?.source_default());
+			return (this.source_default());
 		}
 		source_hint(){
 			return (this.$.$mol_locale.text("$hyoo_tree_source_hint"));
 		}
 		Source_text(){
 			const obj = new this.$.$mol_textarea();
-			(obj.value) = (next) => ((this?.source(next)));
-			(obj.hint) = () => ((this?.source_hint()));
+			(obj.value) = (next) => ((this.source(next)));
+			(obj.hint) = () => ((this.source_hint()));
 			(obj.sidebar_showed) = () => (true);
 			return obj;
 		}
 		Source(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_tree_Source_title")));
-			(obj.tools) = () => ((this?.source_tools()));
-			(obj.body) = () => ([(this?.Source_text())]);
+			(obj.tools) = () => ((this.source_tools()));
+			(obj.body) = () => ([(this.Source_text())]);
 			return obj;
 		}
 		result_title(){
-			return (this?.Pipeline()?.title());
+			return (this.Pipeline().title());
 		}
 		transform_options(){
 			return [];
@@ -29876,9 +29884,9 @@ var $;
 		}
 		Pipeline(){
 			const obj = new this.$.$mol_select_list();
-			(obj.value) = (next) => ((this?.pipeline(next)));
-			(obj.options_pickable) = () => ((this?.transform_options()));
-			(obj.pick_hint) = () => ((this?.add_hint()));
+			(obj.value) = (next) => ((this.pipeline(next)));
+			(obj.options_pickable) = () => ((this.transform_options()));
+			(obj.pick_hint) = () => ((this.add_hint()));
 			return obj;
 		}
 		result_text(){
@@ -29887,14 +29895,14 @@ var $;
 		Result_text(){
 			const obj = new this.$.$mol_text_code();
 			(obj.sidebar_showed) = () => (true);
-			(obj.text) = () => ((this?.result_text()));
+			(obj.text) = () => ((this.result_text()));
 			return obj;
 		}
 		Result(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.result_title()));
-			(obj.head) = () => ([(this?.Pipeline())]);
-			(obj.body) = () => ([(this?.Result_text())]);
+			(obj.title) = () => ((this.result_title()));
+			(obj.head) = () => ([(this.Pipeline())]);
+			(obj.body) = () => ([(this.Result_text())]);
 			return obj;
 		}
 		transform_map(){
@@ -29933,20 +29941,20 @@ var $;
 			};
 		}
 		plugins(){
-			return [(this?.Theme())];
+			return [(this.Theme())];
 		}
 		pipeline(next){
 			if(next !== undefined) return next;
-			return (this?.pipeline_default());
+			return (this.pipeline_default());
 		}
 		Placeholder(){
 			return null;
 		}
 		pages(){
 			return [
-				(this?.Presets()), 
-				(this?.Source()), 
-				(this?.Result())
+				(this.Presets()), 
+				(this.Source()), 
+				(this.Result())
 			];
 		}
 	};
@@ -30135,7 +30143,7 @@ var $;
 			return obj;
 		}
 		tools_root(){
-			return [(this?.Sources()), (this?.Lights())];
+			return [(this.Sources()), (this.Lights())];
 		}
 		Lang(){
 			const obj = new this.$.$mol_locale_select();
@@ -30146,24 +30154,24 @@ var $;
 			(obj.side_main_id) = () => ("j0mafl_shvwnd");
 			(obj.menu_title) = () => ((this.$.$mol_locale.text("$hyoo_mol_Docs_menu_title")));
 			(obj.News) = () => (null);
-			(obj.tools_ext) = () => ([(this?.Spread_close())]);
+			(obj.tools_ext) = () => ([(this.Spread_close())]);
 			return obj;
 		}
 		Apps(){
 			const obj = new this.$.$hyoo_apps();
 			(obj.menu_title) = () => ((this.$.$mol_locale.text("$hyoo_mol_Apps_menu_title")));
-			(obj.tools) = () => ([(this?.Spread_close())]);
+			(obj.tools) = () => ([(this.Spread_close())]);
 			return obj;
 		}
 		Demos(){
 			const obj = new this.$.$mol_app_demo();
 			(obj.menu_title) = () => ((this.$.$mol_locale.text("$hyoo_mol_Demos_menu_title")));
-			(obj.tools) = () => ([(this?.Spread_close())]);
+			(obj.tools) = () => ([(this.Spread_close())]);
 			return obj;
 		}
 		Bench(){
 			const obj = new this.$.$hyoo_mol_bench();
-			(obj.menu_tools) = () => ([(this?.Spread_close())]);
+			(obj.menu_tools) = () => ([(this.Spread_close())]);
 			return obj;
 		}
 		View_tree_syntax_icon(){
@@ -30174,7 +30182,7 @@ var $;
 			const obj = new this.$.$mol_link();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_mol_View_tree_syntax_hint")));
 			(obj.uri) = () => ("#!section=docs/=vv2nig_s5zr0f");
-			(obj.sub) = () => ([(this?.View_tree_syntax_icon())]);
+			(obj.sub) = () => ([(this.View_tree_syntax_icon())]);
 			return obj;
 		}
 		tree_pipeline(){
@@ -30192,9 +30200,9 @@ var $;
 			const obj = new this.$.$hyoo_tree();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_mol_View_tree_title")));
 			(obj.Presets) = () => (null);
-			(obj.source_tools) = () => ([(this?.View_tree_syntax()), (this?.Spread_close())]);
-			(obj.pipeline_default) = () => ((this?.tree_pipeline()));
-			(obj.source_default) = () => ((this?.tree_source()));
+			(obj.source_tools) = () => ([(this.View_tree_syntax()), (this.Spread_close())]);
+			(obj.pipeline_default) = () => ((this.tree_pipeline()));
+			(obj.source_default) = () => ((this.tree_source()));
 			return obj;
 		}
 		Icons(){
@@ -30204,7 +30212,7 @@ var $;
 			return obj;
 		}
 		plugins(){
-			return [(this?.Theme())];
+			return [(this.Theme())];
 		}
 		Placeholder(){
 			return null;
@@ -30213,22 +30221,22 @@ var $;
 			return (this.$.$mol_locale.text("$hyoo_mol_menu_title"));
 		}
 		menu_tools(){
-			return (this?.tools_root());
+			return (this.tools_root());
 		}
 		menu_foot(){
-			return [(this?.Lang())];
+			return [(this.Lang())];
 		}
 		param(){
 			return "section";
 		}
 		spreads(){
 			return {
-				"docs": (this?.Docs()), 
-				"apps": (this?.Apps()), 
-				"demos": (this?.Demos()), 
-				"bench": (this?.Bench()), 
-				"view.tree": (this?.View_tree()), 
-				"icons": (this?.Icons())
+				"docs": (this.Docs()), 
+				"apps": (this.Apps()), 
+				"demos": (this.Demos()), 
+				"bench": (this.Bench()), 
+				"view.tree": (this.View_tree()), 
+				"icons": (this.Icons())
 			};
 		}
 	};
@@ -30253,8 +30261,8 @@ var $;
 		}
 		Title(){
 			const obj = new this.$.$mol_paragraph();
-			(obj.dom_name) = () => ((this?.title_dom_name()));
-			(obj.title) = () => ((this?.title()));
+			(obj.dom_name) = () => ((this.title_dom_name()));
+			(obj.title) = () => ((this.title()));
 			return obj;
 		}
 		tools(){
@@ -30262,15 +30270,15 @@ var $;
 		}
 		Tools(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.tools()));
+			(obj.sub) = () => ((this.tools()));
 			return obj;
 		}
 		head(){
-			return [(this?.Title()), (this?.Tools())];
+			return [(this.Title()), (this.Tools())];
 		}
 		Head(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.head()));
+			(obj.sub) = () => ((this.head()));
 			return obj;
 		}
 		content(){
@@ -30278,14 +30286,14 @@ var $;
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.content()));
+			(obj.rows) = () => ((this.content()));
 			return obj;
 		}
 		level(){
 			return 1;
 		}
 		rows(){
-			return [(this?.Head()), (this?.Content())];
+			return [(this.Head()), (this.Content())];
 		}
 	};
 	($mol_mem(($.$mol_section.prototype), "Title"));
@@ -30335,16 +30343,16 @@ var $;
 		Sync(){
 			const obj = new this.$.$mol_button_major();
 			(obj.title) = () => ("Sync");
-			(obj.enabled) = () => ((this?.sync_enabled()));
-			(obj.click) = (next) => ((this?.sync(next)));
+			(obj.enabled) = () => ((this.sync_enabled()));
+			(obj.click) = (next) => ((this.sync(next)));
 			return obj;
 		}
 		Left(){
 			const obj = new this.$.$hyoo_crowd_app_peer();
 			(obj.title) = () => ("CROWD Text Demo");
 			(obj.hint) = () => ("Text of Alice");
-			(obj.sync) = () => ((this?.sync()));
-			(obj.tools) = () => ([(this?.Sync())]);
+			(obj.sync) = () => ((this.sync()));
+			(obj.tools) = () => ([(this.Sync())]);
 			return obj;
 		}
 		Lights(){
@@ -30360,18 +30368,18 @@ var $;
 			const obj = new this.$.$hyoo_crowd_app_peer();
 			(obj.title) = () => ("");
 			(obj.hint) = () => ("Text of Bob");
-			(obj.sync) = () => ((this?.sync()));
-			(obj.tools) = () => ([(this?.Lights()), (this?.Source())]);
+			(obj.sync) = () => ((this.sync()));
+			(obj.tools) = () => ([(this.Lights()), (this.Source())]);
 			return obj;
 		}
 		Placeholder(){
 			return null;
 		}
 		plugins(){
-			return [(this?.Theme())];
+			return [(this.Theme())];
 		}
 		pages(){
-			return [(this?.Left()), (this?.Right())];
+			return [(this.Left()), (this.Right())];
 		}
 	};
 	($mol_mem(($.$hyoo_crowd_app.prototype), "Theme"));
@@ -30391,8 +30399,8 @@ var $;
 		}
 		Text(){
 			const obj = new this.$.$mol_textarea();
-			(obj.hint) = () => ((this?.hint()));
-			(obj.value) = (next) => ((this?.text(next)));
+			(obj.hint) = () => ((this.hint()));
+			(obj.value) = (next) => ((this.text(next)));
 			(obj.sidebar_showed) = () => (true);
 			return obj;
 		}
@@ -30401,7 +30409,7 @@ var $;
 		}
 		Stats(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.stats()));
+			(obj.text) = () => ((this.stats()));
 			return obj;
 		}
 		delta_view(){
@@ -30409,13 +30417,13 @@ var $;
 		}
 		Delta(){
 			const obj = new this.$.$mol_grid();
-			(obj.records) = () => ((this?.delta_view()));
+			(obj.records) = () => ((this.delta_view()));
 			return obj;
 		}
 		Delta_section(){
 			const obj = new this.$.$mol_section();
 			(obj.title) = () => ("Delta");
-			(obj.content) = () => ([(this?.Delta())]);
+			(obj.content) = () => ([(this.Delta())]);
 			return obj;
 		}
 		store(){
@@ -30437,9 +30445,9 @@ var $;
 		}
 		body(){
 			return [
-				(this?.Text()), 
-				(this?.Stats()), 
-				(this?.Delta_section())
+				(this.Text()), 
+				(this.Stats()), 
+				(this.Delta_section())
 			];
 		}
 	};
@@ -30628,7 +30636,7 @@ var $;
 			return "CROWD Text Merge";
 		}
 		sub(){
-			return [(this?.Sandbox())];
+			return [(this.Sandbox())];
 		}
 		tags(){
 			return ["text", "merge"];
@@ -30658,8 +30666,8 @@ var $;
 		}
 		Name(){
 			const obj = new this.$.$mol_string();
-			(obj.hint) = () => ((this?.name_hint()));
-			(obj.value) = (next) => ((this?.name(next)));
+			(obj.hint) = () => ((this.name_hint()));
+			(obj.value) = (next) => ((this.name(next)));
 			return obj;
 		}
 		greeting(){
@@ -30667,11 +30675,11 @@ var $;
 		}
 		Greeting(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.greeting())]);
+			(obj.sub) = () => ([(this.greeting())]);
 			return obj;
 		}
 		sub(){
-			return [(this?.Name()), (this?.Greeting())];
+			return [(this.Name()), (this.Greeting())];
 		}
 	};
 	($mol_mem(($.$mol_app_hello.prototype), "name"));
@@ -30719,7 +30727,7 @@ var $;
 			return "Simpliest application";
 		}
 		sub(){
-			return [(this?.App())];
+			return [(this.App())];
 		}
 		aspects(){
 			return ["Application"];
@@ -30765,7 +30773,7 @@ var $;
 		}
 		Menu_links(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.menu_rows()));
+			(obj.rows) = () => ((this.menu_rows()));
 			return obj;
 		}
 		question_title(id){
@@ -30780,8 +30788,8 @@ var $;
 		}
 		Details_permalink(id){
 			const obj = new this.$.$mol_link();
-			(obj.uri) = () => ((this?.question_permalink(id)));
-			(obj.sub) = () => ([(this?.Details_permalink_icon(id))]);
+			(obj.uri) = () => ((this.question_permalink(id)));
+			(obj.sub) = () => ([(this.Details_permalink_icon(id))]);
 			return obj;
 		}
 		Details_close_icon(id){
@@ -30790,7 +30798,7 @@ var $;
 		}
 		Details_close(id){
 			const obj = new this.$.$mol_link();
-			(obj.sub) = () => ([(this?.Details_close_icon(id))]);
+			(obj.sub) = () => ([(this.Details_close_icon(id))]);
 			(obj.arg) = () => ({"question": null});
 			return obj;
 		}
@@ -30799,7 +30807,7 @@ var $;
 		}
 		Details_descr(id){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.question_descr(id)));
+			(obj.text) = () => ((this.question_descr(id)));
 			return obj;
 		}
 		answers(id){
@@ -30807,7 +30815,7 @@ var $;
 		}
 		Answers(id){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.answers(id)));
+			(obj.rows) = () => ((this.answers(id)));
 			return obj;
 		}
 		question_answer(id){
@@ -30821,7 +30829,7 @@ var $;
 		}
 		Question_title(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.question_title_by_index(id))]);
+			(obj.sub) = () => ([(this.question_title_by_index(id))]);
 			return obj;
 		}
 		question_tags_by_index(id){
@@ -30829,45 +30837,45 @@ var $;
 		}
 		Question_tags(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.question_tags_by_index(id)));
+			(obj.sub) = () => ((this.question_tags_by_index(id)));
 			return obj;
 		}
 		tag_name(id){
 			return " ";
 		}
 		plugins(){
-			return [(this?.Themme())];
+			return [(this.Themme())];
 		}
 		Menu(){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.title_default()));
-			(obj.tools) = () => ([(this?.Lights()), (this?.Source_link())]);
-			(obj.body) = () => ([(this?.Menu_links())]);
+			(obj.title) = () => ((this.title_default()));
+			(obj.tools) = () => ([(this.Lights()), (this.Source_link())]);
+			(obj.body) = () => ([(this.Menu_links())]);
 			return obj;
 		}
 		Details(id){
 			const obj = new this.$.$mol_page();
-			(obj.title) = () => ((this?.question_title(id)));
-			(obj.tools) = () => ([(this?.Details_permalink(id)), (this?.Details_close(id))]);
-			(obj.body) = () => ([(this?.Details_descr(id)), (this?.Answers(id))]);
+			(obj.title) = () => ((this.question_title(id)));
+			(obj.tools) = () => ([(this.Details_permalink(id)), (this.Details_close(id))]);
+			(obj.body) = () => ([(this.Details_descr(id)), (this.Answers(id))]);
 			return obj;
 		}
 		Answer(id){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.question_answer(id)));
+			(obj.text) = () => ((this.question_answer(id)));
 			return obj;
 		}
 		Question_link(id){
 			const obj = new this.$.$mol_link();
 			(obj.minimal_width) = () => (64);
 			(obj.minimal_height) = () => (64);
-			(obj.arg) = () => ((this?.question_arg_by_index(id)));
-			(obj.sub) = () => ([(this?.Question_title(id)), (this?.Question_tags(id))]);
+			(obj.arg) = () => ((this.question_arg_by_index(id)));
+			(obj.sub) = () => ([(this.Question_title(id)), (this.Question_tags(id))]);
 			return obj;
 		}
 		Tag(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.tag_name(id))]);
+			(obj.sub) = () => ([(this.tag_name(id))]);
 			return obj;
 		}
 	};
@@ -31029,7 +31037,7 @@ var $;
 			return "New questions from StackOverflow";
 		}
 		sub(){
-			return [(this?.App())];
+			return [(this.App())];
 		}
 		aspects(){
 			return [
@@ -31052,14 +31060,14 @@ var $;
 		}
 		Text(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.content()));
+			(obj.text) = () => ((this.content()));
 			return obj;
 		}
 		title(){
 			return (this.$.$mol_locale.text("$mol_app_quine_title"));
 		}
 		body(){
-			return [(this?.Text())];
+			return [(this.Text())];
 		}
 		paths(){
 			return [
@@ -31107,7 +31115,7 @@ var $;
 			return obj;
 		}
 		sub(){
-			return [(this?.App())];
+			return [(this.App())];
 		}
 		aspects(){
 			return ["Application", "Network/HTTP"];
@@ -31126,7 +31134,7 @@ var $;
 		}
 		descriptor(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.description())]);
+			(obj.sub) = () => ([(this.description())]);
 			return obj;
 		}
 		headCells(){
@@ -31134,15 +31142,15 @@ var $;
 		}
 		headRower(){
 			const obj = new this.$.$mol_app_report_rower();
-			(obj.cells) = () => ((this?.headCells()));
+			(obj.cells) = () => ((this.headCells()));
 			return obj;
 		}
 		rows(){
-			return [(this?.headRower())];
+			return [(this.headRower())];
 		}
 		tabler(){
 			const obj = new this.$.$mol_app_report_tabler();
-			(obj.rows) = () => ((this?.rows()));
+			(obj.rows) = () => ((this.rows()));
 			return obj;
 		}
 		rowerCells(id){
@@ -31168,34 +31176,34 @@ var $;
 			return (this.$.$mol_locale.text("$mol_app_report_title"));
 		}
 		body(){
-			return [(this?.descriptor()), (this?.tabler())];
+			return [(this.descriptor()), (this.tabler())];
 		}
 		rower(id){
 			const obj = new this.$.$mol_app_report_rower();
-			(obj.cells) = () => ((this?.rowerCells(id)));
+			(obj.cells) = () => ((this.rowerCells(id)));
 			return obj;
 		}
 		cell(id){
 			const obj = new this.$.$mol_app_report_cell();
-			(obj.content) = () => ((this?.cell_content(id)));
-			(obj.rows) = () => ((this?.cellrows(id)));
-			(obj.cols) = () => ((this?.cellCols(id)));
+			(obj.content) = () => ((this.cell_content(id)));
+			(obj.rows) = () => ((this.cellrows(id)));
+			(obj.cols) = () => ((this.cellCols(id)));
 			return obj;
 		}
 		texter(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.cell_value(id))]);
+			(obj.sub) = () => ([(this.cell_value(id))]);
 			return obj;
 		}
 		select(id){
 			const obj = new this.$.$mol_select();
-			(obj.value) = (next) => ((this?.cell_value(id, next)));
-			(obj.dictionary) = () => ((this?.cell_options(id)));
+			(obj.value) = (next) => ((this.cell_value(id, next)));
+			(obj.dictionary) = () => ((this.cell_options(id)));
 			return obj;
 		}
 		number(id){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.cell_value(id, next)));
+			(obj.value) = (next) => ((this.cell_value(id, next)));
 			return obj;
 		}
 	};
@@ -31216,7 +31224,7 @@ var $;
 			return "table";
 		}
 		sub(){
-			return (this?.rows());
+			return (this.rows());
 		}
 	};
 	($.$mol_app_report_rower) = class $mol_app_report_rower extends ($.$mol_view) {
@@ -31227,7 +31235,7 @@ var $;
 			return "tr";
 		}
 		sub(){
-			return (this?.cells());
+			return (this.cells());
 		}
 	};
 	($.$mol_app_report_cell) = class $mol_app_report_cell extends ($.$mol_view) {
@@ -31246,12 +31254,12 @@ var $;
 		attr(){
 			return {
 				...(super.attr()), 
-				"colspan": (this?.cols()), 
-				"rowspan": (this?.rows())
+				"colspan": (this.cols()), 
+				"rowspan": (this.rows())
 			};
 		}
 		sub(){
-			return [(this?.content())];
+			return [(this.content())];
 		}
 	};
 
@@ -31554,7 +31562,7 @@ var $;
 			return obj;
 		}
 		sub(){
-			return [(this?.App())];
+			return [(this.App())];
 		}
 		aspects(){
 			return ["Widget/Form"];
@@ -31598,11 +31606,11 @@ var $;
 			(obj.Menu_page) = () => (null);
 			(obj.Perf) = () => (null);
 			(obj.Bookmark) = () => (null);
-			(obj.code) = (next) => ((this?.code(next)));
+			(obj.code) = (next) => ((this.code(next)));
 			return obj;
 		}
 		sub(){
-			return [(this?.Sandbox())];
+			return [(this.Sandbox())];
 		}
 		tags(){
 			return [
@@ -31752,13 +31760,13 @@ var $;
 		}
 		Native(){
 			const obj = new this.$.$mol_button_open_native();
-			(obj.files) = (next) => ((this?.files(next)));
-			(obj.accept) = () => ((this?.accept()));
-			(obj.multiple) = () => ((this?.multiple()));
+			(obj.files) = (next) => ((this.files(next)));
+			(obj.accept) = () => ((this.accept()));
+			(obj.multiple) = () => ((this.multiple()));
 			return obj;
 		}
 		sub(){
-			return [(this?.Icon()), (this?.Native())];
+			return [(this.Icon()), (this.Native())];
 		}
 	};
 	($mol_mem(($.$mol_button_open.prototype), "Icon"));
@@ -31785,12 +31793,12 @@ var $;
 		attr(){
 			return {
 				"type": "file", 
-				"accept": (this?.accept()), 
-				"multiple": (this?.multiple())
+				"accept": (this.accept()), 
+				"multiple": (this.multiple())
 			};
 		}
 		event(){
-			return {"change": (next) => (this?.picked(next))};
+			return {"change": (next) => (this.picked(next))};
 		}
 	};
 	($mol_mem(($.$mol_button_open_native.prototype), "picked"));
@@ -31835,7 +31843,7 @@ var $;
 		}
 		Content(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ((this?.content()));
+			(obj.sub) = () => ((this.content()));
 			return obj;
 		}
 		attach_title(){
@@ -31855,7 +31863,7 @@ var $;
 		Image(id){
 			const obj = new this.$.$mol_image();
 			(obj.title) = () => ("");
-			(obj.uri) = () => ((this?.item_uri(id)));
+			(obj.uri) = () => ((this.item_uri(id)));
 			return obj;
 		}
 		items(next){
@@ -31863,18 +31871,18 @@ var $;
 			return [];
 		}
 		sub(){
-			return [(this?.Content())];
+			return [(this.Content())];
 		}
 		Add(){
 			const obj = new this.$.$mol_button_open();
-			(obj.title) = () => ((this?.attach_title()));
-			(obj.files) = (next) => ((this?.attach_new(next)));
+			(obj.title) = () => ((this.attach_title()));
+			(obj.files) = (next) => ((this.attach_new(next)));
 			return obj;
 		}
 		Item(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.item_drop(id, next)));
-			(obj.sub) = () => ([(this?.Image(id))]);
+			(obj.click) = (next) => ((this.item_drop(id, next)));
+			(obj.sub) = () => ([(this.Image(id))]);
 			return obj;
 		}
 	};
@@ -31939,14 +31947,14 @@ var $;
 		}
 		Filled(){
 			const obj = new this.$.$mol_attach();
-			(obj.items) = (next) => ((this?.filled_items(next)));
+			(obj.items) = (next) => ((this.filled_items(next)));
 			return obj;
 		}
 		title(){
 			return "Attach files an show them";
 		}
 		sub(){
-			return [(this?.Filled())];
+			return [(this.Filled())];
 		}
 		tags(){
 			return [
@@ -32516,7 +32524,7 @@ var $;
 			return false;
 		}
 		status_name(){
-			return (this?.status());
+			return (this.status());
 		}
 		Icon(){
 			const obj = new this.$.$mol_icon_play();
@@ -32524,18 +32532,18 @@ var $;
 		}
 		Wakeup(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.wakeup(next)));
-			(obj.enabled) = () => ((this?.wakeup_enabled()));
-			(obj.hint) = () => ((this?.status_name()));
-			(obj.sub) = () => ([(this?.Icon())]);
+			(obj.click) = (next) => ((this.wakeup(next)));
+			(obj.enabled) = () => ((this.wakeup_enabled()));
+			(obj.hint) = () => ((this.status_name()));
+			(obj.sub) = () => ([(this.Icon())]);
 			return obj;
 		}
 		icons(){
 			return {
-				"closed": (this?.Closed()), 
-				"suspended": (this?.Suspended()), 
-				"playing": (this?.Playing()), 
-				"running": (this?.Running())
+				"closed": (this.Closed()), 
+				"suspended": (this.Suspended()), 
+				"playing": (this.Playing()), 
+				"running": (this.Running())
 			};
 		}
 		status(next){
@@ -32546,7 +32554,7 @@ var $;
 			return "Audio status: {status}";
 		}
 		sub(){
-			return [(this?.Wakeup())];
+			return [(this.Wakeup())];
 		}
 	};
 	($mol_mem(($.$mol_audio_status.prototype), "Closed"));
@@ -32640,10 +32648,10 @@ var $;
 ;
 	($.$mol_audio_demo) = class $mol_audio_demo extends ($.$mol_example_small) {
 		beep_status(next){
-			return (this?.Beep_room()?.status(next));
+			return (this.Beep_room().status(next));
 		}
 		beep_play(){
-			return (this?.Beep_track()?.start());
+			return (this.Beep_track().start());
 		}
 		Beep_track(){
 			const obj = new this.$.$mol_audio_melody();
@@ -32652,20 +32660,20 @@ var $;
 			return obj;
 		}
 		noise_status(next){
-			return (this?.Noise_room()?.status(next));
+			return (this.Noise_room().status(next));
 		}
 		noise_active(next){
-			return (this?.Noise()?.active(next));
+			return (this.Noise().active(next));
 		}
 		noise_stop_at(next){
-			return (this?.Noise()?.stop_at(next));
+			return (this.Noise().stop_at(next));
 		}
 		noise_freq(){
 			return 0;
 		}
 		Noise(){
 			const obj = new this.$.$mol_audio_vibe();
-			(obj.freq_default) = () => ((this?.noise_freq()));
+			(obj.freq_default) = () => ((this.noise_freq()));
 			return obj;
 		}
 		beep_play_click(next){
@@ -32674,18 +32682,18 @@ var $;
 		}
 		Beep_play(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.beep_play_click(next)));
+			(obj.click) = (next) => ((this.beep_play_click(next)));
 			(obj.title) = () => ("Beep");
 			return obj;
 		}
 		Beep_status(){
 			const obj = new this.$.$mol_audio_status();
-			(obj.status) = (next) => ((this?.beep_status(next)));
+			(obj.status) = (next) => ((this.beep_status(next)));
 			return obj;
 		}
 		Beep_row(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Beep_play()), (this?.Beep_status())]);
+			(obj.sub) = () => ([(this.Beep_play()), (this.Beep_status())]);
 			return obj;
 		}
 		noise_play_click(next){
@@ -32694,23 +32702,23 @@ var $;
 		}
 		Noise_play(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.noise_play_click(next)));
+			(obj.click) = (next) => ((this.noise_play_click(next)));
 			(obj.title) = () => ("Noise");
 			return obj;
 		}
 		Noise_status(){
 			const obj = new this.$.$mol_audio_status();
-			(obj.status) = (next) => ((this?.noise_status(next)));
+			(obj.status) = (next) => ((this.noise_status(next)));
 			return obj;
 		}
 		Nouse_row(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Noise_play()), (this?.Noise_status())]);
+			(obj.sub) = () => ([(this.Noise_play()), (this.Noise_status())]);
 			return obj;
 		}
 		List(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Beep_row()), (this?.Nouse_row())]);
+			(obj.rows) = () => ([(this.Beep_row()), (this.Nouse_row())]);
 			return obj;
 		}
 		title(){
@@ -32718,16 +32726,16 @@ var $;
 		}
 		Beep_room(){
 			const obj = new this.$.$mol_audio_room();
-			(obj.input) = () => ([(this?.Beep_track())]);
+			(obj.input) = () => ([(this.Beep_track())]);
 			return obj;
 		}
 		Noise_room(){
 			const obj = new this.$.$mol_audio_room();
-			(obj.input) = () => ([(this?.Noise())]);
+			(obj.input) = () => ([(this.Noise())]);
 			return obj;
 		}
 		sub(){
-			return [(this?.List())];
+			return [(this.List())];
 		}
 		tags(){
 			return ["sound"];
@@ -32781,13 +32789,13 @@ var $;
 ;
 	($.$mol_audio_demo_vibe) = class $mol_audio_demo_vibe extends ($.$mol_example_small) {
 		room_status(next){
-			return (this?.Room()?.status(next));
+			return (this.Room().status(next));
 		}
 		active(next){
-			return (this?.Beep_vibe()?.active(next));
+			return (this.Beep_vibe().active(next));
 		}
 		stop_at(next){
-			return (this?.Beep_vibe()?.stop_at(next));
+			return (this.Beep_vibe().stop_at(next));
 		}
 		freq(next){
 			if(next !== undefined) return next;
@@ -32795,8 +32803,8 @@ var $;
 		}
 		Beep_vibe(){
 			const obj = new this.$.$mol_audio_vibe();
-			(obj.freq_default) = () => ((this?.freq()));
-			(obj.shape_default) = () => ((this?.shape()));
+			(obj.freq_default) = () => ((this.freq()));
+			(obj.shape_default) = () => ((this.shape()));
 			return obj;
 		}
 		duration_label(){
@@ -32809,13 +32817,13 @@ var $;
 		Duration_num(){
 			const obj = new this.$.$mol_number();
 			(obj.precision_change) = () => (0.05);
-			(obj.value) = (next) => ((this?.duration(next)));
+			(obj.value) = (next) => ((this.duration(next)));
 			return obj;
 		}
 		Duration(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => ((this?.duration_label()));
-			(obj.content) = () => ([(this?.Duration_num())]);
+			(obj.title) = () => ((this.duration_label()));
+			(obj.content) = () => ([(this.Duration_num())]);
 			return obj;
 		}
 		frequency_label(){
@@ -32824,13 +32832,13 @@ var $;
 		Frequency_num(){
 			const obj = new this.$.$mol_number();
 			(obj.precision_change) = () => (50);
-			(obj.value) = (next) => ((this?.freq(next)));
+			(obj.value) = (next) => ((this.freq(next)));
 			return obj;
 		}
 		Frequency(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => ((this?.frequency_label()));
-			(obj.content) = () => ([(this?.Frequency_num())]);
+			(obj.title) = () => ((this.frequency_label()));
+			(obj.content) = () => ([(this.Frequency_num())]);
 			return obj;
 		}
 		shape_label(){
@@ -32843,7 +32851,7 @@ var $;
 		Shape_select(){
 			const obj = new this.$.$mol_select();
 			(obj.Filter) = () => (null);
-			(obj.value) = (next) => ((this?.shape(next)));
+			(obj.value) = (next) => ((this.shape(next)));
 			(obj.options) = () => ([
 				"sine", 
 				"square", 
@@ -32854,8 +32862,8 @@ var $;
 		}
 		Shape(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => ((this?.shape_label()));
-			(obj.content) = () => ([(this?.Shape_select())]);
+			(obj.title) = () => ((this.shape_label()));
+			(obj.content) = () => ([(this.Shape_select())]);
 			return obj;
 		}
 		beep_vibe_start_click(next){
@@ -32868,27 +32876,27 @@ var $;
 		}
 		Play_button(){
 			const obj = new this.$.$mol_button_major();
-			(obj.click) = (next) => ((this?.beep_vibe_start_click(next)));
-			(obj.sub) = () => ([(this?.Play_icon()), "Play"]);
+			(obj.click) = (next) => ((this.beep_vibe_start_click(next)));
+			(obj.sub) = () => ([(this.Play_icon()), "Play"]);
 			return obj;
 		}
 		Room_status(){
 			const obj = new this.$.$mol_audio_status();
-			(obj.status) = (next) => ((this?.room_status(next)));
+			(obj.status) = (next) => ((this.room_status(next)));
 			return obj;
 		}
 		Button_row(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Play_button()), (this?.Room_status())]);
+			(obj.sub) = () => ([(this.Play_button()), (this.Room_status())]);
 			return obj;
 		}
 		List(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Duration()), 
-				(this?.Frequency()), 
-				(this?.Shape()), 
-				(this?.Button_row())
+				(this.Duration()), 
+				(this.Frequency()), 
+				(this.Shape()), 
+				(this.Button_row())
 			]);
 			return obj;
 		}
@@ -32897,11 +32905,11 @@ var $;
 		}
 		Room(){
 			const obj = new this.$.$mol_audio_room();
-			(obj.input) = () => ([(this?.Beep_vibe())]);
+			(obj.input) = () => ([(this.Beep_vibe())]);
 			return obj;
 		}
 		sub(){
-			return [(this?.List())];
+			return [(this.List())];
 		}
 		tags(){
 			return ["sound"];
@@ -33050,16 +33058,16 @@ var $;
 ;
 	($.$mol_audio_demo_sample) = class $mol_audio_demo_sample extends ($.$mol_example_small) {
 		room_status(next){
-			return (this?.Room()?.status(next));
+			return (this.Room().status(next));
 		}
 		sample_active(next){
-			return (this?.Sample()?.active(next));
+			return (this.Sample().active(next));
 		}
 		start(){
-			return (this?.Sample()?.start());
+			return (this.Sample().start());
 		}
 		loop(next){
-			return (this?.Sample()?.loop(next));
+			return (this.Sample().loop(next));
 		}
 		sample_buffer(){
 			return null;
@@ -33067,7 +33075,7 @@ var $;
 		Sample(){
 			const obj = new this.$.$mol_audio_sample();
 			(obj.loop_default) = () => (true);
-			(obj.buffer) = () => ((this?.sample_buffer()));
+			(obj.buffer) = () => ((this.sample_buffer()));
 			return obj;
 		}
 		sample_url(next){
@@ -33076,13 +33084,13 @@ var $;
 		}
 		Sample_url(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = (next) => ((this?.sample_url(next)));
+			(obj.value) = (next) => ((this.sample_url(next)));
 			return obj;
 		}
 		Sample_url_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Sample url");
-			(obj.control) = () => ((this?.Sample_url()));
+			(obj.control) = () => ((this.Sample_url()));
 			return obj;
 		}
 		Active_icon(){
@@ -33091,9 +33099,9 @@ var $;
 		}
 		Active(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.checked) = (next) => ((this?.sample_active(next)));
+			(obj.checked) = (next) => ((this.sample_active(next)));
 			(obj.title) = () => ("Active");
-			(obj.Icon) = () => ((this?.Active_icon()));
+			(obj.Icon) = () => ((this.Active_icon()));
 			return obj;
 		}
 		start_click(next){
@@ -33102,7 +33110,7 @@ var $;
 		}
 		Start(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.start_click(next)));
+			(obj.click) = (next) => ((this.start_click(next)));
 			(obj.title) = () => ("Start");
 			return obj;
 		}
@@ -33112,31 +33120,31 @@ var $;
 		}
 		Loop(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.checked) = (next) => ((this?.loop(next)));
+			(obj.checked) = (next) => ((this.loop(next)));
 			(obj.title) = () => ("Loop");
-			(obj.Icon) = () => ((this?.Loop_icon()));
+			(obj.Icon) = () => ((this.Loop_icon()));
 			return obj;
 		}
 		Controls(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Active()), 
-				(this?.Start()), 
-				(this?.Loop())
+				(this.Active()), 
+				(this.Start()), 
+				(this.Loop())
 			]);
 			return obj;
 		}
 		Room_status(){
 			const obj = new this.$.$mol_audio_status();
-			(obj.status) = (next) => ((this?.room_status(next)));
+			(obj.status) = (next) => ((this.room_status(next)));
 			return obj;
 		}
 		List(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Sample_url_field()), 
-				(this?.Controls()), 
-				(this?.Room_status())
+				(this.Sample_url_field()), 
+				(this.Controls()), 
+				(this.Room_status())
 			]);
 			return obj;
 		}
@@ -33145,11 +33153,11 @@ var $;
 		}
 		Room(){
 			const obj = new this.$.$mol_audio_room();
-			(obj.input) = () => ([(this?.Sample())]);
+			(obj.input) = () => ([(this.Sample())]);
 			return obj;
 		}
 		sub(){
-			return [(this?.List())];
+			return [(this.List())];
 		}
 		tags(){
 			return ["sound", "sample"];
@@ -33210,16 +33218,16 @@ var $;
 ;
 	($.$mol_audio_demo_sequencer) = class $mol_audio_demo_sequencer extends ($.$mol_example_small) {
 		room_status(next){
-			return (this?.Room()?.status(next));
+			return (this.Room().status(next));
 		}
 		room_active(next){
-			return (this?.Room()?.active(next));
+			return (this.Room().active(next));
 		}
 		beep_track_start(){
-			return (this?.Beep_track()?.start());
+			return (this.Beep_track().start());
 		}
 		beep_track_active(next){
-			return (this?.Beep_track()?.active(next));
+			return (this.Beep_track().active(next));
 		}
 		notes(next){
 			if(next !== undefined) return next;
@@ -33235,52 +33243,52 @@ var $;
 		}
 		Beep_track(){
 			const obj = new this.$.$mol_audio_melody();
-			(obj.notes) = (next) => ((this?.notes(next)));
-			(obj.note_length) = (next) => ((this?.note_length(next)));
-			(obj.note_off_part) = (next) => ((this?.note_off_part(next)));
+			(obj.notes) = (next) => ((this.notes(next)));
+			(obj.note_length) = (next) => ((this.note_length(next)));
+			(obj.note_off_part) = (next) => ((this.note_off_part(next)));
 			return obj;
 		}
 		Note_length(){
 			const obj = new this.$.$mol_number();
 			(obj.precision) = () => (.05);
 			(obj.value_min) = () => (.05);
-			(obj.value) = (next) => ((this?.note_length(next)));
+			(obj.value) = (next) => ((this.note_length(next)));
 			return obj;
 		}
 		Note_length_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Note length, sec");
-			(obj.control) = () => ((this?.Note_length()));
+			(obj.control) = () => ((this.Note_length()));
 			return obj;
 		}
 		Note_off_part(){
 			const obj = new this.$.$mol_number();
 			(obj.precision) = () => (.1);
 			(obj.value_min) = () => (.1);
-			(obj.value) = (next) => ((this?.note_off_part(next)));
+			(obj.value) = (next) => ((this.note_off_part(next)));
 			return obj;
 		}
 		Note_off_part_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Note off, part of length");
-			(obj.control) = () => ((this?.Note_off_part()));
+			(obj.control) = () => ((this.Note_off_part()));
 			return obj;
 		}
 		Note_settings(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Note_length_field()), (this?.Note_off_part_field())]);
+			(obj.sub) = () => ([(this.Note_length_field()), (this.Note_off_part_field())]);
 			return obj;
 		}
 		Notes(){
 			const obj = new this.$.$mol_textarea();
 			(obj.hint) = () => ("Example: e _ c#5/2 _/2");
-			(obj.value) = (next) => ((this?.notes(next)));
+			(obj.value) = (next) => ((this.notes(next)));
 			return obj;
 		}
 		Notes_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Notes");
-			(obj.control) = () => ((this?.Notes()));
+			(obj.control) = () => ((this.Notes()));
 			return obj;
 		}
 		Beep_active_icon(){
@@ -33290,36 +33298,36 @@ var $;
 		Beep_active(){
 			const obj = new this.$.$mol_check_icon();
 			(obj.hint) = () => ("Play / Pause");
-			(obj.Icon) = () => ((this?.Beep_active_icon()));
-			(obj.checked) = (next) => ((this?.beep_track_active(next)));
+			(obj.Icon) = () => ((this.Beep_active_icon()));
+			(obj.checked) = (next) => ((this.beep_track_active(next)));
 			return obj;
 		}
 		Beep_play(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.beep_track_start(next)));
+			(obj.click) = (next) => ((this.beep_track_start(next)));
 			(obj.title) = () => ("Play");
 			return obj;
 		}
 		Beep_status(){
 			const obj = new this.$.$mol_audio_status();
-			(obj.status) = (next) => ((this?.room_status(next)));
+			(obj.status) = (next) => ((this.room_status(next)));
 			return obj;
 		}
 		Beep_row(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Beep_active()), 
-				(this?.Beep_play()), 
-				(this?.Beep_status())
+				(this.Beep_active()), 
+				(this.Beep_play()), 
+				(this.Beep_status())
 			]);
 			return obj;
 		}
 		List(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Note_settings()), 
-				(this?.Notes_field()), 
-				(this?.Beep_row())
+				(this.Note_settings()), 
+				(this.Notes_field()), 
+				(this.Beep_row())
 			]);
 			return obj;
 		}
@@ -33328,11 +33336,11 @@ var $;
 		}
 		Room(){
 			const obj = new this.$.$mol_audio_room();
-			(obj.input) = () => ([(this?.Beep_track())]);
+			(obj.input) = () => ([(this.Beep_track())]);
 			return obj;
 		}
 		sub(){
-			return [(this?.List())];
+			return [(this.List())];
 		}
 		tags(){
 			return ["sound", "sequencer"];
@@ -33384,31 +33392,31 @@ var $;
 		}
 		Avatar_id_value(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = (next) => ((this?.avatar_id(next)));
+			(obj.value) = (next) => ((this.avatar_id(next)));
 			return obj;
 		}
 		Avatar_id_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Id");
-			(obj.content) = () => ([(this?.Avatar_id_value())]);
+			(obj.content) = () => ([(this.Avatar_id_value())]);
 			return obj;
 		}
 		Avatar(){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.avatar_id()));
+			(obj.id) = () => ((this.avatar_id()));
 			return obj;
 		}
 		Avatar_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Avatar");
-			(obj.content) = () => ([(this?.Avatar())]);
+			(obj.content) = () => ([(this.Avatar())]);
 			return obj;
 		}
 		title(){
 			return "Avatar uniquely-generated by id";
 		}
 		sub(){
-			return [(this?.Avatar_id_label()), (this?.Avatar_label())];
+			return [(this.Avatar_id_label()), (this.Avatar_label())];
 		}
 		tags(){
 			return [
@@ -33458,8 +33466,8 @@ var $;
 		}
 		Two_mail(){
 			const obj = new this.$.$mol_string();
-			(obj.hint) = () => ((this?.mail_hint()));
-			(obj.value) = (next) => ((this?.mail(next)));
+			(obj.hint) = () => ((this.mail_hint()));
+			(obj.value) = (next) => ((this.mail(next)));
 			return obj;
 		}
 		submit_title(){
@@ -33467,18 +33475,18 @@ var $;
 		}
 		Two_submit(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.submit_title()));
+			(obj.title) = () => ((this.submit_title()));
 			return obj;
 		}
 		Two(){
 			const obj = new this.$.$mol_bar();
-			(obj.sub) = () => ([(this?.Two_mail()), (this?.Two_submit())]);
+			(obj.sub) = () => ([(this.Two_mail()), (this.Two_submit())]);
 			return obj;
 		}
 		Three_mail(){
 			const obj = new this.$.$mol_string();
-			(obj.hint) = () => ((this?.mail_hint()));
-			(obj.value) = (next) => ((this?.mail(next)));
+			(obj.hint) = () => ((this.mail_hint()));
+			(obj.value) = (next) => ((this.mail(next)));
 			return obj;
 		}
 		confirm_title(){
@@ -33490,20 +33498,20 @@ var $;
 		}
 		Three_confirm(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.confirm_title()));
-			(obj.checked) = (next) => ((this?.confirmed(next)));
+			(obj.title) = () => ((this.confirm_title()));
+			(obj.checked) = (next) => ((this.confirmed(next)));
 			return obj;
 		}
 		Three(){
 			const obj = new this.$.$mol_bar();
-			(obj.sub) = () => ([(this?.Three_mail()), (this?.Three_confirm())]);
+			(obj.sub) = () => ([(this.Three_mail()), (this.Three_confirm())]);
 			return obj;
 		}
 		title(){
 			return "Group of controls as one control";
 		}
 		sub(){
-			return [(this?.Two()), (this?.Three())];
+			return [(this.Two()), (this.Three())];
 		}
 		tags(){
 			return ["group", "container"];
@@ -33536,15 +33544,15 @@ var $;
 		}
 		View(){
 			const obj = new this.$.$mol_bench();
-			(obj.col_sort) = (next) => ((this?.col_sort(next)));
-			(obj.result) = () => ((this?.result()));
+			(obj.col_sort) = (next) => ((this.col_sort(next)));
+			(obj.result) = () => ((this.result()));
 			return obj;
 		}
 		title(){
 			return "Benchmarking results visualization";
 		}
 		sub(){
-			return [(this?.View())];
+			return [(this.View())];
 		}
 		tags(){
 			return ["perfomance", "comparison"];
@@ -33612,11 +33620,11 @@ var $;
 		}
 		View(){
 			const obj = new this.$.$mol_book2();
-			(obj.Placeholder) = () => ((this?.Side()));
+			(obj.Placeholder) = () => ((this.Side()));
 			(obj.pages) = () => ([
-				(this?.First()), 
-				(this?.Second()), 
-				(this?.Third())
+				(this.First()), 
+				(this.Second()), 
+				(this.Third())
 			]);
 			return obj;
 		}
@@ -33624,7 +33632,7 @@ var $;
 			return "Adaprive layout for various sizes of screen";
 		}
 		sub(){
-			return [(this?.View())];
+			return [(this.View())];
 		}
 		tags(){
 			return [
@@ -33797,7 +33805,7 @@ var $;
 			return 7000;
 		}
 		sub(){
-			return (this?.filler_lines());
+			return (this.filler_lines());
 		}
 	};
 
@@ -33837,133 +33845,133 @@ var $;
 ;
 	($.$mol_book2_catalog_demo) = class $mol_book2_catalog_demo extends ($.$mol_example_large) {
 		Spread_close(){
-			return (this?.Calatog()?.Spread_close());
+			return (this.Calatog().Spread_close());
 		}
 		Foods_spread_close(){
-			return (this?.Foods()?.Spread_close());
+			return (this.Foods().Spread_close());
 		}
 		Pizza(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🍕 Pizzas");
-			(obj.tools) = () => ([(this?.Foods_spread_close())]);
-			(obj.body) = () => ([(this?.Empty())]);
+			(obj.tools) = () => ([(this.Foods_spread_close())]);
+			(obj.body) = () => ([(this.Empty())]);
 			return obj;
 		}
 		Hot_dogs(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🌭 Hot Dogs");
-			(obj.tools) = () => ([(this?.Foods_spread_close())]);
-			(obj.body) = () => ([(this?.Empty())]);
+			(obj.tools) = () => ([(this.Foods_spread_close())]);
+			(obj.body) = () => ([(this.Empty())]);
 			return obj;
 		}
 		Fries(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🍟 Fries");
-			(obj.tools) = () => ([(this?.Foods_spread_close())]);
-			(obj.body) = () => ([(this?.Empty())]);
+			(obj.tools) = () => ([(this.Foods_spread_close())]);
+			(obj.body) = () => ([(this.Empty())]);
 			return obj;
 		}
 		Foods(){
 			const obj = new this.$.$mol_book2_catalog();
 			(obj.param) = () => ("mol_book2_catalog_demo_foods");
 			(obj.menu_title) = () => ("Foods");
-			(obj.menu_tools) = () => ([(this?.Spread_close())]);
+			(obj.menu_tools) = () => ([(this.Spread_close())]);
 			(obj.spreads) = () => ({
-				"pizza": (this?.Pizza()), 
-				"hot_dogs": (this?.Hot_dogs()), 
-				"fries": (this?.Fries())
+				"pizza": (this.Pizza()), 
+				"hot_dogs": (this.Hot_dogs()), 
+				"fries": (this.Fries())
 			});
 			return obj;
 		}
 		Animals_spread_close(){
-			return (this?.Animals()?.Spread_close());
+			return (this.Animals().Spread_close());
 		}
 		Cats(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐱 Cats");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Dogs(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐶 Dogs");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Horses(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐴 Horses");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Racoons(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🦝 Racoons");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Pigs(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐷 Pigs ");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Rabbits(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐰 Rabbits");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Wolfs(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐺 Wolfs");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Mice(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐭 Mice");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Ants(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐜 Ants");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Bugs(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("🐛 Bugs");
-			(obj.tools) = () => ([(this?.Animals_spread_close())]);
-			(obj.body) = () => ([(this?.Content())]);
+			(obj.tools) = () => ([(this.Animals_spread_close())]);
+			(obj.body) = () => ([(this.Content())]);
 			return obj;
 		}
 		Animals(){
 			const obj = new this.$.$mol_book2_catalog();
 			(obj.param) = () => ("mol_book2_catalog_demo_animals");
 			(obj.menu_title) = () => ("Animals");
-			(obj.menu_tools) = () => ([(this?.Spread_close())]);
+			(obj.menu_tools) = () => ([(this.Spread_close())]);
 			(obj.spreads) = () => ({
-				"cats": (this?.Cats()), 
-				"dogs": (this?.Dogs()), 
-				"horses": (this?.Horses()), 
-				"racoons": (this?.Racoons()), 
-				"pigs": (this?.Pigs()), 
-				"rabbits": (this?.Rabbits()), 
-				"wolfs": (this?.Wolfs()), 
-				"mice": (this?.Mice()), 
-				"ants": (this?.Ants()), 
-				"bugs": (this?.Bugs())
+				"cats": (this.Cats()), 
+				"dogs": (this.Dogs()), 
+				"horses": (this.Horses()), 
+				"racoons": (this.Racoons()), 
+				"pigs": (this.Pigs()), 
+				"rabbits": (this.Rabbits()), 
+				"wolfs": (this.Wolfs()), 
+				"mice": (this.Mice()), 
+				"ants": (this.Ants()), 
+				"bugs": (this.Bugs())
 			});
 			return obj;
 		}
@@ -33971,7 +33979,7 @@ var $;
 			const obj = new this.$.$mol_book2_catalog();
 			(obj.param) = () => ("mol_book2_catalog_demo");
 			(obj.menu_title) = () => ("Catalog");
-			(obj.spreads) = () => ({"foods": (this?.Foods()), "animals": (this?.Animals())});
+			(obj.spreads) = () => ({"foods": (this.Foods()), "animals": (this.Animals())});
 			return obj;
 		}
 		title(){
@@ -33986,7 +33994,7 @@ var $;
 			return obj;
 		}
 		sub(){
-			return [(this?.Calatog())];
+			return [(this.Calatog())];
 		}
 		tags(){
 			return [
@@ -34067,7 +34075,7 @@ var $;
 		Major_enabled(){
 			const obj = new this.$.$mol_button_major();
 			(obj.title) = () => ("Enabled Major");
-			(obj.click) = (next) => ((this?.fail(next)));
+			(obj.click) = (next) => ((this.fail(next)));
 			return obj;
 		}
 		Major_disabled(){
@@ -34079,7 +34087,7 @@ var $;
 		Minor_enabled(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.title) = () => ("Enabled Minor");
-			(obj.click) = (next) => ((this?.fail(next)));
+			(obj.click) = (next) => ((this.fail(next)));
 			return obj;
 		}
 		Minor_disabled(){
@@ -34094,8 +34102,8 @@ var $;
 		}
 		Minor_icon_only(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.fail(next)));
-			(obj.sub) = () => ([(this?.Minor_icon_only_icon())]);
+			(obj.click) = (next) => ((this.fail(next)));
+			(obj.sub) = () => ([(this.Minor_icon_only_icon())]);
 			return obj;
 		}
 		Minor_iconed_icon(){
@@ -34104,8 +34112,8 @@ var $;
 		}
 		Minor_iconed(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.click) = (next) => ((this?.fail(next)));
-			(obj.sub) = () => ([(this?.Minor_iconed_icon()), "Minor with Icon"]);
+			(obj.click) = (next) => ((this.fail(next)));
+			(obj.sub) = () => ([(this.Minor_iconed_icon()), "Minor with Icon"]);
 			return obj;
 		}
 		title(){
@@ -34113,12 +34121,12 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Major_enabled()), 
-				(this?.Major_disabled()), 
-				(this?.Minor_enabled()), 
-				(this?.Minor_disabled()), 
-				(this?.Minor_icon_only()), 
-				(this?.Minor_iconed())
+				(this.Major_enabled()), 
+				(this.Major_disabled()), 
+				(this.Minor_enabled()), 
+				(this.Minor_disabled()), 
+				(this.Minor_icon_only()), 
+				(this.Minor_iconed())
 			];
 		}
 		aspects(){
@@ -34159,7 +34167,7 @@ var $;
 	($.$mol_button_share_demo) = class $mol_button_share_demo extends ($.$mol_example_small) {
 		Share_page(){
 			const obj = new this.$.$mol_button_share();
-			(obj.title) = () => ((this?.title()));
+			(obj.title) = () => ((this.title()));
 			(obj.hint) = () => ("Share this page with screenshot");
 			return obj;
 		}
@@ -34168,7 +34176,7 @@ var $;
 			(obj.title) = () => ("Component screensht");
 			(obj.hint) = () => ("Share screenshot of component");
 			(obj.uri) = () => (null);
-			(obj.capture) = () => ((this?.Share_hyoo()));
+			(obj.capture) = () => ((this.Share_hyoo()));
 			return obj;
 		}
 		Share_hyoo(){
@@ -34184,9 +34192,9 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Share_page()), 
-				(this?.Share_screenshot()), 
-				(this?.Share_hyoo())
+				(this.Share_page()), 
+				(this.Share_screenshot()), 
+				(this.Share_hyoo())
 			];
 		}
 		aspects(){
@@ -34211,8 +34219,8 @@ var $;
 		}
 		Calendar(){
 			const obj = new this.$.$mol_calendar();
-			(obj.month_string) = () => ((this?.month()));
-			(obj.day_holiday) = (id) => ((this?.holiday(id)));
+			(obj.month_string) = () => ((this.month()));
+			(obj.day_holiday) = (id) => ((this.holiday(id)));
 			return obj;
 		}
 		title(){
@@ -34237,7 +34245,7 @@ var $;
 			];
 		}
 		sub(){
-			return [(this?.Calendar())];
+			return [(this.Calendar())];
 		}
 		tags(){
 			return ["month"];
@@ -34277,8 +34285,8 @@ var $;
 		}
 		Calendar(){
 			const obj = new this.$.$mol_calendar();
-			(obj.month_string) = () => ((this?.month()));
-			(obj.day_selected) = (id) => ((this?.selected(id)));
+			(obj.month_string) = () => ((this.month()));
+			(obj.day_selected) = (id) => ((this.selected(id)));
 			return obj;
 		}
 		title(){
@@ -34297,7 +34305,7 @@ var $;
 			];
 		}
 		sub(){
-			return [(this?.Calendar())];
+			return [(this.Calendar())];
 		}
 		tags(){
 			return ["month"];
@@ -34418,14 +34426,14 @@ var $;
 		}
 		Calendar(){
 			const obj = new this.$.$mol_calendar();
-			(obj.month_moment) = () => ((this?.today()));
+			(obj.month_moment) = () => ((this.today()));
 			return obj;
 		}
 		title(){
 			return "Days of curret month";
 		}
 		sub(){
-			return [(this?.Calendar())];
+			return [(this.Calendar())];
 		}
 		tags(){
 			return ["month"];
@@ -34462,27 +34470,27 @@ var $;
 			return "";
 		}
 		content(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 		Content(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.content()));
+			(obj.sub) = () => ((this.content()));
 			return obj;
 		}
 		status_text(){
-			return (this?.status());
+			return (this.status());
 		}
 		Status(){
 			const obj = new this.$.$mol_view();
 			(obj.minimal_height) = () => (30);
-			(obj.sub) = () => ([(this?.status_text())]);
+			(obj.sub) = () => ([(this.status_text())]);
 			return obj;
 		}
 		attr(){
-			return {...(super.attr()), "mol_card_status_type": (this?.status())};
+			return {...(super.attr()), "mol_card_status_type": (this.status())};
 		}
 		rows(){
-			return [(this?.Content()), (this?.Status())];
+			return [(this.Content()), (this.Status())];
 		}
 	};
 	($mol_mem(($.$mol_card.prototype), "Content"));
@@ -34534,7 +34542,7 @@ var $;
 			return "Cards with optional status";
 		}
 		sub(){
-			return [(this?.Simple()), (this?.Pending())];
+			return [(this.Simple()), (this.Pending())];
 		}
 		tags(){
 			return [
@@ -34566,12 +34574,12 @@ var $;
 			return [];
 		}
 		sub(){
-			return (this?.items());
+			return (this.items());
 		}
 		Side(id){
 			const obj = new this.$.$mol_gallery();
-			(obj.style) = () => ({"flexGrow": (this?.side_size(id))});
-			(obj.items) = () => ((this?.side_items(id)));
+			(obj.style) = () => ({"flexGrow": (this.side_size(id))});
+			(obj.items) = () => ((this.side_items(id)));
 			return obj;
 		}
 	};
@@ -34634,7 +34642,7 @@ var $;
 		}
 		Gallery(){
 			const obj = new this.$.$mol_gallery();
-			(obj.items) = () => ((this?.graph_legends()));
+			(obj.items) = () => ((this.graph_legends()));
 			return obj;
 		}
 		Graph_sample(id){
@@ -34642,7 +34650,7 @@ var $;
 		}
 		Graph_sample_box(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Graph_sample(id))]);
+			(obj.sub) = () => ([(this.Graph_sample(id))]);
 			return obj;
 		}
 		graph_title(id){
@@ -34650,7 +34658,7 @@ var $;
 		}
 		Graph_title(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.graph_title(id))]);
+			(obj.sub) = () => ([(this.graph_title(id))]);
 			return obj;
 		}
 		graphs(){
@@ -34660,11 +34668,11 @@ var $;
 			return [];
 		}
 		sub(){
-			return [(this?.Gallery())];
+			return [(this.Gallery())];
 		}
 		Graph_legend(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Graph_sample_box(id)), (this?.Graph_title(id))]);
+			(obj.sub) = () => ([(this.Graph_sample_box(id)), (this.Graph_title(id))]);
 			return obj;
 		}
 	};
@@ -34807,7 +34815,7 @@ var $;
 			return "title";
 		}
 		sub(){
-			return [(this?.title())];
+			return [(this.title())];
 		}
 	};
 
@@ -34859,7 +34867,7 @@ var $;
 			return "";
 		}
 		hint(){
-			return (this?.title());
+			return (this.title());
 		}
 		series_x(){
 			return [];
@@ -34868,13 +34876,13 @@ var $;
 			return [];
 		}
 		attr(){
-			return {...(super.attr()), "mol_plot_graph_type": (this?.type())};
+			return {...(super.attr()), "mol_plot_graph_type": (this.type())};
 		}
 		style(){
-			return {...(super.style()), "color": (this?.color())};
+			return {...(super.style()), "color": (this.color())};
 		}
 		viewport(){
-			const obj = new this.$.$mol_vector_2d((this?.viewport_x()), (this?.viewport_y()));
+			const obj = new this.$.$mol_vector_2d((this.viewport_x()), (this.viewport_y()));
 			return obj;
 		}
 		shift(){
@@ -34888,11 +34896,11 @@ var $;
 			return obj;
 		}
 		dimensions_pane(){
-			const obj = new this.$.$mol_vector_2d((this?.dimensions_pane_x()), (this?.dimensions_pane_y()));
+			const obj = new this.$.$mol_vector_2d((this.dimensions_pane_x()), (this.dimensions_pane_y()));
 			return obj;
 		}
 		dimensions(){
-			const obj = new this.$.$mol_vector_2d((this?.dimensions_x()), (this?.dimensions_y()));
+			const obj = new this.$.$mol_vector_2d((this.dimensions_x()), (this.dimensions_y()));
 			return obj;
 		}
 		size_real(){
@@ -34900,7 +34908,7 @@ var $;
 			return obj;
 		}
 		gap(){
-			const obj = new this.$.$mol_vector_2d((this?.gap_x()), (this?.gap_y()));
+			const obj = new this.$.$mol_vector_2d((this.gap_x()), (this.gap_y()));
 			return obj;
 		}
 		repos_x(id){
@@ -34923,7 +34931,7 @@ var $;
 		}
 		Hint(){
 			const obj = new this.$.$mol_svg_title();
-			(obj.title) = () => ((this?.hint()));
+			(obj.title) = () => ((this.hint()));
 			return obj;
 		}
 		hue(next){
@@ -34958,10 +34966,10 @@ var $;
 			return "black";
 		}
 		attr(){
-			return {...(super.attr()), "mol_plot_graph_type": (this?.type())};
+			return {...(super.attr()), "mol_plot_graph_type": (this.type())};
 		}
 		style(){
-			return {...(super.style()), "color": (this?.color())};
+			return {...(super.style()), "color": (this.color())};
 		}
 	};
 
@@ -35228,11 +35236,11 @@ var $;
 		event(){
 			return {
 				...(super.event()), 
-				"pointerdown": (next) => (this?.event_start(next)), 
-				"pointermove": (next) => (this?.event_move(next)), 
-				"pointerup": (next) => (this?.event_end(next)), 
-				"pointerleave": (next) => (this?.event_leave(next)), 
-				"wheel": (next) => (this?.event_wheel(next))
+				"pointerdown": (next) => (this.event_start(next)), 
+				"pointermove": (next) => (this.event_move(next)), 
+				"pointerup": (next) => (this.event_end(next)), 
+				"pointerleave": (next) => (this.event_leave(next)), 
+				"wheel": (next) => (this.event_wheel(next))
 			};
 		}
 	};
@@ -35519,11 +35527,11 @@ var $;
 ;
 	($.$mol_plot_pane) = class $mol_plot_pane extends ($.$mol_svg_root) {
 		gap_x(){
-			const obj = new this.$.$mol_vector_range((this?.gap_left()), (this?.gap_right()));
+			const obj = new this.$.$mol_vector_range((this.gap_left()), (this.gap_right()));
 			return obj;
 		}
 		gap_y(){
-			const obj = new this.$.$mol_vector_range((this?.gap_bottom()), (this?.gap_top()));
+			const obj = new this.$.$mol_vector_range((this.gap_bottom()), (this.gap_top()));
 			return obj;
 		}
 		shift_limit_x(){
@@ -35565,17 +35573,17 @@ var $;
 			return [];
 		}
 		graphs_positioned(){
-			return (this?.graphs());
+			return (this.graphs());
 		}
 		graphs_visible(){
-			return (this?.graphs_positioned());
+			return (this.graphs_positioned());
 		}
 		zoom(next){
 			if(next !== undefined) return next;
 			return 1;
 		}
 		cursor_position(){
-			return (this?.Touch()?.pointer_center());
+			return (this.Touch().pointer_center());
 		}
 		allow_draw(){
 			return true;
@@ -35587,10 +35595,10 @@ var $;
 			return true;
 		}
 		action_type(){
-			return (this?.Touch()?.action_type());
+			return (this.Touch().action_type());
 		}
 		action_point(){
-			return (this?.Touch()?.action_point());
+			return (this.Touch().action_point());
 		}
 		draw_start(next){
 			if(next !== undefined) return next;
@@ -35606,14 +35614,14 @@ var $;
 		}
 		Touch(){
 			const obj = new this.$.$mol_touch();
-			(obj.zoom) = (next) => ((this?.zoom(next)));
-			(obj.pan) = (next) => ((this?.shift(next)));
-			(obj.allow_draw) = () => ((this?.allow_draw()));
-			(obj.allow_pan) = () => ((this?.allow_pan()));
-			(obj.allow_zoom) = () => ((this?.allow_zoom()));
-			(obj.draw_start) = (next) => ((this?.draw_start(next)));
-			(obj.draw) = (next) => ((this?.draw(next)));
-			(obj.draw_end) = (next) => ((this?.draw_end(next)));
+			(obj.zoom) = (next) => ((this.zoom(next)));
+			(obj.pan) = (next) => ((this.shift(next)));
+			(obj.allow_draw) = () => ((this.allow_draw()));
+			(obj.allow_pan) = () => ((this.allow_pan()));
+			(obj.allow_zoom) = () => ((this.allow_zoom()));
+			(obj.draw_start) = (next) => ((this.draw_start(next)));
+			(obj.draw) = (next) => ((this.draw(next)));
+			(obj.draw_end) = (next) => ((this.draw_end(next)));
 			return obj;
 		}
 		aspect(){
@@ -35634,23 +35642,23 @@ var $;
 			return 24;
 		}
 		gap_left(){
-			return (this?.gap_hor());
+			return (this.gap_hor());
 		}
 		gap_right(){
-			return (this?.gap_hor());
+			return (this.gap_hor());
 		}
 		gap_top(){
-			return (this?.gap_vert());
+			return (this.gap_vert());
 		}
 		gap_bottom(){
-			return (this?.gap_vert());
+			return (this.gap_vert());
 		}
 		gap(){
-			const obj = new this.$.$mol_vector_2d((this?.gap_x()), (this?.gap_y()));
+			const obj = new this.$.$mol_vector_2d((this.gap_x()), (this.gap_y()));
 			return obj;
 		}
 		shift_limit(){
-			const obj = new this.$.$mol_vector_2d((this?.shift_limit_x()), (this?.shift_limit_y()));
+			const obj = new this.$.$mol_vector_2d((this.shift_limit_x()), (this.shift_limit_y()));
 			return obj;
 		}
 		shift_default(){
@@ -35663,7 +35671,7 @@ var $;
 			return obj;
 		}
 		scale_limit(){
-			const obj = new this.$.$mol_vector_2d((this?.scale_limit_x()), (this?.scale_limit_y()));
+			const obj = new this.$.$mol_vector_2d((this.scale_limit_x()), (this.scale_limit_y()));
 			return obj;
 		}
 		scale_default(){
@@ -35692,21 +35700,21 @@ var $;
 			return obj;
 		}
 		dimensions(){
-			const obj = new this.$.$mol_vector_2d((this?.dimensions_x()), (this?.dimensions_y()));
+			const obj = new this.$.$mol_vector_2d((this.dimensions_x()), (this.dimensions_y()));
 			return obj;
 		}
 		dimensions_viewport(){
-			const obj = new this.$.$mol_vector_2d((this?.dimensions_viewport_x()), (this?.dimensions_viewport_y()));
+			const obj = new this.$.$mol_vector_2d((this.dimensions_viewport_x()), (this.dimensions_viewport_y()));
 			return obj;
 		}
 		sub(){
-			return (this?.graphs_sorted());
+			return (this.graphs_sorted());
 		}
 		graphs_colored(){
-			return (this?.graphs_visible());
+			return (this.graphs_visible());
 		}
 		plugins(){
-			return [...(super.plugins()), (this?.Touch())];
+			return [...(super.plugins()), (this.Touch())];
 		}
 	};
 	($mol_mem(($.$mol_plot_pane.prototype), "gap_x"));
@@ -35957,14 +35965,14 @@ var $;
 	($.$mol_chart) = class $mol_chart extends ($.$mol_view) {
 		Legend(){
 			const obj = new this.$.$mol_chart_legend();
-			(obj.graphs) = () => ((this?.graphs_colored()));
+			(obj.graphs) = () => ((this.graphs_colored()));
 			return obj;
 		}
 		zoom(next){
-			return (this?.Plot()?.scale_x(next));
+			return (this.Plot().scale_x(next));
 		}
 		graphs_colored(){
-			return (this?.Plot()?.graphs_colored());
+			return (this.Plot().graphs_colored());
 		}
 		hue_base(){
 			return 210;
@@ -35974,14 +35982,14 @@ var $;
 		}
 		Plot(){
 			const obj = new this.$.$mol_plot_pane();
-			(obj.zoom) = (next) => ((this?.zoom(next)));
-			(obj.gap_left) = () => ((this?.gap_left()));
-			(obj.gap_right) = () => ((this?.gap_right()));
-			(obj.gap_bottom) = () => ((this?.gap_bottom()));
-			(obj.gap_top) = () => ((this?.gap_top()));
-			(obj.graphs) = () => ((this?.graphs()));
-			(obj.hue_base) = () => ((this?.hue_base()));
-			(obj.hue_shift) = () => ((this?.hue_shift()));
+			(obj.zoom) = (next) => ((this.zoom(next)));
+			(obj.gap_left) = () => ((this.gap_left()));
+			(obj.gap_right) = () => ((this.gap_right()));
+			(obj.gap_bottom) = () => ((this.gap_bottom()));
+			(obj.gap_top) = () => ((this.gap_top()));
+			(obj.graphs) = () => ((this.graphs()));
+			(obj.hue_base) = () => ((this.hue_base()));
+			(obj.hue_shift) = () => ((this.hue_shift()));
 			return obj;
 		}
 		gap_hor(){
@@ -35991,22 +35999,22 @@ var $;
 			return 24;
 		}
 		gap_left(){
-			return (this?.gap_hor());
+			return (this.gap_hor());
 		}
 		gap_right(){
-			return (this?.gap_hor());
+			return (this.gap_hor());
 		}
 		gap_bottom(){
-			return (this?.gap_vert());
+			return (this.gap_vert());
 		}
 		gap_top(){
-			return (this?.gap_vert());
+			return (this.gap_vert());
 		}
 		graphs(){
 			return [];
 		}
 		sub(){
-			return [(this?.Legend()), (this?.Plot())];
+			return [(this.Legend()), (this.Plot())];
 		}
 	};
 	($mol_mem(($.$mol_chart.prototype), "Legend"));
@@ -36033,18 +36041,18 @@ var $;
 		}
 		Curve(){
 			const obj = new this.$.$mol_svg_path();
-			(obj.geometry) = () => ((this?.curve()));
+			(obj.geometry) = () => ((this.curve()));
 			return obj;
 		}
 		style(){
-			return {...(super.style()), "stroke-width": (this?.stroke_width())};
+			return {...(super.style()), "stroke-width": (this.stroke_width())};
 		}
 		sub(){
-			return [(this?.Hint()), (this?.Curve())];
+			return [(this.Hint()), (this.Curve())];
 		}
 		Sample(){
 			const obj = new this.$.$mol_plot_graph_sample();
-			(obj.color) = () => ((this?.color()));
+			(obj.color) = () => ((this.color()));
 			return obj;
 		}
 	};
@@ -36162,15 +36170,15 @@ var $;
 			return "path";
 		}
 		attr(){
-			return {...(super.attr()), "d": (this?.curve())};
+			return {...(super.attr()), "d": (this.curve())};
 		}
 		sub(){
-			return [(this?.Hint())];
+			return [(this.Hint())];
 		}
 		Sample(){
 			const obj = new this.$.$mol_plot_graph_sample();
-			(obj.color) = () => ((this?.color()));
-			(obj.type) = () => ((this?.type()));
+			(obj.color) = () => ((this.color()));
+			(obj.type) = () => ((this.type()));
 			return obj;
 		}
 	};
@@ -36256,7 +36264,7 @@ var $;
 		}
 		Curve(){
 			const obj = new this.$.$mol_svg_path();
-			(obj.geometry) = () => ((this?.curve()));
+			(obj.geometry) = () => ((this.curve()));
 			return obj;
 		}
 		points_max(){
@@ -36266,14 +36274,14 @@ var $;
 			return 1;
 		}
 		style(){
-			return {...(super.style()), "stroke-width": (this?.diameter())};
+			return {...(super.style()), "stroke-width": (this.diameter())};
 		}
 		sub(){
-			return [(this?.Hint()), (this?.Curve())];
+			return [(this.Hint()), (this.Curve())];
 		}
 		Sample(){
 			const obj = new this.$.$mol_plot_graph_sample();
-			(obj.color) = () => ((this?.color()));
+			(obj.color) = () => ((this.color()));
 			return obj;
 		}
 	};
@@ -36401,17 +36409,17 @@ var $;
 			return [];
 		}
 		graphs_enriched(){
-			return (this?.graphs());
+			return (this.graphs());
 		}
 		graph_samples(){
 			return [];
 		}
 		sub(){
-			return (this?.graphs_enriched());
+			return (this.graphs_enriched());
 		}
 		Sample(){
 			const obj = new this.$.$mol_plot_graph_sample();
-			(obj.sub) = () => ((this?.graph_samples()));
+			(obj.sub) = () => ((this.graph_samples()));
 			return obj;
 		}
 	};
@@ -36509,10 +36517,10 @@ var $;
 		attr(){
 			return {
 				...(super.attr()), 
-				"width": (this?.width()), 
-				"height": (this?.height()), 
-				"x": (this?.pos_x()), 
-				"y": (this?.pos_y())
+				"width": (this.width()), 
+				"height": (this.height()), 
+				"x": (this.pos_x()), 
+				"y": (this.pos_y())
 			};
 		}
 	};
@@ -36551,7 +36559,7 @@ var $;
 			return "middle";
 		}
 		align_hor(){
-			return (this?.align());
+			return (this.align());
 		}
 		align_vert(){
 			return "baseline";
@@ -36568,14 +36576,14 @@ var $;
 		attr(){
 			return {
 				...(super.attr()), 
-				"x": (this?.pos_x()), 
-				"y": (this?.pos_y()), 
-				"text-anchor": (this?.align_hor()), 
-				"alignment-baseline": (this?.align_vert())
+				"x": (this.pos_x()), 
+				"y": (this.pos_y()), 
+				"text-anchor": (this.align_hor()), 
+				"alignment-baseline": (this.align_vert())
 			};
 		}
 		sub(){
-			return [(this?.text())];
+			return [(this.text())];
 		}
 	};
 
@@ -36624,10 +36632,10 @@ var $;
 		}
 		Background(){
 			const obj = new this.$.$mol_svg_rect();
-			(obj.pos_x) = () => ((this?.background_x()));
-			(obj.pos_y) = () => ((this?.background_y()));
-			(obj.width) = () => ((this?.background_width()));
-			(obj.height) = () => ((this?.background_height()));
+			(obj.pos_x) = () => ((this.background_x()));
+			(obj.pos_y) = () => ((this.background_y()));
+			(obj.width) = () => ((this.background_width()));
+			(obj.height) = () => ((this.background_height()));
 			return obj;
 		}
 		curve(){
@@ -36635,7 +36643,7 @@ var $;
 		}
 		Curve(){
 			const obj = new this.$.$mol_svg_path();
-			(obj.geometry) = () => ((this?.curve()));
+			(obj.geometry) = () => ((this.curve()));
 			return obj;
 		}
 		labels_formatted(){
@@ -36652,10 +36660,10 @@ var $;
 		}
 		Title(){
 			const obj = new this.$.$mol_svg_text();
-			(obj.pos_x) = () => ((this?.title_pos_x()));
-			(obj.pos_y) = () => ((this?.title_pos_y()));
-			(obj.align) = () => ((this?.title_align()));
-			(obj.text) = () => ((this?.title()));
+			(obj.pos_x) = () => ((this.title_pos_x()));
+			(obj.pos_y) = () => ((this.title_pos_y()));
+			(obj.align) = () => ((this.title_align()));
+			(obj.text) = () => ((this.title()));
 			return obj;
 		}
 		label_pos_x(id){
@@ -36665,7 +36673,7 @@ var $;
 			return "";
 		}
 		label_pos(id){
-			return [(this?.label_pos_x(id)), (this?.label_pos_y(id))];
+			return [(this.label_pos_x(id)), (this.label_pos_y(id))];
 		}
 		label_text(id){
 			return "";
@@ -36705,17 +36713,17 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Background()), 
-				(this?.Curve()), 
-				(this?.labels_formatted()), 
-				(this?.Title())
+				(this.Background()), 
+				(this.Curve()), 
+				(this.labels_formatted()), 
+				(this.Title())
 			];
 		}
 		Label(id){
 			const obj = new this.$.$mol_svg_text();
-			(obj.pos) = () => ((this?.label_pos(id)));
-			(obj.text) = () => ((this?.label_text(id)));
-			(obj.align) = () => ((this?.label_align()));
+			(obj.pos) = () => ((this.label_pos(id)));
+			(obj.text) = () => ((this.label_text(id)));
+			(obj.align) = () => ((this.label_align()));
 			return obj;
 		}
 	};
@@ -36854,13 +36862,13 @@ var $;
 			return "14";
 		}
 		label_pos_x(id){
-			return (this?.title_pos_x());
+			return (this.title_pos_x());
 		}
 		background_height(){
 			return "100%";
 		}
 		background_width(){
-			return (this?.title_pos_x());
+			return (this.title_pos_x());
 		}
 	};
 
@@ -36932,7 +36940,7 @@ var $;
 			return "100%";
 		}
 		label_pos_y(id){
-			return (this?.title_pos_y());
+			return (this.title_pos_y());
 		}
 		background_width(){
 			return "100%";
@@ -37117,16 +37125,16 @@ var $;
 			return "1rem";
 		}
 		box_pos_x(){
-			return (this?.pos_x());
+			return (this.pos_x());
 		}
 		box_pos_y(){
 			return "0";
 		}
 		Back(){
 			const obj = new this.$.$mol_svg_rect();
-			(obj.width) = () => ((this?.box_width()));
-			(obj.height) = () => ((this?.box_height()));
-			(obj.pos) = () => ([(this?.box_pos_x()), (this?.box_pos_y())]);
+			(obj.width) = () => ((this.box_width()));
+			(obj.height) = () => ((this.box_height()));
+			(obj.pos) = () => ([(this.box_pos_x()), (this.box_pos_y())]);
 			return obj;
 		}
 		pos_x(){
@@ -37143,9 +37151,9 @@ var $;
 		}
 		Text(){
 			const obj = new this.$.$mol_svg_text();
-			(obj.pos) = () => ([(this?.pos_x()), (this?.pos_y())]);
-			(obj.align) = () => ((this?.align()));
-			(obj.sub) = () => ([(this?.text())]);
+			(obj.pos) = () => ([(this.pos_x()), (this.pos_y())]);
+			(obj.align) = () => ((this.align()));
+			(obj.sub) = () => ([(this.text())]);
 			return obj;
 		}
 		font_size(){
@@ -37155,7 +37163,7 @@ var $;
 			return 0;
 		}
 		sub(){
-			return [(this?.Back()), (this?.Text())];
+			return [(this.Back()), (this.Text())];
 		}
 	};
 	($mol_mem(($.$mol_svg_text_box.prototype), "Back"));
@@ -37244,7 +37252,7 @@ var $;
 		}
 		Curve(){
 			const obj = new this.$.$mol_svg_path();
-			(obj.geometry) = () => ((this?.curve()));
+			(obj.geometry) = () => ((this.curve()));
 			return obj;
 		}
 		title_x_pos_x(){
@@ -37258,9 +37266,9 @@ var $;
 		}
 		Label_x(){
 			const obj = new this.$.$mol_svg_text_box();
-			(obj.pos_x) = () => ((this?.title_x_pos_x()));
-			(obj.pos_y) = () => ((this?.title_x_pos_y()));
-			(obj.text) = () => ((this?.title_x()));
+			(obj.pos_x) = () => ((this.title_x_pos_x()));
+			(obj.pos_y) = () => ((this.title_x_pos_y()));
+			(obj.text) = () => ((this.title_x()));
 			return obj;
 		}
 		title_y_pos_x(){
@@ -37274,9 +37282,9 @@ var $;
 		}
 		Label_y(){
 			const obj = new this.$.$mol_svg_text_box();
-			(obj.pos_x) = () => ((this?.title_y_pos_x()));
-			(obj.pos_y) = () => ((this?.title_y_pos_y()));
-			(obj.text) = () => ((this?.title_y()));
+			(obj.pos_x) = () => ((this.title_y_pos_x()));
+			(obj.pos_y) = () => ((this.title_y_pos_y()));
+			(obj.text) = () => ((this.title_y()));
 			return obj;
 		}
 		labels(){
@@ -37295,14 +37303,14 @@ var $;
 			return [];
 		}
 		dimensions(){
-			const obj = new this.$.$mol_vector_2d((this?.dimensions_x()), (this?.dimensions_y()));
+			const obj = new this.$.$mol_vector_2d((this.dimensions_x()), (this.dimensions_y()));
 			return obj;
 		}
 		sub(){
 			return [
-				(this?.Curve()), 
-				(this?.Label_x()), 
-				(this?.Label_y())
+				(this.Curve()), 
+				(this.Label_x()), 
+				(this.Label_y())
 			];
 		}
 	};
@@ -37433,8 +37441,8 @@ var $;
 		}
 		Plan(){
 			const obj = new this.$.$mol_plot_bar();
-			(obj.title) = () => ((this?.plan_title()));
-			(obj.series_y) = () => ((this?.plan()));
+			(obj.title) = () => ((this.plan_title()));
+			(obj.series_y) = () => ((this.plan()));
 			return obj;
 		}
 		fact_title(){
@@ -37457,9 +37465,9 @@ var $;
 		}
 		Fact(){
 			const obj = new this.$.$mol_plot_group();
-			(obj.title) = () => ((this?.fact_title()));
-			(obj.series_y) = () => ((this?.facts()));
-			(obj.graphs) = () => ([(this?.Fact_line()), (this?.Fact_dots())]);
+			(obj.title) = () => ((this.fact_title()));
+			(obj.series_y) = () => ((this.facts()));
+			(obj.graphs) = () => ([(this.Fact_line()), (this.Fact_dots())]);
 			return obj;
 		}
 		vert_title(){
@@ -37467,7 +37475,7 @@ var $;
 		}
 		Vert_ruler(){
 			const obj = new this.$.$mol_plot_ruler_vert();
-			(obj.title) = () => ((this?.vert_title()));
+			(obj.title) = () => ((this.vert_title()));
 			return obj;
 		}
 		marker_hor_title(){
@@ -37483,24 +37491,24 @@ var $;
 		}
 		Marker_hor(){
 			const obj = new this.$.$mol_plot_mark_hor();
-			(obj.title) = () => ((this?.marker_hor_title()));
-			(obj.labels) = () => ((this?.months()));
+			(obj.title) = () => ((this.marker_hor_title()));
+			(obj.labels) = () => ((this.months()));
 			return obj;
 		}
 		Marker_cross(){
 			const obj = new this.$.$mol_plot_mark_cross();
-			(obj.labels) = () => ((this?.months()));
-			(obj.graphs) = () => ([(this?.Plan()), (this?.Fact_dots())]);
+			(obj.labels) = () => ((this.months()));
+			(obj.graphs) = () => ([(this.Plan()), (this.Fact_dots())]);
 			return obj;
 		}
 		Chart(){
 			const obj = new this.$.$mol_chart();
 			(obj.graphs) = () => ([
-				(this?.Plan()), 
-				(this?.Fact()), 
-				(this?.Vert_ruler()), 
-				(this?.Marker_hor()), 
-				(this?.Marker_cross())
+				(this.Plan()), 
+				(this.Fact()), 
+				(this.Vert_ruler()), 
+				(this.Marker_hor()), 
+				(this.Marker_cross())
 			]);
 			return obj;
 		}
@@ -37508,7 +37516,7 @@ var $;
 			return "Simple chart with hadcoded series";
 		}
 		sub(){
-			return [(this?.Chart())];
+			return [(this.Chart())];
 		}
 		tags(){
 			return [
@@ -37595,9 +37603,9 @@ var $;
 		}
 		Receipts(){
 			const obj = new this.$.$mol_plot_bar();
-			(obj.title) = () => ((this?.receipts_title()));
-			(obj.series_x) = () => ((this?.series_x()));
-			(obj.series_y) = () => ((this?.series_2_y()));
+			(obj.title) = () => ((this.receipts_title()));
+			(obj.series_x) = () => ((this.series_x()));
+			(obj.series_y) = () => ((this.series_2_y()));
 			return obj;
 		}
 		receipts_confirmed_title(){
@@ -37608,9 +37616,9 @@ var $;
 		}
 		Receipts_confirmed(){
 			const obj = new this.$.$mol_plot_bar();
-			(obj.title) = () => ((this?.receipts_confirmed_title()));
-			(obj.series_x) = () => ((this?.series_x()));
-			(obj.series_y) = () => ((this?.series_3_y()));
+			(obj.title) = () => ((this.receipts_confirmed_title()));
+			(obj.series_x) = () => ((this.series_x()));
+			(obj.series_y) = () => ((this.series_3_y()));
 			return obj;
 		}
 		maximum_title(){
@@ -37621,9 +37629,9 @@ var $;
 		}
 		Maximum(){
 			const obj = new this.$.$mol_plot_dot();
-			(obj.title) = () => ((this?.maximum_title()));
-			(obj.series_x) = () => ((this?.series_x()));
-			(obj.series_y) = () => ((this?.series_1_y()));
+			(obj.title) = () => ((this.maximum_title()));
+			(obj.series_x) = () => ((this.series_x()));
+			(obj.series_y) = () => ((this.series_1_y()));
 			return obj;
 		}
 		waste_title(){
@@ -37635,9 +37643,9 @@ var $;
 		Waste(){
 			const obj = new this.$.$mol_plot_line();
 			(obj.type) = () => ("dashed");
-			(obj.title) = () => ((this?.waste_title()));
-			(obj.series_x) = () => ((this?.series_x()));
-			(obj.series_y) = () => ((this?.series_4_y()));
+			(obj.title) = () => ((this.waste_title()));
+			(obj.series_x) = () => ((this.series_x()));
+			(obj.series_y) = () => ((this.series_4_y()));
 			return obj;
 		}
 		purchases_title(){
@@ -37660,13 +37668,13 @@ var $;
 		}
 		Purchases(){
 			const obj = new this.$.$mol_plot_group();
-			(obj.title) = () => ((this?.purchases_title()));
-			(obj.series_x) = () => ((this?.series_x()));
-			(obj.series_y) = () => ((this?.series_5_y()));
+			(obj.title) = () => ((this.purchases_title()));
+			(obj.series_x) = () => ((this.series_x()));
+			(obj.series_y) = () => ((this.series_5_y()));
 			(obj.graphs) = () => ([
-				(this?.Purchases_fill()), 
-				(this?.Purchases_line()), 
-				(this?.Purchases_dots())
+				(this.Purchases_fill()), 
+				(this.Purchases_line()), 
+				(this.Purchases_dots())
 			]);
 			return obj;
 		}
@@ -37691,13 +37699,13 @@ var $;
 		}
 		Taxes(){
 			const obj = new this.$.$mol_plot_group();
-			(obj.title) = () => ((this?.taxes_title()));
-			(obj.series_x) = () => ((this?.series_x()));
-			(obj.series_y) = () => ((this?.series_6_y()));
+			(obj.title) = () => ((this.taxes_title()));
+			(obj.series_x) = () => ((this.series_x()));
+			(obj.series_y) = () => ((this.series_6_y()));
 			(obj.graphs) = () => ([
-				(this?.Taxes_fill()), 
-				(this?.Taxes_line()), 
-				(this?.Taxes_dots())
+				(this.Taxes_fill()), 
+				(this.Taxes_line()), 
+				(this.Taxes_dots())
 			]);
 			return obj;
 		}
@@ -37706,7 +37714,7 @@ var $;
 		}
 		Energy(){
 			const obj = new this.$.$mol_plot_ruler_vert();
-			(obj.title) = () => ((this?.energy_title()));
+			(obj.title) = () => ((this.energy_title()));
 			return obj;
 		}
 		day_title(){
@@ -37714,25 +37722,25 @@ var $;
 		}
 		Day(){
 			const obj = new this.$.$mol_plot_mark_hor();
-			(obj.title) = () => ((this?.day_title()));
-			(obj.series_x) = () => ((this?.series_x()));
+			(obj.title) = () => ((this.day_title()));
+			(obj.series_x) = () => ((this.series_x()));
 			return obj;
 		}
 		graphs(){
 			return [
-				(this?.Receipts()), 
-				(this?.Receipts_confirmed()), 
-				(this?.Maximum()), 
-				(this?.Waste()), 
-				(this?.Purchases()), 
-				(this?.Taxes()), 
-				(this?.Energy()), 
-				(this?.Day())
+				(this.Receipts()), 
+				(this.Receipts_confirmed()), 
+				(this.Maximum()), 
+				(this.Waste()), 
+				(this.Purchases()), 
+				(this.Taxes()), 
+				(this.Energy()), 
+				(this.Day())
 			];
 		}
 		Chart(){
 			const obj = new this.$.$mol_chart();
-			(obj.graphs) = () => ((this?.graphs()));
+			(obj.graphs) = () => ((this.graphs()));
 			return obj;
 		}
 		title(){
@@ -37742,7 +37750,7 @@ var $;
 			return 15;
 		}
 		sub(){
-			return [(this?.Chart())];
+			return [(this.Chart())];
 		}
 		tags(){
 			return [
@@ -37862,10 +37870,10 @@ var $;
 		}
 		Forces_left(){
 			const obj = new this.$.$mol_plot_dot();
-			(obj.title) = () => ((this?.forces_left_title()));
-			(obj.series_x) = () => ((this?.forces_left_x()));
-			(obj.series_y) = () => ((this?.forces_left_y()));
-			(obj.points_max) = () => ((this?.points_max()));
+			(obj.title) = () => ((this.forces_left_title()));
+			(obj.series_x) = () => ((this.forces_left_x()));
+			(obj.series_y) = () => ((this.forces_left_y()));
+			(obj.points_max) = () => ((this.points_max()));
 			return obj;
 		}
 		forces_right_title(){
@@ -37879,10 +37887,10 @@ var $;
 		}
 		Forces_right(){
 			const obj = new this.$.$mol_plot_dot();
-			(obj.title) = () => ((this?.forces_right_title()));
-			(obj.series_x) = () => ((this?.forces_right_x()));
-			(obj.series_y) = () => ((this?.forces_right_y()));
-			(obj.points_max) = () => ((this?.points_max()));
+			(obj.title) = () => ((this.forces_right_title()));
+			(obj.series_x) = () => ((this.forces_right_x()));
+			(obj.series_y) = () => ((this.forces_right_y()));
+			(obj.points_max) = () => ((this.points_max()));
 			return obj;
 		}
 		vert_title(){
@@ -37890,7 +37898,7 @@ var $;
 		}
 		Vert_ruler(){
 			const obj = new this.$.$mol_plot_ruler_vert();
-			(obj.title) = () => ((this?.vert_title()));
+			(obj.title) = () => ((this.vert_title()));
 			return obj;
 		}
 		hor_title(){
@@ -37898,23 +37906,23 @@ var $;
 		}
 		Hor_ruler(){
 			const obj = new this.$.$mol_plot_ruler_hor();
-			(obj.title) = () => ((this?.hor_title()));
-			(obj.series_x) = () => ((this?.forces_left_x()));
+			(obj.title) = () => ((this.hor_title()));
+			(obj.series_x) = () => ((this.forces_left_x()));
 			return obj;
 		}
 		Cross(){
 			const obj = new this.$.$mol_plot_mark_cross();
-			(obj.graphs) = () => ([(this?.Forces_left()), (this?.Forces_right())]);
+			(obj.graphs) = () => ([(this.Forces_left()), (this.Forces_right())]);
 			return obj;
 		}
 		Chart(){
 			const obj = new this.$.$mol_chart();
 			(obj.graphs) = () => ([
-				(this?.Forces_left()), 
-				(this?.Forces_right()), 
-				(this?.Vert_ruler()), 
-				(this?.Hor_ruler()), 
-				(this?.Cross())
+				(this.Forces_left()), 
+				(this.Forces_right()), 
+				(this.Vert_ruler()), 
+				(this.Hor_ruler()), 
+				(this.Cross())
 			]);
 			return obj;
 		}
@@ -37928,7 +37936,7 @@ var $;
 			return 2500;
 		}
 		sub(){
-			return [(this?.Chart())];
+			return [(this.Chart())];
 		}
 		tags(){
 			return [
@@ -38008,7 +38016,7 @@ var $;
 ;
 	($.$mol_chat_demo) = class $mol_chat_demo extends ($.$mol_example_small) {
 		chat_pages(){
-			return (this?.Chat()?.pages());
+			return (this.Chat().pages());
 		}
 		Chat(){
 			const obj = new this.$.$mol_chat();
@@ -38019,7 +38027,7 @@ var $;
 			return "Feed of comments for this page";
 		}
 		sub(){
-			return [(this?.Chat())];
+			return [(this.Chat())];
 		}
 		tags(){
 			return ["communication"];
@@ -38052,8 +38060,8 @@ var $;
 		}
 		Labeled_base(){
 			const obj = new this.$.$mol_check_box();
-			(obj.checked) = (next) => ((this?.base_checked(next)));
-			(obj.title) = () => ((this?.c1Label()));
+			(obj.checked) = (next) => ((this.base_checked(next)));
+			(obj.title) = () => ((this.c1Label()));
 			return obj;
 		}
 		c2Label(){
@@ -38065,8 +38073,8 @@ var $;
 		}
 		Labeled_checked(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.c2Label()));
-			(obj.checked) = (next) => ((this?.checked_checked(next)));
+			(obj.title) = () => ((this.c2Label()));
+			(obj.checked) = (next) => ((this.checked_checked(next)));
 			return obj;
 		}
 		c6Label(){
@@ -38074,19 +38082,19 @@ var $;
 		}
 		Labeled_disabled(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.c6Label()));
+			(obj.title) = () => ((this.c6Label()));
 			(obj.checked) = () => (true);
 			(obj.enabled) = () => (false);
 			return obj;
 		}
 		Alone_base(){
 			const obj = new this.$.$mol_check_box();
-			(obj.checked) = (next) => ((this?.base_checked(next)));
+			(obj.checked) = (next) => ((this.base_checked(next)));
 			return obj;
 		}
 		Alone_checked(){
 			const obj = new this.$.$mol_check_box();
-			(obj.checked) = (next) => ((this?.checked_checked(next)));
+			(obj.checked) = (next) => ((this.checked_checked(next)));
 			return obj;
 		}
 		Alone_disabled(){
@@ -38098,12 +38106,12 @@ var $;
 		Demo_items(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Labeled_base()), 
-				(this?.Labeled_checked()), 
-				(this?.Labeled_disabled()), 
-				(this?.Alone_base()), 
-				(this?.Alone_checked()), 
-				(this?.Alone_disabled())
+				(this.Labeled_base()), 
+				(this.Labeled_checked()), 
+				(this.Labeled_disabled()), 
+				(this.Alone_base()), 
+				(this.Alone_checked()), 
+				(this.Alone_disabled())
 			]);
 			return obj;
 		}
@@ -38111,7 +38119,7 @@ var $;
 			return "Checkboxes in various states";
 		}
 		sub(){
-			return [(this?.Demo_items())];
+			return [(this.Demo_items())];
 		}
 		tags(){
 			return ["switch", "toggle"];
@@ -38142,7 +38150,7 @@ var $;
 		}
 		Rights(){
 			const obj = new this.$.$mol_check_list();
-			(obj.option_checked) = (id, next) => ((this?.right(id, next)));
+			(obj.option_checked) = (id, next) => ((this.right(id, next)));
 			(obj.options) = () => ({
 				"read": "Allow Read", 
 				"write": "Allow Write", 
@@ -38159,7 +38167,7 @@ var $;
 			return "Set of toggles";
 		}
 		sub(){
-			return [(this?.Rights())];
+			return [(this.Rights())];
 		}
 		tags(){
 			return [
@@ -38190,8 +38198,8 @@ var $;
 		}
 		Labeled_base(){
 			const obj = new this.$.$mol_check_expand();
-			(obj.checked) = (next) => ((this?.base_expanded(next)));
-			(obj.title) = () => ((this?.c1Label()));
+			(obj.checked) = (next) => ((this.base_expanded(next)));
+			(obj.title) = () => ((this.c1Label()));
 			return obj;
 		}
 		c2Label(){
@@ -38203,8 +38211,8 @@ var $;
 		}
 		Labeled_expanded(){
 			const obj = new this.$.$mol_check_expand();
-			(obj.title) = () => ((this?.c2Label()));
-			(obj.checked) = (next) => ((this?.expanded_expanded(next)));
+			(obj.title) = () => ((this.c2Label()));
+			(obj.checked) = (next) => ((this.expanded_expanded(next)));
 			return obj;
 		}
 		c5Label(){
@@ -38212,28 +38220,28 @@ var $;
 		}
 		Disabled(){
 			const obj = new this.$.$mol_check_expand();
-			(obj.title) = () => ((this?.c5Label()));
+			(obj.title) = () => ((this.c5Label()));
 			(obj.disabled) = () => (true);
 			return obj;
 		}
 		Empty_base(){
 			const obj = new this.$.$mol_check_expand();
-			(obj.checked) = (next) => ((this?.base_expanded(next)));
+			(obj.checked) = (next) => ((this.base_expanded(next)));
 			return obj;
 		}
 		Empty_expanded(){
 			const obj = new this.$.$mol_check_expand();
-			(obj.checked) = (next) => ((this?.expanded_expanded(next)));
+			(obj.checked) = (next) => ((this.expanded_expanded(next)));
 			return obj;
 		}
 		Demo_items(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Labeled_base()), 
-				(this?.Labeled_expanded()), 
-				(this?.Disabled()), 
-				(this?.Empty_base()), 
-				(this?.Empty_expanded())
+				(this.Labeled_base()), 
+				(this.Labeled_expanded()), 
+				(this.Disabled()), 
+				(this.Empty_base()), 
+				(this.Empty_expanded())
 			]);
 			return obj;
 		}
@@ -38241,7 +38249,7 @@ var $;
 			return "Checkbox-expand in various states";
 		}
 		sub(){
-			return [(this?.Demo_items())];
+			return [(this.Demo_items())];
 		}
 		tags(){
 			return ["fold"];
@@ -38269,13 +38277,13 @@ var $;
 			const obj = new this.$.$mol_check_group();
 			(obj.title) = () => ("SPECIAL");
 			(obj.checks) = () => ([
-				(this?.Strength()), 
-				(this?.Perception()), 
-				(this?.Endurance()), 
-				(this?.Charisma()), 
-				(this?.Intelligence()), 
-				(this?.Agility()), 
-				(this?.Luck())
+				(this.Strength()), 
+				(this.Perception()), 
+				(this.Endurance()), 
+				(this.Charisma()), 
+				(this.Intelligence()), 
+				(this.Agility()), 
+				(this.Luck())
 			]);
 			return obj;
 		}
@@ -38288,8 +38296,8 @@ var $;
 		}
 		Strength(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.strength_title()));
-			(obj.checked) = (next) => ((this?.strength(next)));
+			(obj.title) = () => ((this.strength_title()));
+			(obj.checked) = (next) => ((this.strength(next)));
 			return obj;
 		}
 		perception_title(){
@@ -38301,8 +38309,8 @@ var $;
 		}
 		Perception(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.perception_title()));
-			(obj.checked) = (next) => ((this?.perception(next)));
+			(obj.title) = () => ((this.perception_title()));
+			(obj.checked) = (next) => ((this.perception(next)));
 			return obj;
 		}
 		endurance_title(){
@@ -38314,8 +38322,8 @@ var $;
 		}
 		Endurance(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.endurance_title()));
-			(obj.checked) = (next) => ((this?.endurance(next)));
+			(obj.title) = () => ((this.endurance_title()));
+			(obj.checked) = (next) => ((this.endurance(next)));
 			return obj;
 		}
 		charisma_title(){
@@ -38327,8 +38335,8 @@ var $;
 		}
 		Charisma(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.charisma_title()));
-			(obj.checked) = (next) => ((this?.charisma(next)));
+			(obj.title) = () => ((this.charisma_title()));
+			(obj.checked) = (next) => ((this.charisma(next)));
 			return obj;
 		}
 		intelligence_title(){
@@ -38340,8 +38348,8 @@ var $;
 		}
 		Intelligence(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.intelligence_title()));
-			(obj.checked) = (next) => ((this?.intelligence(next)));
+			(obj.title) = () => ((this.intelligence_title()));
+			(obj.checked) = (next) => ((this.intelligence(next)));
 			return obj;
 		}
 		agility_title(){
@@ -38353,8 +38361,8 @@ var $;
 		}
 		Agility(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.agility_title()));
-			(obj.checked) = (next) => ((this?.agility(next)));
+			(obj.title) = () => ((this.agility_title()));
+			(obj.checked) = (next) => ((this.agility(next)));
 			return obj;
 		}
 		luck_title(){
@@ -38366,33 +38374,33 @@ var $;
 		}
 		Luck(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.luck_title()));
-			(obj.checked) = (next) => ((this?.luck(next)));
+			(obj.title) = () => ((this.luck_title()));
+			(obj.checked) = (next) => ((this.luck(next)));
 			return obj;
 		}
 		Partial(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Strength()), 
-				(this?.Perception()), 
-				(this?.Endurance()), 
-				(this?.Charisma()), 
-				(this?.Intelligence()), 
-				(this?.Agility()), 
-				(this?.Luck())
+				(this.Strength()), 
+				(this.Perception()), 
+				(this.Endurance()), 
+				(this.Charisma()), 
+				(this.Intelligence()), 
+				(this.Agility()), 
+				(this.Luck())
 			]);
 			return obj;
 		}
 		Demo_items(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.All()), (this?.Partial())]);
+			(obj.rows) = () => ([(this.All()), (this.Partial())]);
 			return obj;
 		}
 		title(){
 			return "Group of checkboxes";
 		}
 		sub(){
-			return [(this?.Demo_items())];
+			return [(this.Demo_items())];
 		}
 		tags(){
 			return ["multi", "group"];
@@ -38453,8 +38461,8 @@ var $;
 		}
 		Base(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.Icon) = () => ((this?.Base_icon()));
-			(obj.checked) = (next) => ((this?.base_checked(next)));
+			(obj.Icon) = () => ((this.Base_icon()));
+			(obj.checked) = (next) => ((this.base_checked(next)));
 			return obj;
 		}
 		Checked_icon(){
@@ -38467,8 +38475,8 @@ var $;
 		}
 		Checked(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.Icon) = () => ((this?.Checked_icon()));
-			(obj.checked) = (next) => ((this?.checked_checked(next)));
+			(obj.Icon) = () => ((this.Checked_icon()));
+			(obj.checked) = (next) => ((this.checked_checked(next)));
 			return obj;
 		}
 		Disabled_icon(){
@@ -38477,7 +38485,7 @@ var $;
 		}
 		Disabled(){
 			const obj = new this.$.$mol_check_box();
-			(obj.Icon) = () => ((this?.Disabled_icon()));
+			(obj.Icon) = () => ((this.Disabled_icon()));
 			(obj.checked) = () => (true);
 			(obj.enabled) = () => (false);
 			return obj;
@@ -38487,9 +38495,9 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Base()), 
-				(this?.Checked()), 
-				(this?.Disabled())
+				(this.Base()), 
+				(this.Checked()), 
+				(this.Disabled())
 			];
 		}
 		tags(){
@@ -38522,12 +38530,12 @@ var $;
 			return "";
 		}
 		hint(){
-			return (this?.format());
+			return (this.format());
 		}
 		Manual(){
 			const obj = new this.$.$mol_search();
-			(obj.query) = (next) => ((this?.value(next)));
-			(obj.hint) = () => ((this?.hint()));
+			(obj.query) = (next) => ((this.value(next)));
+			(obj.hint) = () => ((this.hint()));
 			return obj;
 		}
 		event_scan(next){
@@ -38539,12 +38547,12 @@ var $;
 		}
 		Scan(){
 			const obj = new this.$.$mol_button();
-			(obj.event_click) = (next) => ((this?.event_scan(next)));
-			(obj.sub) = () => ([(this?.scan_label())]);
+			(obj.event_click) = (next) => ((this.event_scan(next)));
+			(obj.sub) = () => ([(this.scan_label())]);
 			return obj;
 		}
 		sub(){
-			return [(this?.Manual()), (this?.Scan())];
+			return [(this.Manual()), (this.Scan())];
 		}
 	};
 	($mol_mem(($.$mol_code.prototype), "value"));
@@ -38661,15 +38669,15 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Qr()), 
-				(this?.Matrix()), 
-				(this?.Upc_e()), 
-				(this?.Upc_a()), 
-				(this?.Ean_8()), 
-				(this?.Ean_13()), 
-				(this?.Code_128()), 
-				(this?.Code_39()), 
-				(this?.Itf())
+				(this.Qr()), 
+				(this.Matrix()), 
+				(this.Upc_e()), 
+				(this.Upc_a()), 
+				(this.Ean_8()), 
+				(this.Ean_13()), 
+				(this.Code_128()), 
+				(this.Code_39()), 
+				(this.Itf())
 			];
 		}
 		tags(){
@@ -39486,7 +39494,7 @@ var $;
 		}
 		Current(){
 			const obj = new this.$.$mol_date();
-			(obj.value_moment) = (next) => ((this?.date_current(next)));
+			(obj.value_moment) = (next) => ((this.date_current(next)));
 			return obj;
 		}
 		formatted(){
@@ -39494,7 +39502,7 @@ var $;
 		}
 		Formatted(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.formatted())]);
+			(obj.sub) = () => ([(this.formatted())]);
 			return obj;
 		}
 		date_empty(next){
@@ -39503,14 +39511,14 @@ var $;
 		}
 		Empty(){
 			const obj = new this.$.$mol_date();
-			(obj.value_moment) = (next) => ((this?.date_empty(next)));
+			(obj.value_moment) = (next) => ((this.date_empty(next)));
 			return obj;
 		}
 		sub(){
 			return [
-				(this?.Current()), 
-				(this?.Formatted()), 
-				(this?.Empty())
+				(this.Current()), 
+				(this.Formatted()), 
+				(this.Empty())
 			];
 		}
 		tags(){
@@ -39589,17 +39597,17 @@ var $;
 		Spam(){
 			const obj = new this.$.$mol_card();
 			(obj.title) = () => ("Spam");
-			(obj.Content) = () => ((this?.Spam_content()));
+			(obj.Content) = () => ((this.Spam_content()));
 			return obj;
 		}
 		Deck(){
 			const obj = new this.$.$mol_deck();
 			(obj.items) = () => ([
-				(this?.Greeting()), 
-				(this?.Question()), 
-				(this?.Answer()), 
-				(this?.Command()), 
-				(this?.Spam())
+				(this.Greeting()), 
+				(this.Question()), 
+				(this.Answer()), 
+				(this.Command()), 
+				(this.Spam())
 			]);
 			return obj;
 		}
@@ -39607,7 +39615,7 @@ var $;
 			return "Simple deck with tabbar";
 		}
 		sub(){
-			return [(this?.Deck())];
+			return [(this.Deck())];
 		}
 		tags(){
 			return ["tabs", "container"];
@@ -39669,12 +39677,12 @@ var $;
 		Cases(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.One()), 
-				(this?.Two()), 
-				(this?.Three()), 
-				(this?.Four()), 
-				(this?.Five()), 
-				(this?.Six())
+				(this.One()), 
+				(this.Two()), 
+				(this.Three()), 
+				(this.Four()), 
+				(this.Five()), 
+				(this.Six())
 			]);
 			return obj;
 		}
@@ -39682,7 +39690,7 @@ var $;
 			return "Text with highlighted found substring";
 		}
 		sub(){
-			return [(this?.Cases())];
+			return [(this.Cases())];
 		}
 		tags(){
 			return ["search", "highlight"];
@@ -39730,14 +39738,14 @@ var $;
 		}
 		Trash(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Trash_icon()), " Trash"]);
+			(obj.sub) = () => ([(this.Trash_icon()), " Trash"]);
 			return obj;
 		}
 		Trash_drop(){
 			const obj = new this.$.$mol_drop();
-			(obj.adopt) = (next) => ((this?.transfer_adopt(next)));
-			(obj.receive) = (next) => ((this?.receive_trash(next)));
-			(obj.Sub) = () => ((this?.Trash()));
+			(obj.adopt) = (next) => ((this.transfer_adopt(next)));
+			(obj.receive) = (next) => ((this.receive_trash(next)));
+			(obj.Sub) = () => ((this.Trash()));
 			return obj;
 		}
 		task_rows(){
@@ -39745,20 +39753,20 @@ var $;
 		}
 		List(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.task_rows()));
+			(obj.rows) = () => ((this.task_rows()));
 			return obj;
 		}
 		Page(){
 			const obj = new this.$.$mol_page();
-			(obj.head) = () => ([(this?.Trash_drop())]);
-			(obj.Body_content) = () => ((this?.List()));
+			(obj.head) = () => ([(this.Trash_drop())]);
+			(obj.Body_content) = () => ((this.List()));
 			return obj;
 		}
 		List_drop(){
 			const obj = new this.$.$mol_drop();
-			(obj.adopt) = (next) => ((this?.transfer_adopt(next)));
-			(obj.receive) = (next) => ((this?.receive(next)));
-			(obj.Sub) = () => ((this?.Page()));
+			(obj.adopt) = (next) => ((this.transfer_adopt(next)));
+			(obj.receive) = (next) => ((this.receive(next)));
+			(obj.Sub) = () => ((this.Page()));
 			return obj;
 		}
 		task_title(id){
@@ -39776,31 +39784,31 @@ var $;
 		}
 		Task_link(id){
 			const obj = new this.$.$mol_link();
-			(obj.uri) = () => ((this?.task_uri(id)));
-			(obj.sub) = () => ([(this?.task_title(id))]);
+			(obj.uri) = () => ((this.task_uri(id)));
+			(obj.sub) = () => ([(this.task_title(id))]);
 			return obj;
 		}
 		Task_drop(id){
 			const obj = new this.$.$mol_drop();
-			(obj.adopt) = (next) => ((this?.transfer_adopt(next)));
-			(obj.receive) = (next) => ((this?.receive_before(id, next)));
-			(obj.Sub) = () => ((this?.Task_link(id)));
+			(obj.adopt) = (next) => ((this.transfer_adopt(next)));
+			(obj.receive) = (next) => ((this.receive_before(id, next)));
+			(obj.Sub) = () => ((this.Task_link(id)));
 			return obj;
 		}
 		task_count(){
 			return 100;
 		}
 		sub(){
-			return [(this?.List_drop())];
+			return [(this.List_drop())];
 		}
 		Task_row(id){
 			const obj = new this.$.$mol_drag();
 			(obj.transfer) = () => ({
-				"text/plain": (this?.task_title(id)), 
-				"text/html": (this?.task_html(id)), 
-				"text/uri-list": (this?.task_uri(id))
+				"text/plain": (this.task_title(id)), 
+				"text/html": (this.task_html(id)), 
+				"text/uri-list": (this.task_uri(id))
 			});
-			(obj.Sub) = () => ((this?.Task_drop(id)));
+			(obj.Sub) = () => ((this.Task_drop(id)));
 			return obj;
 		}
 		tags(){
@@ -39957,25 +39965,25 @@ var $;
 		}
 		Dump_short(){
 			const obj = new this.$.$mol_dump_value();
-			(obj.value) = () => ((this?.value()));
+			(obj.value) = () => ((this.value()));
 			return obj;
 		}
 		Dump_long(){
 			const obj = new this.$.$mol_dump_value();
-			(obj.value) = () => ((this?.value()));
+			(obj.value) = () => ((this.value()));
 			(obj.prototypes) = () => (true);
 			return obj;
 		}
 		Dump_list(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Dump_short()), (this?.Dump_long())]);
+			(obj.rows) = () => ([(this.Dump_short()), (this.Dump_long())]);
 			return obj;
 		}
 		title(){
 			return "Attach files an show them";
 		}
 		sub(){
-			return [(this?.Dump_list())];
+			return [(this.Dump_list())];
 		}
 		tags(){
 			return [
@@ -40039,14 +40047,14 @@ var $;
 		Expander(){
 			const obj = new this.$.$mol_expander();
 			(obj.title) = () => ("Lorem Ipsum");
-			(obj.content) = () => ([(this?.Content())]);
+			(obj.content) = () => ([(this.Content())]);
 			return obj;
 		}
 		title(){
 			return "Simple spoiler";
 		}
 		sub(){
-			return [(this?.Expander())];
+			return [(this.Expander())];
 		}
 		tags(){
 			return [
@@ -40076,7 +40084,7 @@ var $;
 		}
 		Url(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = (next) => ((this?.url(next)));
+			(obj.value) = (next) => ((this.url(next)));
 			return obj;
 		}
 		fetch_data(next){
@@ -40085,12 +40093,12 @@ var $;
 		}
 		Fetch(){
 			const obj = new this.$.$mol_button_major();
-			(obj.click) = (next) => ((this?.fetch_data()));
+			(obj.click) = (next) => ((this.fetch_data()));
 			return obj;
 		}
 		Request(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Url()), (this?.Fetch())]);
+			(obj.sub) = () => ([(this.Url()), (this.Fetch())]);
 			return obj;
 		}
 		data(next){
@@ -40099,19 +40107,19 @@ var $;
 		}
 		Data(){
 			const obj = new this.$.$mol_dump_value();
-			(obj.value) = () => ((this?.data()));
+			(obj.value) = () => ((this.data()));
 			return obj;
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Request()), (this?.Data())]);
+			(obj.rows) = () => ([(this.Request()), (this.Data())]);
 			return obj;
 		}
 		title(){
 			return "Simple spoiler";
 		}
 		sub(){
-			return [(this?.Content())];
+			return [(this.Content())];
 		}
 		tags(){
 			return [
@@ -40165,7 +40173,7 @@ var $;
 			return "Prints large bulk of text";
 		}
 		sub(){
-			return [(this?.Filler())];
+			return [(this.Filler())];
 		}
 		tags(){
 			return [
@@ -40195,12 +40203,12 @@ var $;
 		}
 		Head_row(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Head_content())]);
+			(obj.sub) = () => ([(this.Head_content())]);
 			return obj;
 		}
 		Head(){
 			const obj = new this.$.$mol_float();
-			(obj.sub) = () => ([(this?.Head_row())]);
+			(obj.sub) = () => ([(this.Head_row())]);
 			return obj;
 		}
 		Filler1(){
@@ -40213,19 +40221,19 @@ var $;
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Filler1()), (this?.Filler2())]);
+			(obj.rows) = () => ([(this.Filler1()), (this.Filler2())]);
 			return obj;
 		}
 		Scroll(){
 			const obj = new this.$.$mol_scroll();
-			(obj.sub) = () => ([(this?.Head()), (this?.Content())]);
+			(obj.sub) = () => ([(this.Head()), (this.Content())]);
 			return obj;
 		}
 		title(){
 			return "Floating header example";
 		}
 		sub(){
-			return [(this?.Scroll())];
+			return [(this.Scroll())];
 		}
 		tags(){
 			return ["scroll", "container"];
@@ -40271,14 +40279,14 @@ var $;
 		}
 		Avatars_control(){
 			const obj = new this.$.$mol_attach();
-			(obj.items) = (next) => ((this?.avatars(next)));
+			(obj.items) = (next) => ((this.avatars(next)));
 			return obj;
 		}
 		Avatars_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Avatars");
-			(obj.bid) = () => ((this?.avatars_bid()));
-			(obj.Content) = () => ((this?.Avatars_control()));
+			(obj.bid) = () => ((this.avatars_bid()));
+			(obj.Content) = () => ((this.Avatars_control()));
 			return obj;
 		}
 		name_first_bid(){
@@ -40291,14 +40299,14 @@ var $;
 		Name_first_control(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ("Jack");
-			(obj.value) = (next) => ((this?.name_first(next)));
+			(obj.value) = (next) => ((this.name_first(next)));
 			return obj;
 		}
 		Name_first_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("First Name");
-			(obj.bid) = () => ((this?.name_first_bid()));
-			(obj.Content) = () => ((this?.Name_first_control()));
+			(obj.bid) = () => ((this.name_first_bid()));
+			(obj.Content) = () => ((this.Name_first_control()));
 			return obj;
 		}
 		name_nick_bid(){
@@ -40311,14 +40319,14 @@ var $;
 		Name_nick_control(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ("Capitan");
-			(obj.value) = (next) => ((this?.name_nick(next)));
+			(obj.value) = (next) => ((this.name_nick(next)));
 			return obj;
 		}
 		Name_nick_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Nick Name");
-			(obj.bid) = () => ((this?.name_nick_bid()));
-			(obj.Content) = () => ((this?.Name_nick_control()));
+			(obj.bid) = () => ((this.name_nick_bid()));
+			(obj.Content) = () => ((this.Name_nick_control()));
 			return obj;
 		}
 		name_second_bid(){
@@ -40331,22 +40339,22 @@ var $;
 		Name_second_control(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ("Sparrow");
-			(obj.value) = (next) => ((this?.name_second(next)));
+			(obj.value) = (next) => ((this.name_second(next)));
 			return obj;
 		}
 		Name_second_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Second Name");
-			(obj.bid) = () => ((this?.name_second_bid()));
-			(obj.Content) = () => ((this?.Name_second_control()));
+			(obj.bid) = () => ((this.name_second_bid()));
+			(obj.Content) = () => ((this.Name_second_control()));
 			return obj;
 		}
 		Names(){
 			const obj = new this.$.$mol_form_group();
 			(obj.sub) = () => ([
-				(this?.Name_first_field()), 
-				(this?.Name_nick_field()), 
-				(this?.Name_second_field())
+				(this.Name_first_field()), 
+				(this.Name_nick_field()), 
+				(this.Name_second_field())
 			]);
 			return obj;
 		}
@@ -40359,14 +40367,14 @@ var $;
 		}
 		Age_control(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.age(next)));
+			(obj.value) = (next) => ((this.age(next)));
 			return obj;
 		}
 		Age_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Age");
-			(obj.bid) = () => ((this?.age_bid()));
-			(obj.Content) = () => ((this?.Age_control()));
+			(obj.bid) = () => ((this.age_bid()));
+			(obj.Content) = () => ((this.Age_control()));
 			return obj;
 		}
 		sex_label(){
@@ -40388,15 +40396,15 @@ var $;
 		}
 		Sex_control(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.sex(next)));
-			(obj.options) = () => ((this?.sex_options()));
+			(obj.value) = (next) => ((this.sex(next)));
+			(obj.options) = () => ((this.sex_options()));
 			return obj;
 		}
 		Sex_field(){
 			const obj = new this.$.$mol_form_field();
-			(obj.name) = () => ((this?.sex_label()));
-			(obj.bid) = () => ((this?.sex_bid()));
-			(obj.Content) = () => ((this?.Sex_control()));
+			(obj.name) = () => ((this.sex_label()));
+			(obj.bid) = () => ((this.sex_bid()));
+			(obj.Content) = () => ((this.Sex_control()));
 			return obj;
 		}
 		color_bid(){
@@ -40408,7 +40416,7 @@ var $;
 		}
 		Color_control(){
 			const obj = new this.$.$mol_select();
-			(obj.value) = (next) => ((this?.color(next)));
+			(obj.value) = (next) => ((this.color(next)));
 			(obj.dictionary) = () => ({
 				"": "❔", 
 				"white": "⬜ White", 
@@ -40421,16 +40429,16 @@ var $;
 		Color_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Skin color");
-			(obj.bid) = () => ((this?.color_bid()));
-			(obj.Content) = () => ((this?.Color_control()));
+			(obj.bid) = () => ((this.color_bid()));
+			(obj.Content) = () => ((this.Color_control()));
 			return obj;
 		}
 		Parameters(){
 			const obj = new this.$.$mol_form_group();
 			(obj.sub) = () => ([
-				(this?.Age_field()), 
-				(this?.Sex_field()), 
-				(this?.Color_field())
+				(this.Age_field()), 
+				(this.Sex_field()), 
+				(this.Color_field())
 			]);
 			return obj;
 		}
@@ -40444,14 +40452,14 @@ var $;
 		Mail_control(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ("name@domain.com");
-			(obj.value) = (next) => ((this?.mail(next)));
+			(obj.value) = (next) => ((this.mail(next)));
 			return obj;
 		}
 		Mail_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("E-mail");
-			(obj.bid) = () => ((this?.mail_bid()));
-			(obj.Content) = () => ((this?.Mail_control()));
+			(obj.bid) = () => ((this.mail_bid()));
+			(obj.Content) = () => ((this.Mail_control()));
 			return obj;
 		}
 		signup(next){
@@ -40459,13 +40467,13 @@ var $;
 			return null;
 		}
 		signup_allowed(){
-			return (this?.Form()?.submit_allowed());
+			return (this.Form().submit_allowed());
 		}
 		Signup(){
 			const obj = new this.$.$mol_button_major();
 			(obj.title) = () => ("Sign Up");
-			(obj.click) = (next) => ((this?.signup(next)));
-			(obj.enabled) = () => ((this?.signup_allowed()));
+			(obj.click) = (next) => ((this.signup(next)));
+			(obj.enabled) = () => ((this.signup_allowed()));
 			return obj;
 		}
 		result(next){
@@ -40474,19 +40482,19 @@ var $;
 		}
 		Result(){
 			const obj = new this.$.$mol_status();
-			(obj.message) = () => ((this?.result()));
+			(obj.message) = () => ((this.result()));
 			return obj;
 		}
 		Form(){
 			const obj = new this.$.$mol_form();
 			(obj.body) = () => ([
-				(this?.Avatars_field()), 
-				(this?.Names()), 
-				(this?.Parameters()), 
-				(this?.Mail_field())
+				(this.Avatars_field()), 
+				(this.Names()), 
+				(this.Parameters()), 
+				(this.Mail_field())
 			]);
-			(obj.submit) = (next) => ((this?.signup(next)));
-			(obj.buttons) = () => ([(this?.Signup()), (this?.Result())]);
+			(obj.submit) = (next) => ((this.signup(next)));
+			(obj.buttons) = () => ([(this.Signup()), (this.Result())]);
 			return obj;
 		}
 		title(){
@@ -40507,7 +40515,7 @@ var $;
 			};
 		}
 		sub(){
-			return [(this?.Form())];
+			return [(this.Form())];
 		}
 		tags(){
 			return [
@@ -40869,42 +40877,42 @@ var $;
 			return obj;
 		}
 		publish(next){
-			return (this?.Form()?.submit(next));
+			return (this.Form().submit(next));
 		}
 		publish_allowed(){
-			return (this?.Form()?.submit_allowed());
+			return (this.Form().submit_allowed());
 		}
 		value_str(id, next){
-			return (this?.Form()?.value_str(id, next));
+			return (this.Form().value_str(id, next));
 		}
 		list_string(id, next){
-			return (this?.Form()?.list_string(id, next));
+			return (this.Form().list_string(id, next));
 		}
 		dictionary_bool(id, next){
-			return (this?.Form()?.dictionary_bool(id, next));
+			return (this.Form().dictionary_bool(id, next));
 		}
 		changed(){
-			return (this?.Form()?.changed());
+			return (this.Form().changed());
 		}
 		reset(next){
-			return (this?.Form()?.reset(next));
+			return (this.Form().reset(next));
 		}
 		Title(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ("How I spent the summer..");
-			(obj.value) = (next) => ((this?.value_str("title", next)));
+			(obj.value) = (next) => ((this.value_str("title", next)));
 			return obj;
 		}
 		Title_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Title");
-			(obj.bids) = () => ([(this?.bid_swearing("title")), (this?.bid_short("title"))]);
-			(obj.Content) = () => ((this?.Title()));
+			(obj.bids) = () => ([(this.bid_swearing("title")), (this.bid_short("title"))]);
+			(obj.Content) = () => ((this.Title()));
 			return obj;
 		}
 		Type(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.value_str("type", next)));
+			(obj.value) = (next) => ((this.value_str("type", next)));
 			(obj.options) = () => ({
 				"article": "Article", 
 				"news": "News", 
@@ -40915,38 +40923,38 @@ var $;
 		Type_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Type");
-			(obj.bids) = () => ([(this?.bid_required("type"))]);
-			(obj.Content) = () => ((this?.Type()));
+			(obj.bids) = () => ([(this.bid_required("type"))]);
+			(obj.Content) = () => ((this.Type()));
 			return obj;
 		}
 		Adult(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.value_str("adult", next)));
+			(obj.value) = (next) => ((this.value_str("adult", next)));
 			(obj.options) = () => ({"false": "No", "true": "Yes"});
 			return obj;
 		}
 		Adult_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Adult only");
-			(obj.Content) = () => ((this?.Adult()));
+			(obj.Content) = () => ((this.Adult()));
 			return obj;
 		}
 		Content(){
 			const obj = new this.$.$mol_textarea();
 			(obj.hint) = () => ("Long long story..");
-			(obj.value) = (next) => ((this?.value_str("content", next)));
+			(obj.value) = (next) => ((this.value_str("content", next)));
 			return obj;
 		}
 		Content_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Content");
-			(obj.bids) = () => ([(this?.bid_swearing("content")), (this?.bid_long("content"))]);
-			(obj.Content) = () => ((this?.Content()));
+			(obj.bids) = () => ([(this.bid_swearing("content")), (this.bid_long("content"))]);
+			(obj.Content) = () => ((this.Content()));
 			return obj;
 		}
 		Hobbies(){
 			const obj = new this.$.$mol_check_list();
-			(obj.dictionary) = (next) => ((this?.dictionary_bool("hobbies", next)));
+			(obj.dictionary) = (next) => ((this.dictionary_bool("hobbies", next)));
 			(obj.options) = () => ({
 				"programming": "Programming", 
 				"bikinkg": "Biking", 
@@ -40957,7 +40965,7 @@ var $;
 		Hobbies_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Hobbies");
-			(obj.Content) = () => ((this?.Hobbies()));
+			(obj.Content) = () => ((this.Hobbies()));
 			return obj;
 		}
 		Friends(){
@@ -40972,33 +40980,33 @@ var $;
 				"clay": "Clayface", 
 				"mask": "Black Mask"
 			});
-			(obj.value) = (next) => ((this?.list_string("friends", next)));
+			(obj.value) = (next) => ((this.list_string("friends", next)));
 			return obj;
 		}
 		Friends_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Friends");
-			(obj.Content) = () => ((this?.Friends()));
+			(obj.Content) = () => ((this.Friends()));
 			return obj;
 		}
 		Config(){
 			const obj = new this.$.$mol_form_group();
-			(obj.sub) = () => ([(this?.Adult_field()), (this?.Type_field())]);
+			(obj.sub) = () => ([(this.Adult_field()), (this.Type_field())]);
 			return obj;
 		}
 		form_body(){
 			return [
-				(this?.Title_field()), 
-				(this?.Config()), 
-				(this?.Content_field()), 
-				(this?.Friends_field())
+				(this.Title_field()), 
+				(this.Config()), 
+				(this.Content_field()), 
+				(this.Friends_field())
 			];
 		}
 		Publish(){
 			const obj = new this.$.$mol_button_major();
 			(obj.title) = () => ("Publish");
-			(obj.click) = (next) => ((this?.publish(next)));
-			(obj.enabled) = () => ((this?.publish_allowed()));
+			(obj.click) = (next) => ((this.publish(next)));
+			(obj.enabled) = () => ((this.publish_allowed()));
 			return obj;
 		}
 		result(next){
@@ -41007,32 +41015,32 @@ var $;
 		}
 		Result(){
 			const obj = new this.$.$mol_status();
-			(obj.message) = () => ((this?.result()));
+			(obj.message) = () => ((this.result()));
 			return obj;
 		}
 		Reset(){
 			const obj = new this.$.$mol_button_minor();
 			(obj.title) = () => ("Сбросить");
-			(obj.click) = (next) => ((this?.reset(next)));
-			(obj.enabled) = () => ((this?.changed()));
+			(obj.click) = (next) => ((this.reset(next)));
+			(obj.enabled) = () => ((this.changed()));
 			return obj;
 		}
 		Form(){
 			const obj = new this.$.$mol_form_draft();
-			(obj.model) = () => ((this?.model()));
+			(obj.model) = () => ((this.model()));
 			(obj.form_fields) = () => ([
-				(this?.Title_field()), 
-				(this?.Type_field()), 
-				(this?.Adult_field()), 
-				(this?.Content_field()), 
-				(this?.Hobbies_field()), 
-				(this?.Friends_field())
+				(this.Title_field()), 
+				(this.Type_field()), 
+				(this.Adult_field()), 
+				(this.Content_field()), 
+				(this.Hobbies_field()), 
+				(this.Friends_field())
 			]);
-			(obj.body) = () => ((this?.form_body()));
+			(obj.body) = () => ((this.form_body()));
 			(obj.buttons) = () => ([
-				(this?.Publish()), 
-				(this?.Result()), 
-				(this?.Reset())
+				(this.Publish()), 
+				(this.Result()), 
+				(this.Reset())
 			]);
 			return obj;
 		}
@@ -41055,7 +41063,7 @@ var $;
 			return "> 100 letters";
 		}
 		sub(){
-			return [(this?.Form())];
+			return [(this.Form())];
 		}
 		tags(){
 			return [
@@ -41244,13 +41252,13 @@ var $;
 		Ip(){
 			const obj = new this.$.$mol_format();
 			(obj.mask) = () => ("___.___.___.___");
-			(obj.value) = (next) => ((this?.ip(next)));
+			(obj.value) = (next) => ((this.ip(next)));
 			return obj;
 		}
 		Ip_card(){
 			const obj = new this.$.$mol_card();
-			(obj.status) = () => ((this?.ip()));
-			(obj.Content) = () => ((this?.Ip()));
+			(obj.status) = () => ((this.ip()));
+			(obj.Content) = () => ((this.Ip()));
 			return obj;
 		}
 		phone(next){
@@ -41259,13 +41267,13 @@ var $;
 		}
 		Phone(){
 			const obj = new this.$.$mol_phone();
-			(obj.value) = (next) => ((this?.phone(next)));
+			(obj.value) = (next) => ((this.phone(next)));
 			return obj;
 		}
 		Phone_card(){
 			const obj = new this.$.$mol_card();
-			(obj.status) = () => ((this?.phone()));
-			(obj.Content) = () => ((this?.Phone()));
+			(obj.status) = () => ((this.phone()));
+			(obj.Content) = () => ((this.Phone()));
 			return obj;
 		}
 		card(next){
@@ -41275,13 +41283,13 @@ var $;
 		Card(){
 			const obj = new this.$.$mol_format();
 			(obj.mask) = () => ("____ ____ ____ ____");
-			(obj.value) = (next) => ((this?.card(next)));
+			(obj.value) = (next) => ((this.card(next)));
 			return obj;
 		}
 		Card_card(){
 			const obj = new this.$.$mol_card();
-			(obj.status) = () => ((this?.card()));
-			(obj.Content) = () => ((this?.Card()));
+			(obj.status) = () => ((this.card()));
+			(obj.Content) = () => ((this.Card()));
 			return obj;
 		}
 		moment(next){
@@ -41291,13 +41299,13 @@ var $;
 		Moment(){
 			const obj = new this.$.$mol_format();
 			(obj.mask) = () => ("__.__.____ __:__");
-			(obj.value) = (next) => ((this?.moment(next)));
+			(obj.value) = (next) => ((this.moment(next)));
 			return obj;
 		}
 		Moment_card(){
 			const obj = new this.$.$mol_card();
-			(obj.status) = () => ((this?.moment()));
-			(obj.Content) = () => ((this?.Moment()));
+			(obj.status) = () => ((this.moment()));
+			(obj.Content) = () => ((this.Moment()));
 			return obj;
 		}
 		title(){
@@ -41305,10 +41313,10 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Ip_card()), 
-				(this?.Phone_card()), 
-				(this?.Card_card()), 
-				(this?.Moment_card())
+				(this.Ip_card()), 
+				(this.Phone_card()), 
+				(this.Card_card()), 
+				(this.Moment_card())
 			];
 		}
 		tags(){
@@ -41350,7 +41358,7 @@ var $;
 			return obj;
 		}
 		sub(){
-			return [(this?.Frame())];
+			return [(this.Frame())];
 		}
 		tags(){
 			return ["iframe", "container"];
@@ -41372,7 +41380,7 @@ var $;
 		}
 		App(){
 			const obj = new this.$.$mol_gallery();
-			(obj.items) = () => ((this?.items()));
+			(obj.items) = () => ((this.items()));
 			return obj;
 		}
 		item_title(id){
@@ -41380,7 +41388,7 @@ var $;
 		}
 		Item_image(id){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.item_title(id)));
+			(obj.id) = () => ((this.item_title(id)));
 			return obj;
 		}
 		title(){
@@ -41390,11 +41398,11 @@ var $;
 			return 101;
 		}
 		sub(){
-			return [(this?.App())];
+			return [(this.App())];
 		}
 		Item(id){
 			const obj = new this.$.$mol_stack();
-			(obj.sub) = () => ([(this?.Item_image(id))]);
+			(obj.sub) = () => ([(this.Item_image(id))]);
 			return obj;
 		}
 		tags(){
@@ -41482,69 +41490,69 @@ var $;
 		}
 		Heading(id){
 			const obj = new this.$.$mol_html_view_heading();
-			(obj.level) = () => ((this?.heading_level(id)));
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.level) = () => ((this.heading_level(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		Paragraph(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		List(id){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.content(id)));
+			(obj.rows) = () => ((this.content(id)));
 			return obj;
 		}
 		Quote(id){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.content(id)));
+			(obj.rows) = () => ((this.content(id)));
 			return obj;
 		}
 		Strong(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		Emphasis(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		Deleted(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		Inserted(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		Subscript(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		Superscript(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		Code(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ((this?.content(id)));
+			(obj.sub) = () => ((this.content(id)));
 			return obj;
 		}
 		Link(id){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.uri) = () => ((this?.link_uri(id)));
-			(obj.content) = () => ((this?.content(id)));
+			(obj.uri) = () => ((this.link_uri(id)));
+			(obj.content) = () => ((this.content(id)));
 			return obj;
 		}
 		Image(id){
 			const obj = new this.$.$mol_image();
-			(obj.uri) = () => ((this?.image_uri(id)));
+			(obj.uri) = () => ((this.image_uri(id)));
 			return obj;
 		}
 		Break(id){
@@ -41554,8 +41562,8 @@ var $;
 		}
 		Text(id){
 			const obj = new this.$.$mol_dimmer();
-			(obj.needle) = () => ((this?.highlight()));
-			(obj.haystack) = () => ((this?.text(id)));
+			(obj.needle) = () => ((this.highlight()));
+			(obj.haystack) = () => ((this.text(id)));
 			return obj;
 		}
 	};
@@ -41579,7 +41587,7 @@ var $;
 			return 1;
 		}
 		attr(){
-			return {...(super.attr()), "mol_html_view_heading": (this?.level())};
+			return {...(super.attr()), "mol_html_view_heading": (this.level())};
 		}
 	};
 
@@ -41850,7 +41858,7 @@ var $;
 			return "View raw HTML";
 		}
 		sub(){
-			return [(this?.Html())];
+			return [(this.Html())];
 		}
 		tags(){
 			return ["html", "render"];
@@ -41894,14 +41902,14 @@ var $;
 			const obj = new this.$.$mol_view();
 			(obj.minimal_width) = () => (0);
 			(obj.minimal_height) = () => (0);
-			(obj.sub) = () => ([(this?.before_load(id))]);
+			(obj.sub) = () => ([(this.before_load(id))]);
 			return obj;
 		}
 		After(id){
 			const obj = new this.$.$mol_view();
 			(obj.minimal_width) = () => (0);
 			(obj.minimal_height) = () => (0);
-			(obj.sub) = () => ([(this?.after_load(id))]);
+			(obj.sub) = () => ([(this.after_load(id))]);
 			return obj;
 		}
 	};
@@ -41989,7 +41997,7 @@ var $;
 		}
 		Photo(id){
 			const obj = new this.$.$mol_avatar();
-			(obj.id) = () => ((this?.id(id)));
+			(obj.id) = () => ((this.id(id)));
 			return obj;
 		}
 		name(id){
@@ -41997,7 +42005,7 @@ var $;
 		}
 		Name(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.title) = () => ((this?.name(id)));
+			(obj.title) = () => ((this.name(id)));
 			return obj;
 		}
 		city(id){
@@ -42005,29 +42013,29 @@ var $;
 		}
 		City(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.title) = () => ((this?.city(id)));
+			(obj.title) = () => ((this.city(id)));
 			return obj;
 		}
 		Info(id){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Name(id)), (this?.City(id))]);
+			(obj.rows) = () => ([(this.Name(id)), (this.City(id))]);
 			return obj;
 		}
 		Item(id){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Photo(id)), (this?.Info(id))]);
+			(obj.sub) = () => ([(this.Photo(id)), (this.Info(id))]);
 			return obj;
 		}
 		List(){
 			const obj = new this.$.$mol_infinite();
-			(obj.before) = (id) => ((this?.before(id)));
-			(obj.after) = (id) => ((this?.after(id)));
-			(obj.Row) = (id) => ((this?.Item(id)));
+			(obj.before) = (id) => ((this.before(id)));
+			(obj.after) = (id) => ((this.after(id)));
+			(obj.Row) = (id) => ((this.Item(id)));
 			return obj;
 		}
 		Scroll(){
 			const obj = new this.$.$mol_scroll();
-			(obj.sub) = () => ([(this?.List())]);
+			(obj.sub) = () => ([(this.List())]);
 			return obj;
 		}
 		title(){
@@ -42037,7 +42045,7 @@ var $;
 			return 20;
 		}
 		sub(){
-			return [(this?.Scroll())];
+			return [(this.Scroll())];
 		}
 		tags(){
 			return [
@@ -42278,20 +42286,20 @@ var $;
 		Name_control(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ("Jack Sparrow");
-			(obj.value) = (next) => ((this?.user_name(next)));
+			(obj.value) = (next) => ((this.user_name(next)));
 			return obj;
 		}
 		Name(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("User name");
-			(obj.Content) = () => ((this?.Name_control()));
+			(obj.Content) = () => ((this.Name_control()));
 			return obj;
 		}
 		title(){
 			return "Labeled content of some types";
 		}
 		sub(){
-			return [(this?.Provider()), (this?.Name())];
+			return [(this.Provider()), (this.Name())];
 		}
 		tags(){
 			return [
@@ -42374,8 +42382,8 @@ var $;
 		field(){
 			return {
 				...(super.field()), 
-				"width": (this?.width()), 
-				"height": (this?.height())
+				"width": (this.width()), 
+				"height": (this.height())
 			};
 		}
 		paint(){
@@ -42445,24 +42453,24 @@ var $;
 			return null;
 		}
 		context(){
-			return (this?.Sample()?.context());
+			return (this.Sample().context());
 		}
 		width(){
-			return (this?.Sample()?.width());
+			return (this.Sample().width());
 		}
 		height(){
-			return (this?.Sample()?.height());
+			return (this.Sample().height());
 		}
 		Sample(){
 			const obj = new this.$.$mol_canvas();
-			(obj.paint) = () => ((this?.paint()));
+			(obj.paint) = () => ((this.paint()));
 			return obj;
 		}
 		title(){
 			return "Custom flex layout engine";
 		}
 		sub(){
-			return [(this?.Sample())];
+			return [(this.Sample())];
 		}
 		aspects(){
 			return ["Algorithm/Constraint"];
@@ -42822,7 +42830,7 @@ var $;
 		}
 		This(){
 			const obj = new this.$.$mol_link();
-			(obj.sub) = () => ([(this?.this_label())]);
+			(obj.sub) = () => ([(this.this_label())]);
 			return obj;
 		}
 		red_label(){
@@ -42831,7 +42839,7 @@ var $;
 		Red(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"color": "red"});
-			(obj.sub) = () => ([(this?.red_label())]);
+			(obj.sub) = () => ([(this.red_label())]);
 			return obj;
 		}
 		green_label(){
@@ -42840,7 +42848,7 @@ var $;
 		Green(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"color": "green"});
-			(obj.sub) = () => ([(this?.green_label())]);
+			(obj.sub) = () => ([(this.green_label())]);
 			return obj;
 		}
 		blue_label(){
@@ -42849,7 +42857,7 @@ var $;
 		Blue(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"color": "blue"});
-			(obj.sub) = () => ([(this?.blue_label())]);
+			(obj.sub) = () => ([(this.blue_label())]);
 			return obj;
 		}
 		external_hint(){
@@ -42859,7 +42867,7 @@ var $;
 			const obj = new this.$.$mol_link();
 			(obj.uri) = () => ("http://example.org");
 			(obj.title) = () => ("example.org");
-			(obj.hint) = () => ((this?.external_hint()));
+			(obj.hint) = () => ((this.external_hint()));
 			return obj;
 		}
 		object_uri(){
@@ -42874,20 +42882,20 @@ var $;
 		}
 		Download(){
 			const obj = new this.$.$mol_link();
-			(obj.uri) = () => ((this?.object_uri()));
+			(obj.uri) = () => ((this.object_uri()));
 			(obj.file_name) = () => ("file.csv");
-			(obj.sub) = () => ([(this?.Download_icon()), (this?.download_label())]);
+			(obj.sub) = () => ([(this.Download_icon()), (this.download_label())]);
 			return obj;
 		}
 		Demo_items(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.This()), 
-				(this?.Red()), 
-				(this?.Green()), 
-				(this?.Blue()), 
-				(this?.External()), 
-				(this?.Download())
+				(this.This()), 
+				(this.Red()), 
+				(this.Green()), 
+				(this.Blue()), 
+				(this.External()), 
+				(this.Download())
 			]);
 			return obj;
 		}
@@ -42895,7 +42903,7 @@ var $;
 			return "Some hyperlinks";
 		}
 		sub(){
-			return [(this?.Demo_items())];
+			return [(this.Demo_items())];
 		}
 		tags(){
 			return [
@@ -42953,24 +42961,24 @@ var $;
 		}
 		Input(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = (next) => ((this?.uri(next)));
+			(obj.value) = (next) => ((this.uri(next)));
 			return obj;
 		}
 		Output(){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.uri) = () => ((this?.uri()));
+			(obj.uri) = () => ((this.uri()));
 			return obj;
 		}
 		Blocks(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Input()), (this?.Output())]);
+			(obj.rows) = () => ([(this.Input()), (this.Output())]);
 			return obj;
 		}
 		title(){
 			return "Link with icon";
 		}
 		sub(){
-			return [(this?.Blocks())];
+			return [(this.Blocks())];
 		}
 		tags(){
 			return [
@@ -43016,7 +43024,7 @@ var $;
 			return false;
 		}
 		event(){
-			return {...(super.event()), "mousedown": (next) => (this?.generate(next))};
+			return {...(super.event()), "mousedown": (next) => (this.generate(next))};
 		}
 	};
 	($mol_mem(($.$mol_link_lazy.prototype), "generate"));
@@ -43058,17 +43066,17 @@ var $;
 		}
 		Download(){
 			const obj = new this.$.$mol_link_lazy();
-			(obj.hint) = () => ((this?.title()));
-			(obj.uri_generated) = () => ((this?.uri_generated()));
-			(obj.file_name) = () => ((this?.download_file()));
-			(obj.sub) = () => ([(this?.Download_icon()), (this?.download_label())]);
+			(obj.hint) = () => ((this.title()));
+			(obj.uri_generated) = () => ((this.uri_generated()));
+			(obj.file_name) = () => ((this.download_file()));
+			(obj.sub) = () => ([(this.Download_icon()), (this.download_label())]);
 			return obj;
 		}
 		title(){
 			return "Lazy generated link";
 		}
 		sub(){
-			return [(this?.Download())];
+			return [(this.Download())];
 		}
 		tags(){
 			return [
@@ -43113,24 +43121,24 @@ var $;
 		}
 		Input(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = (next) => ((this?.uri(next)));
+			(obj.value) = (next) => ((this.uri(next)));
 			return obj;
 		}
 		Output(){
 			const obj = new this.$.$mol_link_source();
-			(obj.uri) = () => ((this?.uri()));
+			(obj.uri) = () => ((this.uri()));
 			return obj;
 		}
 		Blocks(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Input()), (this?.Output())]);
+			(obj.rows) = () => ([(this.Input()), (this.Output())]);
 			return obj;
 		}
 		title(){
 			return "Link with icon";
 		}
 		sub(){
-			return [(this?.Blocks())];
+			return [(this.Blocks())];
 		}
 		tags(){
 			return [
@@ -43162,7 +43170,7 @@ var $;
 		}
 		Items_count(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.items_count(next)));
+			(obj.value) = (next) => ((this.items_count(next)));
 			(obj.value_min) = () => (0);
 			(obj.value_max) = () => (100000);
 			return obj;
@@ -43170,7 +43178,7 @@ var $;
 		Items_count_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Items count");
-			(obj.content) = () => ([(this?.Items_count())]);
+			(obj.content) = () => ([(this.Items_count())]);
 			return obj;
 		}
 		item_title(id){
@@ -43178,11 +43186,11 @@ var $;
 		}
 		Item(id){
 			const obj = new this.$.$mol_link();
-			(obj.title) = () => ((this?.item_title(id)));
+			(obj.title) = () => ((this.item_title(id)));
 			return obj;
 		}
 		list_items(){
-			return [(this?.Item("0"))];
+			return [(this.Item("0"))];
 		}
 		List_empty(){
 			const obj = new this.$.$mol_paragraph();
@@ -43191,12 +43199,12 @@ var $;
 		}
 		Items(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.list_items()));
-			(obj.Empty) = () => ((this?.List_empty()));
+			(obj.rows) = () => ((this.list_items()));
+			(obj.Empty) = () => ((this.List_empty()));
 			return obj;
 		}
 		sub(){
-			return [(this?.Items_count_label()), (this?.Items())];
+			return [(this.Items_count_label()), (this.Items())];
 		}
 		tags(){
 			return [
@@ -43249,13 +43257,13 @@ var $;
 		}
 		Check(){
 			const obj = new this.$.$mol_check_group();
-			(obj.checks) = () => ((this?.check_list()));
+			(obj.checks) = () => ((this.check_list()));
 			(obj.title) = () => ("Good Goods");
 			return obj;
 		}
 		Head(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Check())]);
+			(obj.sub) = () => ([(this.Check())]);
 			return obj;
 		}
 		row_id(id, next){
@@ -43268,14 +43276,14 @@ var $;
 		}
 		Id(id){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.row_id(id)));
-			(obj.checked) = (next) => ((this?.row_checked(id, next)));
+			(obj.title) = () => ((this.row_id(id)));
+			(obj.checked) = (next) => ((this.row_checked(id, next)));
 			return obj;
 		}
 		Id_labeler(id){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("ID");
-			(obj.Content) = () => ((this?.Id(id)));
+			(obj.Content) = () => ((this.Id(id)));
 			return obj;
 		}
 		row_uri(id){
@@ -43286,14 +43294,14 @@ var $;
 		}
 		Title(id){
 			const obj = new this.$.$mol_link_iconed();
-			(obj.uri) = () => ((this?.row_uri(id)));
-			(obj.title) = () => ((this?.row_title(id)));
+			(obj.uri) = () => ((this.row_uri(id)));
+			(obj.title) = () => ((this.row_title(id)));
 			return obj;
 		}
 		Title_labeler(id){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Product Name");
-			(obj.Content) = () => ((this?.Title(id)));
+			(obj.Content) = () => ((this.Title(id)));
 			return obj;
 		}
 		row_color(id, next){
@@ -43305,14 +43313,14 @@ var $;
 		}
 		Color(id){
 			const obj = new this.$.$mol_select();
-			(obj.value) = (next) => ((this?.row_color(id, next)));
-			(obj.options) = () => ((this?.colors()));
+			(obj.value) = (next) => ((this.row_color(id, next)));
+			(obj.options) = () => ((this.colors()));
 			return obj;
 		}
 		Color_labeler(id){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Color");
-			(obj.Content) = () => ((this?.Color(id)));
+			(obj.Content) = () => ((this.Color(id)));
 			return obj;
 		}
 		row_status(id, next){
@@ -43328,14 +43336,14 @@ var $;
 		}
 		Status(id){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.row_status(id, next)));
-			(obj.options) = () => ((this?.status_options()));
+			(obj.value) = (next) => ((this.row_status(id, next)));
+			(obj.options) = () => ((this.status_options()));
 			return obj;
 		}
 		Status_labeler(id){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Status");
-			(obj.Content) = () => ((this?.Status(id)));
+			(obj.Content) = () => ((this.Status(id)));
 			return obj;
 		}
 		row_quantity(id, next){
@@ -43344,13 +43352,13 @@ var $;
 		}
 		Quantity(id){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.row_quantity(id, next)));
+			(obj.value) = (next) => ((this.row_quantity(id, next)));
 			return obj;
 		}
 		Quantity_labeler(id){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Quantity");
-			(obj.Content) = () => ((this?.Quantity(id)));
+			(obj.Content) = () => ((this.Quantity(id)));
 			return obj;
 		}
 		row_moment(id, next){
@@ -43360,38 +43368,38 @@ var $;
 		}
 		Date(id){
 			const obj = new this.$.$mol_date();
-			(obj.value_moment) = (next) => ((this?.row_moment(id, next)));
+			(obj.value_moment) = (next) => ((this.row_moment(id, next)));
 			return obj;
 		}
 		Date_labeler(id){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Supply Time");
-			(obj.Content) = () => ((this?.Date(id)));
+			(obj.Content) = () => ((this.Date(id)));
 			return obj;
 		}
 		row_content(id){
 			return [
-				(this?.Id_labeler(id)), 
-				(this?.Title_labeler(id)), 
-				(this?.Color_labeler(id)), 
-				(this?.Status_labeler(id)), 
-				(this?.Quantity_labeler(id)), 
-				(this?.Date_labeler(id))
+				(this.Id_labeler(id)), 
+				(this.Title_labeler(id)), 
+				(this.Color_labeler(id)), 
+				(this.Status_labeler(id)), 
+				(this.Quantity_labeler(id)), 
+				(this.Date_labeler(id))
 			];
 		}
 		Row(id){
 			const obj = new this.$.$mol_row();
 			(obj.minimal_height) = () => (100);
 			(obj.minimal_width) = () => (200);
-			(obj.sub) = () => ((this?.row_content(id)));
+			(obj.sub) = () => ((this.row_content(id)));
 			return obj;
 		}
 		rows(){
-			return [(this?.Row("0"))];
+			return [(this.Row("0"))];
 		}
 		Rows(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.rows()));
+			(obj.rows) = () => ((this.rows()));
 			return obj;
 		}
 		title(){
@@ -43401,7 +43409,7 @@ var $;
 			return 9999;
 		}
 		sub(){
-			return [(this?.Head()), (this?.Rows())];
+			return [(this.Head()), (this.Rows())];
 		}
 		tags(){
 			return [
@@ -43723,7 +43731,7 @@ var $;
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.root_rows()));
+			(obj.rows) = () => ((this.root_rows()));
 			return obj;
 		}
 		row_title(id){
@@ -43731,7 +43739,7 @@ var $;
 		}
 		Row_title(id){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ([(this?.row_title(id))]);
+			(obj.sub) = () => ([(this.row_title(id))]);
 			return obj;
 		}
 		row_expanded(id, next){
@@ -43743,21 +43751,21 @@ var $;
 		}
 		Row_content(id){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ((this?.row_content(id)));
+			(obj.rows) = () => ((this.row_content(id)));
 			return obj;
 		}
 		title(){
 			return "Large list of rows with dynamic content";
 		}
 		sub(){
-			return [(this?.Content())];
+			return [(this.Content())];
 		}
 		Row(id){
 			const obj = new this.$.$mol_expander();
-			(obj.label) = () => ([(this?.Row_title(id))]);
-			(obj.expanded) = (next) => ((this?.row_expanded(id, next)));
+			(obj.label) = () => ([(this.Row_title(id))]);
+			(obj.expanded) = (next) => ((this.row_expanded(id, next)));
 			(obj.expandable) = () => (true);
-			(obj.Content) = () => ((this?.Row_content(id)));
+			(obj.Content) = () => ((this.Row_content(id)));
 			return obj;
 		}
 		tags(){
@@ -43888,14 +43896,14 @@ var $;
 			return obj;
 		}
 		box(){
-			const obj = new this.$.$mol_vector_2d((this?.box_lat()), (this?.box_lon()));
+			const obj = new this.$.$mol_vector_2d((this.box_lat()), (this.box_lon()));
 			return obj;
 		}
 		hint(){
 			return "";
 		}
 		title(){
-			return (this?.address());
+			return (this.address());
 		}
 		content(){
 			return "";
@@ -44052,21 +44060,21 @@ var $;
 		}
 		Place(){
 			const obj = new this.$.$mol_map_yandex_mark();
-			(obj.title) = () => ((this?.place_title()));
-			(obj.address) = () => ((this?.place_addres()));
-			(obj.content) = () => ((this?.place_content()));
+			(obj.title) = () => ((this.place_title()));
+			(obj.address) = () => ((this.place_addres()));
+			(obj.content) = () => ((this.place_content()));
 			return obj;
 		}
 		Map(){
 			const obj = new this.$.$mol_map_yandex();
-			(obj.objects) = () => ([(this?.Place())]);
+			(obj.objects) = () => ([(this.Place())]);
 			return obj;
 		}
 		title(){
 			return "Simple Yandex Maps wrapper";
 		}
 		sub(){
-			return [(this?.Map())];
+			return [(this.Map())];
 		}
 		aspects(){
 			return ["Integration", "Widget/Map"];
@@ -44144,7 +44152,7 @@ var $;
 		}
 		Preview(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.preview(next)));
+			(obj.value) = (next) => ((this.preview(next)));
 			(obj.options) = () => ({"html": "HTML", "view": "View"});
 			return obj;
 		}
@@ -44154,18 +44162,18 @@ var $;
 		}
 		Marked_text(){
 			const obj = new this.$.$mol_textarea();
-			(obj.value) = (next) => ((this?.marked(next)));
+			(obj.value) = (next) => ((this.marked(next)));
 			return obj;
 		}
 		Marked(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("MarkedText");
 			(obj.tools) = () => ([
-				(this?.Lights()), 
-				(this?.Source()), 
-				(this?.Preview())
+				(this.Lights()), 
+				(this.Source()), 
+				(this.Preview())
 			]);
-			(obj.body) = () => ([(this?.Marked_text())]);
+			(obj.body) = () => ([(this.Marked_text())]);
 			return obj;
 		}
 		html(){
@@ -44174,26 +44182,26 @@ var $;
 		Html_text(){
 			const obj = new this.$.$mol_text_code();
 			(obj.sidebar_showed) = () => (true);
-			(obj.text) = () => ((this?.html()));
+			(obj.text) = () => ((this.html()));
 			return obj;
 		}
 		Html(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("HTML");
-			(obj.tools) = () => ([(this?.Preview_close())]);
-			(obj.body) = () => ([(this?.Html_text())]);
+			(obj.tools) = () => ([(this.Preview_close())]);
+			(obj.body) = () => ([(this.Html_text())]);
 			return obj;
 		}
 		View_text(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.marked()));
+			(obj.text) = () => ((this.marked()));
 			return obj;
 		}
 		View(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("View");
-			(obj.tools) = () => ([(this?.Preview_close())]);
-			(obj.body) = () => ([(this?.View_text())]);
+			(obj.tools) = () => ([(this.Preview_close())]);
+			(obj.body) = () => ([(this.View_text())]);
 			return obj;
 		}
 		Preview_close_icon(){
@@ -44201,18 +44209,18 @@ var $;
 			return obj;
 		}
 		plugins(){
-			return [(this?.Theme())];
+			return [(this.Theme())];
 		}
 		pages(){
 			return [
-				(this?.Marked()), 
-				(this?.Html()), 
-				(this?.View())
+				(this.Marked()), 
+				(this.Html()), 
+				(this.View())
 			];
 		}
 		Preview_close(){
 			const obj = new this.$.$mol_link();
-			(obj.sub) = () => ([(this?.Preview_close_icon())]);
+			(obj.sub) = () => ([(this.Preview_close_icon())]);
 			(obj.arg) = () => ({"preview": null});
 			return obj;
 		}
@@ -44289,7 +44297,7 @@ var $;
 			return "CROWD Text Merge";
 		}
 		sub(){
-			return [(this?.Sandbox())];
+			return [(this.Sandbox())];
 		}
 		tags(){
 			return ["MarkDown", "HTML"];
@@ -44329,7 +44337,7 @@ var $;
 		}
 		Rate(){
 			const obj = new this.$.$mol_speck();
-			(obj.value) = () => ((this?.rate()));
+			(obj.value) = () => ((this.rate()));
 			return obj;
 		}
 		uri(next){
@@ -44339,7 +44347,7 @@ var $;
 		Uri(){
 			const obj = new this.$.$mol_textarea();
 			(obj.hint) = () => ("harp;query");
-			(obj.value) = (next) => ((this?.uri(next)));
+			(obj.value) = (next) => ((this.uri(next)));
 			return obj;
 		}
 		json(next){
@@ -44348,15 +44356,15 @@ var $;
 		}
 		Json(){
 			const obj = new this.$.$mol_dump_value();
-			(obj.value) = () => ((this?.json()));
+			(obj.value) = () => ((this.json()));
 			return obj;
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Rate()), 
-				(this?.Uri()), 
-				(this?.Json())
+				(this.Rate()), 
+				(this.Uri()), 
+				(this.Json())
 			]);
 			return obj;
 		}
@@ -44364,13 +44372,13 @@ var $;
 			return "HARP - Humane API REST Protocol";
 		}
 		plugins(){
-			return [(this?.Theme())];
+			return [(this.Theme())];
 		}
 		tools(){
-			return [(this?.Source()), (this?.Lights())];
+			return [(this.Source()), (this.Lights())];
 		}
 		body(){
-			return [(this?.Content())];
+			return [(this.Content())];
 		}
 	};
 	($mol_mem(($.$hyoo_harp_app.prototype), "Theme"));
@@ -44560,7 +44568,7 @@ var $;
 ;
 	($.$hyoo_harp_demo) = class $hyoo_harp_demo extends ($.$mol_example_large) {
 		title(){
-			return (this?.Sandbox()?.title());
+			return (this.Sandbox().title());
 		}
 		Sandbox(){
 			const obj = new this.$.$hyoo_harp_app();
@@ -44568,7 +44576,7 @@ var $;
 			return obj;
 		}
 		sub(){
-			return [(this?.Sandbox())];
+			return [(this.Sandbox())];
 		}
 		tags(){
 			return [
@@ -44595,14 +44603,14 @@ var $;
 	($.$mol_nav_demo) = class $mol_nav_demo extends ($.$mol_example) {
 		Nav(){
 			const obj = new this.$.$mol_nav();
-			(obj.keys_x) = () => ((this?.tab_list()));
-			(obj.current_x) = (next) => ((this?.tab_current(next)));
-			(obj.keys_y) = () => ((this?.row_list()));
-			(obj.current_y) = (next) => ((this?.row_current(next)));
+			(obj.keys_x) = () => ((this.tab_list()));
+			(obj.current_x) = (next) => ((this.tab_current(next)));
+			(obj.keys_y) = () => ((this.row_list()));
+			(obj.current_y) = (next) => ((this.row_current(next)));
 			return obj;
 		}
 		tab_list(){
-			return (this?.Tab_list()?.keys());
+			return (this.Tab_list().keys());
 		}
 		tab_current(next){
 			if(next !== undefined) return next;
@@ -44610,7 +44618,7 @@ var $;
 		}
 		Tab_list(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.tab_current(next)));
+			(obj.value) = (next) => ((this.tab_current(next)));
 			(obj.options) = () => ({
 				"first": "First", 
 				"second": "Second", 
@@ -44619,7 +44627,7 @@ var $;
 			return obj;
 		}
 		row_list(){
-			return (this?.Row_list()?.keys());
+			return (this.Row_list().keys());
 		}
 		row_current(next){
 			if(next !== undefined) return next;
@@ -44627,7 +44635,7 @@ var $;
 		}
 		Row_list(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.row_current(next)));
+			(obj.value) = (next) => ((this.row_current(next)));
 			(obj.options) = () => ({
 				"first": "First", 
 				"second": "Second", 
@@ -44637,7 +44645,7 @@ var $;
 		}
 		Demo_items(){
 			const obj = new this.$.$mol_card();
-			(obj.content) = () => ([(this?.Tab_list()), (this?.Row_list())]);
+			(obj.content) = () => ([(this.Tab_list()), (this.Row_list())]);
 			(obj.status) = () => ("Select option and use keys to switch");
 			return obj;
 		}
@@ -44645,10 +44653,10 @@ var $;
 			return "Number input control with various configuration";
 		}
 		plugins(){
-			return [(this?.Nav())];
+			return [(this.Nav())];
 		}
 		sub(){
-			return [(this?.Demo_items())];
+			return [(this.Demo_items())];
 		}
 		tags(){
 			return ["navigation"];
@@ -44689,7 +44697,7 @@ var $;
 		}
 		Value_string(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = () => ((this?.value_string()));
+			(obj.value) = () => ((this.value_string()));
 			(obj.disabled) = () => (true);
 			return obj;
 		}
@@ -44703,240 +44711,240 @@ var $;
 		Reset(){
 			const obj = new this.$.$mol_button_major();
 			(obj.title) = () => ("Reset");
-			(obj.enabled) = (next) => ((this?.reset_enabled()));
-			(obj.click) = (next) => ((this?.reset_value(next)));
+			(obj.enabled) = (next) => ((this.reset_enabled()));
+			(obj.click) = (next) => ((this.reset_value(next)));
 			return obj;
 		}
 		Section_value_bar(){
 			const obj = new this.$.$mol_bar();
-			(obj.sub) = () => ([(this?.Value_string()), (this?.Reset())]);
+			(obj.sub) = () => ([(this.Value_string()), (this.Reset())]);
 			return obj;
 		}
 		Section_value_row(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Section_value_bar())]);
+			(obj.sub) = () => ([(this.Section_value_bar())]);
 			return obj;
 		}
 		Section_value(){
 			const obj = new this.$.$mol_section();
 			(obj.title) = () => ("Stringified number value");
-			(obj.content) = () => ([(this?.Section_value_row())]);
+			(obj.content) = () => ([(this.Section_value_row())]);
 			return obj;
 		}
 		Initial_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			return obj;
 		}
 		Initial_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Initial");
-			(obj.content) = () => ([(this?.Initial_number())]);
+			(obj.content) = () => ([(this.Initial_number())]);
 			return obj;
 		}
 		Hint_number(){
 			const obj = new this.$.$mol_number();
 			(obj.hint) = () => ("Any number");
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			return obj;
 		}
 		Hint_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Hint showed (if empty value)");
-			(obj.content) = () => ([(this?.Hint_number())]);
+			(obj.content) = () => ([(this.Hint_number())]);
 			return obj;
 		}
 		Section_initial_row(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Initial_number_label()), (this?.Hint_number_label())]);
+			(obj.sub) = () => ([(this.Initial_number_label()), (this.Hint_number_label())]);
 			return obj;
 		}
 		Section_initial(){
 			const obj = new this.$.$mol_section();
 			(obj.title) = () => ("Simple");
-			(obj.content) = () => ([(this?.Section_initial_row())]);
+			(obj.content) = () => ([(this.Section_initial_row())]);
 			return obj;
 		}
 		Value_field_disabled_number(){
 			const obj = new this.$.$mol_number();
 			(obj.hint) = () => ("This hint not showed while string_enabled is false");
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.string_enabled) = () => (false);
 			return obj;
 		}
 		Value_field_disabled_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Value field disabled");
-			(obj.content) = () => ([(this?.Value_field_disabled_number())]);
+			(obj.content) = () => ([(this.Value_field_disabled_number())]);
 			return obj;
 		}
 		Disabled_number(){
 			const obj = new this.$.$mol_number();
 			(obj.hint) = () => ("This hint not showed while enabled is false");
-			(obj.value) = (next) => ((this?.value()));
+			(obj.value) = (next) => ((this.value()));
 			(obj.enabled) = () => (false);
 			return obj;
 		}
 		Disabled_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Disabled");
-			(obj.content) = () => ([(this?.Disabled_number())]);
+			(obj.content) = () => ([(this.Disabled_number())]);
 			return obj;
 		}
 		Dec_disabled_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.dec_enabled) = () => (false);
 			return obj;
 		}
 		Dec_disabled_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Decrement disabled");
-			(obj.content) = () => ([(this?.Dec_disabled_number())]);
+			(obj.content) = () => ([(this.Dec_disabled_number())]);
 			return obj;
 		}
 		Inc_disabled_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.inc_enabled) = () => (false);
 			return obj;
 		}
 		Inc_disabled_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Increment disabled");
-			(obj.content) = () => ([(this?.Inc_disabled_number())]);
+			(obj.content) = () => ([(this.Inc_disabled_number())]);
 			return obj;
 		}
 		Section_disabled_row(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Value_field_disabled_number_label()), 
-				(this?.Disabled_number_label()), 
-				(this?.Dec_disabled_number_label()), 
-				(this?.Inc_disabled_number_label())
+				(this.Value_field_disabled_number_label()), 
+				(this.Disabled_number_label()), 
+				(this.Dec_disabled_number_label()), 
+				(this.Inc_disabled_number_label())
 			]);
 			return obj;
 		}
 		Section_disabled(){
 			const obj = new this.$.$mol_section();
 			(obj.title) = () => ("Disabled");
-			(obj.content) = () => ([(this?.Section_disabled_row())]);
+			(obj.content) = () => ([(this.Section_disabled_row())]);
 			return obj;
 		}
 		Precision_change_10_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.precision_change) = () => (10);
 			return obj;
 		}
 		Precision_change_10_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Precision change 10");
-			(obj.content) = () => ([(this?.Precision_change_10_number())]);
+			(obj.content) = () => ([(this.Precision_change_10_number())]);
 			return obj;
 		}
 		Precision_change_01_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.precision_change) = () => (0.1);
 			return obj;
 		}
 		Precision_change_01_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("⚠️ Precision change 0.1");
-			(obj.content) = () => ([(this?.Precision_change_01_number())]);
+			(obj.content) = () => ([(this.Precision_change_01_number())]);
 			return obj;
 		}
 		Precision_100_number_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.precision) = () => (100);
 			return obj;
 		}
 		Precision_100_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Precision 100");
-			(obj.content) = () => ([(this?.Precision_100_number_number())]);
+			(obj.content) = () => ([(this.Precision_100_number_number())]);
 			return obj;
 		}
 		Precision_5_number_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.precision) = () => (5);
 			return obj;
 		}
 		Precision_5_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Precision 5");
-			(obj.content) = () => ([(this?.Precision_5_number_number())]);
+			(obj.content) = () => ([(this.Precision_5_number_number())]);
 			return obj;
 		}
 		Precision_01_number_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.precision) = () => (0.1);
 			return obj;
 		}
 		Precision_01_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Precision 0.1");
-			(obj.content) = () => ([(this?.Precision_01_number_number())]);
+			(obj.content) = () => ([(this.Precision_01_number_number())]);
 			return obj;
 		}
 		Precision_005_number_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.precision) = () => (0.05);
 			return obj;
 		}
 		Precision_005_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Precision 0.05");
-			(obj.content) = () => ([(this?.Precision_005_number_number())]);
+			(obj.content) = () => ([(this.Precision_005_number_number())]);
 			return obj;
 		}
 		Precision_view_001_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.precision_view) = () => (0.001);
 			return obj;
 		}
 		Precision_view_001_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Precision view 0.001");
-			(obj.content) = () => ([(this?.Precision_view_001_number())]);
+			(obj.content) = () => ([(this.Precision_view_001_number())]);
 			return obj;
 		}
 		Precision_view_10_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.precision_view) = () => (10);
 			return obj;
 		}
 		Precision_view_10_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("⚠️ Precision view 10");
-			(obj.content) = () => ([(this?.Precision_view_10_number())]);
+			(obj.content) = () => ([(this.Precision_view_10_number())]);
 			return obj;
 		}
 		Section_precision_row(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Precision_change_10_number_label()), 
-				(this?.Precision_change_01_number_label()), 
-				(this?.Precision_100_number_label()), 
-				(this?.Precision_5_number_label()), 
-				(this?.Precision_01_number_label()), 
-				(this?.Precision_005_number_label()), 
-				(this?.Precision_view_001_number_label()), 
-				(this?.Precision_view_10_number_label())
+				(this.Precision_change_10_number_label()), 
+				(this.Precision_change_01_number_label()), 
+				(this.Precision_100_number_label()), 
+				(this.Precision_5_number_label()), 
+				(this.Precision_01_number_label()), 
+				(this.Precision_005_number_label()), 
+				(this.Precision_view_001_number_label()), 
+				(this.Precision_view_10_number_label())
 			]);
 			return obj;
 		}
 		Section_precision(){
 			const obj = new this.$.$mol_section();
 			(obj.title) = () => ("Precision");
-			(obj.content) = () => ([(this?.Section_precision_row())]);
+			(obj.content) = () => ([(this.Section_precision_row())]);
 			return obj;
 		}
 		value_min_m5(next){
@@ -44945,14 +44953,14 @@ var $;
 		}
 		Min_m5_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_min_m5(next)));
+			(obj.value) = (next) => ((this.value_min_m5(next)));
 			(obj.value_min) = () => (-5);
 			return obj;
 		}
 		Min_m5_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Min value -5");
-			(obj.content) = () => ([(this?.Min_m5_number())]);
+			(obj.content) = () => ([(this.Min_m5_number())]);
 			return obj;
 		}
 		value_min_0(next){
@@ -44961,14 +44969,14 @@ var $;
 		}
 		Min_0_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_min_0(next)));
+			(obj.value) = (next) => ((this.value_min_0(next)));
 			(obj.value_min) = () => (0);
 			return obj;
 		}
 		Min_0_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Min value 0");
-			(obj.content) = () => ([(this?.Min_0_number())]);
+			(obj.content) = () => ([(this.Min_0_number())]);
 			return obj;
 		}
 		value_min_5(next){
@@ -44977,14 +44985,14 @@ var $;
 		}
 		Min_5_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_min_5(next)));
+			(obj.value) = (next) => ((this.value_min_5(next)));
 			(obj.value_min) = () => (5);
 			return obj;
 		}
 		Min_5_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Min value 5");
-			(obj.content) = () => ([(this?.Min_5_number())]);
+			(obj.content) = () => ([(this.Min_5_number())]);
 			return obj;
 		}
 		value_max_m5(next){
@@ -44993,14 +45001,14 @@ var $;
 		}
 		Max_m5_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_max_m5(next)));
+			(obj.value) = (next) => ((this.value_max_m5(next)));
 			(obj.value_max) = () => (-5);
 			return obj;
 		}
 		Max_m5_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Max value -5");
-			(obj.content) = () => ([(this?.Max_m5_number())]);
+			(obj.content) = () => ([(this.Max_m5_number())]);
 			return obj;
 		}
 		value_max_0(next){
@@ -45009,14 +45017,14 @@ var $;
 		}
 		Max_0_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_max_0(next)));
+			(obj.value) = (next) => ((this.value_max_0(next)));
 			(obj.value_max) = () => (0);
 			return obj;
 		}
 		Max_0_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Max value 0");
-			(obj.content) = () => ([(this?.Max_0_number())]);
+			(obj.content) = () => ([(this.Max_0_number())]);
 			return obj;
 		}
 		value_max_5(next){
@@ -45025,14 +45033,14 @@ var $;
 		}
 		Max_5_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_max_5(next)));
+			(obj.value) = (next) => ((this.value_max_5(next)));
 			(obj.value_max) = () => (5);
 			return obj;
 		}
 		Max_5_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Max value 5");
-			(obj.content) = () => ([(this?.Max_5_number())]);
+			(obj.content) = () => ([(this.Max_5_number())]);
 			return obj;
 		}
 		value_max_100(next){
@@ -45041,7 +45049,7 @@ var $;
 		}
 		Max_100_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_max_100(next)));
+			(obj.value) = (next) => ((this.value_max_100(next)));
 			(obj.value_max) = () => (100);
 			(obj.precision_change) = () => (10);
 			return obj;
@@ -45049,7 +45057,7 @@ var $;
 		Max_100_number_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Max value 100");
-			(obj.content) = () => ([(this?.Max_100_number())]);
+			(obj.content) = () => ([(this.Max_100_number())]);
 			return obj;
 		}
 		value_case1_range(next){
@@ -45058,7 +45066,7 @@ var $;
 		}
 		Range_case1_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_case1_range(next)));
+			(obj.value) = (next) => ((this.value_case1_range(next)));
 			(obj.value_min) = () => (-5);
 			(obj.value_max) = () => (5);
 			return obj;
@@ -45066,7 +45074,7 @@ var $;
 		Range_number_case1_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Value from -5 to 5");
-			(obj.content) = () => ([(this?.Range_case1_number())]);
+			(obj.content) = () => ([(this.Range_case1_number())]);
 			return obj;
 		}
 		value_case2_range(next){
@@ -45075,7 +45083,7 @@ var $;
 		}
 		Range_case2_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_case2_range(next)));
+			(obj.value) = (next) => ((this.value_case2_range(next)));
 			(obj.value_min) = () => (5);
 			(obj.value_max) = () => (10);
 			return obj;
@@ -45083,7 +45091,7 @@ var $;
 		Range_number_case2_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Value from 5 to 10");
-			(obj.content) = () => ([(this?.Range_case2_number())]);
+			(obj.content) = () => ([(this.Range_case2_number())]);
 			return obj;
 		}
 		value_case3_range(next){
@@ -45092,7 +45100,7 @@ var $;
 		}
 		Range_case3_number(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.value_case3_range(next)));
+			(obj.value) = (next) => ((this.value_case3_range(next)));
 			(obj.value_min) = () => (-10);
 			(obj.value_max) = () => (-5);
 			return obj;
@@ -45100,39 +45108,39 @@ var $;
 		Range_number_case3_label(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Value from -10 to -5");
-			(obj.content) = () => ([(this?.Range_case3_number())]);
+			(obj.content) = () => ([(this.Range_case3_number())]);
 			return obj;
 		}
 		Section_range_row(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Min_m5_number_label()), 
-				(this?.Min_0_number_label()), 
-				(this?.Min_5_number_label()), 
-				(this?.Max_m5_number_label()), 
-				(this?.Max_0_number_label()), 
-				(this?.Max_5_number_label()), 
-				(this?.Max_100_number_label()), 
-				(this?.Range_number_case1_label()), 
-				(this?.Range_number_case2_label()), 
-				(this?.Range_number_case3_label())
+				(this.Min_m5_number_label()), 
+				(this.Min_0_number_label()), 
+				(this.Min_5_number_label()), 
+				(this.Max_m5_number_label()), 
+				(this.Max_0_number_label()), 
+				(this.Max_5_number_label()), 
+				(this.Max_100_number_label()), 
+				(this.Range_number_case1_label()), 
+				(this.Range_number_case2_label()), 
+				(this.Range_number_case3_label())
 			]);
 			return obj;
 		}
 		Section_range(){
 			const obj = new this.$.$mol_section();
 			(obj.title) = () => ("Range");
-			(obj.content) = () => ([(this?.Section_range_row())]);
+			(obj.content) = () => ([(this.Section_range_row())]);
 			return obj;
 		}
 		Rows(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Section_value()), 
-				(this?.Section_initial()), 
-				(this?.Section_disabled()), 
-				(this?.Section_precision()), 
-				(this?.Section_range())
+				(this.Section_value()), 
+				(this.Section_initial()), 
+				(this.Section_disabled()), 
+				(this.Section_precision()), 
+				(this.Section_range())
 			]);
 			return obj;
 		}
@@ -45144,7 +45152,7 @@ var $;
 			return +NaN;
 		}
 		sub(){
-			return [(this?.Rows())];
+			return [(this.Rows())];
 		}
 		tags(){
 			return [
@@ -45282,16 +45290,16 @@ var $;
 		}
 		Page(){
 			const obj = new this.$.$mol_page();
-			(obj.tools) = () => ([(this?.Button_tools())]);
-			(obj.body) = () => ([(this?.Text())]);
-			(obj.foot) = () => ([(this?.Button_foot())]);
+			(obj.tools) = () => ([(this.Button_tools())]);
+			(obj.body) = () => ([(this.Text())]);
+			(obj.foot) = () => ([(this.Button_foot())]);
 			return obj;
 		}
 		title(){
 			return "Page with header, body and footer";
 		}
 		sub(){
-			return [(this?.Page())];
+			return [(this.Page())];
 		}
 		tags(){
 			return [
@@ -45326,14 +45334,14 @@ var $;
 		}
 		Pages(){
 			const obj = new this.$.$mol_paginator();
-			(obj.value) = (next) => ((this?.page(next)));
+			(obj.value) = (next) => ((this.page(next)));
 			return obj;
 		}
 		title(){
 			return "Page switcher";
 		}
 		sub(){
-			return [(this?.Pages())];
+			return [(this.Pages())];
 		}
 		tags(){
 			return ["paginator", "navigation"];
@@ -45365,8 +45373,8 @@ var $;
 		}
 		Saturation(){
 			const obj = new this.$.$mol_plot_group();
-			(obj.series_y) = () => ((this?.saturation_series()));
-			(obj.graphs) = () => ([(this?.Saturation_fill()), (this?.Saturation_line())]);
+			(obj.series_y) = () => ((this.saturation_series()));
+			(obj.graphs) = () => ([(this.Saturation_fill()), (this.Saturation_line())]);
 			return obj;
 		}
 		input_series(){
@@ -45382,8 +45390,8 @@ var $;
 		}
 		Input(){
 			const obj = new this.$.$mol_plot_group();
-			(obj.series_y) = () => ((this?.input_series()));
-			(obj.graphs) = () => ([(this?.Input_line()), (this?.Input_dots())]);
+			(obj.series_y) = () => ((this.input_series()));
+			(obj.graphs) = () => ([(this.Input_line()), (this.Input_dots())]);
 			return obj;
 		}
 		output_series(){
@@ -45391,7 +45399,7 @@ var $;
 		}
 		Output(){
 			const obj = new this.$.$mol_plot_bar();
-			(obj.series_y) = () => ((this?.output_series()));
+			(obj.series_y) = () => ((this.output_series()));
 			return obj;
 		}
 		Voltage_title(){
@@ -45399,7 +45407,7 @@ var $;
 		}
 		Voltage(){
 			const obj = new this.$.$mol_plot_ruler_vert();
-			(obj.title) = () => ((this?.Voltage_title()));
+			(obj.title) = () => ((this.Voltage_title()));
 			return obj;
 		}
 		Time_title(){
@@ -45407,17 +45415,17 @@ var $;
 		}
 		Time(){
 			const obj = new this.$.$mol_plot_ruler_hor();
-			(obj.title) = () => ((this?.Time_title()));
+			(obj.title) = () => ((this.Time_title()));
 			return obj;
 		}
 		Plot(){
 			const obj = new this.$.$mol_plot_pane();
 			(obj.graphs) = () => ([
-				(this?.Saturation()), 
-				(this?.Input()), 
-				(this?.Output()), 
-				(this?.Voltage()), 
-				(this?.Time())
+				(this.Saturation()), 
+				(this.Input()), 
+				(this.Output()), 
+				(this.Voltage()), 
+				(this.Time())
 			]);
 			return obj;
 		}
@@ -45432,7 +45440,7 @@ var $;
 			return 8;
 		}
 		sub(){
-			return [(this?.Plot())];
+			return [(this.Plot())];
 		}
 		tags(){
 			return [
@@ -45543,20 +45551,20 @@ var $;
 			return [];
 		}
 		graphs(){
-			return (this?.level_graphs());
+			return (this.level_graphs());
 		}
 		Level(id){
 			const obj = new this.$.$mol_plot_map_heat_level();
-			(obj.hint) = () => ((this?.level_hint(id)));
-			(obj.points) = () => ((this?.level_points(id)));
-			(obj.opacity) = () => ((this?.level_opacity(id)));
-			(obj.diameter) = () => ((this?.level_diameter()));
-			(obj.aspect) = () => ((this?.level_aspect()));
+			(obj.hint) = () => ((this.level_hint(id)));
+			(obj.points) = () => ((this.level_points(id)));
+			(obj.opacity) = () => ((this.level_opacity(id)));
+			(obj.diameter) = () => ((this.level_diameter()));
+			(obj.aspect) = () => ((this.level_aspect()));
 			return obj;
 		}
 		Sample(){
 			const obj = new this.$.$mol_plot_graph_sample();
-			(obj.color) = () => ((this?.color()));
+			(obj.color) = () => ((this.color()));
 			return obj;
 		}
 	};
@@ -45567,7 +45575,7 @@ var $;
 			return "1";
 		}
 		style(){
-			return {...(super.style()), "opacity": (this?.opacity())};
+			return {...(super.style()), "opacity": (this.opacity())};
 		}
 	};
 
@@ -45648,7 +45656,7 @@ var $;
 ;
 	($.$mol_plot_map_heat_demo) = class $mol_plot_map_heat_demo extends ($.$mol_example_large) {
 		zoom(next){
-			return (this?.Plot()?.scale_y(next));
+			return (this.Plot().scale_y(next));
 		}
 		terrain_x(){
 			return [];
@@ -45661,15 +45669,15 @@ var $;
 		}
 		Terrain(){
 			const obj = new this.$.$mol_plot_map_heat();
-			(obj.series_x) = () => ((this?.terrain_x()));
-			(obj.series_y) = () => ((this?.terrain_y()));
-			(obj.series_z) = () => ((this?.terrain_z()));
+			(obj.series_x) = () => ((this.terrain_x()));
+			(obj.series_y) = () => ((this.terrain_y()));
+			(obj.series_z) = () => ((this.terrain_z()));
 			return obj;
 		}
 		Plot(){
 			const obj = new this.$.$mol_plot_pane();
-			(obj.zoom) = (next) => ((this?.zoom(next)));
-			(obj.graphs) = () => ([(this?.Terrain())]);
+			(obj.zoom) = (next) => ((this.zoom(next)));
+			(obj.graphs) = () => ([(this.Terrain())]);
 			return obj;
 		}
 		title(){
@@ -45685,7 +45693,7 @@ var $;
 			return 20;
 		}
 		sub(){
-			return [(this?.Plot())];
+			return [(this.Plot())];
 		}
 		tags(){
 			return [
@@ -45769,14 +45777,14 @@ var $;
 		}
 		Show_check(){
 			const obj = new this.$.$mol_check_box();
-			(obj.hint) = () => ((this?.pop_showed_check_hint()));
-			(obj.checked) = (next) => ((this?.pop_showed(next)));
+			(obj.hint) = () => ((this.pop_showed_check_hint()));
+			(obj.checked) = (next) => ((this.pop_showed(next)));
 			return obj;
 		}
 		Showed(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => ((this?.show_title()));
-			(obj.content) = () => ([(this?.Show_check())]);
+			(obj.title) = () => ((this.show_title()));
+			(obj.content) = () => ([(this.Show_check())]);
 			return obj;
 		}
 		align_title(){
@@ -45805,19 +45813,19 @@ var $;
 		}
 		Align_select(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.pop_align(next)));
-			(obj.options) = () => ((this?.aligins()));
+			(obj.value) = (next) => ((this.pop_align(next)));
+			(obj.options) = () => ((this.aligins()));
 			return obj;
 		}
 		Align(){
 			const obj = new this.$.$mol_labeler();
-			(obj.title) = () => ((this?.align_title()));
-			(obj.content) = () => ([(this?.Align_select())]);
+			(obj.title) = () => ((this.align_title()));
+			(obj.content) = () => ([(this.Align_select())]);
 			return obj;
 		}
 		Manage(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Showed()), (this?.Align())]);
+			(obj.sub) = () => ([(this.Showed()), (this.Align())]);
 			return obj;
 		}
 		anchor_button_icon(){
@@ -45829,7 +45837,7 @@ var $;
 		}
 		Pop_anchor(){
 			const obj = new this.$.$mol_button_major();
-			(obj.sub) = () => ([(this?.anchor_button_icon()), (this?.anchor_button_title())]);
+			(obj.sub) = () => ([(this.anchor_button_icon()), (this.anchor_button_title())]);
 			return obj;
 		}
 		bubble_hint(){
@@ -45838,27 +45846,27 @@ var $;
 		Content(){
 			const obj = new this.$.$mol_row();
 			(obj.minimal_width) = () => (150);
-			(obj.sub) = () => ([(this?.bubble_hint())]);
+			(obj.sub) = () => ([(this.bubble_hint())]);
 			return obj;
 		}
 		Pop(){
 			const obj = new this.$.$mol_pop();
-			(obj.Anchor) = () => ((this?.Pop_anchor()));
-			(obj.showed) = () => ((this?.pop_showed()));
-			(obj.align) = () => ((this?.pop_align()));
-			(obj.bubble_content) = () => ([(this?.Content())]);
+			(obj.Anchor) = () => ((this.Pop_anchor()));
+			(obj.showed) = () => ((this.pop_showed()));
+			(obj.align) = () => ((this.pop_align()));
+			(obj.bubble_content) = () => ([(this.Content())]);
 			return obj;
 		}
 		Pop_area(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Pop())]);
+			(obj.sub) = () => ([(this.Pop())]);
 			return obj;
 		}
 		title(){
 			return "Pop up block with various alignment";
 		}
 		sub(){
-			return [(this?.Manage()), (this?.Pop_area())];
+			return [(this.Manage()), (this.Pop_area())];
 		}
 		tags(){
 			return [
@@ -45930,7 +45938,7 @@ var $;
 			return null;
 		}
 		showed(){
-			return (this?.hovered());
+			return (this.hovered());
 		}
 		attr(){
 			return {...(super.attr()), "tabindex": 0};
@@ -45938,8 +45946,8 @@ var $;
 		event(){
 			return {
 				...(super.event()), 
-				"mouseenter": (next) => (this?.event_show(next)), 
-				"mouseleave": (next) => (this?.event_hide(next))
+				"mouseenter": (next) => (this.event_show(next)), 
+				"mouseleave": (next) => (this.event_hide(next))
 			};
 		}
 	};
@@ -45989,7 +45997,7 @@ var $;
 		}
 		Open(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.open_title()));
+			(obj.title) = () => ((this.open_title()));
 			return obj;
 		}
 		export_title(){
@@ -45997,7 +46005,7 @@ var $;
 		}
 		Export(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.export_title()));
+			(obj.title) = () => ((this.export_title()));
 			return obj;
 		}
 		save_title(){
@@ -46005,23 +46013,23 @@ var $;
 		}
 		Save(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.save_title()));
+			(obj.title) = () => ((this.save_title()));
 			return obj;
 		}
 		File_menu(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Open()), 
-				(this?.Export()), 
-				(this?.Save())
+				(this.Open()), 
+				(this.Export()), 
+				(this.Save())
 			]);
 			return obj;
 		}
 		File(){
 			const obj = new this.$.$mol_pop_over();
 			(obj.align) = () => ("bottom_right");
-			(obj.Anchor) = () => ((this?.file_title()));
-			(obj.bubble_content) = () => ([(this?.File_menu())]);
+			(obj.Anchor) = () => ((this.file_title()));
+			(obj.bubble_content) = () => ([(this.File_menu())]);
 			return obj;
 		}
 		help_title(){
@@ -46032,7 +46040,7 @@ var $;
 		}
 		Updates(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.updates_title()));
+			(obj.title) = () => ((this.updates_title()));
 			return obj;
 		}
 		about_title(){
@@ -46040,31 +46048,31 @@ var $;
 		}
 		About(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.about_title()));
+			(obj.title) = () => ((this.about_title()));
 			return obj;
 		}
 		Help_menu(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Updates()), (this?.About())]);
+			(obj.rows) = () => ([(this.Updates()), (this.About())]);
 			return obj;
 		}
 		Help(){
 			const obj = new this.$.$mol_pop_over();
 			(obj.align) = () => ("bottom_right");
-			(obj.Anchor) = () => ((this?.help_title()));
-			(obj.bubble_content) = () => ([(this?.Help_menu())]);
+			(obj.Anchor) = () => ((this.help_title()));
+			(obj.bubble_content) = () => ([(this.Help_menu())]);
 			return obj;
 		}
 		Menu(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.File()), (this?.Help())]);
+			(obj.sub) = () => ([(this.File()), (this.Help())]);
 			return obj;
 		}
 		title(){
 			return "Menu that opens on mouse over";
 		}
 		sub(){
-			return [(this?.Menu())];
+			return [(this.Menu())];
 		}
 		tags(){
 			return [
@@ -46108,7 +46116,7 @@ var $;
 		}
 		Empty(){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.fist()));
+			(obj.portion) = () => ((this.fist()));
 			return obj;
 		}
 		second(){
@@ -46116,7 +46124,7 @@ var $;
 		}
 		Partial(){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.second()));
+			(obj.portion) = () => ((this.second()));
 			return obj;
 		}
 		third(){
@@ -46124,7 +46132,7 @@ var $;
 		}
 		Full(){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.third()));
+			(obj.portion) = () => ((this.third()));
 			return obj;
 		}
 		title(){
@@ -46132,9 +46140,9 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Empty()), 
-				(this?.Partial()), 
-				(this?.Full())
+				(this.Empty()), 
+				(this.Partial()), 
+				(this.Full())
 			];
 		}
 		tags(){
@@ -46170,13 +46178,13 @@ var $;
 		}
 		Info_content(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.info_content_text()));
+			(obj.text) = () => ((this.info_content_text()));
 			return obj;
 		}
 		Info_pop(){
 			const obj = new this.$.$mol_pick();
 			(obj.title) = () => ("Info");
-			(obj.bubble_content) = () => ([(this?.Info_content())]);
+			(obj.bubble_content) = () => ([(this.Info_content())]);
 			return obj;
 		}
 		Options_trigger_icon(){
@@ -46196,7 +46204,7 @@ var $;
 		Menu_item_download(){
 			const obj = new this.$.$mol_button_download();
 			(obj.title) = () => ("Download");
-			(obj.blob) = () => ((this?.Menu_item_download_blob()));
+			(obj.blob) = () => ((this.Menu_item_download_blob()));
 			(obj.file_name) = () => ("demo.bin");
 			return obj;
 		}
@@ -46214,37 +46222,37 @@ var $;
 		Delete_confirm(){
 			const obj = new this.$.$mol_button_major();
 			(obj.title) = () => ("Confirm");
-			(obj.click) = (next) => ((this?.delete_confirm(next)));
+			(obj.click) = (next) => ((this.delete_confirm(next)));
 			return obj;
 		}
 		Menu_item_delete(){
 			const obj = new this.$.$mol_pick();
 			(obj.align) = () => ("center");
-			(obj.trigger_content) = () => ([(this?.menu_item_delete_icon()), (this?.menu_item_delete_label())]);
-			(obj.bubble_content) = () => ([(this?.Delete_confirm())]);
+			(obj.trigger_content) = () => ([(this.menu_item_delete_icon()), (this.menu_item_delete_label())]);
+			(obj.bubble_content) = () => ([(this.Delete_confirm())]);
 			return obj;
 		}
 		Options_content(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Menu_item_copy()), 
-				(this?.Menu_item_download()), 
-				(this?.Menu_item_delete())
+				(this.Menu_item_copy()), 
+				(this.Menu_item_download()), 
+				(this.Menu_item_delete())
 			]);
 			return obj;
 		}
 		Options_pop(){
 			const obj = new this.$.$mol_pick();
 			(obj.hint) = () => ("Click to show options menu");
-			(obj.trigger_content) = () => ([(this?.Options_trigger_icon())]);
-			(obj.bubble_content) = () => ([(this?.Options_content())]);
+			(obj.trigger_content) = () => ([(this.Options_trigger_icon())]);
+			(obj.bubble_content) = () => ([(this.Options_content())]);
 			return obj;
 		}
 		title(){
 			return "Simple and complex popups";
 		}
 		sub(){
-			return [(this?.Info_pop()), (this?.Options_pop())];
+			return [(this.Info_pop()), (this.Options_pop())];
 		}
 		tags(){
 			return [
@@ -46327,10 +46335,10 @@ var $;
 		}
 		Input(){
 			const obj = new this.$.$mol_format();
-			(obj.value) = (next) => ((this?.value(next)));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.mask) = () => ("__:__");
 			(obj.allow) = () => ("0123456789.");
-			(obj.enabled) = () => ((this?.enabled()));
+			(obj.enabled) = () => ((this.enabled()));
 			return obj;
 		}
 		hour_selected(next){
@@ -46342,8 +46350,8 @@ var $;
 		}
 		Hours(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.hour_selected(next)));
-			(obj.options) = () => ((this?.hour_options()));
+			(obj.value) = (next) => ((this.hour_selected(next)));
+			(obj.options) = () => ((this.hour_options()));
 			return obj;
 		}
 		Delimiter(){
@@ -46360,16 +46368,16 @@ var $;
 		}
 		Minutes(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.minute_selected(next)));
-			(obj.options) = () => ((this?.minute_options()));
+			(obj.value) = (next) => ((this.minute_selected(next)));
+			(obj.options) = () => ((this.minute_options()));
 			return obj;
 		}
 		Pickers(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Hours()), 
-				(this?.Delimiter()), 
-				(this?.Minutes())
+				(this.Hours()), 
+				(this.Delimiter()), 
+				(this.Minutes())
 			]);
 			return obj;
 		}
@@ -46378,10 +46386,10 @@ var $;
 			return obj;
 		}
 		trigger_enabled(){
-			return (this?.enabled());
+			return (this.enabled());
 		}
 		bubble_content(){
-			return [(this?.Input()), (this?.Pickers())];
+			return [(this.Input()), (this.Pickers())];
 		}
 		value_moment(next){
 			if(next !== undefined) return next;
@@ -46515,11 +46523,11 @@ var $;
 		}
 		Picker(){
 			const obj = new this.$.$mol_pick_time();
-			(obj.value_moment) = (next) => ((this?.moment(next)));
+			(obj.value_moment) = (next) => ((this.moment(next)));
 			return obj;
 		}
 		sub(){
-			return [(this?.Picker())];
+			return [(this.Picker())];
 		}
 		tags(){
 			return [
@@ -46557,9 +46565,9 @@ var $;
 		}
 		Name(){
 			const obj = new this.$.$mol_search();
-			(obj.hint) = () => ((this?.name_hint()));
-			(obj.query) = (next) => ((this?.name(next)));
-			(obj.suggests) = () => ([(this?.suggest1()), (this?.suggest2())]);
+			(obj.hint) = () => ((this.name_hint()));
+			(obj.query) = (next) => ((this.name(next)));
+			(obj.suggests) = () => ([(this.suggest1()), (this.suggest2())]);
 			return obj;
 		}
 		count_hint(){
@@ -46571,8 +46579,8 @@ var $;
 		}
 		Count(){
 			const obj = new this.$.$mol_number();
-			(obj.hint) = () => ((this?.count_hint()));
-			(obj.value) = (next) => ((this?.count(next)));
+			(obj.hint) = () => ((this.count_hint()));
+			(obj.value) = (next) => ((this.count(next)));
 			return obj;
 		}
 		progress(){
@@ -46580,7 +46588,7 @@ var $;
 		}
 		Progress(){
 			const obj = new this.$.$mol_portion();
-			(obj.portion) = () => ((this?.progress()));
+			(obj.portion) = () => ((this.progress()));
 			return obj;
 		}
 		publish_label(){
@@ -46592,8 +46600,8 @@ var $;
 		}
 		Publish(){
 			const obj = new this.$.$mol_check_box();
-			(obj.title) = () => ((this?.publish_label()));
-			(obj.checked) = (next) => ((this?.publish(next)));
+			(obj.title) = () => ((this.publish_label()));
+			(obj.checked) = (next) => ((this.publish(next)));
 			return obj;
 		}
 		drop_title(){
@@ -46601,17 +46609,17 @@ var $;
 		}
 		Drop(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.drop_title()));
+			(obj.title) = () => ((this.drop_title()));
 			return obj;
 		}
 		Row(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Name()), 
-				(this?.Count()), 
-				(this?.Progress()), 
-				(this?.Publish()), 
-				(this?.Drop())
+				(this.Name()), 
+				(this.Count()), 
+				(this.Progress()), 
+				(this.Publish()), 
+				(this.Drop())
 			]);
 			return obj;
 		}
@@ -46619,7 +46627,7 @@ var $;
 			return "Some controls in one row with equal paddings and wrapping support";
 		}
 		sub(){
-			return [(this?.Row())];
+			return [(this.Row())];
 		}
 		tags(){
 			return [
@@ -46656,7 +46664,7 @@ var $;
 		}
 		Products(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ((this?.products()));
+			(obj.sub) = () => ((this.products()));
 			return obj;
 		}
 		title(){
@@ -46669,11 +46677,11 @@ var $;
 			const obj = new this.$.$mol_card();
 			(obj.minimal_width) = () => (110);
 			(obj.minimal_height) = () => (100);
-			(obj.title) = () => ((this?.product_title(id)));
+			(obj.title) = () => ((this.product_title(id)));
 			return obj;
 		}
 		sub(){
-			return [(this?.Products())];
+			return [(this.Products())];
 		}
 		tags(){
 			return [
@@ -46766,29 +46774,29 @@ var $;
 		Content(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Filler0()), 
-				(this?.Filler1()), 
-				(this?.Filler2()), 
-				(this?.Filler3()), 
-				(this?.Filler4()), 
-				(this?.Filler5()), 
-				(this?.Filler6()), 
-				(this?.Filler7()), 
-				(this?.Filler8()), 
-				(this?.Filler9())
+				(this.Filler0()), 
+				(this.Filler1()), 
+				(this.Filler2()), 
+				(this.Filler3()), 
+				(this.Filler4()), 
+				(this.Filler5()), 
+				(this.Filler6()), 
+				(this.Filler7()), 
+				(this.Filler8()), 
+				(this.Filler9())
 			]);
 			return obj;
 		}
 		Scroll(){
 			const obj = new this.$.$mol_scroll();
-			(obj.sub) = () => ([(this?.Content())]);
+			(obj.sub) = () => ([(this.Content())]);
 			return obj;
 		}
 		title(){
 			return "Simple scroll pane";
 		}
 		sub(){
-			return [(this?.Scroll())];
+			return [(this.Scroll())];
 		}
 		tags(){
 			return ["scroll", "container"];
@@ -46817,21 +46825,21 @@ var $;
 ;
 	($.$mol_search_demo) = class $mol_search_demo extends ($.$mol_example_small) {
 		query(){
-			return (this?.Search()?.query());
+			return (this.Search().query());
 		}
 		suggests(){
 			return [];
 		}
 		Search(){
 			const obj = new this.$.$mol_search();
-			(obj.suggests) = () => ((this?.suggests()));
+			(obj.suggests) = () => ((this.suggests()));
 			return obj;
 		}
 		title(){
 			return "Search field with suggest ";
 		}
 		sub(){
-			return [(this?.Search())];
+			return [(this.Search())];
 		}
 		tags(){
 			return [
@@ -46885,14 +46893,14 @@ var $;
 		Section(){
 			const obj = new this.$.$mol_section();
 			(obj.title) = () => ("Section header");
-			(obj.content) = () => ([(this?.Section_content())]);
+			(obj.content) = () => ([(this.Section_content())]);
 			return obj;
 		}
 		title(){
 			return "Section with header";
 		}
 		sub(){
-			return [(this?.Section())];
+			return [(this.Section())];
 		}
 		tags(){
 			return ["container", "header"];
@@ -46949,55 +46957,55 @@ var $;
 			return "Section with header";
 		}
 		sub(){
-			return [(this?.Section1())];
+			return [(this.Section1())];
 		}
 		Section1(){
 			const obj = new this.$.$mol_section();
 			(obj.level) = () => (1);
 			(obj.title) = () => ("Level 1");
-			(obj.content) = () => ([(this?.Section1_text()), (this?.Section2())]);
+			(obj.content) = () => ([(this.Section1_text()), (this.Section2())]);
 			return obj;
 		}
 		Section2(){
 			const obj = new this.$.$mol_section();
 			(obj.level) = () => (2);
 			(obj.title) = () => ("Level 2");
-			(obj.content) = () => ([(this?.Section2_text()), (this?.Section3())]);
+			(obj.content) = () => ([(this.Section2_text()), (this.Section3())]);
 			return obj;
 		}
 		Section3(){
 			const obj = new this.$.$mol_section();
 			(obj.level) = () => (3);
 			(obj.title) = () => ("Level 3");
-			(obj.content) = () => ([(this?.Section3_text()), (this?.Section4())]);
+			(obj.content) = () => ([(this.Section3_text()), (this.Section4())]);
 			return obj;
 		}
 		Section4(){
 			const obj = new this.$.$mol_section();
 			(obj.level) = () => (4);
 			(obj.title) = () => ("Level 4");
-			(obj.content) = () => ([(this?.Section4_text()), (this?.Section5())]);
+			(obj.content) = () => ([(this.Section4_text()), (this.Section5())]);
 			return obj;
 		}
 		Section5(){
 			const obj = new this.$.$mol_section();
 			(obj.level) = () => (5);
 			(obj.title) = () => ("Level 5");
-			(obj.content) = () => ([(this?.Section5_text()), (this?.Section6())]);
+			(obj.content) = () => ([(this.Section5_text()), (this.Section6())]);
 			return obj;
 		}
 		Section6(){
 			const obj = new this.$.$mol_section();
 			(obj.level) = () => (6);
 			(obj.title) = () => ("Level 6");
-			(obj.content) = () => ([(this?.Section6_text()), (this?.Section7())]);
+			(obj.content) = () => ([(this.Section6_text()), (this.Section7())]);
 			return obj;
 		}
 		Section7(){
 			const obj = new this.$.$mol_section();
 			(obj.level) = () => (7);
 			(obj.title) = () => ("Level 7");
-			(obj.content) = () => ([(this?.Section7_text())]);
+			(obj.content) = () => ([(this.Section7_text())]);
 			return obj;
 		}
 		tags(){
@@ -47033,7 +47041,7 @@ var $;
 ;
 	($.$mol_select_demo_colors) = class $mol_select_demo_colors extends ($.$mol_example_small) {
 		color_filter(){
-			return (this?.Color()?.filter_pattern());
+			return (this.Color().filter_pattern());
 		}
 		color(next){
 			if(next !== undefined) return next;
@@ -47050,37 +47058,37 @@ var $;
 		}
 		Color_preview(id){
 			const obj = new this.$.$mol_select_colors_color_preview();
-			(obj.color) = () => ((this?.option_color(id)));
+			(obj.color) = () => ((this.option_color(id)));
 			return obj;
 		}
 		Color_name(id){
 			const obj = new this.$.$mol_dimmer();
-			(obj.haystack) = () => ((this?.color_name(id)));
-			(obj.needle) = () => ((this?.color_filter()));
+			(obj.haystack) = () => ((this.color_name(id)));
+			(obj.needle) = () => ((this.color_filter()));
 			return obj;
 		}
 		Color_option(id){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.Color_preview(id)), (this?.Color_name(id))]);
+			(obj.sub) = () => ([(this.Color_preview(id)), (this.Color_name(id))]);
 			(obj.minimal_height) = () => (40);
 			return obj;
 		}
 		option_content(id){
-			return [(this?.Color_option(id))];
+			return [(this.Color_option(id))];
 		}
 		Color(){
 			const obj = new this.$.$mol_select();
-			(obj.value) = (next) => ((this?.color(next)));
-			(obj.dictionary) = () => ((this?.colors()));
-			(obj.option_label) = (id) => ((this?.color_name(id)));
-			(obj.option_content) = (id) => ((this?.option_content(id)));
+			(obj.value) = (next) => ((this.color(next)));
+			(obj.dictionary) = () => ((this.colors()));
+			(obj.option_label) = (id) => ((this.color_name(id)));
+			(obj.option_content) = (id) => ((this.option_content(id)));
 			return obj;
 		}
 		title(){
 			return "Color picker with filter and custom rows";
 		}
 		sub(){
-			return [(this?.Color())];
+			return [(this.Color())];
 		}
 		tags(){
 			return [
@@ -47104,7 +47112,7 @@ var $;
 			return "";
 		}
 		style(){
-			return {...(super.style()), "background": (this?.color())};
+			return {...(super.style()), "background": (this.color())};
 		}
 	};
 
@@ -47165,15 +47173,15 @@ var $;
 		Month(){
 			const obj = new this.$.$mol_select();
 			(obj.no_options_message) = () => ("Not found");
-			(obj.value) = (next) => ((this?.month(next)));
-			(obj.dictionary) = () => ((this?.months()));
+			(obj.value) = (next) => ((this.month(next)));
+			(obj.dictionary) = () => ((this.months()));
 			return obj;
 		}
 		title(){
 			return "Month picker with filter";
 		}
 		sub(){
-			return [(this?.Month())];
+			return [(this.Month())];
 		}
 		tags(){
 			return ["select", "month"];
@@ -47198,7 +47206,7 @@ var $;
 		Priority(){
 			const obj = new this.$.$mol_select();
 			(obj.Filter) = () => (null);
-			(obj.value) = (next) => ((this?.priority(next)));
+			(obj.value) = (next) => ((this.priority(next)));
 			(obj.options) = () => ([
 				"Highest ", 
 				"High", 
@@ -47212,7 +47220,7 @@ var $;
 			return "Priority picker";
 		}
 		sub(){
-			return [(this?.Priority())];
+			return [(this.Priority())];
 		}
 		tags(){
 			return ["select", "priority"];
@@ -47248,14 +47256,14 @@ var $;
 		}
 		Friends(){
 			const obj = new this.$.$mol_select_list();
-			(obj.value) = (next) => ((this?.friends(next)));
-			(obj.dictionary) = () => ((this?.suggestions()));
+			(obj.value) = (next) => ((this.friends(next)));
+			(obj.dictionary) = () => ((this.suggestions()));
 			return obj;
 		}
 		Friends_disabled(){
 			const obj = new this.$.$mol_select_list();
-			(obj.value) = (next) => ((this?.friends(next)));
-			(obj.dictionary) = () => ((this?.suggestions()));
+			(obj.value) = (next) => ((this.friends(next)));
+			(obj.dictionary) = () => ((this.suggestions()));
 			(obj.enabled) = () => (false);
 			return obj;
 		}
@@ -47267,25 +47275,25 @@ var $;
 			return "";
 		}
 		filter_pattern(next){
-			return (this?.Friends_lazy()?.filter_pattern(next));
+			return (this.Friends_lazy().filter_pattern(next));
 		}
 		suggestions_lazy(){
-			return (this?.suggestions());
+			return (this.suggestions());
 		}
 		Friends_lazy(){
 			const obj = new this.$.$mol_select_list();
-			(obj.value) = (next) => ((this?.friends_lazy(next)));
-			(obj.option_title) = (id) => ((this?.option_title(id)));
+			(obj.value) = (next) => ((this.friends_lazy(next)));
+			(obj.option_title) = (id) => ((this.option_title(id)));
 			(obj.pick_enabled) = () => (true);
-			(obj.dictionary) = () => ((this?.suggestions_lazy()));
+			(obj.dictionary) = () => ((this.suggestions_lazy()));
 			return obj;
 		}
 		Demo_items(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Friends()), 
-				(this?.Friends_disabled()), 
-				(this?.Friends_lazy())
+				(this.Friends()), 
+				(this.Friends_disabled()), 
+				(this.Friends_lazy())
 			]);
 			return obj;
 		}
@@ -47293,7 +47301,7 @@ var $;
 			return "Friends picker";
 		}
 		sub(){
-			return [(this?.Demo_items())];
+			return [(this.Demo_items())];
 		}
 		tags(){
 			return [
@@ -47355,7 +47363,7 @@ var $;
 		}
 		Link(){
 			const obj = new this.$.$mol_link();
-			(obj.sub) = () => ([(this?.Link_speck()), (this?.Link_icon())]);
+			(obj.sub) = () => ([(this.Link_speck()), (this.Link_icon())]);
 			return obj;
 		}
 		string_speck(){
@@ -47363,7 +47371,7 @@ var $;
 		}
 		String_speck(){
 			const obj = new this.$.$mol_speck();
-			(obj.value) = () => ((this?.string_speck()));
+			(obj.value) = () => ((this.string_speck()));
 			return obj;
 		}
 		String_field(){
@@ -47372,7 +47380,7 @@ var $;
 		}
 		String(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ([(this?.String_speck()), (this?.String_field())]);
+			(obj.sub) = () => ([(this.String_speck()), (this.String_field())]);
 			return obj;
 		}
 		notification_count(){
@@ -47380,7 +47388,7 @@ var $;
 		}
 		Button_speck(){
 			const obj = new this.$.$mol_speck();
-			(obj.value) = () => ((this?.notification_count()));
+			(obj.value) = () => ((this.notification_count()));
 			return obj;
 		}
 		Button_icon(){
@@ -47389,7 +47397,7 @@ var $;
 		}
 		Button(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.sub) = () => ([(this?.Button_speck()), (this?.Button_icon())]);
+			(obj.sub) = () => ([(this.Button_speck()), (this.Button_icon())]);
 			return obj;
 		}
 		Message_speck(){
@@ -47401,15 +47409,15 @@ var $;
 		}
 		Message(){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ([(this?.Message_speck()), (this?.message_text())]);
+			(obj.sub) = () => ([(this.Message_speck()), (this.message_text())]);
 			return obj;
 		}
 		sub(){
 			return [
-				(this?.Link()), 
-				(this?.String()), 
-				(this?.Button()), 
-				(this?.Message())
+				(this.Link()), 
+				(this.String()), 
+				(this.Button()), 
+				(this.Message())
 			];
 		}
 		tags(){
@@ -47665,8 +47673,8 @@ var $;
 		}
 		Toggle(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.Icon) = () => ((this?.Toggle_icon()));
-			(obj.checked) = (next) => ((this?.hearing(next)));
+			(obj.Icon) = () => ((this.Toggle_icon()));
+			(obj.checked) = (next) => ((this.hearing(next)));
 			return obj;
 		}
 		message(){
@@ -47674,7 +47682,7 @@ var $;
 		}
 		Message(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.message())]);
+			(obj.sub) = () => ([(this.message())]);
 			return obj;
 		}
 		speak(next){
@@ -47683,15 +47691,15 @@ var $;
 		}
 		Speak(){
 			const obj = new this.$.$mol_button_major();
-			(obj.click) = (next) => ((this?.speak(next)));
+			(obj.click) = (next) => ((this.speak(next)));
 			(obj.sub) = () => (["Speak"]);
 			return obj;
 		}
 		sub(){
 			return [
-				(this?.Toggle()), 
-				(this?.Message()), 
-				(this?.Speak())
+				(this.Toggle()), 
+				(this.Message()), 
+				(this.Speak())
 			];
 		}
 		tags(){
@@ -47844,7 +47852,7 @@ var $;
 		}
 		Article(){
 			const obj = new this.$.$mol_textarea();
-			(obj.value) = (next) => ((this?.article(next)));
+			(obj.value) = (next) => ((this.article(next)));
 			return obj;
 		}
 		report(){
@@ -47852,16 +47860,16 @@ var $;
 		}
 		Report(){
 			const obj = new this.$.$mol_text_code();
-			(obj.text) = () => ((this?.report()));
+			(obj.text) = () => ((this.report()));
 			return obj;
 		}
 		List(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Article()), (this?.Report())]);
+			(obj.rows) = () => ([(this.Article()), (this.Report())]);
 			return obj;
 		}
 		sub(){
-			return [(this?.List())];
+			return [(this.List())];
 		}
 		tags(){
 			return [
@@ -47954,11 +47962,11 @@ var $;
 		}
 		Collage(){
 			const obj = new this.$.$mol_stack();
-			(obj.sub) = () => ([(this?.Back()), (this?.Front())]);
+			(obj.sub) = () => ([(this.Back()), (this.Front())]);
 			return obj;
 		}
 		sub(){
-			return [(this?.Collage())];
+			return [(this.Collage())];
 		}
 		aspects(){
 			return ["Widget/Layout"];
@@ -47987,13 +47995,13 @@ var $;
 		}
 		Simple(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = (next) => ((this?.name(next)));
+			(obj.value) = (next) => ((this.name(next)));
 			return obj;
 		}
 		Hint(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ("Batman");
-			(obj.value) = (next) => ((this?.name(next)));
+			(obj.value) = (next) => ((this.name(next)));
 			return obj;
 		}
 		broken(next){
@@ -48003,7 +48011,7 @@ var $;
 		Broken(){
 			const obj = new this.$.$mol_string();
 			(obj.hint) = () => ("Broken");
-			(obj.value) = (next) => ((this?.broken(next)));
+			(obj.value) = (next) => ((this.broken(next)));
 			return obj;
 		}
 		name2(next){
@@ -48012,18 +48020,18 @@ var $;
 		}
 		Filled(){
 			const obj = new this.$.$mol_string();
-			(obj.value) = (next) => ((this?.name2(next)));
+			(obj.value) = (next) => ((this.name2(next)));
 			return obj;
 		}
 		Disabled(){
 			const obj = new this.$.$mol_string();
 			(obj.disabled) = () => (true);
-			(obj.value) = (next) => ((this?.name2(next)));
+			(obj.value) = (next) => ((this.name2(next)));
 			return obj;
 		}
 		Button(){
 			const obj = new this.$.$mol_string_button();
-			(obj.value) = (next) => ((this?.name2(next)));
+			(obj.value) = (next) => ((this.name2(next)));
 			return obj;
 		}
 		title(){
@@ -48031,12 +48039,12 @@ var $;
 		}
 		sub(){
 			return [
-				(this?.Simple()), 
-				(this?.Hint()), 
-				(this?.Broken()), 
-				(this?.Filled()), 
-				(this?.Disabled()), 
-				(this?.Button())
+				(this.Simple()), 
+				(this.Hint()), 
+				(this.Broken()), 
+				(this.Filled()), 
+				(this.Disabled()), 
+				(this.Button())
 			];
 		}
 		tags(){
@@ -48099,48 +48107,48 @@ var $;
 		}
 		Enabled(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.color(next)));
+			(obj.value) = (next) => ((this.color(next)));
 			(obj.options) = () => ({
-				"red": (this?.option_red()), 
-				"green": (this?.option_green()), 
-				"blue": (this?.option_blue()), 
-				"infernal": (this?.option_infernal())
+				"red": (this.option_red()), 
+				"green": (this.option_green()), 
+				"blue": (this.option_blue()), 
+				"infernal": (this.option_infernal())
 			});
 			return obj;
 		}
 		Enabled_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Read/Write");
-			(obj.Content) = () => ((this?.Enabled()));
+			(obj.Content) = () => ((this.Enabled()));
 			return obj;
 		}
 		Disabled(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.color(next)));
+			(obj.value) = (next) => ((this.color(next)));
 			(obj.enabled) = () => (false);
 			(obj.options) = () => ({
-				"red": (this?.option_red()), 
-				"green": (this?.option_green()), 
-				"blue": (this?.option_blue())
+				"red": (this.option_red()), 
+				"green": (this.option_green()), 
+				"blue": (this.option_blue())
 			});
 			return obj;
 		}
 		Disabled_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Read only");
-			(obj.Content) = () => ((this?.Disabled()));
+			(obj.Content) = () => ((this.Disabled()));
 			return obj;
 		}
 		Demo_items(){
 			const obj = new this.$.$mol_list();
-			(obj.sub) = () => ([(this?.Enabled_labeler()), (this?.Disabled_labeler())]);
+			(obj.sub) = () => ([(this.Enabled_labeler()), (this.Disabled_labeler())]);
 			return obj;
 		}
 		title(){
 			return "Color switchers in various state";
 		}
 		sub(){
-			return [(this?.Demo_items())];
+			return [(this.Demo_items())];
 		}
 		tags(){
 			return [
@@ -48171,12 +48179,12 @@ var $;
 		}
 		Item(id){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.item_title(id)));
+			(obj.title) = () => ((this.item_title(id)));
 			return obj;
 		}
 		Tree(){
 			const obj = new this.$.$mol_tag_tree();
-			(obj.Item) = (id) => ((this?.Item(id)));
+			(obj.Item) = (id) => ((this.Item(id)));
 			(obj.levels_expanded) = () => (0);
 			(obj.ids_tags) = () => ({
 				"Batman": [
@@ -48261,7 +48269,7 @@ var $;
 			return "Autoatic tag tree";
 		}
 		sub(){
-			return [(this?.Tree())];
+			return [(this.Tree())];
 		}
 		tags(){
 			return ["taxonomy", "menu"];
@@ -48306,16 +48314,16 @@ var $;
 		Text(){
 			const obj = new this.$.$mol_text_code();
 			(obj.sidebar_showed) = () => (true);
-			(obj.text) = () => ((this?.source()));
-			(obj.syntax) = () => ((this?.syntax()));
-			(obj.uri_resolve) = (id) => ((this?.uri_resolve(id)));
+			(obj.text) = () => ((this.source()));
+			(obj.syntax) = () => ((this.syntax()));
+			(obj.uri_resolve) = (id) => ((this.uri_resolve(id)));
 			return obj;
 		}
 		title(){
 			return "Markdow visualization example";
 		}
 		sub(){
-			return [(this?.Text())];
+			return [(this.Text())];
 		}
 		tags(){
 			return [
@@ -48372,8 +48380,8 @@ var $;
 		}
 		Search(){
 			const obj = new this.$.$mol_search_jumper();
-			(obj.query) = (next) => ((this?.search(next)));
-			(obj.Root) = () => ((this?.View()));
+			(obj.query) = (next) => ((this.search(next)));
+			(obj.Root) = () => ((this.View()));
 			return obj;
 		}
 		Edit_icon(){
@@ -48383,20 +48391,20 @@ var $;
 		Edit(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"edit": ""});
-			(obj.sub) = () => ([(this?.Edit_icon())]);
+			(obj.sub) = () => ([(this.Edit_icon())]);
 			return obj;
 		}
 		View(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.text()));
-			(obj.highlight) = () => ((this?.search()));
+			(obj.text) = () => ((this.text()));
+			(obj.highlight) = () => ((this.search()));
 			return obj;
 		}
 		View_page(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("Output");
-			(obj.tools) = () => ([(this?.Search()), (this?.Edit())]);
-			(obj.body) = () => ([(this?.View())]);
+			(obj.tools) = () => ([(this.Search()), (this.Edit())]);
+			(obj.body) = () => ([(this.View())]);
 			return obj;
 		}
 		Close_icon(){
@@ -48406,7 +48414,7 @@ var $;
 		Close(){
 			const obj = new this.$.$mol_link();
 			(obj.arg) = () => ({"edit": null});
-			(obj.sub) = () => ([(this?.Close_icon())]);
+			(obj.sub) = () => ([(this.Close_icon())]);
 			return obj;
 		}
 		text(next){
@@ -48415,30 +48423,30 @@ var $;
 		}
 		Code(){
 			const obj = new this.$.$mol_textarea();
-			(obj.value) = (next) => ((this?.text(next)));
+			(obj.value) = (next) => ((this.text(next)));
 			return obj;
 		}
 		Code_page(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ("Input");
-			(obj.tools) = () => ([(this?.Close())]);
-			(obj.body) = () => ([(this?.Code())]);
+			(obj.tools) = () => ([(this.Close())]);
+			(obj.body) = () => ([(this.Code())]);
 			return obj;
 		}
 		pages(){
-			return [(this?.View_page()), (this?.Code_page())];
+			return [(this.View_page()), (this.Code_page())];
 		}
 		Book(){
 			const obj = new this.$.$mol_book2();
 			(obj.Placeholder) = () => (null);
-			(obj.pages) = () => ((this?.pages()));
+			(obj.pages) = () => ((this.pages()));
 			return obj;
 		}
 		title(){
 			return "Markdown visualization example";
 		}
 		sub(){
-			return [(this?.Book())];
+			return [(this.Book())];
 		}
 		tags(){
 			return ["markdown", "marked"];
@@ -48505,7 +48513,7 @@ var $;
 			const obj = new this.$.$mol_textarea();
 			(obj.sidebar_showed) = () => (true);
 			(obj.hint) = () => ("source code");
-			(obj.value) = (next) => ((this?.filled_descr(next)));
+			(obj.value) = (next) => ((this.filled_descr(next)));
 			return obj;
 		}
 		symbols_hint(){
@@ -48513,19 +48521,19 @@ var $;
 		}
 		Disabled(){
 			const obj = new this.$.$mol_text();
-			(obj.text) = () => ((this?.symbols_hint()));
+			(obj.text) = () => ((this.symbols_hint()));
 			return obj;
 		}
 		Content(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Filled_descr()), (this?.Disabled())]);
+			(obj.rows) = () => ([(this.Filled_descr()), (this.Disabled())]);
 			return obj;
 		}
 		title(){
 			return "Text input field in various states";
 		}
 		sub(){
-			return [(this?.Content())];
+			return [(this.Content())];
 		}
 		tags(){
 			return [
@@ -48595,14 +48603,14 @@ var $;
 		}
 		Hue(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.hue(next)));
+			(obj.value) = (next) => ((this.hue(next)));
 			(obj.precision_change) = () => (15);
 			return obj;
 		}
 		Hue_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Hue");
-			(obj.Content) = () => ((this?.Hue()));
+			(obj.Content) = () => ((this.Hue()));
 			return obj;
 		}
 		hue_spread(next){
@@ -48611,19 +48619,19 @@ var $;
 		}
 		Hue_spread(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.hue_spread(next)));
+			(obj.value) = (next) => ((this.hue_spread(next)));
 			(obj.precision_change) = () => (15);
 			return obj;
 		}
 		Hue_spread_field(){
 			const obj = new this.$.$mol_form_field();
 			(obj.name) = () => ("Hue spread");
-			(obj.Content) = () => ((this?.Hue_spread()));
+			(obj.Content) = () => ((this.Hue_spread()));
 			return obj;
 		}
 		Config(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Hue_field()), (this?.Hue_spread_field())]);
+			(obj.sub) = () => ([(this.Hue_field()), (this.Hue_spread_field())]);
 			return obj;
 		}
 		Base(){
@@ -48650,23 +48658,23 @@ var $;
 			const obj = new this.$.$mol_theme_demo_case();
 			(obj.title) = () => ("Current light");
 			(obj.inner) = () => ([
-				(this?.Base()), 
-				(this?.Accent()), 
-				(this?.Current()), 
-				(this?.Special())
+				(this.Base()), 
+				(this.Accent()), 
+				(this.Current()), 
+				(this.Special())
 			]);
 			return obj;
 		}
 		Scroll(){
 			const obj = new this.$.$mol_scroll();
-			(obj.sub) = () => ([(this?.Cases())]);
+			(obj.sub) = () => ([(this.Cases())]);
 			return obj;
 		}
 		style(){
-			return {"--mol_theme_hue": (this?.hue_deg()), "--mol_theme_hue_spread": (this?.hue_spread_deg())};
+			return {"--mol_theme_hue": (this.hue_deg()), "--mol_theme_hue_spread": (this.hue_spread_deg())};
 		}
 		sub(){
-			return [(this?.Config()), (this?.Scroll())];
+			return [(this.Config()), (this.Scroll())];
 		}
 		tags(){
 			return ["theme", "skin"];
@@ -48694,12 +48702,12 @@ var $;
 		}
 		Card2_text(){
 			const obj = new this.$.$mol_button_copy();
-			(obj.title) = () => ((this?.title()));
+			(obj.title) = () => ((this.title()));
 			return obj;
 		}
 		Card2(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Card2_text())]);
+			(obj.sub) = () => ([(this.Card2_text())]);
 			return obj;
 		}
 		Card1_text(){
@@ -48709,7 +48717,7 @@ var $;
 		}
 		Card1(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Card2()), (this?.Card1_text())]);
+			(obj.rows) = () => ([(this.Card2()), (this.Card1_text())]);
 			return obj;
 		}
 		Back(){
@@ -48765,25 +48773,25 @@ var $;
 		Self(){
 			const obj = new this.$.$mol_list();
 			(obj.rows) = () => ([
-				(this?.Card1()), 
-				(this?.Back()), 
-				(this?.Line()), 
-				(this?.Text()), 
-				(this?.Field()), 
-				(this?.Shade()), 
-				(this?.Focus()), 
-				(this?.Control()), 
-				(this?.Hover()), 
-				(this?.Current()), 
-				(this?.Special())
+				(this.Card1()), 
+				(this.Back()), 
+				(this.Line()), 
+				(this.Text()), 
+				(this.Field()), 
+				(this.Shade()), 
+				(this.Focus()), 
+				(this.Control()), 
+				(this.Hover()), 
+				(this.Current()), 
+				(this.Special())
 			]);
 			return obj;
 		}
 		title(){
-			return (this?.theme());
+			return (this.theme());
 		}
 		sub(){
-			return [(this?.Self()), ...(this.inner())];
+			return [(this.Self()), ...(this.inner())];
 		}
 		inner(){
 			return [];
@@ -48986,7 +48994,7 @@ var $;
 		}
 		Bar(){
 			const obj = new this.$.$mol_view();
-			(obj.sub) = () => ((this?.items()));
+			(obj.sub) = () => ((this.items()));
 			return obj;
 		}
 		expanded(next){
@@ -48995,14 +49003,14 @@ var $;
 		}
 		Expand(){
 			const obj = new this.$.$mol_check_expand();
-			(obj.checked) = (next) => ((this?.expanded(next)));
+			(obj.checked) = (next) => ((this.expanded(next)));
 			return obj;
 		}
 		attr(){
-			return {...(super.attr()), "mol_toolbar_expanded": (this?.expanded())};
+			return {...(super.attr()), "mol_toolbar_expanded": (this.expanded())};
 		}
 		sub(){
-			return [(this?.Bar()), (this?.Expand())];
+			return [(this.Bar()), (this.Expand())];
 		}
 	};
 	($mol_mem(($.$mol_toolbar.prototype), "Bar"));
@@ -49134,7 +49142,7 @@ var $;
 		}
 		Search(){
 			const obj = new this.$.$mol_string();
-			(obj.hint) = () => ((this?.search_hint()));
+			(obj.hint) = () => ((this.search_hint()));
 			return obj;
 		}
 		replace_hint(){
@@ -49142,7 +49150,7 @@ var $;
 		}
 		Replace(){
 			const obj = new this.$.$mol_string();
-			(obj.hint) = () => ((this?.replace_hint()));
+			(obj.hint) = () => ((this.replace_hint()));
 			return obj;
 		}
 		approve_label(){
@@ -49150,7 +49158,7 @@ var $;
 		}
 		Approve(){
 			const obj = new this.$.$mol_button_major();
-			(obj.title) = () => ((this?.approve_label()));
+			(obj.title) = () => ((this.approve_label()));
 			return obj;
 		}
 		decline_label(){
@@ -49158,7 +49166,7 @@ var $;
 		}
 		Decline(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.title) = () => ((this?.decline_label()));
+			(obj.title) = () => ((this.decline_label()));
 			return obj;
 		}
 		Copy_icon(){
@@ -49167,7 +49175,7 @@ var $;
 		}
 		Copy(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.sub) = () => ([(this?.Copy_icon())]);
+			(obj.sub) = () => ([(this.Copy_icon())]);
 			return obj;
 		}
 		Cut_icon(){
@@ -49176,7 +49184,7 @@ var $;
 		}
 		Cut(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.sub) = () => ([(this?.Cut_icon())]);
+			(obj.sub) = () => ([(this.Cut_icon())]);
 			return obj;
 		}
 		Paste_icon(){
@@ -49185,7 +49193,7 @@ var $;
 		}
 		Paste(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.sub) = () => ([(this?.Paste_icon())]);
+			(obj.sub) = () => ([(this.Paste_icon())]);
 			return obj;
 		}
 		Delete_icon(){
@@ -49194,20 +49202,20 @@ var $;
 		}
 		Delete(){
 			const obj = new this.$.$mol_button_minor();
-			(obj.sub) = () => ([(this?.Delete_icon())]);
+			(obj.sub) = () => ([(this.Delete_icon())]);
 			return obj;
 		}
 		Toolbar(){
 			const obj = new this.$.$mol_toolbar();
 			(obj.items) = () => ([
-				(this?.Search()), 
-				(this?.Replace()), 
-				(this?.Approve()), 
-				(this?.Decline()), 
-				(this?.Copy()), 
-				(this?.Cut()), 
-				(this?.Paste()), 
-				(this?.Delete())
+				(this.Search()), 
+				(this.Replace()), 
+				(this.Approve()), 
+				(this.Decline()), 
+				(this.Copy()), 
+				(this.Cut()), 
+				(this.Paste()), 
+				(this.Delete())
 			]);
 			return obj;
 		}
@@ -49215,7 +49223,7 @@ var $;
 			return "Foldable toolbar demo";
 		}
 		sub(){
-			return [(this?.Toolbar())];
+			return [(this.Toolbar())];
 		}
 		aspects(){
 			return ["Widget/Layout"];
@@ -49261,10 +49269,10 @@ var $;
 			return null;
 		}
 		style(){
-			return {"animationName": (this?.animation_name_style())};
+			return {"animationName": (this.animation_name_style())};
 		}
 		event(){
-			return {"animationend": (next) => (this?.reset(next))};
+			return {"animationend": (next) => (this.reset(next))};
 		}
 	};
 	($mol_mem(($.$mol_transit.prototype), "reset"));
@@ -49370,7 +49378,7 @@ var $;
 		}
 		Align(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.align(next)));
+			(obj.value) = (next) => ((this.align(next)));
 			(obj.options) = () => ({
 				"flex-start": "left", 
 				"center": "center", 
@@ -49384,7 +49392,7 @@ var $;
 		}
 		Justify(){
 			const obj = new this.$.$mol_switch();
-			(obj.value) = (next) => ((this?.justify(next)));
+			(obj.value) = (next) => ((this.justify(next)));
 			(obj.options) = () => ({
 				"flex-start": "top", 
 				"center": "center", 
@@ -49394,22 +49402,22 @@ var $;
 		}
 		Float(){
 			const obj = new this.$.$mol_list();
-			(obj.rows) = () => ([(this?.Align()), (this?.Justify())]);
+			(obj.rows) = () => ([(this.Align()), (this.Justify())]);
 			return obj;
 		}
 		Transit(){
 			const obj = new this.$.$mol_transit();
-			(obj.Sub) = () => ((this?.Float()));
+			(obj.Sub) = () => ((this.Float()));
 			return obj;
 		}
 		title(){
 			return "Layout transition";
 		}
 		style(){
-			return {"justify-content": (this?.justify()), "align-items": (this?.align())};
+			return {"justify-content": (this.justify()), "align-items": (this.align())};
 		}
 		sub(){
-			return [(this?.Transit())];
+			return [(this.Transit())];
 		}
 		aspects(){
 			return ["Widget/Layout"];
@@ -49530,26 +49538,26 @@ var $;
 		}
 		attr(){
 			return {
-				"src": (this?.uri()), 
-				"controls": (this?.controls()), 
-				"autoplay": (this?.autoplay()), 
-				"playsinline": (this?.inline()), 
-				"loop": (this?.loop()), 
-				"muted": (this?.muted()), 
-				"poster": (this?.poster())
+				"src": (this.uri()), 
+				"controls": (this.controls()), 
+				"autoplay": (this.autoplay()), 
+				"playsinline": (this.inline()), 
+				"loop": (this.loop()), 
+				"muted": (this.muted()), 
+				"poster": (this.poster())
 			};
 		}
 		field(){
-			return {"srcObject": (this?.stream())};
+			return {"srcObject": (this.stream())};
 		}
 		event(){
 			return {
-				"volumechange": (next) => (this?.revolume(next)), 
-				"timeupdate": (next) => (this?.retime(next)), 
-				"durationchange": (next) => (this?.redurate(next)), 
-				"playing": (next) => (this?.playing_event(next)), 
-				"play": (next) => (this?.play_event(next)), 
-				"pause": (next) => (this?.pause_event(next))
+				"volumechange": (next) => (this.revolume(next)), 
+				"timeupdate": (next) => (this.retime(next)), 
+				"durationchange": (next) => (this.redurate(next)), 
+				"playing": (next) => (this.playing_event(next)), 
+				"play": (next) => (this.play_event(next)), 
+				"pause": (next) => (this.pause_event(next))
 			};
 		}
 	};
@@ -49644,7 +49652,7 @@ var $;
 ;
 	($.$mol_video_player_demo) = class $mol_video_player_demo extends ($.$mol_example_large) {
 		files(){
-			return (this?.Open()?.files());
+			return (this.Open().files());
 		}
 		Open(){
 			const obj = new this.$.$mol_button_open();
@@ -49656,53 +49664,53 @@ var $;
 		}
 		Playing(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.checked) = (next) => ((this?.playing(next)));
-			(obj.Icon) = () => ((this?.Playing_icon()));
+			(obj.checked) = (next) => ((this.playing(next)));
+			(obj.Icon) = () => ((this.Playing_icon()));
 			return obj;
 		}
 		Duration(){
 			const obj = new this.$.$mol_paragraph();
-			(obj.sub) = () => ([(this?.duration())]);
+			(obj.sub) = () => ([(this.duration())]);
 			return obj;
 		}
 		Duration_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Duration");
-			(obj.content) = () => ([(this?.Duration())]);
+			(obj.content) = () => ([(this.Duration())]);
 			return obj;
 		}
 		Time(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.time(next)));
+			(obj.value) = (next) => ((this.time(next)));
 			(obj.precision_view) = () => (0.001);
 			return obj;
 		}
 		Time_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Time");
-			(obj.content) = () => ([(this?.Time())]);
+			(obj.content) = () => ([(this.Time())]);
 			return obj;
 		}
 		Volume(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.volume(next)));
+			(obj.value) = (next) => ((this.volume(next)));
 			(obj.precision) = () => (0.001);
 			return obj;
 		}
 		Volume_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Volume");
-			(obj.content) = () => ([(this?.Volume())]);
+			(obj.content) = () => ([(this.Volume())]);
 			return obj;
 		}
 		Controls(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Open()), 
-				(this?.Playing()), 
-				(this?.Duration_labeler()), 
-				(this?.Time_labeler()), 
-				(this?.Volume_labeler())
+				(this.Open()), 
+				(this.Playing()), 
+				(this.Duration_labeler()), 
+				(this.Time_labeler()), 
+				(this.Volume_labeler())
 			]);
 			return obj;
 		}
@@ -49710,27 +49718,27 @@ var $;
 			return "";
 		}
 		playing(next){
-			return (this?.Player()?.playing(next));
+			return (this.Player().playing(next));
 		}
 		volume(next){
-			return (this?.Player()?.volume(next));
+			return (this.Player().volume(next));
 		}
 		time(next){
-			return (this?.Player()?.time(next));
+			return (this.Player().time(next));
 		}
 		duration(){
-			return (this?.Player()?.duration());
+			return (this.Player().duration());
 		}
 		Player(){
 			const obj = new this.$.$mol_video_player();
-			(obj.uri) = () => ((this?.uri()));
+			(obj.uri) = () => ((this.uri()));
 			return obj;
 		}
 		title(){
 			return "Reactive video player";
 		}
 		sub(){
-			return [(this?.Controls()), (this?.Player())];
+			return [(this.Controls()), (this.Player())];
 		}
 		tags(){
 			return ["palyback"];
@@ -49788,10 +49796,10 @@ var $;
 			return 720;
 		}
 		width(){
-			return (this?.size());
+			return (this.size());
 		}
 		height(){
-			return (this?.size());
+			return (this.size());
 		}
 		brightness(){
 			return 128;
@@ -49815,23 +49823,23 @@ var $;
 			return false;
 		}
 		style(){
-			return {"transform": (this?.transform())};
+			return {"transform": (this.transform())};
 		}
 		video_constraints(){
 			return {
-				"facingMode": (this?.facing()), 
-				"aspectRatio": (this?.aspect()), 
-				"width": {"ideal": (this?.width())}, 
-				"height": {"ideal": (this?.height())}
+				"facingMode": (this.facing()), 
+				"aspectRatio": (this.aspect()), 
+				"width": {"ideal": (this.width())}, 
+				"height": {"ideal": (this.height())}
 			};
 		}
 		video_settings(){
 			return {
-				"brightness": (this?.brightness()), 
-				"sharpness": (this?.sharpness()), 
-				"contrast": (this?.contrast()), 
-				"saturation": (this?.saturation()), 
-				"advanced": [{"colorTemperature": (this?.temperature())}, {"torch": (this?.torch())}]
+				"brightness": (this.brightness()), 
+				"sharpness": (this.sharpness()), 
+				"contrast": (this.contrast()), 
+				"saturation": (this.saturation()), 
+				"advanced": [{"colorTemperature": (this.temperature())}, {"torch": (this.torch())}]
 			};
 		}
 	};
@@ -49914,17 +49922,17 @@ var $;
 	($.$mol_video_camera_demo) = class $mol_video_camera_demo extends ($.$mol_example_large) {
 		Player(){
 			const obj = new this.$.$mol_video_camera();
-			(obj.torch) = () => ((this?.torch()));
-			(obj.brightness) = () => ((this?.brightness()));
-			(obj.sharpness) = () => ((this?.sharpness()));
-			(obj.contrast) = () => ((this?.contrast()));
-			(obj.saturation) = () => ((this?.saturation()));
-			(obj.temperature) = () => ((this?.temperature()));
+			(obj.torch) = () => ((this.torch()));
+			(obj.brightness) = () => ((this.brightness()));
+			(obj.sharpness) = () => ((this.sharpness()));
+			(obj.contrast) = () => ((this.contrast()));
+			(obj.saturation) = () => ((this.saturation()));
+			(obj.temperature) = () => ((this.temperature()));
 			return obj;
 		}
 		View(){
 			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this?.Player())]);
+			(obj.sub) = () => ([(this.Player())]);
 			return obj;
 		}
 		torch(next){
@@ -49937,14 +49945,14 @@ var $;
 		}
 		Torch(){
 			const obj = new this.$.$mol_check_icon();
-			(obj.checked) = (next) => ((this?.torch(next)));
-			(obj.Icon) = () => ((this?.Torch_icon()));
+			(obj.checked) = (next) => ((this.torch(next)));
+			(obj.Icon) = () => ((this.Torch_icon()));
 			return obj;
 		}
 		Torch_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Torch");
-			(obj.content) = () => ([(this?.Torch())]);
+			(obj.content) = () => ([(this.Torch())]);
 			return obj;
 		}
 		brightness(next){
@@ -49953,14 +49961,14 @@ var $;
 		}
 		Brightness(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.brightness(next)));
+			(obj.value) = (next) => ((this.brightness(next)));
 			(obj.precision_change) = () => (8);
 			return obj;
 		}
 		Brightness_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Brightness");
-			(obj.content) = () => ([(this?.Brightness())]);
+			(obj.content) = () => ([(this.Brightness())]);
 			return obj;
 		}
 		sharpness(next){
@@ -49969,13 +49977,13 @@ var $;
 		}
 		Sharpness(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.sharpness(next)));
+			(obj.value) = (next) => ((this.sharpness(next)));
 			return obj;
 		}
 		Sharpness_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Sharpness");
-			(obj.content) = () => ([(this?.Sharpness())]);
+			(obj.content) = () => ([(this.Sharpness())]);
 			return obj;
 		}
 		contrast(next){
@@ -49984,14 +49992,14 @@ var $;
 		}
 		Contrast(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.contrast(next)));
+			(obj.value) = (next) => ((this.contrast(next)));
 			(obj.precision_change) = () => (4);
 			return obj;
 		}
 		Contrast_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Contrast");
-			(obj.content) = () => ([(this?.Contrast())]);
+			(obj.content) = () => ([(this.Contrast())]);
 			return obj;
 		}
 		saturation(next){
@@ -50000,14 +50008,14 @@ var $;
 		}
 		Saturation(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.saturation(next)));
+			(obj.value) = (next) => ((this.saturation(next)));
 			(obj.precision_change) = () => (8);
 			return obj;
 		}
 		Saturation_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Saturation");
-			(obj.content) = () => ([(this?.Saturation())]);
+			(obj.content) = () => ([(this.Saturation())]);
 			return obj;
 		}
 		temperature(next){
@@ -50016,38 +50024,38 @@ var $;
 		}
 		Temperature(){
 			const obj = new this.$.$mol_number();
-			(obj.value) = (next) => ((this?.temperature(next)));
+			(obj.value) = (next) => ((this.temperature(next)));
 			(obj.precision_change) = () => (100);
 			return obj;
 		}
 		Temperature_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Temperature");
-			(obj.content) = () => ([(this?.Temperature())]);
+			(obj.content) = () => ([(this.Temperature())]);
 			return obj;
 		}
 		Controls(){
 			const obj = new this.$.$mol_row();
 			(obj.sub) = () => ([
-				(this?.Torch_labeler()), 
-				(this?.Brightness_labeler()), 
-				(this?.Sharpness_labeler()), 
-				(this?.Contrast_labeler()), 
-				(this?.Saturation_labeler()), 
-				(this?.Temperature_labeler())
+				(this.Torch_labeler()), 
+				(this.Brightness_labeler()), 
+				(this.Sharpness_labeler()), 
+				(this.Contrast_labeler()), 
+				(this.Saturation_labeler()), 
+				(this.Temperature_labeler())
 			]);
 			return obj;
 		}
 		Scroll(){
 			const obj = new this.$.$mol_scroll();
-			(obj.sub) = () => ([(this?.View()), (this?.Controls())]);
+			(obj.sub) = () => ([(this.View()), (this.Controls())]);
 			return obj;
 		}
 		title(){
 			return "Reactive video camera";
 		}
 		sub(){
-			return [(this?.Scroll())];
+			return [(this.Scroll())];
 		}
 		tags(){
 			return ["capture"];
@@ -50092,7 +50100,7 @@ var $;
 		}
 		Simple(){
 			const obj = new this.$.$mol_password();
-			(obj.value) = (next) => ((this?.pass(next)));
+			(obj.value) = (next) => ((this.pass(next)));
 			return obj;
 		}
 		pass2(next){
@@ -50101,7 +50109,7 @@ var $;
 		}
 		Hint(){
 			const obj = new this.$.$mol_password();
-			(obj.value) = (next) => ((this?.pass2(next)));
+			(obj.value) = (next) => ((this.pass2(next)));
 			(obj.hint) = () => ("Top secret");
 			return obj;
 		}
@@ -50109,7 +50117,7 @@ var $;
 			return "Password input field based on $mol_string";
 		}
 		sub(){
-			return [(this?.Simple()), (this?.Hint())];
+			return [(this.Simple()), (this.Hint())];
 		}
 		tags(){
 			return ["input"];
@@ -50139,15 +50147,15 @@ var $;
 		}
 		Sample(){
 			const obj = new this.$.$mol_view();
-			(obj.plugins) = () => ([(this?.Theme())]);
-			(obj.sub) = () => ([(this?.Lighter())]);
+			(obj.plugins) = () => ([(this.Theme())]);
+			(obj.sub) = () => ([(this.Lighter())]);
 			return obj;
 		}
 		title(){
 			return "Switcher between light/dark themes (usually for `$mol_theme_auto` plugin).";
 		}
 		sub(){
-			return [(this?.Sample())];
+			return [(this.Sample())];
 		}
 		tags(){
 			return [
@@ -50179,7 +50187,7 @@ var $;
 		All_languages_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("All languages example");
-			(obj.content) = () => ([(this?.All_languages())]);
+			(obj.content) = () => ([(this.All_languages())]);
 			return obj;
 		}
 		List_of_languages(){
@@ -50190,14 +50198,14 @@ var $;
 		List_of_languages_labeler(){
 			const obj = new this.$.$mol_labeler();
 			(obj.title) = () => ("Or you can give user select from your list");
-			(obj.content) = () => ([(this?.List_of_languages())]);
+			(obj.content) = () => ([(this.List_of_languages())]);
 			return obj;
 		}
 		title(){
 			return "Example usages of $mol_locale component";
 		}
 		sub(){
-			return [(this?.All_languages_labeler()), (this?.List_of_languages_labeler())];
+			return [(this.All_languages_labeler()), (this.List_of_languages_labeler())];
 		}
 		tags(){
 			return ["language", "l10n"];
