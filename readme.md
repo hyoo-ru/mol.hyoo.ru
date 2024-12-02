@@ -2,7 +2,7 @@
 
 This portal is the synergetic mix of $mol-based microfrontends:
 
-- [$mol_app_demo](https://mol.js.org/app/demo/-/)
+- [$mol_app_docs](https://mol.js.org/app/docs/-/)
 - [$hyoo_page](https://page.hyoo.ru/)
 - [$hyoo_js_eval](https://eval.js.hyoo.ru/)
 - [$hyoo_js_perf](https://perf.js.hyoo.ru/)
