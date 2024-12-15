@@ -793,7 +793,6 @@
     "jsdom": "*",
     "chokidar": "*",
     "fake-indexeddb": "*",
-    "undici": "*",
     "web-audio-api": "*"
   }
 }
