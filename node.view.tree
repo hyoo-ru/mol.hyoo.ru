@@ -1868,10 +1868,14 @@ $hyoo_apps $mol_book2
 			target \develop
 			title @ \$mol UI Framework
 			uri \https://mol.hyoo.ru/
-		sync *
+		science *
 			target \develop
-			title @ \DB Watch
-			uri \https://sync.hyoo.ru/watch/
+			title @ \Science Search
+			uri \https://science.hyoo.ru/
+		crus *
+			target \develop
+			title @ \CRUS-DB
+			uri \https://crus.hyoo.ru/
 		piterjs *
 			target \develop
 			title @ \PiterJS Meetups

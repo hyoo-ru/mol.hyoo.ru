@@ -647,7 +647,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const handled = new WeakSet();
+    const wrappers = new WeakMap();
     class $mol_wire_fiber extends $mol_wire_pub_sub {
         task;
         host;
@@ -782,13 +782,21 @@ var $;
                         result = this.task.call(this.host, ...this.args);
                         break;
                 }
-                if ($mol_promise_like(result) && !handled.has(result)) {
-                    const put = (res) => {
-                        if (this.cache === result)
-                            this.put(res);
-                        return res;
-                    };
-                    result = result.then(put, put);
+                if ($mol_promise_like(result)) {
+                    if (wrappers.has(result)) {
+                        result = wrappers.get(result).then(a => a);
+                    }
+                    else {
+                        const put = (res) => {
+                            if (this.cache === result)
+                                this.put(res);
+                            return res;
+                        };
+                        wrappers.set(result, result = Object.assign(result.then(put, put), { destructor: result.destructor || (() => { }) }));
+                        wrappers.set(result, result);
+                        const error = new Error(`Promise in ${this}`);
+                        Object.defineProperty(result, 'stack', { get: () => error.stack });
+                    }
                 }
             }
             catch (error) {
@@ -798,20 +806,19 @@ var $;
                 else {
                     result = new Error(String(error), { cause: error });
                 }
-                if ($mol_promise_like(result) && !handled.has(result)) {
-                    result = result.finally(() => {
-                        if (this.cache === result)
-                            this.absorb();
-                    });
+                if ($mol_promise_like(result)) {
+                    if (wrappers.has(result)) {
+                        result = wrappers.get(result);
+                    }
+                    else {
+                        wrappers.set(result, result = Object.assign(result.finally(() => {
+                            if (this.cache === result)
+                                this.absorb();
+                        }), { destructor: result.destructor || (() => { }) }));
+                        const error = new Error(`Promise in ${this}`);
+                        Object.defineProperty(result, 'stack', { get: () => error.stack });
+                    }
                 }
-            }
-            if ($mol_promise_like(result) && !handled.has(result)) {
-                result = Object.assign(result, {
-                    destructor: result['destructor'] ?? (() => { })
-                });
-                handled.add(result);
-                const error = new Error(`Promise in ${this}`);
-                Object.defineProperty(result, 'stack', { get: () => error.stack });
             }
             if (!$mol_promise_like(result)) {
                 this.track_cut();
@@ -872,6 +879,12 @@ var $;
                 };
             });
         }
+        destructor() {
+            super.destructor();
+            if ($mol_owning_check(this, this.cache)) {
+                this.cache.destructor();
+            }
+        }
     }
     $.$mol_wire_fiber = $mol_wire_fiber;
 })($ || ($ = {}));
@@ -896,6 +909,7 @@ var $;
 var $;
 (function ($) {
     $.$mol_key_store = new WeakMap();
+    const TypedArray = Object.getPrototypeOf(Uint8Array);
     function $mol_key(value) {
         if (typeof value === 'bigint')
             return value.toString() + 'n';
@@ -925,7 +939,7 @@ var $;
                 return value;
             if (value instanceof RegExp)
                 return value.toString();
-            if (value instanceof Uint8Array)
+            if (value instanceof TypedArray)
                 return [...value];
             let key = $.$mol_key_store.get(value);
             if (key)
@@ -1656,7 +1670,8 @@ var $;
                     $$.$mol_log3_warn({
                         place: '$mol_wire_task',
                         message: `Non idempotency`,
-                        existen,
+                        sub,
+                        pubs: [...sub?.pub_list ?? [], existen],
                         next,
                         hint: 'Ignore it',
                     });
@@ -1679,6 +1694,14 @@ var $;
                 this.cursor = $mol_wire_cursor.fresh;
                 if (next !== prev)
                     this.emit();
+                if ($mol_owning_catch(this, next)) {
+                    try {
+                        next[Symbol.toStringTag] = this[Symbol.toStringTag];
+                    }
+                    catch {
+                        Object.defineProperty(next, Symbol.toStringTag, { value: this[Symbol.toStringTag] });
+                    }
+                }
                 return next;
             }
             this.cursor = $mol_wire_cursor.final;
@@ -1833,10 +1856,6 @@ var $;
         }
         destructor() {
             super.destructor();
-            const prev = this.cache;
-            if ($mol_owning_check(this, prev)) {
-                prev.destructor();
-            }
             if (this.pub_from === 0) {
                 ;
                 (this.host ?? this.task)[this.field()] = null;
@@ -2124,97 +2143,115 @@ var $;
     class $mol_run_error extends $mol_error_mix {
     }
     $.$mol_run_error = $mol_run_error;
-    const child_process = $node['child_process'];
-    $.$mol_run_spawn = child_process.spawn.bind(child_process);
-    $.$mol_run_spawn_sync = child_process.spawnSync.bind(child_process);
-    function $mol_run_async({ dir, timeout, command, env }) {
-        const args_raw = typeof command === 'string' ? command.split(' ') : command;
-        const [app, ...args] = args_raw;
-        if (!env?.MOL_RUN_ASYNC) {
-            this.$mol_log3_come({
-                place: '$mol_run_sync',
+    $.$mol_run_spawn = (...args) => $node['child_process'].spawn(...args);
+    $.$mol_run_spawn_sync = (...args) => $node['child_process'].spawnSync(...args);
+    class $mol_run extends $mol_object {
+        static async_enabled() {
+            return Boolean(this.$.$mol_env()['MOL_RUN_ASYNC']);
+        }
+        static spawn(options) {
+            const sync = !this.async_enabled() || !Boolean($mol_wire_auto());
+            const env = options.env ?? this.$.$mol_env();
+            return $mol_wire_sync(this).spawn_async({ ...options, sync, env });
+        }
+        static spawn_async({ dir, sync, timeout, command, env }) {
+            const args_raw = typeof command === 'string' ? command.split(' ') : command;
+            const [app, ...args] = args_raw;
+            const opts = { shell: true, cwd: dir, env };
+            const log_object = {
+                place: `${this}.spawn()`,
                 message: 'Run',
                 command: args_raw.join(' '),
                 dir: $node.path.relative('', dir),
+            };
+            if (sync) {
+                this.$.$mol_log3_come({
+                    hint: 'Run inside fiber',
+                    ...log_object
+                });
+                let error;
+                let res;
+                try {
+                    res = this.$.$mol_run_spawn_sync(app, args, opts);
+                    error = res.error;
+                }
+                catch (err) {
+                    error = err;
+                }
+                if (!res || error || res.status) {
+                    throw new $mol_run_error(this.error_message(res), { ...log_object, status: res?.status, signal: res?.signal }, ...(error ? [error] : []));
+                }
+                return res;
+            }
+            let sub;
+            try {
+                sub = this.$.$mol_run_spawn(app, args, {
+                    ...opts,
+                    stdio: ['pipe', 'inherit', 'inherit'],
+                });
+            }
+            catch (error) {
+                throw new $mol_run_error(this.error_message(undefined), log_object, error);
+            }
+            const pid = sub.pid ?? 0;
+            this.$.$mol_log3_come({
+                ...log_object,
+                pid,
             });
-            const res = this.$mol_run_spawn_sync(app, args, { shell: true, cwd: dir, env });
-            if (res.status)
-                $mol_fail(new Error(res.stderr.toString() || 'Exit(' + res.status + ')'));
-            return res;
-        }
-        const sub = this.$mol_run_spawn(app, args, {
-            shell: true,
-            cwd: dir,
-            env
-        });
-        this.$mol_log3_come({
-            place: '$mol_run_async',
-            pid: sub.pid,
-            message: 'Run',
-            command: args_raw.join(' '),
-            dir: $node.path.relative('', dir),
-        });
-        let killed = false;
-        let timer;
-        const std_data = [];
-        const error_data = [];
-        const add = (std_chunk, error_chunk) => {
-            if (std_chunk)
-                std_data.push(std_chunk);
-            if (error_chunk)
-                error_data.push(error_chunk);
-            if (!timeout)
-                return;
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                const signal = killed ? 'SIGKILL' : 'SIGTERM';
-                killed = true;
-                add();
-                sub.kill(signal);
-            }, timeout);
-        };
-        add();
-        sub.stdout?.on('data', data => add(data));
-        sub.stderr?.on('data', data => add(undefined, data));
-        const promise = new Promise((done, fail) => {
-            const close = (error, status = null, signal = null) => {
-                if (!timer && timeout)
+            let timeout_kill = false;
+            let timer;
+            const std_data = [];
+            const error_data = [];
+            const add = (std_chunk, error_chunk) => {
+                if (std_chunk)
+                    std_data.push(std_chunk);
+                if (error_chunk)
+                    error_data.push(error_chunk);
+                if (!timeout)
                     return;
                 clearTimeout(timer);
-                timer = undefined;
-                const res = {
-                    pid: sub.pid,
-                    status,
-                    signal,
-                    get stdout() { return Buffer.concat(std_data); },
-                    get stderr() { return Buffer.concat(error_data); }
-                };
-                this.$mol_log3_done({
-                    place: '$mol_run_async',
-                    pid: sub.pid,
-                    message: 'Run',
-                    status,
-                    command: args_raw.join(' '),
-                    dir: $node.path.relative('', dir),
-                });
-                if (error || status || killed)
-                    return fail(new $mol_run_error((res.stderr.toString() || res.stdout.toString() || 'Run error') + (killed ? ', timeout' : ''), { signal, timeout: killed }, ...error ? [error] : []));
-                done(res);
+                timer = setTimeout(() => {
+                    const signal = timeout_kill ? 'SIGKILL' : 'SIGTERM';
+                    timeout_kill = true;
+                    add();
+                    sub.kill(signal);
+                }, timeout);
             };
-            sub.on('disconnect', () => close(new Error('Disconnected')));
-            sub.on('error', err => close(err));
-            sub.on('exit', (status, signal) => close(null, status, signal));
-        });
-        return Object.assign(promise, { destructor: () => {
-                clearTimeout(timer);
-                sub.kill('SIGKILL');
-            } });
-    }
-    $.$mol_run_async = $mol_run_async;
-    function $mol_run(options) {
-        if (!options.env)
-            options = { ...options, env: this.$mol_env() };
-        return $mol_wire_sync(this).$mol_run_async(options);
+            add();
+            sub.stdout?.on('data', data => add(data));
+            sub.stderr?.on('data', data => add(undefined, data));
+            const result_promise = new Promise((done, fail) => {
+                const close = (error, status = null, signal = null) => {
+                    if (!timer && timeout)
+                        return;
+                    clearTimeout(timer);
+                    timer = undefined;
+                    const res = {
+                        pid,
+                        signal,
+                        get stdout() { return Buffer.concat(std_data); },
+                        get stderr() { return Buffer.concat(error_data); }
+                    };
+                    if (error || status || timeout_kill)
+                        return fail(new $mol_run_error(this.error_message(res) + (timeout_kill ? ', timeout' : ''), { ...log_object, pid, status, signal, timeout_kill }, ...error ? [error] : []));
+                    this.$.$mol_log3_done({
+                        ...log_object,
+                        pid,
+                    });
+                    done(res);
+                };
+                sub.on('disconnect', () => close(new Error('Disconnected')));
+                sub.on('error', err => close(err));
+                sub.on('exit', (status, signal) => close(null, status, signal));
+            });
+            return Object.assign(result_promise, { destructor: () => {
+                    clearTimeout(timer);
+                    sub.kill('SIGKILL');
+                } });
+        }
+        static error_message(res) {
+            return res?.stderr.toString() || res?.stdout.toString() || 'Run error';
+        }
     }
     $.$mol_run = $mol_run;
 })($ || ($ = {}));
@@ -2224,7 +2261,7 @@ var $;
 var $;
 (function ($) {
     function $mol_exec(dir, command, ...args) {
-        return this.$mol_run({ command: [command, ...args], dir });
+        return this.$mol_run.spawn({ command: [command, ...args], dir });
     }
     $.$mol_exec = $mol_exec;
 })($ || ($ = {}));
@@ -2311,16 +2348,25 @@ var $;
     class $mol_memo extends $mol_wrapper {
         static wrap(task) {
             const store = new WeakMap();
-            return function (next) {
+            const fun = function (next) {
                 if (next === undefined && store.has(this))
                     return store.get(this);
                 const val = task.call(this, next) ?? next;
                 store.set(this, val);
                 return val;
             };
+            Reflect.defineProperty(fun, 'name', { value: task.name + ' ' });
+            return fun;
         }
     }
     $.$mol_memo = $mol_memo;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_dom = $mol_dom_context;
 })($ || ($ = {}));
 
 ;
@@ -3154,7 +3200,9 @@ var $;
             const win = this.$.$mol_dom_context;
             if (win.parent !== win.self && !win.document.hasFocus())
                 return;
-            this.focused(true);
+            new this.$.$mol_after_timeout(0, () => {
+                this.focused(true);
+            });
         }
         destructor() {
             const node = $mol_wire_probe(() => this.dom_node());
@@ -3660,7 +3708,6 @@ var $;
                             left: p.offsetLeft + p.offsetWidth - b.offsetWidth,
                             behavior: 'smooth',
                         });
-                        new this.$.$mol_after_timeout(1000, () => n.bring());
                     });
                     break;
                 }
@@ -4311,6 +4358,65 @@ var $;
 
 ;
 "use strict";
+var $;
+(function ($) {
+    $.$mol_action = $mol_wire_method;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_lock extends $mol_object {
+        promise = null;
+        async wait() {
+            let next = () => { };
+            let destructed = false;
+            const task = $mol_wire_auto();
+            if (!task)
+                return next;
+            const destructor = task.destructor.bind(task);
+            task.destructor = () => {
+                destructor();
+                destructed = true;
+                next();
+            };
+            let promise;
+            do {
+                promise = this.promise;
+                await promise;
+                if (destructed)
+                    return next;
+            } while (promise !== this.promise);
+            this.promise = new Promise(done => { next = done; });
+            return next;
+        }
+        grab() { return $mol_wire_sync(this).wait(); }
+    }
+    $.$mol_lock = $mol_lock;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function $mol_compare_array(a, b) {
+        if (a === b)
+            return true;
+        if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b))
+            return false;
+        if (a.length !== b.length)
+            return false;
+        for (let i = 0; i < a.length; i++)
+            if (a[i] !== b[i])
+                return false;
+        return true;
+    }
+    $.$mol_compare_array = $mol_compare_array;
+})($ || ($ = {}));
+
+;
+"use strict";
 
 ;
 "use strict";
@@ -4342,12 +4448,82 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_file_not_found extends Error {
+    class $mol_file_transaction extends $mol_object {
+        path() { return ''; }
+        modes() { return []; }
+        write(options) {
+            return 0;
+        }
+        read() {
+            return new Uint8Array();
+        }
+        truncate(size) { }
+        close() { }
+        destructor() {
+            this.close();
+        }
     }
-    $.$mol_file_not_found = $mol_file_not_found;
-    class $mol_file extends $mol_object {
+    $.$mol_file_transaction = $mol_file_transaction;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    let file_modes;
+    (function (file_modes) {
+        file_modes[file_modes["create"] = $node.fs.constants.O_CREAT] = "create";
+        file_modes[file_modes["exists_truncate"] = $node.fs.constants.O_TRUNC] = "exists_truncate";
+        file_modes[file_modes["exists_fail"] = $node.fs.constants.O_EXCL] = "exists_fail";
+        file_modes[file_modes["read_only"] = $node.fs.constants.O_RDONLY] = "read_only";
+        file_modes[file_modes["write_only"] = $node.fs.constants.O_WRONLY] = "write_only";
+        file_modes[file_modes["read_write"] = $node.fs.constants.O_RDWR] = "read_write";
+        file_modes[file_modes["append"] = $node.fs.constants.O_APPEND] = "append";
+    })(file_modes || (file_modes = {}));
+    function mode_mask(modes) {
+        return modes.reduce((res, mode) => res | file_modes[mode], 0);
+    }
+    class $mol_file_transaction_node extends $mol_file_transaction {
+        descr() {
+            $mol_wire_solid();
+            return $node.fs.openSync(this.path(), mode_mask(this.modes()));
+        }
+        write({ buffer, offset = 0, length, position = null }) {
+            if (Array.isArray(buffer)) {
+                return $node.fs.writevSync(this.descr(), buffer, position ?? undefined);
+            }
+            if (typeof buffer === 'string') {
+                return $node.fs.writeSync(this.descr(), buffer, position);
+            }
+            length = length ?? buffer.byteLength;
+            return $node.fs.writeSync(this.descr(), buffer, offset, length, position);
+        }
+        truncate(size) {
+            $node.fs.ftruncateSync(this.descr());
+        }
+        read() {
+            return $mol_file_node_buffer_normalize($node.fs.readFileSync(this.descr()));
+        }
+        close() {
+            $node.fs.closeSync(this.descr());
+        }
+    }
+    __decorate([
+        $mol_mem
+    ], $mol_file_transaction_node.prototype, "descr", null);
+    $.$mol_file_transaction_node = $mol_file_transaction_node;
+    $.$mol_file_transaction = $mol_file_transaction_node;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    class $mol_file_base extends $mol_object {
         static absolute(path) {
-            throw new Error('Not implemented yet');
+            return this.make({
+                path: $mol_const(path)
+            });
         }
         static relative(path) {
             throw new Error('Not implemented yet');
@@ -4359,27 +4535,164 @@ var $;
         parent() {
             return this.resolve('..');
         }
-        reset() {
+        exists_cut() { return this.exists(); }
+        root() {
+            const path = this.path();
+            const base = this.constructor.base;
+            return base.startsWith(path) || this == this.parent();
+        }
+        stat(next, virt) {
+            const path = this.path();
+            const parent = this.parent();
+            if (!this.root()) {
+                parent.version();
+            }
+            parent.watcher();
+            if (virt)
+                return next ?? null;
+            return next ?? this.info(path);
+        }
+        static changed = new Set;
+        static frame = null;
+        static changed_add(type, path) {
+            if (/([\/\\]\.|___$)/.test(path))
+                return;
+            const file = this.relative(path.at(-1) === '/' ? path.slice(0, -1) : path);
+            this.changed.add(file);
+            if (!this.watching)
+                return;
+            this.frame?.destructor();
+            this.frame = new this.$.$mol_after_timeout(this.watch_debounce(), () => {
+                if (!this.watching)
+                    return;
+                this.watching = false;
+                $mol_wire_async(this).flush();
+            });
+        }
+        static watch_debounce() { return 500; }
+        static flush() {
+            for (const file of this.changed) {
+                const parent = file.parent();
+                try {
+                    if ($mol_wire_probe(() => parent.sub()))
+                        parent.sub(null);
+                    file.reset();
+                }
+                catch (error) {
+                    if ($mol_fail_catch(error))
+                        $mol_fail_log(error);
+                }
+            }
+            this.changed.clear();
+            this.watching = true;
+        }
+        static watching = true;
+        static lock = new $mol_lock;
+        static watch_off(path) {
+            this.watching = false;
+            this.flush();
+            this.watching = false;
+            this.changed.add(this.absolute(path));
+        }
+        static unwatched(side_effect, affected_dir) {
+            const unlock = this.lock.grab();
+            this.watch_off(affected_dir);
             try {
-                this.stat(null);
+                const result = side_effect();
+                this.flush();
+                unlock();
+                return result;
+            }
+            catch (e) {
+                if (!$mol_promise_like(e)) {
+                    this.flush();
+                    unlock();
+                }
+                $mol_fail_hidden(e);
+            }
+        }
+        reset() {
+            this.stat(null);
+        }
+        modified() { return this.stat()?.mtime ?? null; }
+        version() {
+            const next = this.stat()?.mtime.getTime().toString(36).toUpperCase() ?? '';
+            return next;
+        }
+        info(path) { return null; }
+        ensure() { }
+        drop() { }
+        copy(to) { }
+        read() { return new Uint8Array; }
+        write(buffer) { }
+        kids() {
+            return [];
+        }
+        readable(opts) {
+            return new ReadableStream;
+        }
+        writable(opts) {
+            return new WritableStream;
+        }
+        buffer(next) {
+            let readed = new Uint8Array();
+            if (next === undefined) {
+                if (this.version())
+                    readed = this.read();
+            }
+            const prev = $mol_mem_cached(() => this.buffer());
+            const changed = prev === undefined || !$mol_compare_array(prev, next ?? readed);
+            if (prev !== undefined && changed) {
+                this.$.$mol_log3_rise({
+                    place: `$mol_file_node.buffer()`,
+                    message: 'Changed',
+                    path: this.relate(),
+                });
+            }
+            if (next === undefined)
+                return changed ? readed : prev;
+            if (!changed && this.exists())
+                return prev;
+            this.parent().exists(true);
+            this.stat(this.stat_make(next.length), 'virt');
+            this.write(next);
+            return next;
+        }
+        stat_make(size) {
+            const now = new Date();
+            return {
+                type: 'file',
+                size,
+                atime: now,
+                mtime: now,
+                ctime: now,
+            };
+        }
+        clone(to) {
+            if (!this.exists())
+                return null;
+            const target = this.constructor.absolute(to);
+            try {
+                this.version();
+                target.parent().exists(true);
+                this.copy(to);
+                target.reset();
+                return target;
             }
             catch (error) {
-                if (error instanceof $mol_file_not_found)
-                    return;
-                return $mol_fail_hidden(error);
+                if ($mol_fail_catch(error)) {
+                    console.error(error);
+                }
             }
-        }
-        version() {
-            return this.stat()?.mtime.getTime().toString(36).toUpperCase() ?? '';
+            return null;
         }
         watcher() {
-            console.warn('$mol_file_web.watcher() not implemented');
             return {
                 destructor() { }
             };
         }
         exists(next) {
-            let exists = Boolean(this.stat());
+            const exists = Boolean(this.stat());
             if (next === undefined)
                 return exists;
             if (next === exists)
@@ -4405,25 +4718,39 @@ var $;
             return match ? match[1].substring(1) : '';
         }
         text(next, virt) {
+            if (next !== undefined)
+                this.exists();
+            return this.text_int(next, virt);
+        }
+        text_int(next, virt) {
             if (virt) {
-                const now = new Date;
-                this.stat({
-                    type: 'file',
-                    size: 0,
-                    atime: now,
-                    mtime: now,
-                    ctime: now,
-                }, 'virt');
+                this.stat(this.stat_make(0), 'virt');
                 return next;
             }
             if (next === undefined) {
-                return $mol_charset_decode(this.buffer(undefined));
+                return $mol_charset_decode(this.buffer());
             }
             else {
-                const buffer = next === undefined ? undefined : $mol_charset_encode(next);
+                const buffer = $mol_charset_encode(next);
                 this.buffer(buffer);
                 return next;
             }
+        }
+        sub(reset) {
+            if (!this.exists())
+                return [];
+            if (this.type() !== 'dir')
+                return [];
+            this.version();
+            return this.kids().filter(file => file.exists());
+        }
+        resolve(path) {
+            throw new Error('implement');
+        }
+        relate(base = this.constructor.relative('.')) {
+            const base_path = base.path();
+            const path = this.path();
+            return path.startsWith(base_path) ? path.slice(base_path.length) : path;
         }
         find(include, exclude) {
             const found = [];
@@ -4448,49 +4775,80 @@ var $;
                 default: return 0;
             }
         }
-        open(...modes) {
-            return 0;
-        }
         toJSON() {
             return this.path();
         }
+        open(...modes) {
+            return this.$.$mol_file_transaction.make({
+                path: () => this.path(),
+                modes: () => modes
+            });
+        }
     }
     __decorate([
-        $mol_mem
-    ], $mol_file.prototype, "exists", null);
+        $mol_action
+    ], $mol_file_base.prototype, "exists_cut", null);
     __decorate([
         $mol_mem
-    ], $mol_file.prototype, "text", null);
+    ], $mol_file_base.prototype, "stat", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_base.prototype, "modified", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_base.prototype, "version", null);
     __decorate([
         $mol_mem_key
-    ], $mol_file, "absolute", null);
-    $.$mol_file = $mol_file;
+    ], $mol_file_base.prototype, "readable", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_file_base.prototype, "writable", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_base.prototype, "buffer", null);
+    __decorate([
+        $mol_action
+    ], $mol_file_base.prototype, "stat_make", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_file_base.prototype, "clone", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_base.prototype, "exists", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_base.prototype, "type", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_base.prototype, "text_int", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_base.prototype, "sub", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_base.prototype, "size", null);
+    __decorate([
+        $mol_action
+    ], $mol_file_base.prototype, "open", null);
+    __decorate([
+        $mol_mem_key
+    ], $mol_file_base, "absolute", null);
+    __decorate([
+        $mol_action
+    ], $mol_file_base, "flush", null);
+    __decorate([
+        $mol_action
+    ], $mol_file_base, "watch_off", null);
+    $.$mol_file_base = $mol_file_base;
 })($ || ($ = {}));
 
 ;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_action = $mol_wire_method;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_compare_array(a, b) {
-        if (a === b)
-            return true;
-        if (Object.getPrototypeOf(a) !== Object.getPrototypeOf(b))
-            return false;
-        if (a.length !== b.length)
-            return false;
-        for (let i = 0; i < a.length; i++)
-            if (a[i] !== b[i])
-                return false;
-        return true;
+    class $mol_file extends $mol_file_base {
     }
-    $.$mol_compare_array = $mol_compare_array;
+    $.$mol_file = $mol_file;
 })($ || ($ = {}));
 
 ;
@@ -4517,186 +4875,183 @@ var $;
             ctime: stat.ctime
         };
     }
-    function buffer_normalize(buf) {
+    function $mol_file_node_buffer_normalize(buf) {
         return new Uint8Array(buf.buffer, buf.byteOffset, buf.byteLength);
     }
-    let $mol_file_mode_open;
-    (function ($mol_file_mode_open) {
-        $mol_file_mode_open[$mol_file_mode_open["create"] = $node.fs.constants.O_CREAT] = "create";
-        $mol_file_mode_open[$mol_file_mode_open["exists_truncate"] = $node.fs.constants.O_TRUNC] = "exists_truncate";
-        $mol_file_mode_open[$mol_file_mode_open["exists_fail"] = $node.fs.constants.O_EXCL] = "exists_fail";
-        $mol_file_mode_open[$mol_file_mode_open["read_only"] = $node.fs.constants.O_RDONLY] = "read_only";
-        $mol_file_mode_open[$mol_file_mode_open["write_only"] = $node.fs.constants.O_WRONLY] = "write_only";
-        $mol_file_mode_open[$mol_file_mode_open["read_write"] = $node.fs.constants.O_RDWR] = "read_write";
-        $mol_file_mode_open[$mol_file_mode_open["append"] = $node.fs.constants.O_APPEND] = "append";
-    })($mol_file_mode_open = $.$mol_file_mode_open || ($.$mol_file_mode_open = {}));
+    $.$mol_file_node_buffer_normalize = $mol_file_node_buffer_normalize;
     class $mol_file_node extends $mol_file {
-        static absolute(path) {
-            return this.make({
-                path: $mol_const(path)
-            });
-        }
         static relative(path) {
             return this.absolute($node.path.resolve(this.base, path).replace(/\\/g, '/'));
         }
-        watcher() {
-            if (/\/\./.test(this.path()))
-                return { destructor() { } };
-            const watcher = $node.chokidar.watch(this.path(), {
-                persistent: true,
-                ignored: path => /([\/\\]\.|___$)/.test(path),
-                depth: 0,
-                ignoreInitial: true,
-                awaitWriteFinish: {
-                    stabilityThreshold: 100,
-                },
+        watcher(reset) {
+            const path = this.path();
+            const root = this.root();
+            if (!root && !this.exists())
+                return super.watcher();
+            let watcher;
+            try {
+                watcher = $node.fs.watch(path);
+            }
+            catch (error) {
+                if (!(error instanceof Error))
+                    error = new Error('Unknown watch error', { cause: error });
+                error.message += '\n' + path;
+                if (root || error.code !== 'ENOENT') {
+                    this.$.$mol_fail_log(error);
+                }
+                return super.watcher();
+            }
+            watcher.on('change', (type, name) => {
+                if (!name)
+                    return;
+                const path = $node.path.join(this.path(), name.toString());
+                this.constructor.changed_add(type, path);
             });
-            watcher
-                .on('all', (type, path) => {
-                const file = $mol_file.relative(path.replace(/\\/g, '/'));
-                file.reset();
-                if (type === 'change') {
-                    this.stat(null);
-                }
-                else {
-                    file.parent().reset();
-                }
-            })
-                .on('error', $mol_fail_log);
+            watcher.on('error', e => this.$.$mol_fail_log(e));
+            let destructed = false;
+            watcher.on('close', () => {
+                if (!destructed)
+                    setTimeout(() => $mol_wire_async(this).watcher(null), 500);
+            });
             return {
                 destructor() {
+                    destructed = true;
                     watcher.close();
                 }
             };
         }
-        stat(next, virt) {
-            let stat = next;
-            const path = this.path();
-            this.parent().watcher();
-            if (virt)
-                return next;
+        info(path) {
             try {
-                stat = next ?? stat_convert($node.fs.statSync(path, { throwIfNoEntry: false }));
+                return stat_convert($node.fs.statSync(path));
             }
             catch (error) {
-                if (error.code === 'ENOENT')
-                    error = new $mol_file_not_found(`File not found`);
-                error.message += '\n' + path;
-                return this.$.$mol_fail_hidden(error);
+                if (this.$.$mol_fail_catch(error)) {
+                    if (error.code === 'ENOENT')
+                        return null;
+                    error.message += '\n' + path;
+                    this.$.$mol_fail_hidden(error);
+                }
             }
-            return stat;
+            return null;
         }
         ensure() {
             const path = this.path();
             try {
-                $node.fs.mkdirSync(path);
+                $node.fs.mkdirSync(path, { recursive: true });
+                return null;
             }
             catch (e) {
-                e.message += '\n' + path;
-                this.$.$mol_fail_hidden(e);
+                if (this.$.$mol_fail_catch(e)) {
+                    if (e.code === 'EEXIST')
+                        return null;
+                    e.message += '\n' + path;
+                    this.$.$mol_fail_hidden(e);
+                }
             }
+        }
+        copy(to) {
+            $node.fs.copyFileSync(this.path(), to);
         }
         drop() {
             $node.fs.unlinkSync(this.path());
         }
-        buffer(next) {
+        read() {
             const path = this.path();
-            if (next === undefined) {
-                if (!this.stat())
-                    return new Uint8Array;
-                try {
-                    const prev = $mol_mem_cached(() => this.buffer());
-                    next = buffer_normalize($node.fs.readFileSync(path));
-                    if (prev !== undefined && !$mol_compare_array(prev, next)) {
-                        this.$.$mol_log3_rise({
-                            place: `$mol_file_node..buffer()`,
-                            message: 'Changed',
-                            path: this.relate(),
-                        });
-                    }
-                    return next;
-                }
-                catch (error) {
-                    error.message += '\n' + path;
-                    return this.$.$mol_fail_hidden(error);
-                }
-            }
-            this.parent().exists(true);
-            const now = new Date;
-            this.stat({
-                type: 'file',
-                size: next.length,
-                atime: now,
-                mtime: now,
-                ctime: now,
-            }, 'virt');
             try {
-                $node.fs.writeFileSync(path, next);
+                return $mol_file_node_buffer_normalize($node.fs.readFileSync(path));
             }
             catch (error) {
-                error.message += '\n' + path;
+                if (!$mol_promise_like(error)) {
+                    error.message += '\n' + path;
+                }
+                $mol_fail_hidden(error);
+            }
+        }
+        write(buffer) {
+            const path = this.path();
+            try {
+                $node.fs.writeFileSync(path, buffer);
+            }
+            catch (error) {
+                if (this.$.$mol_fail_catch(error)) {
+                    error.message += '\n' + path;
+                }
                 return this.$.$mol_fail_hidden(error);
             }
-            return next;
         }
-        sub() {
-            if (!this.exists())
-                return [];
-            if (this.type() !== 'dir')
-                return [];
+        kids() {
             const path = this.path();
-            this.stat();
             try {
-                return $node.fs.readdirSync(path)
+                const kids = $node.fs.readdirSync(path)
                     .filter(name => !/^\.+$/.test(name))
                     .map(name => this.resolve(name));
+                return kids;
             }
             catch (e) {
-                e.message += '\n' + path;
-                return this.$.$mol_fail_hidden(e);
+                if (this.$.$mol_fail_catch(e)) {
+                    if (e.code === 'ENOENT')
+                        return [];
+                    e.message += '\n' + path;
+                }
+                $mol_fail_hidden(e);
             }
         }
         resolve(path) {
-            return this.constructor.relative($node.path.join(this.path(), path));
+            return this.constructor
+                .relative($node.path.join(this.path(), path));
         }
         relate(base = this.constructor.relative('.')) {
             return $node.path.relative(base.path(), this.path()).replace(/\\/g, '/');
         }
-        append(next) {
-            const path = this.path();
-            try {
-                $node.fs.appendFileSync(path, next);
-            }
-            catch (e) {
-                e.message += '\n' + path;
-                return this.$.$mol_fail_hidden(e);
-            }
+        readable(opts) {
+            const { Readable } = $node['node:stream'];
+            const stream = $node.fs.createReadStream(this.path(), {
+                flags: 'r',
+                autoClose: true,
+                start: opts?.start,
+                end: opts?.end,
+                encoding: 'binary',
+            });
+            return Readable.toWeb(stream);
         }
-        open(...modes) {
-            return $node.fs.openSync(this.path(), modes.reduce((res, mode) => res | $mol_file_mode_open[mode], 0));
+        writable(opts) {
+            const { Writable } = $node['node:stream'];
+            const stream = $node.fs.createWriteStream(this.path(), {
+                flags: 'w+',
+                autoClose: true,
+                start: opts?.start,
+                encoding: 'binary',
+            });
+            return Writable.toWeb(stream);
         }
     }
     __decorate([
         $mol_mem
     ], $mol_file_node.prototype, "watcher", null);
     __decorate([
-        $mol_mem
-    ], $mol_file_node.prototype, "stat", null);
+        $mol_action
+    ], $mol_file_node.prototype, "info", null);
     __decorate([
-        $mol_mem
+        $mol_action
     ], $mol_file_node.prototype, "ensure", null);
+    __decorate([
+        $mol_action
+    ], $mol_file_node.prototype, "copy", null);
     __decorate([
         $mol_action
     ], $mol_file_node.prototype, "drop", null);
     __decorate([
-        $mol_mem
-    ], $mol_file_node.prototype, "buffer", null);
+        $mol_action
+    ], $mol_file_node.prototype, "read", null);
     __decorate([
-        $mol_mem
-    ], $mol_file_node.prototype, "sub", null);
+        $mol_action
+    ], $mol_file_node.prototype, "write", null);
     __decorate([
         $mol_mem_key
-    ], $mol_file_node, "absolute", null);
+    ], $mol_file_node.prototype, "readable", null);
+    __decorate([
+        $mol_mem
+    ], $mol_file_node.prototype, "writable", null);
     $.$mol_file_node = $mol_file_node;
     $.$mol_file = $mol_file_node;
 })($ || ($ = {}));
@@ -6697,7 +7052,6 @@ var $;
             maxHeight: per(100),
             boxSizing: 'border-box',
             color: $mol_theme.text,
-            backdropFilter: blur(`3px`),
             ':focus': {
                 outline: 'none',
             },
@@ -6741,7 +7095,7 @@ var $;
             Tools: {
                 flex: {
                     basis: 'auto',
-                    grow: 1000,
+                    grow: 0,
                     shrink: 1,
                 },
                 display: 'flex',
@@ -10782,6 +11136,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -10805,9 +11162,6 @@ var $;
         $$.$hyoo_meta_link = $hyoo_meta_link;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -10871,6 +11225,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -10892,9 +11249,6 @@ var $;
         $$.$hyoo_page_side_news = $hyoo_page_side_news;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -12589,6 +12943,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -12632,9 +12989,6 @@ var $;
         $$.$hyoo_page_side_menu = $hyoo_page_side_menu;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_bar) = class $mol_bar extends ($.$mol_view) {};
@@ -16474,6 +16828,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -16561,9 +16918,6 @@ var $;
         $$.$hyoo_page_side_view = $hyoo_page_side_view;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -17829,6 +18183,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -17867,9 +18224,6 @@ var $;
         $$.$hyoo_page_side_edit = $hyoo_page_side_edit;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -18201,6 +18555,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -18318,9 +18675,6 @@ var $;
         $$.$hyoo_page_side_info = $hyoo_page_side_info;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -18531,6 +18885,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -18595,9 +18952,6 @@ var $;
         $$.$hyoo_meta_rights = $hyoo_meta_rights;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -19085,6 +19439,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -19212,9 +19569,6 @@ var $;
 
 ;
 "use strict";
-
-;
-"use strict";
 var $;
 (function ($) {
     var $$;
@@ -19328,6 +19682,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -19395,9 +19752,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/sync/online/online.view.css", "[hyoo_sync_online_option_row] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_sync_online_well] {\n\tcolor: var(--mol_theme_current);\n}\n\n[hyoo_sync_online_fail] {\n\tcolor: var(--mol_theme_focus);\n}\n\n[hyoo_sync_online][mol_view_error=\"Promise\"] {\n\tanimation: hyoo_sync_online_wait 1s linear infinite;\n}\n\n@keyframes hyoo_sync_online_wait {\n\tfrom {\n\t\topacity: 1;\n\t}\n\tto {\n\t\topacity: .5;\n\t}\n}\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_icon_key) = class $mol_icon_key extends ($.$mol_icon) {
@@ -19533,6 +19887,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -19542,9 +19899,6 @@ var $;
         $$.$hyoo_page_menu = $hyoo_page_menu;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -20217,6 +20571,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -20395,9 +20752,6 @@ var $;
         $$.$hyoo_page = $hyoo_page;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -20703,10 +21057,15 @@ var $;
 					"title": (this.$.$mol_locale.text("$hyoo_apps_apps_mol_title")), 
 					"uri": "https://mol.hyoo.ru/"
 				}, 
-				"sync": {
+				"science": {
 					"target": "develop", 
-					"title": (this.$.$mol_locale.text("$hyoo_apps_apps_sync_title")), 
-					"uri": "https://sync.hyoo.ru/watch/"
+					"title": (this.$.$mol_locale.text("$hyoo_apps_apps_science_title")), 
+					"uri": "https://science.hyoo.ru/"
+				}, 
+				"crus": {
+					"target": "develop", 
+					"title": (this.$.$mol_locale.text("$hyoo_apps_apps_crus_title")), 
+					"uri": "https://crus.hyoo.ru/"
 				}, 
 				"piterjs": {
 					"target": "develop", 
@@ -20796,6 +21155,16 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    $mol_style_attach("hyoo/apps/apps.view.css", "[hyoo_apps_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_apps_menu_link_out] {\n\tflex-grow: 1;\n}\n\n[hyoo_apps_app] {\n\tflex: 1 0 25rem;\n}\n\n[hyoo_apps_filter] {\n\talign-self: stretch;\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
     var $$;
     (function ($$) {
         class $hyoo_apps extends $.$hyoo_apps {
@@ -20861,16 +21230,6 @@ var $;
         $$.$hyoo_apps = $hyoo_apps;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("hyoo/apps/apps.view.css", "[hyoo_apps_menu] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_apps_menu_link_out] {\n\tflex-grow: 1;\n}\n\n[hyoo_apps_app] {\n\tflex: 1 0 25rem;\n}\n\n[hyoo_apps_filter] {\n\talign-self: stretch;\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_tag_tree) = class $mol_tag_tree extends ($.$mol_list) {
@@ -21750,7 +22109,7 @@ var $;
         static request(input, init = {}) {
             const controller = new AbortController();
             let done = false;
-            const promise = globalThis.fetch(input, {
+            const promise = fetch(input, {
                 ...init,
                 signal: controller.signal,
             }).finally(() => {
@@ -21770,7 +22129,7 @@ var $;
             const response = this.response(input, init);
             if (response.status() === 'success')
                 return response;
-            throw new Error(response.message());
+            throw new Error(response.message(), { cause: response });
         }
         static stream(input, init) {
             return this.success(input, init).stream();
@@ -23030,6 +23389,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -23232,9 +23594,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/bench/app/app.view.css", "[hyoo_bench_app_main_page] {\n\tflex: 0 0 45rem;\n}\n\n[hyoo_bench_app_main_page_body] {\n\tdisplay: flex;\n\toverflow: auto;\n\tz-index: 1;\n}\n\n[hyoo_bench_app_addon_page] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_bench_app_sandbox_page] {\n\tflex: 1000 0 20rem;\n}\n\n[hyoo_bench_app_result_page] {\n\tflex: 1 1 auto;\n}\n\n[hyoo_bench_app_sandbox] {\n\tborder: none;\n\tbackground: white;\n}\n\n[hyoo_bench_app_descr] {\n\tflex: 0 0 auto;\n\tmax-width: none;\n}\n\n[hyoo_bench_app_param_fields] {\n\tflex: none;\n\tflex-wrap: wrap;\n}\n\n[hyoo_bench_app_result] {\n\tflex: none;\n}\n\n[hyoo_bench_app_menu] {\n\tdisplay: flex;\n\tflex-direction: column;\n}\n\n[hyoo_bench_app_addon_page_tools] {\n\tflex-grow: 1;\n}\n\n[hyoo_bench_app_result_head] {\n\tcursor: pointer;\n}\n\n[hyoo_bench_app_result_cell_number] {\n\twhite-space: nowrap;\n\ttext-align: right;\n}\n\n[hyoo_bench_app_result_portion] {\n\tdisplay: inline-flex;\n\tvertical-align: bottom;\n\tmargin-left: .5rem;\n\twidth: 5vw;\n}\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_icon_help) = class $mol_icon_help extends ($.$mol_icon) {
@@ -23708,6 +24067,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -23789,9 +24151,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/js/perf/case/result/result.view.css", "[hyoo_js_perf_case_result] {\n\tpadding: .5rem .75rem .25rem;\n\tflex-direction: column;\n\tflex: 1 1 24rem;\n}\n\n[hyoo_js_perf_case_result] > * {\n\tdisplay: flex;\n}\n\n[hyoo_js_perf_case_result_stats] {\n\tdisplay: flex;\n\twhite-space: pre;\n\tjustify-content: space-between;\n}\n\n[hyoo_js_perf_case_result_stats] > * {\n\tword-break: keep-all;\n\twhite-space: nowrap;\n\t/* margin: 0 .5rem; */\n}\n\n[hyoo_js_perf_case_result_stats_main],\n[hyoo_js_perf_case_result_stats_mem] {\n\tdisplay: contents;\n}\n\n[hyoo_js_perf_case_result_perf],\n[hyoo_js_perf_case_result_memory] {\n\tflex-direction: column;\n}\n\n[hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result_memory_per_iteration] {\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_error] {\n\tcolor: crimson;\n\ttext-shadow: 0 0;\n}\n\n[hyoo_js_perf_case_result_portions] {\n\tgap: .75rem;\n}\n\n[hyoo_js_perf_case_result] [mol_portion] {\n\tflex: 1 1 50%;\n\twidth: auto;\n}\n\n[hyoo_js_perf_case_result]:nth-child(1) [mol_portion_indicator] {\n\tbackground-color: dimgray;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [mol_portion_indicator] {\n\tbackground-color: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [mol_portion_indicator] {\n\tbackground-color: orange;\n}\n\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(2) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: royalblue;\n}\n\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_frequency],\n[hyoo_js_perf_case_result]:nth-child(3) [hyoo_js_perf_case_result_memory_per_iteration] {\n\tcolor: orange;\n}\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_icon_play) = class $mol_icon_play extends ($.$mol_icon) {
@@ -25273,6 +25632,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -25332,9 +25694,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/js/perf/case/row/row.view.css", "[hyoo_js_perf_case_row] {\n\tflex: 0 1 auto;\n\tflex-wrap: wrap;\n\tbackground: var(--mol_theme_card);\n\tborder-radius: var(--mol_gap_round);\n}\n\n[hyoo_js_perf_case_row_prefix] ,\n[hyoo_js_perf_case_row_source] {\n\tflex: 1 1 40rem;\n\tvertical-align: top;\n}\n\n[hyoo_js_perf_case_row_prefix_tools] {\n\tflex-grow: 1000;\n}\n\n[hyoo_js_perf_case_row_eval_labeler] {\n\tflex: 1 1 26rem;\n}\n[hyoo_js_perf_case_row_results] {\n\tflex: 1 1 26rem;\n\tflex-wrap: wrap;\n\talign-content: flex-start;\n}\n\n[hyoo_js_perf_case_row_eval_labeler_trigger] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_case_row_title] {\n\ttext-shadow: 0 0;\n}\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_check_group) = class $mol_check_group extends ($.$mol_check_box) {
@@ -26165,6 +26524,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -26659,9 +27021,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/js/perf/perf.view.css", "[hyoo_js_perf_cases_pane_tools] {\n\tflex-grow: 0;\n}\n\n[hyoo_js_perf_body] {\n\tdisplay: flex;\n\tflex-direction: row;\n\tjustify-content: space-between;\n\tpadding: 0;\n}\n\n[hyoo_js_perf_common] {\n\tflex-direction: column;\n\tflex: 0 0 30rem;\n}\n\n[hyoo_js_perf_common_content] {\n\tgap: var(--mol_gap_block);\n}\n\n[hyoo_js_perf_cases_pane] {\n\tflex: 1000 0 90rem;\n\tbackground: var(--mol_theme_back);\n}\n\n[hyoo_js_perf_cases] {\n\tgap: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_check_list) = class $mol_check_list extends ($.$mol_view) {
@@ -27853,6 +28212,11 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function is_identifier(tree) {
+        if (tree.type)
+            return false;
+        return /^[a-z_$][a-z_$0-9]*$/i.test(tree.text());
+    }
     function $mol_tree2_js_to_text(js) {
         function sequence(open, separator, close) {
             return (input, belt) => [
@@ -27953,25 +28317,21 @@ var $;
             '{}': block('{', '', '}'),
             '[]': (input, belt) => {
                 const first = input.kids[0];
-                if (first.type)
+                if (!is_identifier(first))
                     return sequence('[', '', ']')(input, belt);
                 else
                     return [input.data('.' + first.text())];
             },
             '?.[]': (input, belt) => {
                 const first = input.kids[0];
-                if (first.type)
+                if (!is_identifier(first))
                     return sequence('?.[', '', ']')(input, belt);
                 else
                     return [input.data('?.' + first.text())];
             },
-            ':': (input, belt) => {
-                const first = input.kids[0];
-                if (first.type)
-                    return duplet('[', ']: ')(input, belt);
-                else
-                    return duplet('', ': ')(input, belt);
-            },
+            ':': (input, belt) => input.kids[0].type
+                ? duplet('[', ']: ')(input, belt)
+                : duplet('', ': ')(input, belt),
             'let': duplet('let ', ' = '),
             'const': duplet('const ', ' = '),
             'var': duplet('var ', ' = '),
@@ -28002,7 +28362,7 @@ var $;
             '?:': triplet('', ' ? ', ' : '),
             '.': (input, belt) => {
                 const first = input.kids[0];
-                if (first.type)
+                if (!is_identifier(first))
                     return triplet('[', ']')(input, belt);
                 else
                     return [
@@ -29373,10 +29733,10 @@ var $;
                         const second_main = left_parts.key || left_parts.next ? main : left.struct('line', return_type.call(this, main, left));
                         const second_key = left_parts.next || left_parts.key ? left : right;
                         if (prop_parts.key) {
-                            types.push(type_enforce.call(this, method.data(`${method.type}_${klass_name}_${++assert_count}`), parameters.call(this, main, prop, 0), parameters.call(this, second_main, second_key, 0)));
+                            types.push(type_enforce.call(this, method.data(`${method.type}__${klass_name}_${++assert_count}`), parameters.call(this, main, prop, 0), parameters.call(this, second_main, second_key, 0)));
                         }
                         if (prop_parts.next) {
-                            types.push(type_enforce.call(this, method.data(`${method.type}_${klass_name}_${++assert_count}`), parameters.call(this, main, prop, prop_parts.key ? 1 : 0), parameters.call(this, second_main, second_key, (left_parts.next ? left_parts : right_parts).key ? 1 : 0)));
+                            types.push(type_enforce.call(this, method.data(`${method.type}__${klass_name}_${++assert_count}`), parameters.call(this, main, prop, prop_parts.key ? 1 : 0), parameters.call(this, second_main, second_key, (left_parts.next ? left_parts : right_parts).key ? 1 : 0)));
                         }
                         return return_type.call(this, left.struct('line', return_type.call(this, main, left)), name_of.call(this, right));
                     },
@@ -29444,7 +29804,7 @@ var $;
                                 }
                                 else
                                     continue;
-                                types.push(type_enforce.call(this, input.data(`${klass.type}_${prop.type.replace(/[\?\*]*/g, '')}_${++assert_count}`), result, array_type));
+                                types.push(type_enforce.call(this, input.data(`${klass.type}_${prop.type.replace(/[\?\*]*/g, '')}__${++assert_count}`), result, array_type));
                             }
                             return readonly_arr(input, array_type);
                         }
@@ -29457,7 +29817,7 @@ var $;
                                         result.unshift(kid.data(', '));
                                     return kid.struct('line', result);
                                 });
-                                types.push(type_enforce.call(this, first.data(`${input.type}_${klass_name}_${++assert_count}`), [
+                                types.push(type_enforce.call(this, first.data(`${input.type}__${klass_name}_${++assert_count}`), [
                                     first.data('[ '),
                                     ...args,
                                     first.data(' ]'),
@@ -30051,6 +30411,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -30167,9 +30530,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/tree/tree.view.css", "[hyoo_tree_presets] {\n\tflex: 0 0 20rem;\n}\n\n[hyoo_tree_source] {\n\tflex: 1 0 30rem;\n}\n\n[hyoo_tree_source_body] {\n\tflex-direction: row;\n}\n\n[hyoo_tree_result] {\n\tflex: 1 0 30rem;\n}\n\n[hyoo_tree_result_body] {\n\tflex-direction: row;\n}\n\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$hyoo_mol) = class $hyoo_mol extends ($.$mol_book2_catalog) {
@@ -30506,6 +30866,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -30625,9 +30988,6 @@ var $;
         $$.$hyoo_crowd_app_peer = $hyoo_crowd_app_peer;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -30948,7 +31308,7 @@ var $;
 (function ($) {
     function $mol_html_decode(text) {
         return text
-            .replace(/&(?:#(\d+)|(lt|gt|quot));/gi, (str, numb, name) => {
+            .replace(/&(?:#(\d+)|(lt|gt|quot|amp));/gi, (str, numb, name) => {
             if (numb)
                 return String.fromCharCode(numb);
             const mapping = {
@@ -44287,6 +44647,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -44327,9 +44690,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/marked/app/app.view.css", "[hyoo_marked_app_marked] {\n\tflex: 1000 0 40rem;\n}\n\n[hyoo_marked_app_preview] {\n\tflex-grow: 0;\n}\n\n[hyoo_marked_app_html] {\n\tflex: 1000 0 40rem;\n}\n\n[hyoo_marked_app_view] {\n\tflex: 1000 0 40rem;\n}\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$hyoo_marked_demo) = class $hyoo_marked_demo extends ($.$mol_example_large) {
@@ -50427,140 +50787,12 @@ var $;
 
 ;
 "use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'auto name'() {
-            class Invalid extends $mol_error_mix {
-            }
-            const mix = new Invalid('foo');
-            $mol_assert_equal(mix.name, 'Invalid_Error');
-        },
-        'simpe mix'() {
-            const mix = new $mol_error_mix('foo', {}, new Error('bar'), new Error('lol'));
-            $mol_assert_equal(mix.message, 'foo');
-            $mol_assert_equal(mix.errors.map(e => e.message), ['bar', 'lol']);
-        },
-        'provide additional info'() {
-            class Invalid extends $mol_error_mix {
-            }
-            const mix = new $mol_error_mix('Wrong password', {}, new Invalid('Too short', { value: 'p@ssw0rd', hint: '> 8 letters' }), new Invalid('Too simple', { value: 'p@ssw0rd', hint: 'need capital letter' }));
-            const hints = [];
-            if (mix instanceof $mol_error_mix) {
-                for (const er of mix.errors) {
-                    if (er instanceof Invalid) {
-                        hints.push(er.cause?.hint ?? '');
-                    }
-                }
-            }
-            $mol_assert_equal(hints, ['> 8 letters', 'need capital letter']);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_log3_come = () => { };
-        $.$mol_log3_done = () => { };
-        $.$mol_log3_fail = () => { };
-        $.$mol_log3_warn = () => { };
-        $.$mol_log3_rise = () => { };
-        $.$mol_log3_area = () => () => { };
-    });
-})($ || ($ = {}));
 
 ;
 "use strict";
 
 ;
 "use strict";
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    $mol_test({
-        'test types'($) {
-            class A {
-                static a() {
-                    return Promise.resolve('');
-                }
-                static b() {
-                    return $mol_wire_sync(this).a();
-                }
-            }
-        },
-        async 'test method from host'($) {
-            let count = 0;
-            class A {
-                static a() {
-                    return $mol_wire_sync(this).b();
-                }
-                static b() { return Promise.resolve(++count); }
-            }
-            $mol_assert_equal(await $mol_wire_async(A).a(), 1, count);
-        },
-        async 'test function'($) {
-            let count = 0;
-            class A {
-                static a() {
-                    return $mol_wire_sync(this.b)();
-                }
-                static b() { return Promise.resolve(++count); }
-            }
-            $mol_assert_equal(await $mol_wire_async(A).a(), 1, count);
-        },
-        async 'test construct itself'($) {
-            class A {
-                static instances = [];
-                static a() {
-                    const a = new ($mol_wire_sync(A))();
-                    this.instances.push(a);
-                    $mol_wire_sync(this).b();
-                }
-                static b() { return Promise.resolve(); }
-            }
-            await $mol_wire_async(A).a();
-            $mol_assert_equal(A.instances.length, 2);
-            $mol_assert_equal(A.instances[0] instanceof A);
-            $mol_assert_equal(A.instances[0], A.instances[1]);
-        }
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    $mol_test({
-        async 'exec timeout auto kill child process'($) {
-            let close_mock = () => { };
-            const context_mock = $.$mol_ambient({
-                $mol_run_spawn: () => ({
-                    on(name, cb) {
-                        if (name === 'exit')
-                            close_mock = cb;
-                    },
-                    kill() { close_mock(); }
-                })
-            });
-            let message = '';
-            try {
-                const res = await $mol_wire_async(context_mock).$mol_run({ command: 'sleep 10', dir: '.', timeout: 10, env: { 'MOL_RUN_ASYNC': '1' } });
-            }
-            catch (e) {
-                message = e.message;
-            }
-            $mol_assert_equal(message, 'Run error, timeout');
-        }
-    });
-})($ || ($ = {}));
 
 ;
 "use strict";
@@ -50600,6 +50832,19 @@ var $;
                 $mol_jsx("strong", null, "world"),
                 "!");
             $mol_assert_equal(dom.outerHTML, '<div>hello<strong>world</strong>!</div>');
+        },
+        'Make fragment'() {
+            const dom = $mol_jsx($mol_jsx_frag, null,
+                $mol_jsx("br", null),
+                $mol_jsx("hr", null));
+            $mol_assert_equal($mol_dom_serialize(dom), '<br xmlns="http://www.w3.org/1999/xhtml" /><hr xmlns="http://www.w3.org/1999/xhtml" />');
+        },
+        'Spread fragment'() {
+            const dom = $mol_jsx("div", null,
+                $mol_jsx($mol_jsx_frag, null,
+                    $mol_jsx("br", null),
+                    $mol_jsx("hr", null)));
+            $mol_assert_equal(dom.outerHTML, '<div><br><hr></div>');
         },
         'Function as component'() {
             const Button = (props, target) => {
@@ -50984,6 +51229,20 @@ var $;
 ;
 "use strict";
 var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_log3_come = () => { };
+        $.$mol_log3_done = () => { };
+        $.$mol_log3_fail = () => { };
+        $.$mol_log3_warn = () => { };
+        $.$mol_log3_rise = () => { };
+        $.$mol_log3_area = () => () => { };
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
 (function ($) {
     $mol_test({
         'get'() {
@@ -51231,6 +51490,58 @@ var $;
 ;
 "use strict";
 var $;
+(function ($) {
+    $mol_test({
+        'init with overload'() {
+            class X extends $mol_object {
+                foo() {
+                    return 1;
+                }
+            }
+            var x = X.make({
+                foo: () => 2,
+            });
+            $mol_assert_equal(x.foo(), 2);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'auto name'() {
+            class Invalid extends $mol_error_mix {
+            }
+            const mix = new Invalid('foo');
+            $mol_assert_equal(mix.name, 'Invalid_Error');
+        },
+        'simpe mix'() {
+            const mix = new $mol_error_mix('foo', {}, new Error('bar'), new Error('lol'));
+            $mol_assert_equal(mix.message, 'foo');
+            $mol_assert_equal(mix.errors.map(e => e.message), ['bar', 'lol']);
+        },
+        'provide additional info'() {
+            class Invalid extends $mol_error_mix {
+            }
+            const mix = new $mol_error_mix('Wrong password', {}, new Invalid('Too short', { value: 'p@ssw0rd', hint: '> 8 letters' }), new Invalid('Too simple', { value: 'p@ssw0rd', hint: 'need capital letter' }));
+            const hints = [];
+            if (mix instanceof $mol_error_mix) {
+                for (const er of mix.errors) {
+                    if (er instanceof Invalid) {
+                        hints.push(er.cause?.hint ?? '');
+                    }
+                }
+            }
+            $mol_assert_equal(hints, ['> 8 letters', 'need capital letter']);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
 (function ($_1) {
     $mol_test({
         'Collect deps'() {
@@ -51419,50 +51730,6 @@ var $;
 "use strict";
 var $;
 (function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_after_timeout = $mol_after_mock_timeout;
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    $mol_test_mocks.push($ => {
-        $.$mol_after_work = $mol_after_mock_timeout;
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    var $$;
-    (function ($$) {
-        $mol_test_mocks.push($ => {
-            $.$mol_wait_timeout = function $mol_wait_timeout_mock(timeout) { };
-            $.$mol_wait_timeout_async = async function $mol_wait_timeout_async_mock(timeout) { };
-        });
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
-    var $$;
-    (function ($$) {
-        $mol_test_mocks.push($ => {
-            $.$mol_wait_rest = function $mol_wait_rest_mock() { };
-            $.$mol_wait_rest_async = async function $mol_wait_rest_async_mock() { };
-        });
-    })($$ = $_1.$$ || ($_1.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($_1) {
     $mol_test({
         'test types'($) {
             class A {
@@ -51515,19 +51782,151 @@ var $;
 ;
 "use strict";
 var $;
-(function ($) {
+(function ($_1) {
     $mol_test({
-        'init with overload'() {
-            class X extends $mol_object {
-                foo() {
-                    return 1;
+        'test types'($) {
+            class A {
+                static a() {
+                    return Promise.resolve('');
+                }
+                static b() {
+                    return $mol_wire_sync(this).a();
                 }
             }
-            var x = X.make({
-                foo: () => 2,
-            });
-            $mol_assert_equal(x.foo(), 2);
         },
+        async 'test method from host'($) {
+            let count = 0;
+            class A {
+                static a() {
+                    return $mol_wire_sync(this).b();
+                }
+                static b() { return Promise.resolve(++count); }
+            }
+            $mol_assert_equal(await $mol_wire_async(A).a(), 1, count);
+        },
+        async 'test function'($) {
+            let count = 0;
+            class A {
+                static a() {
+                    return $mol_wire_sync(this.b)();
+                }
+                static b() { return Promise.resolve(++count); }
+            }
+            $mol_assert_equal(await $mol_wire_async(A).a(), 1, count);
+        },
+        async 'test construct itself'($) {
+            class A {
+                static instances = [];
+                static a() {
+                    const a = new ($mol_wire_sync(A))();
+                    this.instances.push(a);
+                    $mol_wire_sync(this).b();
+                }
+                static b() { return Promise.resolve(); }
+            }
+            await $mol_wire_async(A).a();
+            $mol_assert_equal(A.instances.length, 2);
+            $mol_assert_equal(A.instances[0] instanceof A);
+            $mol_assert_equal(A.instances[0], A.instances[1]);
+        }
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_after_timeout = $mol_after_mock_timeout;
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        $.$mol_after_work = $mol_after_mock_timeout;
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test_mocks.push($ => {
+            $.$mol_wait_timeout = function $mol_wait_timeout_mock(timeout) { };
+            $.$mol_wait_timeout_async = async function $mol_wait_timeout_async_mock(timeout) { };
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test_mocks.push($ => {
+            $.$mol_wait_rest = function $mol_wait_rest_mock() { };
+            $.$mol_wait_rest_async = async function $mol_wait_rest_async_mock() { };
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test({
+        async 'exec timeout auto kill child process'($) {
+            let close_mock = () => { };
+            const error_message = 'Run error, timeout';
+            function mol_run_spawn_sync_mock() {
+                return {
+                    output: [],
+                    stdout: error_message,
+                    stderr: '',
+                    status: 0,
+                    signal: null,
+                    pid: 123,
+                };
+            }
+            function mol_run_spawn_mock() {
+                return {
+                    on(name, cb) {
+                        if (name === 'exit')
+                            close_mock = cb;
+                    },
+                    kill() { close_mock(); }
+                };
+            }
+            const context_mock = $.$mol_ambient({
+                $mol_run_spawn_sync: mol_run_spawn_sync_mock,
+                $mol_run_spawn: mol_run_spawn_mock
+            });
+            class $mol_run_mock extends $mol_run {
+                static get $() { return context_mock; }
+                static async_enabled() {
+                    return true;
+                }
+            }
+            let message = '';
+            try {
+                const res = await $mol_wire_async($mol_run_mock).spawn({
+                    command: 'sleep 10',
+                    dir: '.',
+                    timeout: 10,
+                    env: { 'MOL_RUN_ASYNC': '1' }
+                });
+            }
+            catch (e) {
+                message = e.message;
+            }
+            $mol_assert_equal(message, error_message);
+        }
     });
 })($ || ($ = {}));
 
@@ -52746,6 +53145,24 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    class TestClass extends Uint8Array {
+    }
+    $mol_test({
+        'Uint8Array vs itself'() {
+            $mol_assert_ok($mol_compare_array(new Uint8Array, new Uint8Array));
+            $mol_assert_ok($mol_compare_array(new Uint8Array([0]), new Uint8Array([0])));
+            $mol_assert_not($mol_compare_array(new Uint8Array([0]), new Uint8Array([1])));
+        },
+        'Uint8Array vs subclassed array'() {
+            $mol_assert_not($mol_compare_array(new Uint8Array, new TestClass));
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
     $mol_test({
         'decode utf8 string'() {
             const str = 'Hello, ΧΨΩЫ';
@@ -52769,24 +53186,6 @@ var $;
             const str = 'Hello, ΧΨΩЫ';
             const encoded = new Uint8Array([72, 101, 108, 108, 111, 44, 32, 206, 167, 206, 168, 206, 169, 208, 171]);
             $mol_assert_like($mol_charset_encode(str), encoded);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    class TestClass extends Uint8Array {
-    }
-    $mol_test({
-        'Uint8Array vs itself'() {
-            $mol_assert_ok($mol_compare_array(new Uint8Array, new Uint8Array));
-            $mol_assert_ok($mol_compare_array(new Uint8Array([0]), new Uint8Array([0])));
-            $mol_assert_not($mol_compare_array(new Uint8Array([0]), new Uint8Array([1])));
-        },
-        'Uint8Array vs subclassed array'() {
-            $mol_assert_not($mol_compare_array(new Uint8Array, new TestClass));
         },
     });
 })($ || ($ = {}));

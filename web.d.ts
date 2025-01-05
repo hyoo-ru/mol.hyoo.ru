@@ -113,6 +113,7 @@ declare namespace $ {
 declare namespace $ {
     interface $mol_wire_sub extends $mol_wire_pub {
         temp: boolean;
+        pub_list: $mol_wire_pub[];
         track_on(): $mol_wire_sub | null;
         track_next(pub?: $mol_wire_pub): $mol_wire_pub | null;
         pub_off(pub_pos: number): void;
@@ -138,8 +139,8 @@ declare namespace $ {
         hasBody: (val: any, config: any) => boolean;
         body: (val: any, config: any) => any;
     }): void;
-    let $mol_dev_format_head: symbol;
-    let $mol_dev_format_body: symbol;
+    const $mol_dev_format_head: unique symbol;
+    const $mol_dev_format_body: unique symbol;
     function $mol_dev_format_native(obj: any): any[];
     function $mol_dev_format_auto(obj: any): any[];
     function $mol_dev_format_element(element: string, style: object, ...content: any[]): any[];
@@ -159,7 +160,6 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_wire_pub_sub extends $mol_wire_pub implements $mol_wire_sub {
-        [x: symbol]: () => any[];
         protected pub_from: number;
         protected cursor: $mol_wire_cursor;
         get temp(): boolean;
@@ -174,6 +174,7 @@ declare namespace $ {
         complete(): void;
         complete_pubs(): void;
         absorb(quant?: $mol_wire_cursor): void;
+        [$mol_dev_format_head](): any[];
         get pub_empty(): boolean;
     }
 }
@@ -194,7 +195,6 @@ declare namespace $ {
 
 declare namespace $ {
     abstract class $mol_wire_fiber<Host, Args extends readonly unknown[], Result> extends $mol_wire_pub_sub {
-        [x: symbol]: string | (() => any[]);
         readonly task: (this: Host, ...args: Args) => Result;
         readonly host?: Host | undefined;
         static warm: boolean;
@@ -214,6 +214,7 @@ declare namespace $ {
         reap(): void;
         toString(): string;
         toJSON(): string;
+        [$mol_dev_format_head](): any[];
         get $(): any;
         emit(quant?: $mol_wire_cursor): void;
         fresh(): this | undefined;
@@ -225,6 +226,7 @@ declare namespace $ {
             destructor(): void;
         };
         step(): Promise<null>;
+        destructor(): void;
     }
 }
 
@@ -411,6 +413,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    var $mol_dom: typeof globalThis;
+}
+
+declare namespace $ {
     function $mol_dom_qname(name: string): string;
 }
 
@@ -469,6 +475,16 @@ declare namespace $ {
     };
     type ObjectOrFunctionResultPromisify<Some> = (Some extends (...args: any) => unknown ? FunctionResultPromisify<Some> : {}) & (Some extends Object ? MethodsResultPromisify<Some> : Some);
     export {};
+}
+
+declare namespace $ {
+    class $mol_after_timeout extends $mol_object2 {
+        delay: number;
+        task: () => void;
+        id: any;
+        constructor(delay: number, task: () => void);
+        destructor(): void;
+    }
 }
 
 declare namespace $ {
@@ -746,7 +762,6 @@ declare namespace $ {
     function $mol_view_visible_height(): number;
     function $mol_view_state_key(suffix: string): string;
     class $mol_view extends $mol_object {
-        [x: symbol]: () => any[];
         static Root<This extends typeof $mol_view>(this: This, id: number): InstanceType<This>;
         autorun(): void;
         static autobind(): void;
@@ -803,6 +818,7 @@ declare namespace $ {
             [x: string]: (event: Event) => Promise<void>;
         };
         plugins(): readonly $mol_view[];
+        [$mol_dev_format_head](): any[];
         view_find(check: (path: $mol_view, text?: string) => boolean, path?: $mol_view[]): Generator<$mol_view[]>;
         force_render(path: Set<$mol_view>): void;
         ensure_visible(view: $mol_view, align?: ScrollLogicalPosition): void;
@@ -928,16 +944,6 @@ declare namespace $.$$ {
 
 declare namespace $ {
     let $mol_mem_cached: typeof $mol_wire_probe;
-}
-
-declare namespace $ {
-    class $mol_after_timeout extends $mol_object2 {
-        delay: number;
-        task: () => void;
-        id: any;
-        constructor(delay: number, task: () => void);
-        destructor(): void;
-    }
 }
 
 declare namespace $ {
@@ -1265,6 +1271,22 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    let $mol_action: typeof $mol_wire_method;
+}
+
+declare namespace $ {
+    class $mol_lock extends $mol_object {
+        protected promise: null | Promise<void>;
+        wait(): Promise<() => void>;
+        grab(): () => void;
+    }
+}
+
+declare namespace $ {
+    function $mol_compare_array<Value extends ArrayLike<unknown>>(a: Value, b: Value): boolean;
+}
+
+declare namespace $ {
     type $mol_charset_encoding = 'utf8' | 'utf-16le' | 'utf-16be' | 'ibm866' | 'iso-8859-2' | 'iso-8859-3' | 'iso-8859-4' | 'iso-8859-5' | 'iso-8859-6' | 'iso-8859-7' | 'iso-8859-8' | 'iso-8859-8i' | 'iso-8859-10' | 'iso-8859-13' | 'iso-8859-14' | 'iso-8859-15' | 'iso-8859-16' | 'koi8-r' | 'koi8-u' | 'koi8-r' | 'macintosh' | 'windows-874' | 'windows-1250' | 'windows-1251' | 'windows-1252' | 'windows-1253' | 'windows-1254' | 'windows-1255' | 'windows-1256' | 'windows-1257' | 'windows-1258' | 'x-mac-cyrillic' | 'gbk' | 'gb18030' | 'hz-gb-2312' | 'big5' | 'euc-jp' | 'iso-2022-jp' | 'shift-jis' | 'euc-kr' | 'iso-2022-kr';
 }
 
@@ -1275,7 +1297,104 @@ declare namespace $ {
 declare var $node: any;
 
 declare namespace $ {
-    function $mol_charset_encode(value: string): Uint8Array<ArrayBufferLike>;
+    function $mol_charset_encode(value: string): Uint8Array<ArrayBuffer>;
+}
+
+declare namespace $ {
+    type $mol_file_transaction_mode = 'create' | 'exists_truncate' | 'exists_fail' | 'read_only' | 'write_only' | 'read_write' | 'append';
+    type $mol_file_transaction_buffer = ArrayBufferView;
+    class $mol_file_transaction extends $mol_object {
+        path(): string;
+        modes(): readonly $mol_file_transaction_mode[];
+        write(options: {
+            buffer: ArrayBufferView | string | readonly ArrayBufferView[];
+            offset?: number | null;
+            length?: number | null;
+            position?: number | null;
+        }): number;
+        read(): Uint8Array<ArrayBuffer>;
+        truncate(size: number): void;
+        close(): void;
+        destructor(): void;
+    }
+}
+
+declare namespace $ {
+    class $mol_file_transaction_web extends $mol_file_transaction {
+        write(options: {
+            buffer: ArrayBufferView | string | readonly ArrayBufferView[];
+            offset?: number | null;
+            length?: number | null;
+            position?: number | null;
+        }): number;
+        truncate(size: number): void;
+        read(): Buffer<ArrayBuffer>;
+        close(): void;
+    }
+}
+
+declare namespace $ {
+    class $mol_file_base extends $mol_object {
+        static absolute<This extends typeof $mol_file_base>(this: This, path: string): InstanceType<This>;
+        static relative<This extends typeof $mol_file_base>(this: This, path: string): InstanceType<This>;
+        static base: string;
+        path(): string;
+        parent(): this;
+        exists_cut(): boolean;
+        protected root(): boolean;
+        protected stat(next?: $mol_file_stat | null, virt?: 'virt'): $mol_file_stat | null;
+        protected static changed: Set<$mol_file_base>;
+        protected static frame: null | $mol_after_timeout;
+        protected static changed_add(type: 'change' | 'rename', path: string): void;
+        static watch_debounce(): number;
+        static flush(): void;
+        protected static watching: boolean;
+        protected static lock: $mol_lock;
+        protected static watch_off(path: string): void;
+        static unwatched<Result>(side_effect: () => Result, affected_dir: string): Result;
+        reset(): void;
+        modified(): Date | null;
+        version(): string;
+        protected info(path: string): null | $mol_file_stat;
+        protected ensure(): void;
+        protected drop(): void;
+        protected copy(to: string): void;
+        protected read(): Uint8Array<ArrayBuffer>;
+        protected write(buffer: Uint8Array<ArrayBuffer>): void;
+        protected kids(): readonly this[];
+        readable(opts: {
+            start?: number;
+            end?: number;
+        }): ReadableStream<Uint8Array<ArrayBuffer>>;
+        writable(opts: {
+            start?: number;
+        }): WritableStream<Uint8Array<ArrayBuffer>>;
+        buffer(next?: Uint8Array<ArrayBuffer>): Uint8Array<ArrayBuffer>;
+        stat_make(size: number): {
+            readonly type: "file";
+            readonly size: number;
+            readonly atime: Date;
+            readonly mtime: Date;
+            readonly ctime: Date;
+        };
+        clone(to: string): this | null;
+        watcher(): {
+            destructor(): void;
+        };
+        exists(next?: boolean): boolean;
+        type(): "" | $mol_file_type;
+        name(): string;
+        ext(): string;
+        text(next?: string, virt?: 'virt'): string;
+        text_int(next?: string, virt?: 'virt'): string;
+        sub(reset?: null): this[];
+        resolve(path: string): this;
+        relate(base?: $mol_file_base): string;
+        find(include?: RegExp, exclude?: RegExp): this[];
+        size(): number;
+        toJSON(): string;
+        open(...modes: readonly $mol_file_transaction_mode[]): $mol_file_transaction;
+    }
 }
 
 declare namespace $ {
@@ -1287,41 +1406,8 @@ declare namespace $ {
         mtime: Date;
         ctime: Date;
     }
-    class $mol_file_not_found extends Error {
+    class $mol_file extends $mol_file_base {
     }
-    abstract class $mol_file extends $mol_object {
-        static absolute(path: string): $mol_file;
-        static relative(path: string): $mol_file;
-        static base: string;
-        path(): string;
-        parent(): $mol_file;
-        abstract stat(next?: $mol_file_stat | null, virt?: 'virt'): $mol_file_stat | null;
-        reset(): void;
-        version(): string;
-        abstract ensure(): void;
-        abstract drop(): void;
-        watcher(): {
-            destructor(): void;
-        };
-        exists(next?: boolean): boolean;
-        type(): "" | $mol_file_type;
-        name(): string;
-        ext(): string;
-        abstract buffer(next?: Uint8Array): Uint8Array;
-        text(next?: string, virt?: 'virt'): string;
-        abstract sub(): $mol_file[];
-        abstract resolve(path: string): $mol_file;
-        abstract relate(base?: $mol_file): string;
-        abstract append(next: Uint8Array | string): void;
-        find(include?: RegExp, exclude?: RegExp): $mol_file[];
-        size(): number;
-        open(...modes: readonly ('create' | 'exists_truncate' | 'exists_fail' | 'read_only' | 'write_only' | 'read_write' | 'append')[]): number;
-        toJSON(): string;
-    }
-}
-
-declare namespace $ {
-    let $mol_action: typeof $mol_wire_method;
 }
 
 declare namespace $ {
@@ -1364,18 +1450,31 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_file_web extends $mol_file {
-        static absolute(path: string): $mol_file_web;
-        static relative(path: string): $mol_file_web;
+    class $mol_file_webdav extends $mol_file_base {
+        static relative<This extends typeof $mol_file>(this: This, path: string): InstanceType<This>;
+        resolve(path: string): this;
+        static headers(): Record<string, string>;
+        headers(): Record<string, string>;
+        protected fetch(init: RequestInit): $mol_fetch_response;
+        protected read(): Uint8Array<ArrayBuffer>;
+        protected write(body: Uint8Array<ArrayBuffer>): void;
+        protected ensure(): void;
+        protected drop(): void;
+        protected copy(to: string): void;
+        protected kids(): this[];
+        readable(opts: {
+            start?: number;
+            end?: number;
+        }): ReadableStream<Uint8Array<ArrayBuffer>>;
+        protected info(): $mol_file_stat | null;
+    }
+}
+
+declare namespace $ {
+    class $mol_file_web extends $mol_file_webdav {
         static base: string;
-        buffer(next?: Uint8Array): Uint8Array<ArrayBuffer>;
-        stat(next?: $mol_file_stat, virt?: 'virt'): $mol_file_stat;
-        resolve(path: string): $mol_file_web;
-        ensure(): void;
-        drop(): void;
-        sub(): $mol_file[];
-        relate(base?: $mol_file): string;
-        append(next: Uint8Array | string): void;
+        version(): string;
+        protected info(): $mol_file_stat | null;
     }
 }
 
@@ -1956,7 +2055,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_dimmer['needle'] >
 	>
-	type $mol_search_plugins_16 = $mol_type_enforce<
+	type $mol_search_plugins__16 = $mol_type_enforce<
 		ReturnType< $mol_pop['plugins'] >[number]
 		,
 		$mol_plugin
@@ -2146,7 +2245,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type _mol_page_7 = $mol_type_enforce<
+	type __mol_page_7 = $mol_type_enforce<
 		Parameters< $mol_page['body_scroll_top'] >[0]
 		,
 		Parameters< ReturnType< $mol_page['Body'] >['scroll_top'] >[0]
@@ -2971,16 +3070,16 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_base64_decode(base64: string): Uint8Array;
+    function $mol_base64_decode(base64: string): Uint8Array<ArrayBuffer>;
 }
 
 declare namespace $ {
-    function $mol_base64_decode_web(base64Str: string): Uint8Array;
+    function $mol_base64_decode_web(base64Str: string): Uint8Array<ArrayBuffer>;
 }
 
 declare namespace $ {
     function $mol_base64_url_encode(buffer: Uint8Array): string;
-    function $mol_base64_url_decode(str: string): Uint8Array<ArrayBufferLike>;
+    function $mol_base64_url_decode(str: string): Uint8Array<ArrayBuffer>;
 }
 
 declare namespace $ {
@@ -3053,7 +3152,6 @@ declare namespace $ {
         data = 1
     }
     class $hyoo_crowd_unit extends Object {
-        [x: symbol]: (() => any[]) | (() => string);
         readonly land: $mol_int62_string;
         readonly auth: $mol_int62_string;
         readonly head: $mol_int62_string;
@@ -3068,13 +3166,14 @@ declare namespace $ {
         group(): $hyoo_crowd_unit_group;
         level(): $hyoo_crowd_peer_level;
         [Symbol.toPrimitive](): string;
+        [$mol_dev_format_head](): any[];
     }
-    class $hyoo_crowd_unit_bin extends DataView {
-        static from_buffer(buffer: Int16Array): any;
-        static from_unit(unit: $hyoo_crowd_unit): any;
-        sign(next?: Uint8Array): Uint8Array<any>;
+    class $hyoo_crowd_unit_bin extends DataView<ArrayBuffer> {
+        static from_buffer(buffer: Int16Array): $hyoo_crowd_unit_bin;
+        static from_unit(unit: $hyoo_crowd_unit): $hyoo_crowd_unit_bin;
+        sign(next?: Uint8Array): Uint8Array<ArrayBuffer>;
         size(): number;
-        sens(): Uint8Array<any>;
+        sens(): Uint8Array<ArrayBuffer>;
         unit(): $hyoo_crowd_unit;
     }
     function $hyoo_crowd_unit_compare(left: $hyoo_crowd_unit, right: $hyoo_crowd_unit): number;
@@ -3082,7 +3181,6 @@ declare namespace $ {
 
 declare namespace $ {
     class $hyoo_crowd_node extends $mol_object2 {
-        [x: symbol]: (() => any[]) | (() => string);
         readonly land: $hyoo_crowd_land;
         readonly head: $mol_int62_string;
         constructor(land?: $hyoo_crowd_land, head?: $mol_int62_string);
@@ -3096,6 +3194,7 @@ declare namespace $ {
         virgin(): boolean;
         [Symbol.toPrimitive](): string;
         toJSON(): `${string}_${string}`;
+        [$mol_dev_format_head](): any[];
     }
 }
 
@@ -3189,7 +3288,6 @@ declare namespace $ {
 
 declare namespace $ {
     class $hyoo_crowd_clock extends Map<$mol_int62_string, number> {
-        [x: symbol]: () => any[];
         static begin: number;
         last_time: number;
         constructor(entries?: Iterable<readonly [$mol_int62_string, number]>);
@@ -3203,11 +3301,12 @@ declare namespace $ {
         now(): number;
         last_stamp(): number;
         tick(peer: $mol_int62_string): number;
+        [$mol_dev_format_head](): any[];
     }
-    class $hyoo_crowd_clock_bin extends DataView {
-        static from(land_id: $mol_int62_string, clocks: readonly [$hyoo_crowd_clock, $hyoo_crowd_clock], count: number): any;
+    class $hyoo_crowd_clock_bin extends DataView<ArrayBuffer> {
+        static from(land_id: $mol_int62_string, clocks: readonly [$hyoo_crowd_clock, $hyoo_crowd_clock], count: number): $hyoo_crowd_clock_bin;
         land(): `${string}_${string}`;
-        count(): any;
+        count(): number;
     }
 }
 
@@ -3244,7 +3343,6 @@ declare namespace $ {
 
 declare namespace $ {
     class $hyoo_crowd_land extends $mol_object {
-        [x: symbol]: () => any[];
         id(): `${string}_${string}`;
         toJSON(): `${string}_${string}`;
         peer(): $hyoo_crowd_peer;
@@ -3253,7 +3351,7 @@ declare namespace $ {
         get clock_auth(): $hyoo_crowd_clock;
         get clock_data(): $hyoo_crowd_clock;
         get clocks(): readonly [$hyoo_crowd_clock, $hyoo_crowd_clock];
-        get clocks_bin(): Uint8Array<any>;
+        get clocks_bin(): Uint8Array<ArrayBuffer>;
         readonly pub: $mol_wire_pub;
         readonly _clocks: readonly [$hyoo_crowd_clock, $hyoo_crowd_clock];
         _unit_all: Map<`${string}_${string}!${string}_${string}`, $hyoo_crowd_unit>;
@@ -3296,6 +3394,7 @@ declare namespace $ {
         wipe(unit: $hyoo_crowd_unit): $hyoo_crowd_unit;
         move(unit: $hyoo_crowd_unit, head: $mol_int62_string, prev: $mol_int62_string): void;
         insert(unit: $hyoo_crowd_unit, head: $mol_int62_string, seat: number): void;
+        [$mol_dev_format_head](): any[];
     }
 }
 
@@ -3414,7 +3513,6 @@ declare namespace $ {
         offset?: $mol_time_duration_config;
     };
     class $mol_time_moment extends $mol_time_base {
-        [x: symbol]: (() => any[]) | ((mode: "default" | "number" | "string") => string | number);
         constructor(config?: $mol_time_moment_config);
         readonly year: number | undefined;
         readonly month: number | undefined;
@@ -3436,6 +3534,7 @@ declare namespace $ {
         toJSON(): string;
         toString(pattern?: string): string;
         [Symbol.toPrimitive](mode: 'default' | 'number' | 'string'): string | number;
+        [$mol_dev_format_head](): any[];
         static patterns: {
             YYYY: (moment: $mol_time_moment) => string;
             AD: (moment: $mol_time_moment) => string;
@@ -3530,13 +3629,6 @@ declare namespace $.$$ {
 declare namespace $ {
 }
 
-declare namespace $.$$ {
-    class $hyoo_meta_link extends $.$hyoo_meta_link {
-        title(): string;
-        uri(): string;
-    }
-}
-
 declare namespace $ {
 
 	type $mol_avatar__id_hyoo_meta_link_1 = $mol_type_enforce<
@@ -3570,15 +3662,14 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=link.view.tree.d.ts.map
-declare namespace $ {
+declare namespace $.$$ {
+    class $hyoo_meta_link extends $.$hyoo_meta_link {
+        title(): string;
+        uri(): string;
+    }
 }
 
-declare namespace $.$$ {
-    class $hyoo_page_side_news extends $.$hyoo_page_side_news {
-        items(): $.$hyoo_meta_link[];
-        item(side: $hyoo_page_side): $hyoo_page_side;
-        item_title(side: $hyoo_page_side): string;
-    }
+declare namespace $ {
 }
 
 declare namespace $ {
@@ -3621,6 +3712,14 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=news.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_page_side_news extends $.$hyoo_page_side_news {
+        items(): $.$hyoo_meta_link[];
+        item(side: $hyoo_page_side): $hyoo_page_side;
+        item_title(side: $hyoo_page_side): string;
+    }
+}
+
 declare namespace $ {
 }
 
@@ -3839,7 +3938,7 @@ declare namespace $.$$ {
 
 declare namespace $ {
 
-	type _hyoo_meta_menu_items_1 = $mol_type_enforce<
+	type __hyoo_meta_menu_items_1 = $mol_type_enforce<
 		Parameters< $hyoo_meta_menu_items['item_title'] >[0]
 		,
 		Parameters< $hyoo_meta_menu_items['item'] >[0]
@@ -4165,7 +4264,6 @@ declare namespace $ {
 
 declare namespace $ {
     class $hyoo_sync_yard<Line> extends $mol_object2 {
-        [x: symbol]: () => any[];
         db_unit_persisted: WeakSet<$hyoo_crowd_unit>;
         log_pack(data: any): any;
         peer(next?: string): $hyoo_crowd_peer;
@@ -4207,9 +4305,10 @@ declare namespace $ {
             line: Line;
             land: $mol_int62_string;
         }, next?: Promise<any>[]): Promise<any>[];
-        line_receive(line: Line, message: Uint8Array): Promise<void>;
+        line_receive(line: Line, message: Uint8Array<ArrayBuffer>): Promise<void>;
         line_send_clocks(line: Line, land: $hyoo_crowd_land): void;
         line_send_units(line: Line, units: readonly $hyoo_crowd_unit[]): Promise<void>;
+        [$mol_dev_format_head](): any[];
     }
 }
 
@@ -4232,7 +4331,7 @@ declare namespace $.$$ {
 
 declare namespace $ {
 
-	type _hyoo_meta_menu_1 = $mol_type_enforce<
+	type __hyoo_meta_menu_1 = $mol_type_enforce<
 		Parameters< $hyoo_meta_menu['item_title'] >[0]
 		,
 		Parameters< $hyoo_meta_menu['item'] >[0]
@@ -4443,13 +4542,6 @@ declare namespace $ {
 declare namespace $ {
 }
 
-declare namespace $.$$ {
-    class $hyoo_page_side_menu extends $.$hyoo_page_side_menu {
-        item_expanded(id: $mol_int62_string, next?: boolean): boolean;
-        item_moved(what: $mol_int62_string, where: $mol_int62_string | null): void;
-    }
-}
-
 declare namespace $ {
 
 	type $hyoo_meta_link__meta_hyoo_page_side_menu_1 = $mol_type_enforce<
@@ -4467,6 +4559,13 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=menu.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_page_side_menu extends $.$hyoo_page_side_menu {
+        item_expanded(id: $mol_int62_string, next?: boolean): boolean;
+        item_moved(what: $mol_int62_string, where: $mol_int62_string | null): void;
+    }
+}
+
 declare namespace $ {
 }
 
@@ -4562,12 +4661,12 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type _mol_search_jumper_1 = $mol_type_enforce<
+	type __mol_search_jumper_1 = $mol_type_enforce<
 		Parameters< $mol_search_jumper['forward'] >[0]
 		,
 		Parameters< ReturnType< $mol_search_jumper['Index'] >['forward'] >[0]
 	>
-	type _mol_search_jumper_2 = $mol_type_enforce<
+	type __mol_search_jumper_2 = $mol_type_enforce<
 		Parameters< $mol_search_jumper['backward'] >[0]
 		,
 		Parameters< ReturnType< $mol_search_jumper['Index'] >['backward'] >[0]
@@ -4885,14 +4984,14 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type $mol_blob_mol_button_copy_1 = $mol_type_enforce<
+	type $mol_blob__mol_button_copy_1 = $mol_type_enforce<
 		[ readonly(BlobPart)[], ({ 
 			'type': string,
 		})  ]
 		,
 		ConstructorParameters< typeof $mol_blob >
 	>
-	type $mol_blob_mol_button_copy_2 = $mol_type_enforce<
+	type $mol_blob__mol_button_copy_2 = $mol_type_enforce<
 		[ readonly(BlobPart)[], ({ 
 			'type': string,
 		})  ]
@@ -6283,7 +6382,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type _mol_date_5 = $mol_type_enforce<
+	type __mol_date_5 = $mol_type_enforce<
 		Parameters< $mol_date['value_changed'] >[0]
 		,
 		Parameters< ReturnType< $mol_date['Input'] >['value_changed'] >[0]
@@ -6508,33 +6607,14 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=list.view.tree.d.ts.map
-declare namespace $.$$ {
-    class $hyoo_page_side_view extends $.$hyoo_page_side_view {
-        head(): ($mol_view | $.$mol_search_jumper)[];
-        bookmark(next?: boolean): boolean;
-        public(next?: boolean): boolean | undefined;
-        Edit_toggle(): any;
-        edit_toggle_label(): $mol_speck[];
-        search_show(next?: boolean): boolean;
-        search_start(event?: KeyboardEvent): void;
-        search_stop(event?: KeyboardEvent): void;
-        details(): string;
-        Following(): $.$hyoo_meta_link;
-        author_list(): $.$hyoo_meta_link[];
-        slides_send(): void;
-        history_mark(): void;
-        author_link(id: $mol_int62_string): string;
-    }
-}
-
 declare namespace $ {
 
-	type _hyoo_page_side_view_1 = $mol_type_enforce<
+	type __hyoo_page_side_view_1 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_view['title'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_view['side'] >['title'] >[0]
 	>
-	type _hyoo_page_side_view_2 = $mol_type_enforce<
+	type __hyoo_page_side_view_2 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_view['side_details'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_view['side'] >['details'] >[0]
@@ -6750,6 +6830,25 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=view.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_page_side_view extends $.$hyoo_page_side_view {
+        head(): ($mol_view | $.$mol_search_jumper)[];
+        bookmark(next?: boolean): boolean;
+        public(next?: boolean): boolean | undefined;
+        Edit_toggle(): any;
+        edit_toggle_label(): $mol_speck[];
+        search_show(next?: boolean): boolean;
+        search_start(event?: KeyboardEvent): void;
+        search_stop(event?: KeyboardEvent): void;
+        details(): string;
+        Following(): $.$hyoo_meta_link;
+        author_list(): $.$hyoo_meta_link[];
+        slides_send(): void;
+        history_mark(): void;
+        author_link(id: $mol_int62_string): string;
+    }
+}
+
 declare namespace $ {
 }
 
@@ -7267,36 +7366,24 @@ declare namespace $ {
     function $hyoo_marked_to_html(this: $, marked: string): string;
 }
 
-declare namespace $.$$ {
-    class $hyoo_page_side_edit extends $.$hyoo_page_side_edit {
-        publish(): void;
-        permalink(): string;
-        export_sign(): string;
-        download_name(): string;
-        copy_text(): string;
-        download_blob(): Blob;
-        copy_html(): string;
-    }
-}
-
 declare namespace $ {
 
-	type _hyoo_page_side_edit_1 = $mol_type_enforce<
+	type __hyoo_page_side_edit_1 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_edit['title'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_edit['side'] >['title'] >[0]
 	>
-	type _hyoo_page_side_edit_2 = $mol_type_enforce<
+	type __hyoo_page_side_edit_2 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_edit['details'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_edit['side'] >['details'] >[0]
 	>
-	type _hyoo_page_side_edit_3 = $mol_type_enforce<
+	type __hyoo_page_side_edit_3 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_edit['details_selection'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_edit['side'] >['details_selection'] >[0]
 	>
-	type _hyoo_page_side_edit_4 = $mol_type_enforce<
+	type __hyoo_page_side_edit_4 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_edit['aura'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_edit['side'] >['aura'] >[0]
@@ -7510,6 +7597,18 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=edit.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_page_side_edit extends $.$hyoo_page_side_edit {
+        publish(): void;
+        permalink(): string;
+        export_sign(): string;
+        download_name(): string;
+        copy_text(): string;
+        download_blob(): Blob;
+        copy_html(): string;
+    }
+}
+
 declare namespace $ {
 }
 
@@ -7543,44 +7642,24 @@ declare namespace $ {
     function $mol_text_profile(text: string): Map<string, number>;
 }
 
-declare namespace $.$$ {
-    class $hyoo_page_side_info extends $.$hyoo_page_side_info {
-        slides_uri(): string;
-        section_indexes(): number[];
-        section_list(): $.$mol_link[];
-        section_title(index: number): string;
-        ref_list(): $mol_view[];
-        ref_uri(uri: string): string;
-        ref_stat(uri: string): number;
-        weight(): string;
-        word_stat(): Map<string, number>;
-        word_list_items(): $mol_view[];
-        word_item_text(word: string): string;
-        word_item_stat(word: string): number;
-        size(): string;
-        chars(): string;
-        words(): string;
-    }
-}
-
 declare namespace $ {
 
-	type _hyoo_page_side_info_1 = $mol_type_enforce<
+	type __hyoo_page_side_info_1 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_info['text_header_title'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_info['Text'] >['block_text'] >[0]
 	>
-	type _hyoo_page_side_info_2 = $mol_type_enforce<
+	type __hyoo_page_side_info_2 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_info['section_arg'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_info['Text'] >['header_arg'] >[0]
 	>
-	type _hyoo_page_side_info_3 = $mol_type_enforce<
+	type __hyoo_page_side_info_3 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_info['section_level'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_info['Text'] >['header_level'] >[0]
 	>
-	type _hyoo_page_side_info_4 = $mol_type_enforce<
+	type __hyoo_page_side_info_4 = $mol_type_enforce<
 		Parameters< $hyoo_page_side_info['referrers_stat'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_page_side_info['side'] >['referrers_stat'] >[0]
@@ -7799,6 +7878,26 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=info.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_page_side_info extends $.$hyoo_page_side_info {
+        slides_uri(): string;
+        section_indexes(): number[];
+        section_list(): $.$mol_link[];
+        section_title(index: number): string;
+        ref_list(): $mol_view[];
+        ref_uri(uri: string): string;
+        ref_stat(uri: string): number;
+        weight(): string;
+        word_stat(): Map<string, number>;
+        word_list_items(): $mol_view[];
+        word_item_text(word: string): string;
+        word_item_stat(word: string): number;
+        size(): string;
+        chars(): string;
+        words(): string;
+    }
+}
+
 declare namespace $ {
 }
 
@@ -7819,21 +7918,6 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=major.view.tree.d.ts.map
-declare namespace $.$$ {
-    class $hyoo_meta_rights extends $.$hyoo_meta_rights {
-        editable(): boolean;
-        blocks(): ($.$mol_list | $.$mol_form_field)[];
-        editor_list(): $.$hyoo_meta_link[];
-        editor_add_rows(): ($mol_button_minor | $.$hyoo_meta_link | $mol_bar)[];
-        editor_add_id(next?: string): $mol_int62_string;
-        editor_add_allowed(): boolean;
-        editor_add_bid(): string;
-        editor_fill_all(): void;
-        editor_add_submit(): void;
-        editor_add_preview(): $hyoo_meta_person;
-    }
-}
-
 declare namespace $ {
 
 	type $hyoo_meta_link__meta_hyoo_meta_rights_1 = $mol_type_enforce<
@@ -7953,6 +8037,21 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=rights.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_meta_rights extends $.$hyoo_meta_rights {
+        editable(): boolean;
+        blocks(): ($.$mol_list | $.$mol_form_field)[];
+        editor_list(): $.$hyoo_meta_link[];
+        editor_add_rows(): ($mol_button_minor | $.$hyoo_meta_link | $mol_bar)[];
+        editor_add_id(next?: string): $mol_int62_string;
+        editor_add_allowed(): boolean;
+        editor_add_bid(): string;
+        editor_fill_all(): void;
+        editor_add_submit(): void;
+        editor_add_preview(): $hyoo_meta_person;
+    }
+}
+
 declare namespace $ {
 }
 
@@ -8061,24 +8160,6 @@ declare namespace $ {
 declare namespace $ {
     function $mol_wait_rest_async(this: $): Promise<unknown>;
     function $mol_wait_rest(this: $): unknown;
-}
-
-declare namespace $.$$ {
-    class $hyoo_meta_safe extends $.$hyoo_meta_safe {
-        password_bid(): string;
-        content(): $.$mol_list[];
-        recall(next?: string): string;
-        recall_enabled(): boolean;
-        peer_current(): `${string}_${string}`;
-        peer_new(): `${string}_${string}`;
-        key_import(next?: string | null): string | null;
-        key_new(): string | null;
-        import_switch(): void;
-        key_export(): string;
-        export_rows(): ($.$mol_list | $.$mol_link)[];
-        import_rows(): ($.$mol_list | $mol_button_minor)[];
-        export_link(): string;
-    }
 }
 
 declare namespace $ {
@@ -8223,6 +8304,24 @@ declare namespace $ {
 
 //# sourceMappingURL=safe.view.tree.d.ts.map
 declare namespace $.$$ {
+    class $hyoo_meta_safe extends $.$hyoo_meta_safe {
+        password_bid(): string;
+        content(): $.$mol_list[];
+        recall(next?: string): string;
+        recall_enabled(): boolean;
+        peer_current(): `${string}_${string}`;
+        peer_new(): `${string}_${string}`;
+        key_import(next?: string | null): string | null;
+        key_new(): string | null;
+        import_switch(): void;
+        key_export(): string;
+        export_rows(): ($.$mol_list | $.$mol_link)[];
+        import_rows(): ($.$mol_list | $mol_button_minor)[];
+        export_link(): string;
+    }
+}
+
+declare namespace $.$$ {
 }
 
 declare namespace $ {
@@ -8243,24 +8342,9 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=off.view.tree.d.ts.map
-declare namespace $.$$ {
-    class $hyoo_sync_online extends $.$hyoo_sync_online {
-        message(): string;
-        link_content(): $mol_icon_sync_off[];
-        hint(): string;
-        master_link(): string;
-        master_id(index: number): string;
-        option_label(index: number): string;
-        value(next?: string): string;
-    }
-}
-
-declare namespace $ {
-}
-
 declare namespace $ {
 
-	type _hyoo_sync_online_1 = $mol_type_enforce<
+	type __hyoo_sync_online_1 = $mol_type_enforce<
 		Parameters< $hyoo_sync_online['master_cursor'] >[0]
 		,
 		Parameters< ReturnType< $hyoo_sync_online['yard'] >['master_cursor'] >[0]
@@ -8313,6 +8397,21 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=online.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_sync_online extends $.$hyoo_sync_online {
+        message(): string;
+        link_content(): $mol_icon_sync_off[];
+        hint(): string;
+        master_link(): string;
+        master_id(index: number): string;
+        option_label(index: number): string;
+        value(next?: string): string;
+    }
+}
+
+declare namespace $ {
+}
+
 declare namespace $ {
 
 	export class $mol_icon_key extends $mol_icon {
@@ -8340,11 +8439,6 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=image.view.tree.d.ts.map
-declare namespace $.$$ {
-    class $hyoo_page_menu extends $.$hyoo_page_menu {
-    }
-}
-
 declare namespace $ {
 
 	type $hyoo_meta_link__meta_hyoo_page_menu_1 = $mol_type_enforce<
@@ -8441,6 +8535,11 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=menu.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_page_menu extends $.$hyoo_page_menu {
+    }
+}
+
 declare namespace $ {
     function $mol_db_response<Result>(request: IDBRequest<Result>): Promise<Result>;
 }
@@ -8576,44 +8675,14 @@ declare namespace $ {
 declare namespace $ {
 }
 
-declare namespace $.$$ {
-    class $hyoo_page extends $.$hyoo_page {
-        profile(): $hyoo_page_side;
-        title(): string;
-        aura_showing(next?: boolean): boolean;
-        aura_image(): string;
-        editing(next?: boolean): boolean;
-        rights(next?: boolean): boolean;
-        info(next?: boolean): boolean;
-        safe(next?: boolean): boolean;
-        edit_close(): void;
-        rights_close(): void;
-        info_close(): void;
-        safe_close(): void;
-        side(id: $mol_int62_string): $hyoo_page_side;
-        side_uri(id: $mol_int62_string): string;
-        side_current_id(): $mol_int62_string;
-        side_current(): $hyoo_page_side;
-        side_current_book(): $hyoo_page_side;
-        book_id(): "" | `${string}_${string}`;
-        book_side(): $hyoo_page_side;
-        book_pages_node(): $hyoo_crowd_list;
-        side_menu_showed(next?: boolean): boolean;
-        pages(): ($mol_view | $.$hyoo_page_side_menu | $.$hyoo_page_side_view | $.$hyoo_page_side_edit | $.$hyoo_page_side_info | $.$hyoo_meta_rights | $.$hyoo_meta_safe)[];
-        page_add(): void;
-        side_add(id: $mol_int62_string): void;
-        ref_track(): void;
-    }
-}
-
 declare namespace $ {
 
-	type _hyoo_page_1 = $mol_type_enforce<
+	type __hyoo_page_1 = $mol_type_enforce<
 		Parameters< $hyoo_page['side_title'] >[0]
 		,
 		Parameters< $hyoo_page['side'] >[0]
 	>
-	type _hyoo_page_2 = $mol_type_enforce<
+	type __hyoo_page_2 = $mol_type_enforce<
 		Parameters< $hyoo_page['pages_node'] >[0]
 		,
 		Parameters< $hyoo_page['side'] >[0]
@@ -8663,7 +8732,7 @@ declare namespace $ {
 		,
 		ReturnType< $hyoo_page_side_menu['tools_ext'] >
 	>
-	type _hyoo_page_12 = $mol_type_enforce<
+	type __hyoo_page_12 = $mol_type_enforce<
 		Parameters< $hyoo_page['View_details'] >[0]
 		,
 		Parameters< $hyoo_page['View'] >[0]
@@ -8872,6 +8941,36 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=page.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_page extends $.$hyoo_page {
+        profile(): $hyoo_page_side;
+        title(): string;
+        aura_showing(next?: boolean): boolean;
+        aura_image(): string;
+        editing(next?: boolean): boolean;
+        rights(next?: boolean): boolean;
+        info(next?: boolean): boolean;
+        safe(next?: boolean): boolean;
+        edit_close(): void;
+        rights_close(): void;
+        info_close(): void;
+        safe_close(): void;
+        side(id: $mol_int62_string): $hyoo_page_side;
+        side_uri(id: $mol_int62_string): string;
+        side_current_id(): $mol_int62_string;
+        side_current(): $hyoo_page_side;
+        side_current_book(): $hyoo_page_side;
+        book_id(): "" | `${string}_${string}`;
+        book_side(): $hyoo_page_side;
+        book_pages_node(): $hyoo_crowd_list;
+        side_menu_showed(next?: boolean): boolean;
+        pages(): ($mol_view | $.$hyoo_page_side_menu | $.$hyoo_page_side_view | $.$hyoo_page_side_edit | $.$hyoo_page_side_info | $.$hyoo_meta_rights | $.$hyoo_meta_safe)[];
+        page_add(): void;
+        side_add(id: $mol_int62_string): void;
+        ref_track(): void;
+    }
+}
+
 declare namespace $ {
 }
 
@@ -8881,23 +8980,6 @@ declare namespace $ {
         title: string;
         uri: string;
     };
-}
-
-declare namespace $.$$ {
-    class $hyoo_apps extends $.$hyoo_apps {
-        app(): string | null;
-        group_name(id: keyof ReturnType<typeof this.groups>): string;
-        group_list(): $.$mol_expander[];
-        group_items(group: string): $mol_view[];
-        pages(): ($mol_page | $.$mol_frame)[];
-        app_title(app: string): string;
-        app_uri_default(app: string, next?: string): string;
-        app_uri_embed(app: string, next?: string): string;
-        app_arg(app: string): {
-            app: string;
-            uri: null;
-        };
-    }
 }
 
 declare namespace $ {
@@ -9041,6 +9123,23 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=apps.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_apps extends $.$hyoo_apps {
+        app(): string | null;
+        group_name(id: keyof ReturnType<typeof this.groups>): string;
+        group_list(): $.$mol_expander[];
+        group_items(group: string): $mol_view[];
+        pages(): ($mol_page | $.$mol_frame)[];
+        app_title(app: string): string;
+        app_uri_default(app: string, next?: string): string;
+        app_uri_embed(app: string, next?: string): string;
+        app_arg(app: string): {
+            app: string;
+            uri: null;
+        };
+    }
+}
+
 declare namespace $ {
     function $mol_compare_text<Item>(item?: (item: Item) => string): (a: Item, b: Item) => number;
 }
@@ -9077,12 +9176,12 @@ declare namespace $ {
 		,
 		ReturnType< $mol_tag_tree['tag_name'] >
 	>
-	type $mol_tag_tree_sub_7 = $mol_type_enforce<
+	type $mol_tag_tree_sub__7 = $mol_type_enforce<
 		ReturnType< $mol_tag_tree['tag_list'] >[number]
 		,
 		$mol_view
 	>
-	type $mol_tag_tree_sub_8 = $mol_type_enforce<
+	type $mol_tag_tree_sub__8 = $mol_type_enforce<
 		ReturnType< $mol_tag_tree['item_list'] >[number]
 		,
 		$mol_view
@@ -9710,7 +9809,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_hotkey['mod_ctrl'] >
 	>
-	type _mol_app_demo_3 = $mol_type_enforce<
+	type __mol_app_demo_3 = $mol_type_enforce<
 		Parameters< $mol_app_demo['search_start'] >[0]
 		,
 		Parameters< ReturnType< $mol_app_demo['Menu'] >['search_start'] >[0]
@@ -9720,7 +9819,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_link_source['uri'] >
 	>
-	type _mol_app_demo_5 = $mol_type_enforce<
+	type __mol_app_demo_5 = $mol_type_enforce<
 		Parameters< $mol_app_demo['chat_pages'] >[0]
 		,
 		Parameters< $mol_app_demo['Detail'] >[0]
@@ -10136,79 +10235,6 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=box.view.tree.d.ts.map
-declare namespace $.$$ {
-    class $hyoo_bench_app extends $.$hyoo_bench_app {
-        bench(next?: string): string;
-        sandbox(): any;
-        command_last(next?: any[] | null): any[] | null;
-        command_result<Result>(command: any[]): Result;
-        command_result_async(command: any[]): Promise<unknown>;
-        meta(): {
-            source: string;
-            title: {
-                [lang: string]: string;
-            };
-            descr: {
-                [lang: string]: string;
-            };
-            samples: {
-                [sample: string]: {
-                    title: {
-                        [lang: string]: string;
-                    };
-                };
-            };
-            steps: {
-                [step: string]: {
-                    title: {
-                        [lang: string]: string;
-                    };
-                };
-            };
-            params: {
-                [param: string]: {
-                    title: {
-                        [lang: string]: string;
-                    };
-                    default: number;
-                    type: string;
-                    precision: number;
-                };
-            };
-        };
-        source_link(): string;
-        samples_all(next?: string[]): string[];
-        samples(next?: string[]): string[];
-        steps(next?: string[]): string[];
-        title(): string;
-        description(): string;
-        result_sample(sample_id: string): {
-            [key: string]: any;
-        };
-        result(): {
-            [sample: string]: {
-                [step: string]: any;
-            };
-        };
-        sandbox_title(): string;
-        result_col_title(col_id: string): string;
-        step_title(step: string): string[];
-        result_col_sort(next?: string): string;
-        menu_options(): $mol_check_box[];
-        sample_title(sample: string): string;
-        menu_option_checked(sample: string, next?: boolean): boolean;
-        params(): string[];
-        param_fields(): $mol_labeler[];
-        param_title(id: string): string;
-        param_value(id: string, next?: any): number;
-        param_precision(id: string): number;
-        param_dict(): Record<string, number>;
-    }
-}
-
-declare namespace $ {
-}
-
 declare namespace $ {
 
 	type $mol_search__query_hyoo_bench_app_1 = $mol_type_enforce<
@@ -10371,6 +10397,79 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=app.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_bench_app extends $.$hyoo_bench_app {
+        bench(next?: string): string;
+        sandbox(): any;
+        command_last(next?: any[] | null): any[] | null;
+        command_result<Result>(command: any[]): Result;
+        command_result_async(command: any[]): Promise<unknown>;
+        meta(): {
+            source: string;
+            title: {
+                [lang: string]: string;
+            };
+            descr: {
+                [lang: string]: string;
+            };
+            samples: {
+                [sample: string]: {
+                    title: {
+                        [lang: string]: string;
+                    };
+                };
+            };
+            steps: {
+                [step: string]: {
+                    title: {
+                        [lang: string]: string;
+                    };
+                };
+            };
+            params: {
+                [param: string]: {
+                    title: {
+                        [lang: string]: string;
+                    };
+                    default: number;
+                    type: string;
+                    precision: number;
+                };
+            };
+        };
+        source_link(): string;
+        samples_all(next?: string[]): string[];
+        samples(next?: string[]): string[];
+        steps(next?: string[]): string[];
+        title(): string;
+        description(): string;
+        result_sample(sample_id: string): {
+            [key: string]: any;
+        };
+        result(): {
+            [sample: string]: {
+                [step: string]: any;
+            };
+        };
+        sandbox_title(): string;
+        result_col_title(col_id: string): string;
+        step_title(step: string): string[];
+        result_col_sort(next?: string): string;
+        menu_options(): $mol_check_box[];
+        sample_title(sample: string): string;
+        menu_option_checked(sample: string, next?: boolean): boolean;
+        params(): string[];
+        param_fields(): $mol_labeler[];
+        param_title(id: string): string;
+        param_value(id: string, next?: any): number;
+        param_precision(id: string): number;
+        param_dict(): Record<string, number>;
+    }
+}
+
+declare namespace $ {
+}
+
 declare namespace $ {
 
 	export class $mol_icon_help extends $mol_icon {
@@ -10461,29 +10560,6 @@ declare namespace $ {
         get frequency(): number;
         get memory_per_iteration(): number;
     }
-}
-
-declare namespace $.$$ {
-    class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
-        sub(): $mol_view[];
-        portions(): $.$mol_portion[];
-        stats(): $mol_view[];
-        error(): string;
-        iterations(): string;
-        frequency(): string;
-        time_total(): string;
-        memory_total(): string;
-        memory_per_iteration(): string;
-        size(): number;
-        deps(): string;
-        frequency_portion(): number;
-        memory_portion(): number;
-        size_portion(): number;
-        deps_portion(): number;
-    }
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
@@ -10675,6 +10751,29 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=result.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_js_perf_case_result extends $.$hyoo_js_perf_case_result {
+        sub(): $mol_view[];
+        portions(): $.$mol_portion[];
+        stats(): $mol_view[];
+        error(): string;
+        iterations(): string;
+        frequency(): string;
+        time_total(): string;
+        memory_total(): string;
+        memory_per_iteration(): string;
+        size(): number;
+        deps(): string;
+        frequency_portion(): number;
+        memory_portion(): number;
+        size_portion(): number;
+        deps_portion(): number;
+    }
+}
+
+declare namespace $ {
+}
+
 declare namespace $ {
 
 	export class $mol_icon_play extends $mol_icon {
@@ -11217,7 +11316,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_page['body'] >
 	>
-	type $hyoo_js_eval_bookmark_list_43 = $mol_type_enforce<
+	type $hyoo_js_eval_bookmark_list__43 = $mol_type_enforce<
 		`// Example Notebook
 
 // load external script
@@ -11288,21 +11387,6 @@ compare( left, right )`
 }
 
 //# sourceMappingURL=eval.view.tree.d.ts.map
-declare namespace $.$$ {
-    class $hyoo_js_perf_case_row extends $.$hyoo_js_perf_case_row {
-        columns(): $mol_view[];
-        result(level: number): any;
-        result_title(level: number): string;
-        eval_standalone(): string;
-        edit_tools(): readonly any[];
-        prefix_showed(next?: boolean): boolean;
-        source_showed(next?: boolean): boolean;
-    }
-}
-
-declare namespace $ {
-}
-
 declare namespace $ {
 
 	type $mol_check_box__checked_hyoo_js_perf_case_row_1 = $mol_type_enforce<
@@ -11576,6 +11660,21 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=row.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_js_perf_case_row extends $.$hyoo_js_perf_case_row {
+        columns(): $mol_view[];
+        result(level: number): any;
+        result_title(level: number): string;
+        eval_standalone(): string;
+        edit_tools(): readonly any[];
+        prefix_showed(next?: boolean): boolean;
+        source_showed(next?: boolean): boolean;
+    }
+}
+
+declare namespace $ {
+}
+
 declare namespace $ {
 
 	export class $mol_icon_check extends $mol_icon {
@@ -11723,61 +11822,6 @@ declare namespace $ {
     }
 }
 
-declare namespace $.$$ {
-    class $hyoo_js_perf extends $.$hyoo_js_perf {
-        bench_fund(): $hyoo_crowd_fund<typeof $hyoo_js_perf_bench>;
-        bench_id(): `${string}_${string}` | null;
-        permalink(): string;
-        bench(): $hyoo_js_perf_bench;
-        bench_new(): $hyoo_js_perf_bench;
-        bench_fork(): $hyoo_js_perf_bench;
-        bench_changable(): $hyoo_js_perf_bench;
-        titles(next?: string[]): string[];
-        prefixes(next?: string[]): string[];
-        sources(next?: string[]): string[];
-        bench_title(next?: string): string;
-        menu_title(): string;
-        prefix(next?: string): string;
-        postfix(next?: string): string;
-        case_drop(index: number): void;
-        case_dupe(index: number): void;
-        case_swap(index: number): void;
-        cases_count(): number;
-        cases(): $.$hyoo_js_perf_case_row[];
-        case_title(index: number, next?: string): string;
-        case_prefix(index: number, next?: string): string;
-        source(index: number, next?: string): string;
-        case_sample(index: number): string;
-        case_size(index: number): number;
-        case_deps_names(index: number): string[];
-        case_deps(index: number): number;
-        case_measurable(index: number, next?: boolean): boolean;
-        module_size(name: string): number;
-        measures_for(index: number, next?: $hyoo_js_perf_stats[]): $hyoo_js_perf_stats[];
-        measures(): $hyoo_js_perf_stats[][];
-        max_frequency(): number;
-        max_memory(): number;
-        max_size(): number;
-        max_deps(): number;
-        results(index: number): $hyoo_js_perf_stats[];
-        token(): string;
-        measure_step(count: number, prefix: string, inner: string, postfix: string): {
-            total: number;
-            time: any;
-            mem: any;
-        };
-        measure_precise(prefix: string, inner: string, postfix: string): $hyoo_js_perf_stats;
-        measure_safe(index: number, prefix: string, inner: string, postfix: string): $hyoo_js_perf_stats;
-        _run_iteration: number;
-        iterations_reset(): void;
-        measurable_all(): $mol_check_box[];
-        run(): void;
-    }
-}
-
-declare namespace $ {
-}
-
 declare namespace $ {
 
 	type $mol_hotkey__mod_ctrl_hyoo_js_perf_1 = $mol_type_enforce<
@@ -11917,7 +11961,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_string_button['enabled'] >
 	>
-	type _hyoo_js_perf_28 = $mol_type_enforce<
+	type __hyoo_js_perf_28 = $mol_type_enforce<
 		Parameters< $hyoo_js_perf['Case_measurable'] >[0]
 		,
 		Parameters< $hyoo_js_perf['Case'] >[0]
@@ -12126,6 +12170,61 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=perf.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_js_perf extends $.$hyoo_js_perf {
+        bench_fund(): $hyoo_crowd_fund<typeof $hyoo_js_perf_bench>;
+        bench_id(): `${string}_${string}` | null;
+        permalink(): string;
+        bench(): $hyoo_js_perf_bench;
+        bench_new(): $hyoo_js_perf_bench;
+        bench_fork(): $hyoo_js_perf_bench;
+        bench_changable(): $hyoo_js_perf_bench;
+        titles(next?: string[]): string[];
+        prefixes(next?: string[]): string[];
+        sources(next?: string[]): string[];
+        bench_title(next?: string): string;
+        menu_title(): string;
+        prefix(next?: string): string;
+        postfix(next?: string): string;
+        case_drop(index: number): void;
+        case_dupe(index: number): void;
+        case_swap(index: number): void;
+        cases_count(): number;
+        cases(): $.$hyoo_js_perf_case_row[];
+        case_title(index: number, next?: string): string;
+        case_prefix(index: number, next?: string): string;
+        source(index: number, next?: string): string;
+        case_sample(index: number): string;
+        case_size(index: number): number;
+        case_deps_names(index: number): string[];
+        case_deps(index: number): number;
+        case_measurable(index: number, next?: boolean): boolean;
+        module_size(name: string): number;
+        measures_for(index: number, next?: $hyoo_js_perf_stats[]): $hyoo_js_perf_stats[];
+        measures(): $hyoo_js_perf_stats[][];
+        max_frequency(): number;
+        max_memory(): number;
+        max_size(): number;
+        max_deps(): number;
+        results(index: number): $hyoo_js_perf_stats[];
+        token(): string;
+        measure_step(count: number, prefix: string, inner: string, postfix: string): {
+            total: number;
+            time: any;
+            mem: any;
+        };
+        measure_precise(prefix: string, inner: string, postfix: string): $hyoo_js_perf_stats;
+        measure_safe(index: number, prefix: string, inner: string, postfix: string): $hyoo_js_perf_stats;
+        _run_iteration: number;
+        iterations_reset(): void;
+        measurable_all(): $mol_check_box[];
+        run(): void;
+    }
+}
+
+declare namespace $ {
+}
+
 declare namespace $ {
 
 	type $mol_check__checked_mol_check_list_1 = $mol_type_enforce<
@@ -12880,7 +12979,7 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type _mol_select_list_1 = $mol_type_enforce<
+	type __mol_select_list_1 = $mol_type_enforce<
 		Parameters< $mol_select_list['filter_pattern'] >[0]
 		,
 		Parameters< ReturnType< $mol_select_list['Pick'] >['filter_pattern'] >[0]
@@ -12945,7 +13044,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_button_minor['enabled'] >
 	>
-	type $mol_select_list_sub_14 = $mol_type_enforce<
+	type $mol_select_list_sub__14 = $mol_type_enforce<
 		ReturnType< $mol_select_list['badges_list'] >[number]
 		,
 		$mol_view
@@ -13309,9 +13408,9 @@ declare namespace $ {
 
 declare namespace $ {
     class $mol_wasm_module extends $mol_object2 {
-        readonly buffer: ArrayBuffer;
+        readonly buffer: Uint8Array;
         native: WebAssembly.Module;
-        constructor(buffer: ArrayBuffer);
+        constructor(buffer: Uint8Array);
         instance<Imports extends {
             [mod in string]: {
                 [func in string]: WebAssembly.ImportValue;
@@ -13329,21 +13428,6 @@ declare namespace $ {
         prefix: Item[];
         suffix: Item[][];
     };
-}
-
-declare namespace $.$$ {
-    class $hyoo_tree extends $.$hyoo_tree {
-        pipeline(next?: string[]): readonly string[];
-        add(index: number, next?: string): string;
-        source(next?: string): string;
-        transform(index: number, next?: string): string;
-        transform_options(): string[];
-        result(index: number): string | $mol_tree2 | Uint8Array | $mol_wasm_module;
-        result_text(): string;
-    }
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
@@ -13730,6 +13814,21 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=tree.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_tree extends $.$hyoo_tree {
+        pipeline(next?: string[]): readonly string[];
+        add(index: number, next?: string): string;
+        source(next?: string): string;
+        transform(index: number, next?: string): string;
+        transform_options(): string[];
+        result(index: number): string | $mol_tree2 | Uint8Array | $mol_wasm_module;
+        result_text(): string;
+    }
+}
+
+declare namespace $ {
+}
+
 declare namespace $ {
 
 	type $mol_paragraph__dom_name_mol_section_1 = $mol_type_enforce<
@@ -13780,38 +13879,6 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-}
-
-declare namespace $.$$ {
-    class $hyoo_crowd_app extends $.$hyoo_crowd_app {
-        sync_enabled(): boolean;
-        sync(next?: Event): number;
-    }
-    class $hyoo_crowd_app_peer extends $.$hyoo_crowd_app_peer {
-        store(): $hyoo_crowd_land;
-        sync_clocks(next?: readonly [$hyoo_crowd_clock, $hyoo_crowd_clock]): readonly [$hyoo_crowd_clock, $hyoo_crowd_clock];
-        text(next?: string): string;
-        delta(): readonly $hyoo_crowd_unit[];
-        delta_view(): {
-            kind: string;
-            Land: `${string}_${string}`;
-            Auth: `${string}_${string}`;
-            Head: `${string}_${string}`;
-            Self: `${string}_${string}`;
-            Next: `${string}_${string}`;
-            Prev: `${string}_${string}`;
-            Time: string;
-            Data: string;
-        }[];
-        changes(): number;
-        size_text(): number;
-        units_alive(): number;
-        units_total(): number;
-        units_dead(): number;
-        size_state_bin(): number;
-        size_delta_bin(): number;
-        stats(): string;
-    }
 }
 
 declare namespace $ {
@@ -13945,6 +14012,38 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=app.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_crowd_app extends $.$hyoo_crowd_app {
+        sync_enabled(): boolean;
+        sync(next?: Event): number;
+    }
+    class $hyoo_crowd_app_peer extends $.$hyoo_crowd_app_peer {
+        store(): $hyoo_crowd_land;
+        sync_clocks(next?: readonly [$hyoo_crowd_clock, $hyoo_crowd_clock]): readonly [$hyoo_crowd_clock, $hyoo_crowd_clock];
+        text(next?: string): string;
+        delta(): readonly $hyoo_crowd_unit[];
+        delta_view(): {
+            kind: string;
+            Land: `${string}_${string}`;
+            Auth: `${string}_${string}`;
+            Head: `${string}_${string}`;
+            Self: `${string}_${string}`;
+            Next: `${string}_${string}`;
+            Prev: `${string}_${string}`;
+            Time: string;
+            Data: string;
+        }[];
+        changes(): number;
+        size_text(): number;
+        units_alive(): number;
+        units_total(): number;
+        units_dead(): number;
+        size_state_bin(): number;
+        size_delta_bin(): number;
+        stats(): string;
+    }
+}
+
 declare namespace $.$$ {
 }
 
@@ -14960,7 +15059,7 @@ declare namespace $.$$ {
 
 declare namespace $ {
 
-	type _mol_audio_demo_1 = $mol_type_enforce<
+	type __mol_audio_demo_1 = $mol_type_enforce<
 		Parameters< $mol_audio_demo['beep_status'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo['Beep_room'] >['status'] >[0]
@@ -14975,17 +15074,17 @@ declare namespace $ {
 		,
 		ReturnType< $mol_audio_melody['notes'] >
 	>
-	type _mol_audio_demo_4 = $mol_type_enforce<
+	type __mol_audio_demo_4 = $mol_type_enforce<
 		Parameters< $mol_audio_demo['noise_status'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo['Noise_room'] >['status'] >[0]
 	>
-	type _mol_audio_demo_5 = $mol_type_enforce<
+	type __mol_audio_demo_5 = $mol_type_enforce<
 		Parameters< $mol_audio_demo['noise_active'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo['Noise'] >['active'] >[0]
 	>
-	type _mol_audio_demo_6 = $mol_type_enforce<
+	type __mol_audio_demo_6 = $mol_type_enforce<
 		Parameters< $mol_audio_demo['noise_stop_at'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo['Noise'] >['stop_at'] >[0]
@@ -15089,17 +15188,17 @@ declare namespace $.$$ {
 
 declare namespace $ {
 
-	type _mol_audio_demo_vibe_1 = $mol_type_enforce<
+	type __mol_audio_demo_vibe_1 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_vibe['room_status'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_vibe['Room'] >['status'] >[0]
 	>
-	type _mol_audio_demo_vibe_2 = $mol_type_enforce<
+	type __mol_audio_demo_vibe_2 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_vibe['active'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_vibe['Beep_vibe'] >['active'] >[0]
 	>
-	type _mol_audio_demo_vibe_3 = $mol_type_enforce<
+	type __mol_audio_demo_vibe_3 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_vibe['stop_at'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_vibe['Beep_vibe'] >['stop_at'] >[0]
@@ -15164,22 +15263,22 @@ declare namespace $ {
 		,
 		ReturnType< $mol_select['value'] >
 	>
-	type $mol_audio_demo_vibe_Shape_select_17 = $mol_type_enforce<
+	type $mol_audio_demo_vibe_Shape_select__17 = $mol_type_enforce<
 		`sine`
 		,
 		$mol_audio_vibe_shape
 	>
-	type $mol_audio_demo_vibe_Shape_select_18 = $mol_type_enforce<
+	type $mol_audio_demo_vibe_Shape_select__18 = $mol_type_enforce<
 		`square`
 		,
 		$mol_audio_vibe_shape
 	>
-	type $mol_audio_demo_vibe_Shape_select_19 = $mol_type_enforce<
+	type $mol_audio_demo_vibe_Shape_select__19 = $mol_type_enforce<
 		`sawtooth`
 		,
 		$mol_audio_vibe_shape
 	>
-	type $mol_audio_demo_vibe_Shape_select_20 = $mol_type_enforce<
+	type $mol_audio_demo_vibe_Shape_select__20 = $mol_type_enforce<
 		`triangle`
 		,
 		$mol_audio_vibe_shape
@@ -15299,17 +15398,17 @@ declare namespace $ {
 //# sourceMappingURL=loop.view.tree.d.ts.map
 declare namespace $ {
 
-	type _mol_audio_demo_sample_1 = $mol_type_enforce<
+	type __mol_audio_demo_sample_1 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_sample['room_status'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_sample['Room'] >['status'] >[0]
 	>
-	type _mol_audio_demo_sample_2 = $mol_type_enforce<
+	type __mol_audio_demo_sample_2 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_sample['sample_active'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_sample['Sample'] >['active'] >[0]
 	>
-	type _mol_audio_demo_sample_3 = $mol_type_enforce<
+	type __mol_audio_demo_sample_3 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_sample['loop'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_sample['Sample'] >['loop'] >[0]
@@ -15446,17 +15545,17 @@ declare namespace $ {
 //# sourceMappingURL=pause.view.tree.d.ts.map
 declare namespace $ {
 
-	type _mol_audio_demo_sequencer_1 = $mol_type_enforce<
+	type __mol_audio_demo_sequencer_1 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_sequencer['room_status'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_sequencer['Room'] >['status'] >[0]
 	>
-	type _mol_audio_demo_sequencer_2 = $mol_type_enforce<
+	type __mol_audio_demo_sequencer_2 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_sequencer['room_active'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_sequencer['Room'] >['active'] >[0]
 	>
-	type _mol_audio_demo_sequencer_3 = $mol_type_enforce<
+	type __mol_audio_demo_sequencer_3 = $mol_type_enforce<
 		Parameters< $mol_audio_demo_sequencer['beep_track_active'] >[0]
 		,
 		Parameters< ReturnType< $mol_audio_demo_sequencer['Beep_track'] >['active'] >[0]
@@ -15850,642 +15949,642 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type $mol_filler_filler_lines_1 = $mol_type_enforce<
+	type $mol_filler_filler_lines__1 = $mol_type_enforce<
 		`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_2 = $mol_type_enforce<
+	type $mol_filler_filler_lines__2 = $mol_type_enforce<
 		`Donec a diam lectus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_3 = $mol_type_enforce<
+	type $mol_filler_filler_lines__3 = $mol_type_enforce<
 		`Sed sit amet ipsum mauris. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_4 = $mol_type_enforce<
+	type $mol_filler_filler_lines__4 = $mol_type_enforce<
 		`Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_5 = $mol_type_enforce<
+	type $mol_filler_filler_lines__5 = $mol_type_enforce<
 		`Donec et mollis dolor. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_6 = $mol_type_enforce<
+	type $mol_filler_filler_lines__6 = $mol_type_enforce<
 		`Praesent et diam eget libero egestas mattis sit amet vitae augue. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_7 = $mol_type_enforce<
+	type $mol_filler_filler_lines__7 = $mol_type_enforce<
 		`Nam tincidunt congue enim, ut porta lorem lacinia consectetur. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_8 = $mol_type_enforce<
+	type $mol_filler_filler_lines__8 = $mol_type_enforce<
 		`Donec ut libero sed arcu vehicula ultricies a non tortor. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_9 = $mol_type_enforce<
+	type $mol_filler_filler_lines__9 = $mol_type_enforce<
 		`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_10 = $mol_type_enforce<
+	type $mol_filler_filler_lines__10 = $mol_type_enforce<
 		`Aenean ut gravida lorem. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_11 = $mol_type_enforce<
+	type $mol_filler_filler_lines__11 = $mol_type_enforce<
 		`Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_12 = $mol_type_enforce<
+	type $mol_filler_filler_lines__12 = $mol_type_enforce<
 		`Pellentesque auctor nisi id magna consequat sagittis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_13 = $mol_type_enforce<
+	type $mol_filler_filler_lines__13 = $mol_type_enforce<
 		`Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_14 = $mol_type_enforce<
+	type $mol_filler_filler_lines__14 = $mol_type_enforce<
 		`Ut convallis libero in urna ultrices accumsan. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_15 = $mol_type_enforce<
+	type $mol_filler_filler_lines__15 = $mol_type_enforce<
 		`Donec sed odio eros. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_16 = $mol_type_enforce<
+	type $mol_filler_filler_lines__16 = $mol_type_enforce<
 		`Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_17 = $mol_type_enforce<
+	type $mol_filler_filler_lines__17 = $mol_type_enforce<
 		`Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_18 = $mol_type_enforce<
+	type $mol_filler_filler_lines__18 = $mol_type_enforce<
 		`In rutrum accumsan ultricies. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_19 = $mol_type_enforce<
+	type $mol_filler_filler_lines__19 = $mol_type_enforce<
 		`Mauris vitae nisi at sem facilisis semper ac in est. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_20 = $mol_type_enforce<
+	type $mol_filler_filler_lines__20 = $mol_type_enforce<
 		`Vivamus fermentum semper porta. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_21 = $mol_type_enforce<
+	type $mol_filler_filler_lines__21 = $mol_type_enforce<
 		`Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_22 = $mol_type_enforce<
+	type $mol_filler_filler_lines__22 = $mol_type_enforce<
 		`Maecenas convallis ullamcorper ultricies. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_23 = $mol_type_enforce<
+	type $mol_filler_filler_lines__23 = $mol_type_enforce<
 		`Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_24 = $mol_type_enforce<
+	type $mol_filler_filler_lines__24 = $mol_type_enforce<
 		`Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_25 = $mol_type_enforce<
+	type $mol_filler_filler_lines__25 = $mol_type_enforce<
 		`Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_26 = $mol_type_enforce<
+	type $mol_filler_filler_lines__26 = $mol_type_enforce<
 		`Fusce eget orci a orci congue vestibulum. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_27 = $mol_type_enforce<
+	type $mol_filler_filler_lines__27 = $mol_type_enforce<
 		`Ut dolor diam, elementum et vestibulum eu, porttitor vel elit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_28 = $mol_type_enforce<
+	type $mol_filler_filler_lines__28 = $mol_type_enforce<
 		`Curabitur venenatis pulvinar tellus gravida ornare. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_29 = $mol_type_enforce<
+	type $mol_filler_filler_lines__29 = $mol_type_enforce<
 		`Sed et erat faucibus nunc euismod ultricies ut id justo. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_30 = $mol_type_enforce<
+	type $mol_filler_filler_lines__30 = $mol_type_enforce<
 		`Nullam cursus suscipit nisi, et ultrices justo sodales nec. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_31 = $mol_type_enforce<
+	type $mol_filler_filler_lines__31 = $mol_type_enforce<
 		`Fusce venenatis facilisis lectus ac semper. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_32 = $mol_type_enforce<
+	type $mol_filler_filler_lines__32 = $mol_type_enforce<
 		`Aliquam at massa ipsum. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_33 = $mol_type_enforce<
+	type $mol_filler_filler_lines__33 = $mol_type_enforce<
 		`Quisque bibendum purus convallis nulla ultrices ultricies. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_34 = $mol_type_enforce<
+	type $mol_filler_filler_lines__34 = $mol_type_enforce<
 		`Nullam aliquam, mi eu aliquam tincidunt, purus velit laoreet tortor, viverra pretium nisi quam vitae mi. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_35 = $mol_type_enforce<
+	type $mol_filler_filler_lines__35 = $mol_type_enforce<
 		`Fusce vel volutpat elit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_36 = $mol_type_enforce<
+	type $mol_filler_filler_lines__36 = $mol_type_enforce<
 		`Nam sagittis nisi dui. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_37 = $mol_type_enforce<
+	type $mol_filler_filler_lines__37 = $mol_type_enforce<
 		`Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_38 = $mol_type_enforce<
+	type $mol_filler_filler_lines__38 = $mol_type_enforce<
 		`Etiam luctus porttitor lorem, sed suscipit est rutrum non. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_39 = $mol_type_enforce<
+	type $mol_filler_filler_lines__39 = $mol_type_enforce<
 		`Curabitur lobortis nisl a enim congue semper. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_40 = $mol_type_enforce<
+	type $mol_filler_filler_lines__40 = $mol_type_enforce<
 		`Aenean commodo ultrices imperdiet. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_41 = $mol_type_enforce<
+	type $mol_filler_filler_lines__41 = $mol_type_enforce<
 		`Vestibulum ut justo vel sapien venenatis tincidunt. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_42 = $mol_type_enforce<
+	type $mol_filler_filler_lines__42 = $mol_type_enforce<
 		`Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_43 = $mol_type_enforce<
+	type $mol_filler_filler_lines__43 = $mol_type_enforce<
 		`Aliquam ut massa in turpis dapibus convallis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_44 = $mol_type_enforce<
+	type $mol_filler_filler_lines__44 = $mol_type_enforce<
 		`Praesent elit lacus, vestibulum at malesuada et, ornare et est. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_45 = $mol_type_enforce<
+	type $mol_filler_filler_lines__45 = $mol_type_enforce<
 		`Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_46 = $mol_type_enforce<
+	type $mol_filler_filler_lines__46 = $mol_type_enforce<
 		`Mauris ut placerat justo. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_47 = $mol_type_enforce<
+	type $mol_filler_filler_lines__47 = $mol_type_enforce<
 		`Mauris in ultricies enim. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_48 = $mol_type_enforce<
+	type $mol_filler_filler_lines__48 = $mol_type_enforce<
 		`Quisque nec est eleifend nulla ultrices egestas quis ut quam. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_49 = $mol_type_enforce<
+	type $mol_filler_filler_lines__49 = $mol_type_enforce<
 		`Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_50 = $mol_type_enforce<
+	type $mol_filler_filler_lines__50 = $mol_type_enforce<
 		`Cras quis ligula sem, vel elementum mi. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_51 = $mol_type_enforce<
+	type $mol_filler_filler_lines__51 = $mol_type_enforce<
 		`Phasellus non ullamcorper urna. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_52 = $mol_type_enforce<
+	type $mol_filler_filler_lines__52 = $mol_type_enforce<
 		`Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_53 = $mol_type_enforce<
+	type $mol_filler_filler_lines__53 = $mol_type_enforce<
 		`In euismod ultrices facilisis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_54 = $mol_type_enforce<
+	type $mol_filler_filler_lines__54 = $mol_type_enforce<
 		`Vestibulum porta sapien adipiscing augue congue id pretium lectus molestie. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_55 = $mol_type_enforce<
+	type $mol_filler_filler_lines__55 = $mol_type_enforce<
 		`Proin quis dictum nisl. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_56 = $mol_type_enforce<
+	type $mol_filler_filler_lines__56 = $mol_type_enforce<
 		`Morbi id quam sapien, sed vestibulum sem. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_57 = $mol_type_enforce<
+	type $mol_filler_filler_lines__57 = $mol_type_enforce<
 		`Duis elementum rutrum mauris sed convallis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_58 = $mol_type_enforce<
+	type $mol_filler_filler_lines__58 = $mol_type_enforce<
 		`Proin vestibulum magna mi. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_59 = $mol_type_enforce<
+	type $mol_filler_filler_lines__59 = $mol_type_enforce<
 		`Aenean tristique hendrerit magna, ac facilisis nulla hendrerit ut. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_60 = $mol_type_enforce<
+	type $mol_filler_filler_lines__60 = $mol_type_enforce<
 		`Sed non tortor sodales quam auctor elementum. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_61 = $mol_type_enforce<
+	type $mol_filler_filler_lines__61 = $mol_type_enforce<
 		`Donec hendrerit nunc eget elit pharetra pulvinar. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_62 = $mol_type_enforce<
+	type $mol_filler_filler_lines__62 = $mol_type_enforce<
 		`Suspendisse id tempus tortor. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_63 = $mol_type_enforce<
+	type $mol_filler_filler_lines__63 = $mol_type_enforce<
 		`Aenean luctus, elit commodo laoreet commodo, justo nisi consequat massa, sed vulputate quam urna quis eros. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_64 = $mol_type_enforce<
+	type $mol_filler_filler_lines__64 = $mol_type_enforce<
 		`Donec vel. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_65 = $mol_type_enforce<
+	type $mol_filler_filler_lines__65 = $mol_type_enforce<
 		`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_66 = $mol_type_enforce<
+	type $mol_filler_filler_lines__66 = $mol_type_enforce<
 		`Donec a diam lectus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_67 = $mol_type_enforce<
+	type $mol_filler_filler_lines__67 = $mol_type_enforce<
 		`Sed sit amet ipsum mauris. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_68 = $mol_type_enforce<
+	type $mol_filler_filler_lines__68 = $mol_type_enforce<
 		`Maecenas congue ligula ac quam viverra nec consectetur ante hendrerit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_69 = $mol_type_enforce<
+	type $mol_filler_filler_lines__69 = $mol_type_enforce<
 		`Donec et mollis dolor. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_70 = $mol_type_enforce<
+	type $mol_filler_filler_lines__70 = $mol_type_enforce<
 		`Praesent et diam eget libero egestas mattis sit amet vitae augue. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_71 = $mol_type_enforce<
+	type $mol_filler_filler_lines__71 = $mol_type_enforce<
 		`Nam tincidunt congue enim, ut porta lorem lacinia consectetur. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_72 = $mol_type_enforce<
+	type $mol_filler_filler_lines__72 = $mol_type_enforce<
 		`Donec ut libero sed arcu vehicula ultricies a non tortor. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_73 = $mol_type_enforce<
+	type $mol_filler_filler_lines__73 = $mol_type_enforce<
 		`Lorem ipsum dolor sit amet, consectetur adipiscing elit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_74 = $mol_type_enforce<
+	type $mol_filler_filler_lines__74 = $mol_type_enforce<
 		`Aenean ut gravida lorem. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_75 = $mol_type_enforce<
+	type $mol_filler_filler_lines__75 = $mol_type_enforce<
 		`Ut turpis felis, pulvinar a semper sed, adipiscing id dolor. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_76 = $mol_type_enforce<
+	type $mol_filler_filler_lines__76 = $mol_type_enforce<
 		`Pellentesque auctor nisi id magna consequat sagittis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_77 = $mol_type_enforce<
+	type $mol_filler_filler_lines__77 = $mol_type_enforce<
 		`Curabitur dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_78 = $mol_type_enforce<
+	type $mol_filler_filler_lines__78 = $mol_type_enforce<
 		`Ut convallis libero in urna ultrices accumsan. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_79 = $mol_type_enforce<
+	type $mol_filler_filler_lines__79 = $mol_type_enforce<
 		`Donec sed odio eros. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_80 = $mol_type_enforce<
+	type $mol_filler_filler_lines__80 = $mol_type_enforce<
 		`Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_81 = $mol_type_enforce<
+	type $mol_filler_filler_lines__81 = $mol_type_enforce<
 		`Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_82 = $mol_type_enforce<
+	type $mol_filler_filler_lines__82 = $mol_type_enforce<
 		`In rutrum accumsan ultricies. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_83 = $mol_type_enforce<
+	type $mol_filler_filler_lines__83 = $mol_type_enforce<
 		`Mauris vitae nisi at sem facilisis semper ac in est. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_84 = $mol_type_enforce<
+	type $mol_filler_filler_lines__84 = $mol_type_enforce<
 		`Vivamus fermentum semper porta. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_85 = $mol_type_enforce<
+	type $mol_filler_filler_lines__85 = $mol_type_enforce<
 		`Nunc diam velit, adipiscing ut tristique vitae, sagittis vel odio. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_86 = $mol_type_enforce<
+	type $mol_filler_filler_lines__86 = $mol_type_enforce<
 		`Maecenas convallis ullamcorper ultricies. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_87 = $mol_type_enforce<
+	type $mol_filler_filler_lines__87 = $mol_type_enforce<
 		`Curabitur ornare, ligula semper consectetur sagittis, nisi diam iaculis velit, id fringilla sem nunc vel mi. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_88 = $mol_type_enforce<
+	type $mol_filler_filler_lines__88 = $mol_type_enforce<
 		`Nam dictum, odio nec pretium volutpat, arcu ante placerat erat, non tristique elit urna et turpis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_89 = $mol_type_enforce<
+	type $mol_filler_filler_lines__89 = $mol_type_enforce<
 		`Quisque mi metus, ornare sit amet fermentum et, tincidunt et orci. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_90 = $mol_type_enforce<
+	type $mol_filler_filler_lines__90 = $mol_type_enforce<
 		`Fusce eget orci a orci congue vestibulum. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_91 = $mol_type_enforce<
+	type $mol_filler_filler_lines__91 = $mol_type_enforce<
 		`Ut dolor diam, elementum et vestibulum eu, porttitor vel elit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_92 = $mol_type_enforce<
+	type $mol_filler_filler_lines__92 = $mol_type_enforce<
 		`Curabitur venenatis pulvinar tellus gravida ornare. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_93 = $mol_type_enforce<
+	type $mol_filler_filler_lines__93 = $mol_type_enforce<
 		`Sed et erat faucibus nunc euismod ultricies ut id justo. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_94 = $mol_type_enforce<
+	type $mol_filler_filler_lines__94 = $mol_type_enforce<
 		`Nullam cursus suscipit nisi, et ultrices justo sodales nec. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_95 = $mol_type_enforce<
+	type $mol_filler_filler_lines__95 = $mol_type_enforce<
 		`Fusce venenatis facilisis lectus ac semper. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_96 = $mol_type_enforce<
+	type $mol_filler_filler_lines__96 = $mol_type_enforce<
 		`Aliquam at massa ipsum. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_97 = $mol_type_enforce<
+	type $mol_filler_filler_lines__97 = $mol_type_enforce<
 		`Quisque bibendum purus convallis nulla ultrices ultricies. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_98 = $mol_type_enforce<
+	type $mol_filler_filler_lines__98 = $mol_type_enforce<
 		`Nullam aliquam, mi eu aliquam tincidunt, purus velit laoreet tortor, viverra pretium nisi quam vitae mi. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_99 = $mol_type_enforce<
+	type $mol_filler_filler_lines__99 = $mol_type_enforce<
 		`Fusce vel volutpat elit. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_100 = $mol_type_enforce<
+	type $mol_filler_filler_lines__100 = $mol_type_enforce<
 		`Nam sagittis nisi dui. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_101 = $mol_type_enforce<
+	type $mol_filler_filler_lines__101 = $mol_type_enforce<
 		`Suspendisse lectus leo, consectetur in tempor sit amet, placerat quis neque. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_102 = $mol_type_enforce<
+	type $mol_filler_filler_lines__102 = $mol_type_enforce<
 		`Etiam luctus porttitor lorem, sed suscipit est rutrum non. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_103 = $mol_type_enforce<
+	type $mol_filler_filler_lines__103 = $mol_type_enforce<
 		`Curabitur lobortis nisl a enim congue semper. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_104 = $mol_type_enforce<
+	type $mol_filler_filler_lines__104 = $mol_type_enforce<
 		`Aenean commodo ultrices imperdiet. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_105 = $mol_type_enforce<
+	type $mol_filler_filler_lines__105 = $mol_type_enforce<
 		`Vestibulum ut justo vel sapien venenatis tincidunt. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_106 = $mol_type_enforce<
+	type $mol_filler_filler_lines__106 = $mol_type_enforce<
 		`Phasellus eget dolor sit amet ipsum dapibus condimentum vitae quis lectus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_107 = $mol_type_enforce<
+	type $mol_filler_filler_lines__107 = $mol_type_enforce<
 		`Aliquam ut massa in turpis dapibus convallis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_108 = $mol_type_enforce<
+	type $mol_filler_filler_lines__108 = $mol_type_enforce<
 		`Praesent elit lacus, vestibulum at malesuada et, ornare et est. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_109 = $mol_type_enforce<
+	type $mol_filler_filler_lines__109 = $mol_type_enforce<
 		`Ut augue nunc, sodales ut euismod non, adipiscing vitae orci. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_110 = $mol_type_enforce<
+	type $mol_filler_filler_lines__110 = $mol_type_enforce<
 		`Mauris ut placerat justo. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_111 = $mol_type_enforce<
+	type $mol_filler_filler_lines__111 = $mol_type_enforce<
 		`Mauris in ultricies enim. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_112 = $mol_type_enforce<
+	type $mol_filler_filler_lines__112 = $mol_type_enforce<
 		`Quisque nec est eleifend nulla ultrices egestas quis ut quam. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_113 = $mol_type_enforce<
+	type $mol_filler_filler_lines__113 = $mol_type_enforce<
 		`Donec sollicitudin lectus a mauris pulvinar id aliquam urna cursus. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_114 = $mol_type_enforce<
+	type $mol_filler_filler_lines__114 = $mol_type_enforce<
 		`Cras quis ligula sem, vel elementum mi. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_115 = $mol_type_enforce<
+	type $mol_filler_filler_lines__115 = $mol_type_enforce<
 		`Phasellus non ullamcorper urna. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_116 = $mol_type_enforce<
+	type $mol_filler_filler_lines__116 = $mol_type_enforce<
 		`Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_117 = $mol_type_enforce<
+	type $mol_filler_filler_lines__117 = $mol_type_enforce<
 		`In euismod ultrices facilisis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_118 = $mol_type_enforce<
+	type $mol_filler_filler_lines__118 = $mol_type_enforce<
 		`Vestibulum porta sapien adipiscing augue congue id pretium lectus molestie. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_119 = $mol_type_enforce<
+	type $mol_filler_filler_lines__119 = $mol_type_enforce<
 		`Proin quis dictum nisl. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_120 = $mol_type_enforce<
+	type $mol_filler_filler_lines__120 = $mol_type_enforce<
 		`Morbi id quam sapien, sed vestibulum sem. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_121 = $mol_type_enforce<
+	type $mol_filler_filler_lines__121 = $mol_type_enforce<
 		`Duis elementum rutrum mauris sed convallis. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_122 = $mol_type_enforce<
+	type $mol_filler_filler_lines__122 = $mol_type_enforce<
 		`Proin vestibulum magna mi. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_123 = $mol_type_enforce<
+	type $mol_filler_filler_lines__123 = $mol_type_enforce<
 		`Aenean tristique hendrerit magna, ac facilisis nulla hendrerit ut. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_124 = $mol_type_enforce<
+	type $mol_filler_filler_lines__124 = $mol_type_enforce<
 		`Sed non tortor sodales quam auctor elementum. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_125 = $mol_type_enforce<
+	type $mol_filler_filler_lines__125 = $mol_type_enforce<
 		`Donec hendrerit nunc eget elit pharetra pulvinar. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_126 = $mol_type_enforce<
+	type $mol_filler_filler_lines__126 = $mol_type_enforce<
 		`Suspendisse id tempus tortor. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_127 = $mol_type_enforce<
+	type $mol_filler_filler_lines__127 = $mol_type_enforce<
 		`Aenean luctus, elit commodo laoreet commodo, justo nisi consequat massa, sed vulputate quam urna quis eros. `
 		,
 		string
 	>
-	type $mol_filler_filler_lines_128 = $mol_type_enforce<
+	type $mol_filler_filler_lines__128 = $mol_type_enforce<
 		`Donec vel. `
 		,
 		string
@@ -17296,72 +17395,72 @@ declare namespace $ {
 //# sourceMappingURL=title.view.tree.d.ts.map
 declare namespace $ {
 
-	type $mol_vector_range_mol_plot_graph_1 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_graph_1 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_graph_2 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_graph_2 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_graph_3 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_graph_3 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_graph_4 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_graph_4 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_graph_5 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_graph_5 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_graph_6 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_graph_6 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_graph_7 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_graph_7 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_graph_8 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_graph_8 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_2d_mol_plot_graph_9 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_graph_9 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_graph['viewport_x'] >, ReturnType< $mol_plot_graph['viewport_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
 	>
-	type $mol_vector_2d_mol_plot_graph_10 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_graph_10 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_plot_graph_11 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_graph_11 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_graph['dimensions_pane_x'] >, ReturnType< $mol_plot_graph['dimensions_pane_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
 	>
-	type $mol_vector_2d_mol_plot_graph_12 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_graph_12 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_graph['dimensions_x'] >, ReturnType< $mol_plot_graph['dimensions_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
 	>
-	type $mol_vector_2d_mol_plot_graph_13 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_graph_13 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_plot_graph_14 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_graph_14 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_graph['gap_x'] >, ReturnType< $mol_plot_graph['gap_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
@@ -17494,17 +17593,17 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type $mol_vector_2d_mol_touch_1 = $mol_type_enforce<
+	type $mol_vector_2d__mol_touch_1 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_touch_2 = $mol_type_enforce<
+	type $mol_vector_2d__mol_touch_2 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_touch_3 = $mol_type_enforce<
+	type $mol_vector_2d__mol_touch_3 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
@@ -17582,52 +17681,52 @@ declare namespace $.$$ {
 
 declare namespace $ {
 
-	type $mol_vector_range_mol_plot_pane_1 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_1 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_pane['gap_left'] >, ReturnType< $mol_plot_pane['gap_right'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_2 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_2 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_pane['gap_bottom'] >, ReturnType< $mol_plot_pane['gap_top'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_3 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_3 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_4 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_4 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_5 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_5 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_6 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_6 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_7 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_7 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_8 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_8 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_9 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_9 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_pane_10 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_pane_10 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
@@ -17672,57 +17771,57 @@ declare namespace $ {
 		,
 		ReturnType< $mol_touch['draw_end'] >
 	>
-	type $mol_vector_2d_mol_plot_pane_19 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_19 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_pane['gap_x'] >, ReturnType< $mol_plot_pane['gap_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
 	>
-	type $mol_vector_2d_mol_plot_pane_20 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_20 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_pane['shift_limit_x'] >, ReturnType< $mol_plot_pane['shift_limit_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
 	>
-	type $mol_vector_2d_mol_plot_pane_21 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_21 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_plot_pane_22 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_22 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_plot_pane_23 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_23 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_pane['scale_limit_x'] >, ReturnType< $mol_plot_pane['scale_limit_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
 	>
-	type $mol_vector_2d_mol_plot_pane_24 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_24 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_plot_pane_25 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_25 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_plot_pane_26 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_26 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_plot_pane_27 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_27 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_plot_pane_28 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_28 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_pane['dimensions_x'] >, ReturnType< $mol_plot_pane['dimensions_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
 	>
-	type $mol_vector_2d_mol_plot_pane_29 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_pane_29 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_pane['dimensions_viewport_x'] >, ReturnType< $mol_plot_pane['dimensions_viewport_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
@@ -17822,7 +17921,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_chart_legend['graphs'] >
 	>
-	type _mol_chart_2 = $mol_type_enforce<
+	type __mol_chart_2 = $mol_type_enforce<
 		Parameters< $mol_chart['zoom'] >[0]
 		,
 		Parameters< ReturnType< $mol_chart['Plot'] >['scale_x'] >[0]
@@ -18149,12 +18248,12 @@ declare namespace $ {
 		,
 		ReturnType< $mol_svg_text['text'] >
 	>
-	type $mol_vector_range_mol_plot_ruler_10 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_ruler_10 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_ruler_11 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_ruler_11 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
@@ -18385,12 +18484,12 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type $mol_vector_range_mol_plot_mark_cross_1 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_mark_cross_1 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_plot_mark_cross_2 = $mol_type_enforce<
+	type $mol_vector_range__mol_plot_mark_cross_2 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
@@ -18430,7 +18529,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_svg_text_box['text'] >
 	>
-	type $mol_vector_2d_mol_plot_mark_cross_10 = $mol_type_enforce<
+	type $mol_vector_2d__mol_plot_mark_cross_10 = $mol_type_enforce<
 		[ ReturnType< $mol_plot_mark_cross['dimensions_x'] >, ReturnType< $mol_plot_mark_cross['dimensions_y'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
@@ -18512,22 +18611,22 @@ declare namespace $ {
 		,
 		ReturnType< $mol_plot_ruler_vert['title'] >
 	>
-	type $mol_chart_demo_simple_months_7 = $mol_type_enforce<
+	type $mol_chart_demo_simple_months__7 = $mol_type_enforce<
 		`January`
 		,
 		string
 	>
-	type $mol_chart_demo_simple_months_8 = $mol_type_enforce<
+	type $mol_chart_demo_simple_months__8 = $mol_type_enforce<
 		`February`
 		,
 		string
 	>
-	type $mol_chart_demo_simple_months_9 = $mol_type_enforce<
+	type $mol_chart_demo_simple_months__9 = $mol_type_enforce<
 		`March`
 		,
 		string
 	>
-	type $mol_chart_demo_simple_months_10 = $mol_type_enforce<
+	type $mol_chart_demo_simple_months__10 = $mol_type_enforce<
 		`April`
 		,
 		string
@@ -20730,42 +20829,42 @@ declare namespace $ {
 		hobbies( next?: Record<string, any> ): Record<string, any>
 	}
 	
-	type _mol_form_draft_demo_1 = $mol_type_enforce<
+	type __mol_form_draft_demo_1 = $mol_type_enforce<
 		Parameters< $mol_form_draft_demo['publish'] >[0]
 		,
 		Parameters< ReturnType< $mol_form_draft_demo['Form'] >['submit'] >[0]
 	>
-	type _mol_form_draft_demo_2 = $mol_type_enforce<
+	type __mol_form_draft_demo_2 = $mol_type_enforce<
 		Parameters< $mol_form_draft_demo['value_str'] >[0]
 		,
 		Parameters< ReturnType< $mol_form_draft_demo['Form'] >['value_str'] >[0]
 	>
-	type _mol_form_draft_demo_3 = $mol_type_enforce<
+	type __mol_form_draft_demo_3 = $mol_type_enforce<
 		Parameters< $mol_form_draft_demo['value_str'] >[1]
 		,
 		Parameters< ReturnType< $mol_form_draft_demo['Form'] >['value_str'] >[1]
 	>
-	type _mol_form_draft_demo_4 = $mol_type_enforce<
+	type __mol_form_draft_demo_4 = $mol_type_enforce<
 		Parameters< $mol_form_draft_demo['list_string'] >[0]
 		,
 		Parameters< ReturnType< $mol_form_draft_demo['Form'] >['list_string'] >[0]
 	>
-	type _mol_form_draft_demo_5 = $mol_type_enforce<
+	type __mol_form_draft_demo_5 = $mol_type_enforce<
 		Parameters< $mol_form_draft_demo['list_string'] >[1]
 		,
 		Parameters< ReturnType< $mol_form_draft_demo['Form'] >['list_string'] >[1]
 	>
-	type _mol_form_draft_demo_6 = $mol_type_enforce<
+	type __mol_form_draft_demo_6 = $mol_type_enforce<
 		Parameters< $mol_form_draft_demo['dictionary_bool'] >[0]
 		,
 		Parameters< ReturnType< $mol_form_draft_demo['Form'] >['dictionary_bool'] >[0]
 	>
-	type _mol_form_draft_demo_7 = $mol_type_enforce<
+	type __mol_form_draft_demo_7 = $mol_type_enforce<
 		Parameters< $mol_form_draft_demo['dictionary_bool'] >[1]
 		,
 		Parameters< ReturnType< $mol_form_draft_demo['Form'] >['dictionary_bool'] >[1]
 	>
-	type _mol_form_draft_demo_8 = $mol_type_enforce<
+	type __mol_form_draft_demo_8 = $mol_type_enforce<
 		Parameters< $mol_form_draft_demo['reset'] >[0]
 		,
 		Parameters< ReturnType< $mol_form_draft_demo['Form'] >['reset'] >[0]
@@ -22504,22 +22603,22 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type $mol_vector_range_mol_map_yandex_mark_1 = $mol_type_enforce<
+	type $mol_vector_range__mol_map_yandex_mark_1 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_range_mol_map_yandex_mark_2 = $mol_type_enforce<
+	type $mol_vector_range__mol_map_yandex_mark_2 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_range<number> >
 	>
-	type $mol_vector_2d_mol_map_yandex_mark_3 = $mol_type_enforce<
+	type $mol_vector_2d__mol_map_yandex_mark_3 = $mol_type_enforce<
 		[ number, number ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<number> >
 	>
-	type $mol_vector_2d_mol_map_yandex_mark_4 = $mol_type_enforce<
+	type $mol_vector_2d__mol_map_yandex_mark_4 = $mol_type_enforce<
 		[ ReturnType< $mol_map_yandex_mark['box_lat'] >, ReturnType< $mol_map_yandex_mark['box_lon'] > ]
 		,
 		ConstructorParameters< typeof $mol_vector_2d<$mol_vector_range<number>> >
@@ -22640,18 +22739,6 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=demo.view.tree.d.ts.map
-declare namespace $.$$ {
-    class $hyoo_marked_app extends $.$hyoo_marked_app {
-        preview(next?: string): string;
-        pages(): $mol_page[];
-        html(): string;
-        marked(next?: string): string;
-    }
-}
-
-declare namespace $ {
-}
-
 declare namespace $ {
 
 	type $mol_link_source__uri_hyoo_marked_app_1 = $mol_type_enforce<
@@ -22772,6 +22859,18 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=app.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_marked_app extends $.$hyoo_marked_app {
+        preview(next?: string): string;
+        pages(): $mol_page[];
+        html(): string;
+        marked(next?: string): string;
+    }
+}
+
+declare namespace $ {
+}
+
 declare namespace $ {
 
 	export class $hyoo_marked_demo extends $mol_example_large {
@@ -23895,7 +23994,7 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type _mol_plot_map_heat_demo_1 = $mol_type_enforce<
+	type __mol_plot_map_heat_demo_1 = $mol_type_enforce<
 		Parameters< $mol_plot_map_heat_demo['zoom'] >[0]
 		,
 		Parameters< ReturnType< $mol_plot_map_heat_demo['Plot'] >['scale_y'] >[0]
@@ -24530,7 +24629,7 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type $mol_time_moment_mol_pick_time_demo_1 = $mol_type_enforce<
+	type $mol_time_moment__mol_pick_time_demo_1 = $mol_type_enforce<
 		[ string ]
 		,
 		ConstructorParameters< typeof $mol_time_moment >
@@ -25002,7 +25101,7 @@ declare namespace $ {
 //# sourceMappingURL=colors.view.tree.d.ts.map
 declare namespace $.$$ {
     class $mol_select_demo_colors extends $.$mol_select_demo_colors {
-        color_name(id: keyof typeof $mol_colors): "gray" | "magenta" | "aliceblue" | "antiquewhite" | "aqua" | "aquamarine" | "azure" | "beige" | "bisque" | "black" | "blanchedalmond" | "blue" | "blueviolet" | "brown" | "burlywood" | "cadetblue" | "chartreuse" | "chocolate" | "coral" | "cornflowerblue" | "cornsilk" | "crimson" | "cyan" | "darkblue" | "darkcyan" | "darkgoldenrod" | "darkgray" | "darkgreen" | "darkgrey" | "darkkhaki" | "darkmagenta" | "darkolivegreen" | "darkorange" | "darkorchid" | "darkred" | "darksalmon" | "darkseagreen" | "darkslateblue" | "darkslategrey" | "darkturquoise" | "darkviolet" | "deeppink" | "deepskyblue" | "dimgray" | "dimgrey" | "dodgerblue" | "firebrick" | "floralwhite" | "forestgreen" | "fuchsia" | "gainsboro" | "ghostwhite" | "gold" | "goldenrod" | "green" | "greenyellow" | "grey" | "honeydew" | "hotpink" | "indianred" | "indigo" | "ivory" | "khaki" | "lavender" | "lavenderblush" | "lawngreen" | "lemonchiffon" | "lightblue" | "lightcoral" | "lightcyan" | "lightgoldenrodyellow" | "lightgray" | "lightgreen" | "lightgrey" | "lightpink" | "lightsalmon" | "lightseagreen" | "lightskyblue" | "lightslategray" | "lightslategrey" | "lightsteelblue" | "lightyellow" | "lime" | "limegreen" | "linen" | "maroon" | "mediumaquamarine" | "mediumblue" | "mediumorchid" | "mediumpurple" | "mediumseagreen" | "mediumslateblue" | "mediumspringgreen" | "mediumturquoise" | "mediumvioletred" | "midnightblue" | "mintcream" | "mistyrose" | "moccasin" | "navajowhite" | "navy" | "oldlace" | "olive" | "olivedrab" | "orange" | "orangered" | "orchid" | "palegoldenrod" | "palegreen" | "paleturquoise" | "palevioletred" | "papayawhip" | "peachpuff" | "peru" | "pink" | "plum" | "powderblue" | "purple" | "rebeccapurple" | "red" | "rosybrown" | "royalblue" | "saddlebrown" | "salmon" | "sandybrown" | "seagreen" | "seashell" | "sienna" | "silver" | "skyblue" | "slateblue" | "slategray" | "slategrey" | "snow" | "springgreen" | "steelblue" | "tan" | "teal" | "thistle" | "tomato" | "turquoise" | "violet" | "wheat" | "white" | "whitesmoke" | "yellow" | "yellowgreen";
+        color_name(id: keyof typeof $mol_colors): "gray" | "aliceblue" | "antiquewhite" | "aqua" | "aquamarine" | "azure" | "beige" | "bisque" | "black" | "blanchedalmond" | "blue" | "blueviolet" | "brown" | "burlywood" | "cadetblue" | "chartreuse" | "chocolate" | "coral" | "cornflowerblue" | "cornsilk" | "crimson" | "cyan" | "darkblue" | "darkcyan" | "darkgoldenrod" | "darkgray" | "darkgreen" | "darkgrey" | "darkkhaki" | "darkmagenta" | "darkolivegreen" | "darkorange" | "darkorchid" | "darkred" | "darksalmon" | "darkseagreen" | "darkslateblue" | "darkslategrey" | "darkturquoise" | "darkviolet" | "deeppink" | "deepskyblue" | "dimgray" | "dimgrey" | "dodgerblue" | "firebrick" | "floralwhite" | "forestgreen" | "fuchsia" | "gainsboro" | "ghostwhite" | "gold" | "goldenrod" | "green" | "greenyellow" | "grey" | "honeydew" | "hotpink" | "indianred" | "indigo" | "ivory" | "khaki" | "lavender" | "lavenderblush" | "lawngreen" | "lemonchiffon" | "lightblue" | "lightcoral" | "lightcyan" | "lightgoldenrodyellow" | "lightgray" | "lightgreen" | "lightgrey" | "lightpink" | "lightsalmon" | "lightseagreen" | "lightskyblue" | "lightslategray" | "lightslategrey" | "lightsteelblue" | "lightyellow" | "lime" | "limegreen" | "linen" | "magenta" | "maroon" | "mediumaquamarine" | "mediumblue" | "mediumorchid" | "mediumpurple" | "mediumseagreen" | "mediumslateblue" | "mediumspringgreen" | "mediumturquoise" | "mediumvioletred" | "midnightblue" | "mintcream" | "mistyrose" | "moccasin" | "navajowhite" | "navy" | "oldlace" | "olive" | "olivedrab" | "orange" | "orangered" | "orchid" | "palegoldenrod" | "palegreen" | "paleturquoise" | "palevioletred" | "papayawhip" | "peachpuff" | "peru" | "pink" | "plum" | "powderblue" | "purple" | "rebeccapurple" | "red" | "rosybrown" | "royalblue" | "saddlebrown" | "salmon" | "sandybrown" | "seagreen" | "seashell" | "sienna" | "silver" | "skyblue" | "slateblue" | "slategray" | "slategrey" | "snow" | "springgreen" | "steelblue" | "tan" | "teal" | "thistle" | "tomato" | "turquoise" | "violet" | "wheat" | "white" | "whitesmoke" | "yellow" | "yellowgreen";
         option_color(id: keyof typeof $mol_colors): "#f0f8ff" | "#faebd7" | "#00ffff" | "#7fffd4" | "#f0ffff" | "#f5f5dc" | "#ffe4c4" | "#000000" | "#ffebcd" | "#0000ff" | "#8a2be2" | "#a52a2a" | "#deb887" | "#5f9ea0" | "#7fff00" | "#d2691e" | "#ff7f50" | "#6495ed" | "#fff8dc" | "#dc143c" | "#00008b" | "#008b8b" | "#b8860b" | "#a9a9a9" | "#006400" | "#bdb76b" | "#8b008b" | "#556b2f" | "#ff8c00" | "#9932cc" | "#8b0000" | "#e9967a" | "#8fbc8f" | "#483d8b" | "#2f4f4f" | "#00ced1" | "#9400d3" | "#ff1493" | "#00bfff" | "#696969" | "#1e90ff" | "#b22222" | "#fffaf0" | "#228b22" | "#ff00ff" | "#dcdcdc" | "#f8f8ff" | "#ffd700" | "#daa520" | "#808080" | "#008000" | "#adff2f" | "#f0fff0" | "#ff69b4" | "#cd5c5c" | "#4b0082" | "#fffff0" | "#f0e68c" | "#e6e6fa" | "#fff0f5" | "#7cfc00" | "#fffacd" | "#add8e6" | "#f08080" | "#e0ffff" | "#fafad2" | "#d3d3d3" | "#90ee90" | "#ffb6c1" | "#ffa07a" | "#20b2aa" | "#87cefa" | "#778899" | "#b0c4de" | "#ffffe0" | "#00ff00" | "#32cd32" | "#faf0e6" | "#800000" | "#66cdaa" | "#0000cd" | "#ba55d3" | "#9370db" | "#3cb371" | "#7b68ee" | "#00fa9a" | "#48d1cc" | "#c71585" | "#191970" | "#f5fffa" | "#ffe4e1" | "#ffe4b5" | "#ffdead" | "#000080" | "#fdf5e6" | "#808000" | "#6b8e23" | "#ffa500" | "#ff4500" | "#da70d6" | "#eee8aa" | "#98fb98" | "#afeeee" | "#db7093" | "#ffefd5" | "#ffdab9" | "#cd853f" | "#ffc0cb" | "#dda0dd" | "#b0e0e6" | "#800080" | "#663399" | "#ff0000" | "#bc8f8f" | "#4169e1" | "#8b4513" | "#fa8072" | "#f4a460" | "#2e8b57" | "#fff5ee" | "#a0522d" | "#c0c0c0" | "#87ceeb" | "#6a5acd" | "#708090" | "#fffafa" | "#00ff7f" | "#4682b4" | "#d2b48c" | "#008080" | "#d8bfd8" | "#ff6347" | "#40e0d0" | "#ee82ee" | "#f5deb3" | "#ffffff" | "#f5f5f5" | "#ffff00" | "#9acd32";
         colors(): {
             aliceblue: "#f0f8ff";
@@ -25259,7 +25358,7 @@ declare namespace $ {
 		,
 		ReturnType< $mol_select_list['enabled'] >
 	>
-	type _mol_select_list_demo_6 = $mol_type_enforce<
+	type __mol_select_list_demo_6 = $mol_type_enforce<
 		Parameters< $mol_select_list_demo['filter_pattern'] >[0]
 		,
 		Parameters< ReturnType< $mol_select_list_demo['Friends_lazy'] >['filter_pattern'] >[0]
@@ -26637,17 +26736,17 @@ declare namespace $ {
 		,
 		ReturnType< $mol_row['sub'] >
 	>
-	type _mol_video_player_demo_15 = $mol_type_enforce<
+	type __mol_video_player_demo_15 = $mol_type_enforce<
 		Parameters< $mol_video_player_demo['playing'] >[0]
 		,
 		Parameters< ReturnType< $mol_video_player_demo['Player'] >['playing'] >[0]
 	>
-	type _mol_video_player_demo_16 = $mol_type_enforce<
+	type __mol_video_player_demo_16 = $mol_type_enforce<
 		Parameters< $mol_video_player_demo['volume'] >[0]
 		,
 		Parameters< ReturnType< $mol_video_player_demo['Player'] >['volume'] >[0]
 	>
-	type _mol_video_player_demo_17 = $mol_type_enforce<
+	type __mol_video_player_demo_17 = $mol_type_enforce<
 		Parameters< $mol_video_player_demo['time'] >[0]
 		,
 		Parameters< ReturnType< $mol_video_player_demo['Player'] >['time'] >[0]
