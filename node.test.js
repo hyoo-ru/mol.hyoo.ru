@@ -8787,9 +8787,11 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    function $mol_reconcile({ prev, from, to, next, equal, drop, insert, update, }) {
+    function $mol_reconcile({ prev, from, to, next, equal, drop, insert, update, replace, }) {
         if (!update)
-            update = (next, prev, lead) => insert(next, drop(prev, lead));
+            update = (next, prev, lead) => prev;
+        if (!replace)
+            replace = (next, prev, lead) => insert(next, drop(prev, lead));
         if (to > prev.length)
             to = prev.length;
         if (from > to)
@@ -8799,7 +8801,7 @@ var $;
         let lead = p ? prev[p - 1] : null;
         while (p < to || n < next.length) {
             if (p < to && n < next.length && equal(next[n], prev[p])) {
-                lead = prev[p];
+                lead = update(next[n], prev[p], lead);
                 ++p;
                 ++n;
             }
@@ -8812,7 +8814,7 @@ var $;
                 ++p;
             }
             else {
-                lead = update(next[n], prev[p], lead);
+                lead = replace(next[n], prev[p], lead);
                 ++p;
                 ++n;
             }
@@ -8923,7 +8925,7 @@ var $;
                 equal: (next, prev) => $mol_compare_deep(prev.data, next),
                 drop: (prev, lead) => this.land.wipe(prev),
                 insert: (next, lead) => this.land.put(this.head, this.land.id_new(), lead?.self ?? '0_0', next),
-                update: (next, prev, lead) => this.land.put(prev.head, prev.self, lead?.self ?? '0_0', next),
+                replace: (next, prev, lead) => this.land.put(prev.head, prev.self, lead?.self ?? '0_0', next),
             });
         }
         move(from, to) {
@@ -9000,7 +9002,7 @@ var $;
                         this.land.node(unit.self, $hyoo_crowd_text).str(next);
                         return unit;
                     },
-                    update: (next, prev, lead) => {
+                    replace: (next, prev, lead) => {
                         this.land.node(prev.self, $hyoo_crowd_text).str(next);
                         return prev;
                     },
@@ -53861,7 +53863,7 @@ var $;
                 equal: (next, prev) => prev.textContent === next,
                 drop: (prev, lead) => list.removeChild(prev),
                 insert: (next, lead) => list.insertBefore($mol_jsx("p", { "data-rev": "new" }, next), lead ? lead.nextSibling : list.firstChild),
-                update: (next, prev, lead) => {
+                replace: (next, prev, lead) => {
                     prev.textContent = next;
                     prev.setAttribute('data-rev', 'up');
                     return prev;
@@ -53886,7 +53888,7 @@ var $;
                 equal: (next, prev) => prev.textContent === next,
                 drop: (prev, lead) => list.removeChild(prev),
                 insert: (next, lead) => list.insertBefore($mol_jsx("p", { "data-rev": "new" }, next), lead ? lead.nextSibling : list.firstChild),
-                update: (next, prev, lead) => {
+                replace: (next, prev, lead) => {
                     prev.textContent = next;
                     prev.setAttribute('data-rev', 'up');
                     return prev;
@@ -53911,7 +53913,7 @@ var $;
                 equal: (next, prev) => prev.textContent === next,
                 drop: (prev, lead) => list.removeChild(prev),
                 insert: (next, lead) => list.insertBefore($mol_jsx("p", { "data-rev": "new" }, next), lead ? lead.nextSibling : list.firstChild),
-                update: (next, prev, lead) => {
+                replace: (next, prev, lead) => {
                     prev.textContent = next;
                     prev.setAttribute('data-rev', 'up');
                     return prev;
@@ -53935,7 +53937,7 @@ var $;
                 equal: (next, prev) => prev.textContent === next,
                 drop: (prev, lead) => list.removeChild(prev),
                 insert: (next, lead) => list.insertBefore($mol_jsx("p", { "data-rev": "new" }, next), lead ? lead.nextSibling : list.firstChild),
-                update: (next, prev, lead) => {
+                replace: (next, prev, lead) => {
                     prev.textContent = next;
                     prev.setAttribute('data-rev', 'up');
                     return prev;
@@ -53963,7 +53965,7 @@ var $;
                 equal: (next, prev) => prev.textContent === next,
                 drop: (prev, lead) => list.removeChild(prev),
                 insert: (next, lead) => list.insertBefore($mol_jsx("p", { "data-rev": "new" }, next), lead ? lead.nextSibling : list.firstChild),
-                update: (next, prev, lead) => {
+                replace: (next, prev, lead) => {
                     prev.textContent = next;
                     prev.setAttribute('data-rev', 'up');
                     return prev;
@@ -53989,7 +53991,7 @@ var $;
                 equal: (next, prev) => prev.textContent === next,
                 drop: (prev, lead) => list.removeChild(prev),
                 insert: (next, lead) => list.insertBefore($mol_jsx("p", { "data-rev": "new" }, next), lead ? lead.nextSibling : list.firstChild),
-                update: (next, prev, lead) => {
+                replace: (next, prev, lead) => {
                     prev.textContent = next;
                     prev.setAttribute('data-rev', 'up');
                     return prev;
