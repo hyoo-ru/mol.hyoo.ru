@@ -27935,72 +27935,10 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const err = $mol_view_tree2_error_str;
-    function $mol_view_tree2_value_type(val) {
-        switch (val.type) {
-            case 'true': return 'bool';
-            case 'false': return 'bool';
-            case 'null': return 'null';
-            case '*': return 'dict';
-            case '@': return 'locale';
-            case '': return 'string';
-            case '<=': return 'get';
-            case '<=>': return 'bind';
-            case '=>': return 'put';
-        }
-        const first_char = val.type && val.type[0];
-        if (first_char === '/')
-            return 'list';
-        if (Number(val.type).toString() == val.type)
-            return 'number';
-        if (/^[$A-Z]/.test(first_char))
-            return 'object';
-        return this.$mol_fail(err `Unknown value type ${val.type} at ${val.span}`);
-    }
-    $.$mol_view_tree2_value_type = $mol_view_tree2_value_type;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const err = $mol_view_tree2_error_str;
-    function $mol_view_tree2_value(value) {
-        const type = value.type;
-        const kids = value.kids;
-        if (type === '') {
-            if (kids.length === 0)
-                return value.data(JSON.stringify(value.value));
-            return value.data(JSON.stringify(kids.map(node => node.value).join('\n')));
-        }
-        if (kids.length !== 0)
-            return this.$mol_fail(err `Kids are not allowed at ${value.span}, use ${example}`);
-        if (type === 'false' || type === 'true')
-            return value.data(type);
-        if (type === 'null')
-            return value.data(type);
-        if (Number(type).toString() === type.replace(/^\+/, ''))
-            return value.data(type);
-        return this.$mol_fail(err `Value ${value.toString()} not allowed at ${value.span}, use ${example}`);
-    }
-    $.$mol_view_tree2_value = $mol_view_tree2_value;
-    const example = new $mol_view_tree2_error_suggestions([
-        'false',
-        'true',
-        '123',
-        'null',
-        '\\some'
-    ]);
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $mol_view_tree2_value_number(type) {
+    function $mol_tree2_js_is_number(type) {
         return type.match(/[\+\-]*NaN/) || !Number.isNaN(Number(type));
     }
-    $.$mol_view_tree2_value_number = $mol_view_tree2_value_number;
+    $.$mol_tree2_js_is_number = $mol_tree2_js_is_number;
 })($ || ($ = {}));
 
 ;
@@ -28130,7 +28068,7 @@ var $;
                     return [
                         input.struct('[,]', input.hack(belt)),
                     ];
-                if (input.type && $mol_view_tree2_value_number(input.type))
+                if (input.type && $mol_tree2_js_is_number(input.type))
                     return [
                         input
                     ];
@@ -28452,7 +28390,7 @@ var $;
                     return [
                         input.data(input.type),
                     ];
-                if ($mol_view_tree2_value_number(input.type))
+                if ($mol_tree2_js_is_number(input.type))
                     return [
                         input.data(input.type)
                     ];
@@ -29697,7 +29635,7 @@ var $;
     }
     function primitive_type(input) {
         let type = 'string';
-        if (input.type && $mol_view_tree2_value_number(input.type))
+        if (input.type && $mol_tree2_js_is_number(input.type))
             type = 'number';
         if (input.type === 'true' || input.type === 'false')
             type = 'boolean';
@@ -51435,7 +51373,7 @@ var $;
                 .hack({
                 'bar': (input, belt) => [input.struct('777', input.hack(belt))],
             });
-            $mol_assert_equal(res.toString(), 'foo 777 xxx\n');
+            $mol_assert_equal(res.map(String), ['foo 777 xxx\n']);
         },
     });
 })($ || ($ = {}));

@@ -13022,15 +13022,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_view_tree2_value_type(this: $, val: $mol_tree2): "object" | "locale" | "list" | "number" | "string" | "null" | "bool" | "dict" | "get" | "bind" | "put";
-}
-
-declare namespace $ {
-    function $mol_view_tree2_value(this: $, value: $mol_tree2): $mol_tree2;
-}
-
-declare namespace $ {
-    function $mol_view_tree2_value_number(type: string): boolean | RegExpMatchArray;
+    function $mol_tree2_js_is_number(type: string): boolean | RegExpMatchArray;
 }
 
 declare namespace $ {
