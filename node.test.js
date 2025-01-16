@@ -18039,14 +18039,14 @@ var $;
             if (token.header) {
                 const level = token.marker.length;
                 const Tag = `h${level}`;
-                return $mol_jsx(Tag, null,
+                return $mol_jsx(Tag, { style: "break-after: avoid" },
                     NL,
                     line(token.content),
                     NL);
             }
             if (token.list) {
                 const Tag = token.list[0] === '+' ? 'ol' : 'ul';
-                return $mol_jsx(Tag, null,
+                return $mol_jsx(Tag, { style: "break-before: avoid" },
                     NL,
                     list_items(token.list),
                     NL);
@@ -18064,7 +18064,7 @@ var $;
                     NL);
             }
             if (token.quote) {
-                return $mol_jsx("blockquote", null,
+                return $mol_jsx("blockquote", { style: "break-before: avoid" },
                     NL,
                     flow(token.quote.replace(/^" /gm, '')),
                     NL);
@@ -18122,10 +18122,8 @@ var $;
         return [...marked.matchAll($hyoo_marked_list_item)].map(token => {
             const kids = token.groups.kids.replace(/^  /gm, '');
             return $mol_jsx("li", null,
-                NL,
                 flow(token.groups.content.replace(/^  /gm, '') + '\n'),
-                flow(kids),
-                NL);
+                flow(kids));
         }).filter(Boolean);
     }
     function script_lines(marked) {
@@ -32595,19 +32593,21 @@ var $;
             return next;
         }
         active(next) {
+            this.node();
+            const start_at = this.start_at();
+            this.stop_at();
             if (next) {
                 this.context().active(true);
                 this.start_at(0);
                 this.stop_at(-1);
+                return true;
             }
             if (next === false) {
                 this.start_at(-1);
                 this.stop_at(0);
+                return false;
             }
-            this.node();
-            this.start_at();
-            this.stop_at();
-            return this.start_at() !== -1;
+            return start_at !== -1;
         }
         start() {
             this.node(null);
@@ -32858,6 +32858,17 @@ var $;
 "use strict";
 
 ;
+	($.$mol_icon_alert) = class $mol_icon_alert extends ($.$mol_icon) {
+		path(){
+			return "M13 14H11V9H13M13 18H11V16H13M1 21H23L12 2L1 21Z";
+		}
+	};
+
+
+;
+"use strict";
+
+;
 	($.$mol_icon_sleep) = class $mol_icon_sleep extends ($.$mol_icon) {
 		path(){
 			return "M23,12H17V10L20.39,6H17V4H23V6L19.62,10H23V12M15,16H9V14L12.39,10H9V8H15V10L11.62,14H15V16M7,20H1V18L4.39,14H1V12H7V14L3.62,18H7V20Z";
@@ -32883,6 +32894,10 @@ var $;
 	($.$mol_audio_status) = class $mol_audio_status extends ($.$mol_view) {
 		Closed(){
 			const obj = new this.$.$mol_icon_power_sleep();
+			return obj;
+		}
+		Error(){
+			const obj = new this.$.$mol_icon_alert();
 			return obj;
 		}
 		Suspended(){
@@ -32922,6 +32937,7 @@ var $;
 		icons(){
 			return {
 				"closed": (this.Closed()), 
+				"error": (this.Error()), 
 				"suspended": (this.Suspended()), 
 				"playing": (this.Playing()), 
 				"running": (this.Running())
@@ -32939,6 +32955,7 @@ var $;
 		}
 	};
 	($mol_mem(($.$mol_audio_status.prototype), "Closed"));
+	($mol_mem(($.$mol_audio_status.prototype), "Error"));
 	($mol_mem(($.$mol_audio_status.prototype), "Suspended"));
 	($mol_mem(($.$mol_audio_status.prototype), "Playing"));
 	($mol_mem(($.$mol_audio_status.prototype), "Running"));
@@ -32970,11 +32987,26 @@ var $;
                 return null;
             return new this.$.$mol_after_timeout(time * 1000, () => $mol_wire_async(this).active(false));
         }
+        error() {
+            try {
+                this.output();
+            }
+            catch (e) {
+                if (!$mol_promise_like(e))
+                    return { value: e };
+            }
+            return null;
+        }
         status(next) {
-            const state = this.context().state(next === 'playing' ? 'running' : next);
+            if (next === 'playing')
+                next = 'running';
+            if (next === 'error')
+                next = 'closed';
+            const state = this.context().state(next);
             if (state === 'closed')
                 return state;
-            this.output();
+            if (this.error())
+                return 'error';
             if (this.inputs_active() && state === 'running')
                 return 'playing';
             this.suspend_timer();
@@ -32990,6 +33022,9 @@ var $;
     __decorate([
         $mol_mem
     ], $mol_audio_room.prototype, "suspend_timer", null);
+    __decorate([
+        $mol_mem
+    ], $mol_audio_room.prototype, "error", null);
     __decorate([
         $mol_mem
     ], $mol_audio_room.prototype, "status", null);
@@ -33382,13 +33417,14 @@ var $;
             return node;
         }
         active(next) {
+            const prev = super.active(next);
             if (this.node_started()) {
                 if (next)
                     this.context().active(true);
                 this.rate(next ? null : 0);
                 return next ?? false;
             }
-            return super.active(next);
+            return prev;
         }
         output() {
             this.loop();
