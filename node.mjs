@@ -3211,11 +3211,11 @@ var $;
         }
         *view_find(check, path = []) {
             if (path.length === 0 && check(this))
-                return yield [...path, this];
+                return yield [this];
             try {
                 for (const item of this.sub()) {
                     if (item instanceof $mol_view && check(item)) {
-                        return yield [...path, item];
+                        return yield [...path, this, item];
                     }
                 }
                 for (const item of this.sub()) {
@@ -43120,6 +43120,7 @@ var $;
             color: $mol_theme.special,
         },
         Subscript: {
+            display: 'inline',
             font: {
                 size: '.75em',
             },
@@ -43127,6 +43128,7 @@ var $;
             bottom: '-0.5em',
         },
         Superscript: {
+            display: 'inline',
             font: {
                 size: '.75em',
             },
