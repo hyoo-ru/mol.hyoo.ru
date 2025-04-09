@@ -5918,6 +5918,12 @@ var $;
 			(obj.style) = () => ({"paddingTop": (this.gap_after())});
 			return obj;
 		}
+		item_height_min(id){
+			return 1;
+		}
+		item_width_min(id){
+			return 1;
+		}
 		view_window(){
 			return [0, 0];
 		}
@@ -5983,7 +5989,7 @@ var $;
                     min = 0;
                     top = Math.ceil(rect?.top ?? 0);
                     while (min < (kids.length - 1)) {
-                        const height = kids[min]?.minimal_height() ?? 0;
+                        const height = this.item_height_min(min);
                         if (top + height >= limit_top)
                             break;
                         top += height;
@@ -6005,21 +6011,46 @@ var $;
                 }
                 while (anchoring && ((top2 > limit_top) && (min2 > 0))) {
                     --min2;
-                    top2 -= kids[min2]?.minimal_height() ?? 0;
+                    top2 -= this.item_height_min(min2);
                 }
                 while (bottom2 < limit_bottom && max2 < kids.length) {
-                    bottom2 += kids[max2]?.minimal_height() ?? 0;
+                    bottom2 += this.item_height_min(max2);
                     ++max2;
                 }
                 return [min2, max2];
             }
+            item_height_min(index) {
+                try {
+                    return this.sub()[index]?.minimal_height() ?? 0;
+                }
+                catch (error) {
+                    $mol_fail_log(error);
+                    return 0;
+                }
+            }
+            row_width_min(index) {
+                try {
+                    return this.sub()[index]?.minimal_width() ?? 0;
+                }
+                catch (error) {
+                    $mol_fail_log(error);
+                    return 0;
+                }
+            }
             gap_before() {
-                const skipped = this.sub().slice(0, this.view_window()[0]);
-                return Math.max(0, skipped.reduce((sum, view) => sum + (view?.minimal_height() ?? 0), 0));
+                let gap = 0;
+                const skipped = this.view_window()[0];
+                for (let i = 0; i < skipped; ++i)
+                    gap += this.item_height_min(i);
+                return gap;
             }
             gap_after() {
-                const skipped = this.sub().slice(this.view_window()[1]);
-                return Math.max(0, skipped.reduce((sum, view) => sum + (view?.minimal_height() ?? 0), 0));
+                let gap = 0;
+                const from = this.view_window()[1];
+                const to = this.sub().length;
+                for (let i = from; i < to; ++i)
+                    gap += this.item_height_min(i);
+                return gap;
             }
             sub_visible() {
                 return [
@@ -6029,15 +6060,18 @@ var $;
                 ];
             }
             minimal_height() {
-                return this.sub().reduce((sum, view) => {
-                    try {
-                        return sum + (view?.minimal_height() ?? 0);
-                    }
-                    catch (error) {
-                        $mol_fail_log(error);
-                        return sum;
-                    }
-                }, 0);
+                let height = 0;
+                const len = this.sub().length;
+                for (let i = 0; i < len; ++i)
+                    height += this.item_height_min(i);
+                return height;
+            }
+            minimal_width() {
+                let width = 0;
+                const len = this.sub().length;
+                for (let i = 0; i < len; ++i)
+                    width = Math.max(width, this.item_width_min(i));
+                return width;
             }
             force_render(path) {
                 const kids = this.rows();
@@ -6069,6 +6103,9 @@ var $;
         __decorate([
             $mol_mem
         ], $mol_list.prototype, "minimal_height", null);
+        __decorate([
+            $mol_mem
+        ], $mol_list.prototype, "minimal_width", null);
         $$.$mol_list = $mol_list;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -44808,20 +44845,6 @@ var $;
 
 ;
 	($.$mol_list_demo_table) = class $mol_list_demo_table extends ($.$mol_example) {
-		check_list(){
-			return [];
-		}
-		Check(){
-			const obj = new this.$.$mol_check_group();
-			(obj.checks) = () => ((this.check_list()));
-			(obj.title) = () => ("Good Goods");
-			return obj;
-		}
-		Head(){
-			const obj = new this.$.$mol_row();
-			(obj.sub) = () => ([(this.Check())]);
-			return obj;
-		}
 		row_id(id, next){
 			if(next !== undefined) return next;
 			return "0000";
@@ -44945,8 +44968,6 @@ var $;
 		}
 		Row(id){
 			const obj = new this.$.$mol_row();
-			(obj.minimal_height) = () => (100);
-			(obj.minimal_width) = () => (200);
 			(obj.sub) = () => ((this.row_content(id)));
 			return obj;
 		}
@@ -44955,6 +44976,8 @@ var $;
 		}
 		Rows(){
 			const obj = new this.$.$mol_list();
+			(obj.item_width_min) = (id) => (200);
+			(obj.item_height_min) = (id) => (100);
 			(obj.rows) = () => ((this.rows()));
 			return obj;
 		}
@@ -44962,10 +44985,10 @@ var $;
 			return "Large list of rows with dynamic content";
 		}
 		count(){
-			return 9999;
+			return 99999;
 		}
 		sub(){
-			return [(this.Head()), (this.Rows())];
+			return [(this.Rows())];
 		}
 		tags(){
 			return [
@@ -44980,8 +45003,6 @@ var $;
 			return ["Widget/Layout"];
 		}
 	};
-	($mol_mem(($.$mol_list_demo_table.prototype), "Check"));
-	($mol_mem(($.$mol_list_demo_table.prototype), "Head"));
 	($mol_mem_key(($.$mol_list_demo_table.prototype), "row_id"));
 	($mol_mem_key(($.$mol_list_demo_table.prototype), "row_checked"));
 	($mol_mem_key(($.$mol_list_demo_table.prototype), "Id"));
@@ -45170,21 +45191,24 @@ var $;
     (function ($$) {
         class $mol_list_demo_table extends $.$mol_list_demo_table {
             rows() {
-                return Array.from({ length: this.count() }, (_, i) => this.Row(i));
+                return $mol_range2(index => this.Row(index), () => this.count());
             }
             check_list() {
                 return Array.from({ length: this.count() }, (_, i) => this.Id(i));
             }
             row_id(id) {
-                return String(id).padStart(4, '0');
+                return String(id).padStart(5, '0');
             }
             row_title(id) {
+                $mol_wire_solid();
                 return $mol_stub_product_name();
             }
             row_quantity(id, next = Math.floor(Math.random() * 100)) {
+                $mol_wire_solid();
                 return next;
             }
             row_status(id, next = $mol_array_lottery(Object.keys(this.status_options()))) {
+                $mol_wire_solid();
                 return next;
             }
             row_uri(id) {
@@ -45193,6 +45217,7 @@ var $;
             row_moment(id, next = new $mol_time_moment().shift({
                 day: Math.floor(Math.random() * 100)
             })) {
+                $mol_wire_solid();
                 return next;
             }
             colors() {
