@@ -41660,6 +41660,9 @@ var $;
 		hint(){
 			return "";
 		}
+		minimal_height(){
+			return 40;
+		}
 		attr(){
 			return {...(super.attr()), "title": (this.hint())};
 		}
@@ -41715,6 +41718,7 @@ var $;
 		Group(id){
 			const obj = new this.$.$mol_section();
 			(obj.title) = () => ((this.group_title(id)));
+			(obj.level) = () => (5);
 			(obj.content) = () => ([(this.Emojis(id))]);
 			return obj;
 		}
