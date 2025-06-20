@@ -228,6 +228,7 @@ $mol_search $mol_pop
 				bring => bring
 			<= Clear $mol_button_minor
 				hint @ \Clear
+				enabled <= enabled true
 				click?event <=> clear?event null
 				sub /
 					<= Clear_icon $mol_icon_close
@@ -827,15 +828,13 @@ $mol_grid_number $mol_grid_cell
 
 $mol_image $mol_view
 	dom_name \img
-	field *any
+	attr *any
 		^
 		src <= uri \
 		alt <= title
 		loading <= loading \eager
 		decoding <= decoding \async
 		crossOrigin <= cors null
-	attr *any
-		^
 		width <= natural_width 0
 		height <= natural_height 0
 	event *any
@@ -853,13 +852,11 @@ $mol_link_iconed $mol_link
 	host \
 
 $mol_embed_native $mol_scroll
-	uri? \
-	dom_name \object
+	dom_name \iframe
 	window null
 	attr *
 		^
-		data <= uri
-		type <= mime \
+		src <= uri? \about:config
 	sub /
 		<= Fallback $mol_link
 			uri <= uri
@@ -871,13 +868,9 @@ $mol_embed_native $mol_scroll
 $mol_icon_youtube $mol_icon path \M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 21.78,8.27 21.84,9.07C21.91,9.87 21.94,10.56 21.94,11.16L22,12C22,14.19 21.84,15.8 21.56,16.83C21.31,17.73 20.73,18.31 19.83,18.56C19.36,18.69 18.5,18.78 17.18,18.84C15.88,18.91 14.69,18.94 13.59,18.94L12,19C7.81,19 5.2,18.84 4.17,18.56C3.27,18.31 2.69,17.73 2.44,16.83C2.31,16.36 2.22,15.73 2.16,14.93C2.09,14.13 2.06,13.44 2.06,12.84L2,12C2,9.81 2.16,8.2 2.44,7.17C2.69,6.27 3.27,5.69 4.17,5.44C4.64,5.31 5.5,5.22 6.82,5.16C8.12,5.09 9.31,5.06 10.41,5.06L12,5C16.19,5 18.8,5.16 19.83,5.44C20.73,5.69 21.31,6.27 21.56,7.17Z
 
 $mol_frame $mol_embed_native
-	dom_name \iframe
 	attr *
 		^
-		data null
-		type null
 		allow <= allow \
-		src <= uri? \about:config
 		srcdoc <= html null
 	fullscreen true
 	accelerometer true
@@ -2854,6 +2847,57 @@ $hyoo_mol_bench_analysis $mol_link
 	sub /
 		<= Icon $mol_icon_poll
 
+$mol_icon_pencil_box $mol_icon path \M19,3A2,2 0 0,1 21,5V19C21,20.11 20.1,21 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H19M16.7,9.35C16.92,9.14 16.92,8.79 16.7,8.58L15.42,7.3C15.21,7.08 14.86,7.08 14.65,7.3L13.65,8.3L15.7,10.35L16.7,9.35M7,14.94V17H9.06L15.12,10.94L13.06,8.88L7,14.94Z
+
+$mol_icon_pencil_box_outline $mol_icon path \M19,19V5H5V19H19M19,3A2,2 0 0,1 21,5V19C21,20.11 20.1,21 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3H19M16.7,9.35L15.7,10.35L13.65,8.3L14.65,7.3C14.86,7.08 15.21,7.08 15.42,7.3L16.7,8.58C16.92,8.79 16.92,9.14 16.7,9.35M7,14.94L13.06,8.88L15.12,10.94L9.06,17H7V14.94Z
+
+$mol_icon_translate $mol_icon path \M12.87,15.07L10.33,12.56L10.36,12.53C12.1,10.59 13.34,8.36 14.07,6H17V4H10V2H8V4H1V6H12.17C11.5,7.92 10.44,9.75 9,11.35C8.07,10.32 7.3,9.19 6.69,8H4.69C5.42,9.63 6.42,11.17 7.67,12.56L2.58,17.58L4,19L9,14L12.11,17.11L12.87,15.07M18.5,10H16.5L12,22H14L15.12,19H19.87L21,22H23L18.5,10M15.88,17L17.5,12.67L19.12,17H15.88Z
+
+$mol_icon_delete $mol_icon path \M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z
+
+$mol_icon_delete_outline $mol_icon path \M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19M8,9H16V19H8V9M15.5,4L14.5,3H9.5L8.5,4H5V6H19V4H15.5Z
+
+$hyoo_tree_edit $mol_list
+	value? $mol_tree2
+	enabled true
+	rows <= list*0 /
+		<= Item*0 $mol_list rows /
+			<= Item_row* $mol_view sub <= item_row* /
+				<= Item_type* $mol_string_button
+					hint \Type
+					value? <=> item_type*? \
+					enabled <= enabled
+				<= Item_value* $mol_string
+					hint \Value
+					value? <=> item_value*? \
+					enabled <= enabled
+				<= Item_kind* $mol_check_icon
+					hint \Toggle kind
+					checked? <=> item_kind*? false
+					enabled <= enabled
+					sub /
+						<= Item_kind_icon* $mol_icon_translate
+				<= Item_born* $mol_button_minor
+					hint \Add item
+					click? <=> item_born*? null
+					enabled <= enabled
+					sub /
+						<= Item_born_icon* $mol_icon_plus
+				<= Item_delete* $mol_pick
+					hint \Delete
+					trigger_enabled <= enabled
+					trigger_content /
+						<= Item_delete_icon* $mol_icon_delete_outline
+					bubble_content /
+						<= Item_delete_options* $mol_list rows /
+							<= Item_delete_self* $mol_button_minor
+								click? <=> item_delete_self*? null
+								sub / \Disappear
+							<= Item_delete_tree* $mol_button_minor
+								click? <=> item_delete_tree*? null
+								sub / \Truncate
+			<= List* $mol_list rows <= list*
+
 $mol_select_list $mol_view
 	value? /string
 	dictionary *
@@ -2876,7 +2920,7 @@ $mol_select_list $mol_view
 			Trigger_icon <= Pick_icon $mol_icon_plus
 		^ badges_list
 
-$hyoo_tree $mol_book2
+$hyoo_tree_app $mol_book2
 	transform_map *
 		$mol_tree2_from_string *
 			input \text
@@ -3026,8 +3070,15 @@ $hyoo_tree $mol_book2
 							uri \#!source=foo%0A%09bar%0A%09%09%5Chttps%3A%2F%2Fgithub.com%2Fnin-jin%2Ftree.d%2Fwiki%2Fspan.tree%0A/pipeline=%24mol_tree2_from_string~%24mol_tree2_span_imprint~%24mol_tree2_span_reuse~%24mol_tree2_span_imprint
 		<= Source $mol_page
 			title @ \Tree sandbox
-			tools <= source_tools /$mol_view_content
-			body /
+			tools /
+				<= Raw $mol_check_icon
+					hint \Raw code edit
+					checked? <=> raw? true
+					Icon <= Raw_icon $mol_icon_pencil_box_outline
+				<= source_tools /$mol_view_content
+			body <= source_body /
+				<= Source_tree $hyoo_tree_edit
+					value? <=> source_tree? $mol_tree2
 				<= Source_text $mol_textarea
 					value?val <=> source?val <= source_default \
 					hint <= source_hint @ \view.tree source
@@ -3072,7 +3123,7 @@ $hyoo_mol $mol_book2_catalog
 			tools / <= Spread_close
 		bench <= Bench $hyoo_mol_bench
 			menu_tools / <= Spread_close
-		view.tree <= View_tree $hyoo_tree
+		view.tree <= View_tree $hyoo_tree_app
 			title @ \View.Tree Sandbox
 			Presets null
 			source_tools /
@@ -7728,8 +7779,6 @@ $mol_icon_content_copy $mol_icon path \M19,21H8V7H19M19,5H8A2,2 0 0,0 6,7V21A2,2
 $mol_icon_content_cut $mol_icon path \M19,3L13,9L15,11L22,4V3M12,12.5A0.5,0.5 0 0,1 11.5,12A0.5,0.5 0 0,1 12,11.5A0.5,0.5 0 0,1 12.5,12A0.5,0.5 0 0,1 12,12.5M6,20A2,2 0 0,1 4,18C4,16.89 4.9,16 6,16A2,2 0 0,1 8,18C8,19.11 7.1,20 6,20M6,8A2,2 0 0,1 4,6C4,4.89 4.9,4 6,4A2,2 0 0,1 8,6C8,7.11 7.1,8 6,8M9.64,7.64C9.87,7.14 10,6.59 10,6A4,4 0 0,0 6,2A4,4 0 0,0 2,6A4,4 0 0,0 6,10C6.59,10 7.14,9.87 7.64,9.64L10,12L7.64,14.36C7.14,14.13 6.59,14 6,14A4,4 0 0,0 2,18A4,4 0 0,0 6,22A4,4 0 0,0 10,18C10,17.41 9.87,16.86 9.64,16.36L12,14L19,21H22V20L9.64,7.64Z
 
 $mol_icon_content_paste $mol_icon path \M19,20H5V4H7V7H17V4H19M12,2A1,1 0 0,1 13,3A1,1 0 0,1 12,4A1,1 0 0,1 11,3A1,1 0 0,1 12,2M19,2H14.82C14.4,0.84 13.3,0 12,0C10.7,0 9.6,0.84 9.18,2H5A2,2 0 0,0 3,4V20A2,2 0 0,0 5,22H19A2,2 0 0,0 21,20V4A2,2 0 0,0 19,2Z
-
-$mol_icon_delete $mol_icon path \M19,4H15.5L14.5,3H9.5L8.5,4H5V6H19M6,19A2,2 0 0,0 8,21H16A2,2 0 0,0 18,19V7H6V19Z
 
 $mol_toolbar_demo $mol_example_small
 	title \Foldable toolbar demo

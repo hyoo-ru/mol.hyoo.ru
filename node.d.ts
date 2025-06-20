@@ -322,6 +322,10 @@ declare namespace $ {
 }
 
 declare namespace $ {
+    function $mol_maybe<Value>(value: Value | null | undefined): Value[];
+}
+
+declare namespace $ {
     type $mol_tree2_path = Array<string | number | null>;
     type $mol_tree2_hack<Context> = (input: $mol_tree2, belt: $mol_tree2_belt<Context>, context: Context) => readonly $mol_tree2[];
     type $mol_tree2_belt<Context> = Record<string, $mol_tree2_hack<Context>>;
@@ -342,6 +346,7 @@ declare namespace $ {
         static fromString(str: string, uri?: string): $mol_tree2;
         toString(): string;
         insert(value: $mol_tree2 | null, ...path: $mol_tree2_path): $mol_tree2;
+        update(value: readonly $mol_tree2[], ...path: $mol_tree2_path): readonly $mol_tree2[];
         select(...path: $mol_tree2_path): $mol_tree2;
         filter(path: string[], value?: string): $mol_tree2;
         hack_self<Context extends {
@@ -2180,52 +2185,57 @@ declare namespace $ {
 		,
 		ReturnType< $mol_button_minor['hint'] >
 	>
-	type $mol_button_minor__click_mol_search_11 = $mol_type_enforce<
+	type $mol_button_minor__enabled_mol_search_11 = $mol_type_enforce<
+		ReturnType< $mol_search['enabled'] >
+		,
+		ReturnType< $mol_button_minor['enabled'] >
+	>
+	type $mol_button_minor__click_mol_search_12 = $mol_type_enforce<
 		ReturnType< $mol_search['clear'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_mol_search_12 = $mol_type_enforce<
+	type $mol_button_minor__sub_mol_search_13 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_button_minor['sub'] >
 	>
-	type $mol_list__rows_mol_search_13 = $mol_type_enforce<
+	type $mol_list__rows_mol_search_14 = $mol_type_enforce<
 		ReturnType< $mol_search['menu_items'] >
 		,
 		ReturnType< $mol_list['rows'] >
 	>
-	type $mol_scroll__sub_mol_search_14 = $mol_type_enforce<
+	type $mol_scroll__sub_mol_search_15 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_scroll['sub'] >
 	>
-	type $mol_dimmer__haystack_mol_search_15 = $mol_type_enforce<
+	type $mol_dimmer__haystack_mol_search_16 = $mol_type_enforce<
 		ReturnType< $mol_search['suggest_label'] >
 		,
 		ReturnType< $mol_dimmer['haystack'] >
 	>
-	type $mol_dimmer__needle_mol_search_16 = $mol_type_enforce<
+	type $mol_dimmer__needle_mol_search_17 = $mol_type_enforce<
 		ReturnType< $mol_search['query'] >
 		,
 		ReturnType< $mol_dimmer['needle'] >
 	>
-	type $mol_search_plugins__17 = $mol_type_enforce<
+	type $mol_search_plugins__18 = $mol_type_enforce<
 		ReturnType< $mol_pop['plugins'] >[number]
 		,
 		$mol_plugin
 	>
-	type $mol_view__sub_mol_search_18 = $mol_type_enforce<
+	type $mol_view__sub_mol_search_19 = $mol_type_enforce<
 		ReturnType< $mol_search['anchor_content'] >
 		,
 		ReturnType< $mol_view['sub'] >
 	>
-	type $mol_button_minor__click_mol_search_19 = $mol_type_enforce<
+	type $mol_button_minor__click_mol_search_20 = $mol_type_enforce<
 		ReturnType< $mol_search['suggest_select'] >
 		,
 		ReturnType< $mol_button_minor['click'] >
 	>
-	type $mol_button_minor__sub_mol_search_20 = $mol_type_enforce<
+	type $mol_button_minor__sub_mol_search_21 = $mol_type_enforce<
 		ReturnType< $mol_search['suggest_content'] >
 		,
 		ReturnType< $mol_button_minor['sub'] >
@@ -2667,10 +2677,6 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=source.view.tree.d.ts.map
-declare namespace $ {
-    function $mol_maybe<Value>(value: Value | null | undefined): Value[];
-}
-
 declare namespace $ {
 }
 
@@ -5627,7 +5633,6 @@ declare namespace $ {
 		natural_height( ): number
 		load( next?: any ): any
 		dom_name( ): string
-		field( ): Record<string, any> & ReturnType< $mol_view['field'] >
 		attr( ): Record<string, any> & ReturnType< $mol_view['attr'] >
 		event( ): Record<string, any>
 		minimal_width( ): number
@@ -5697,16 +5702,14 @@ declare namespace $ {
 		ReturnType< $mol_link['sub'] >
 	>
 	export class $mol_embed_native extends $mol_scroll {
-		mime( ): string
+		uri( next?: string ): string
 		title( ): string
 		Fallback( ): $mol_link
 		uri_change( next?: any ): any
-		uri( next?: string ): string
 		dom_name( ): string
 		window( ): any
 		attr( ): ({ 
-			'data': ReturnType< $mol_embed_native['uri'] >,
-			'type': ReturnType< $mol_embed_native['mime'] >,
+			'src': ReturnType< $mol_embed_native['uri'] >,
 		})  & ReturnType< $mol_scroll['attr'] >
 		sub( ): readonly(any)[]
 		message( ): ({ 
@@ -5746,14 +5749,9 @@ declare namespace $ {
 
 	export class $mol_frame extends $mol_embed_native {
 		allow( ): string
-		uri( next?: string ): string
 		html( ): any
-		dom_name( ): string
 		attr( ): ({ 
-			'data': any,
-			'type': any,
 			'allow': ReturnType< $mol_frame['allow'] >,
-			'src': ReturnType< $mol_frame['uri'] >,
 			'srcdoc': ReturnType< $mol_frame['html'] >,
 		})  & ReturnType< $mol_embed_native['attr'] >
 		fullscreen( ): boolean
@@ -13318,6 +13316,232 @@ declare namespace $ {
 
 declare namespace $ {
 
+	export class $mol_icon_pencil_box extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=box.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_pencil_box_outline extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=outline.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_translate extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=translate.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_delete extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=delete.view.tree.d.ts.map
+declare namespace $ {
+
+	export class $mol_icon_delete_outline extends $mol_icon {
+		path( ): string
+	}
+	
+}
+
+//# sourceMappingURL=outline.view.tree.d.ts.map
+declare namespace $ {
+
+	type $mol_string_button__hint_hyoo_tree_edit_1 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_string_button['hint'] >
+	>
+	type $mol_string_button__value_hyoo_tree_edit_2 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['item_type'] >
+		,
+		ReturnType< $mol_string_button['value'] >
+	>
+	type $mol_string_button__enabled_hyoo_tree_edit_3 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['enabled'] >
+		,
+		ReturnType< $mol_string_button['enabled'] >
+	>
+	type $mol_string__hint_hyoo_tree_edit_4 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_string['hint'] >
+	>
+	type $mol_string__value_hyoo_tree_edit_5 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['item_value'] >
+		,
+		ReturnType< $mol_string['value'] >
+	>
+	type $mol_string__enabled_hyoo_tree_edit_6 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['enabled'] >
+		,
+		ReturnType< $mol_string['enabled'] >
+	>
+	type $mol_check_icon__hint_hyoo_tree_edit_7 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_icon['hint'] >
+	>
+	type $mol_check_icon__checked_hyoo_tree_edit_8 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['item_kind'] >
+		,
+		ReturnType< $mol_check_icon['checked'] >
+	>
+	type $mol_check_icon__enabled_hyoo_tree_edit_9 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['enabled'] >
+		,
+		ReturnType< $mol_check_icon['enabled'] >
+	>
+	type $mol_check_icon__sub_hyoo_tree_edit_10 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_check_icon['sub'] >
+	>
+	type $mol_button_minor__hint_hyoo_tree_edit_11 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_button_minor['hint'] >
+	>
+	type $mol_button_minor__click_hyoo_tree_edit_12 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['item_born'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__enabled_hyoo_tree_edit_13 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['enabled'] >
+		,
+		ReturnType< $mol_button_minor['enabled'] >
+	>
+	type $mol_button_minor__sub_hyoo_tree_edit_14 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_button_minor__click_hyoo_tree_edit_15 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['item_delete_self'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_hyoo_tree_edit_16 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_button_minor__click_hyoo_tree_edit_17 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['item_delete_tree'] >
+		,
+		ReturnType< $mol_button_minor['click'] >
+	>
+	type $mol_button_minor__sub_hyoo_tree_edit_18 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_button_minor['sub'] >
+	>
+	type $mol_list__rows_hyoo_tree_edit_19 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_list['rows'] >
+	>
+	type $mol_pick__hint_hyoo_tree_edit_20 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_pick['hint'] >
+	>
+	type $mol_pick__trigger_enabled_hyoo_tree_edit_21 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['enabled'] >
+		,
+		ReturnType< $mol_pick['trigger_enabled'] >
+	>
+	type $mol_pick__trigger_content_hyoo_tree_edit_22 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_pick['trigger_content'] >
+	>
+	type $mol_pick__bubble_content_hyoo_tree_edit_23 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_pick['bubble_content'] >
+	>
+	type $mol_view__sub_hyoo_tree_edit_24 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['item_row'] >
+		,
+		ReturnType< $mol_view['sub'] >
+	>
+	type $mol_list__rows_hyoo_tree_edit_25 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_edit['list'] >
+		,
+		ReturnType< $mol_list['rows'] >
+	>
+	type $mol_list__rows_hyoo_tree_edit_26 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_list['rows'] >
+	>
+	export class $hyoo_tree_edit extends $mol_list {
+		item_type( id: any, next?: string ): string
+		Item_type( id: any): $mol_string_button
+		item_value( id: any, next?: string ): string
+		Item_value( id: any): $mol_string
+		item_kind( id: any, next?: boolean ): boolean
+		Item_kind_icon( id: any): $mol_icon_translate
+		Item_kind( id: any): $mol_check_icon
+		item_born( id: any, next?: any ): any
+		Item_born_icon( id: any): $mol_icon_plus
+		Item_born( id: any): $mol_button_minor
+		Item_delete_icon( id: any): $mol_icon_delete_outline
+		item_delete_self( id: any, next?: any ): any
+		Item_delete_self( id: any): $mol_button_minor
+		item_delete_tree( id: any, next?: any ): any
+		Item_delete_tree( id: any): $mol_button_minor
+		Item_delete_options( id: any): $mol_list
+		Item_delete( id: any): $mol_pick
+		item_row( id: any): readonly(any)[]
+		Item_row( id: any): $mol_view
+		List( id: any): $mol_list
+		Item( id: any): $mol_list
+		list( id: any): readonly(any)[]
+		value( next?: $mol_tree2 ): $mol_tree2
+		enabled( ): boolean
+		rows( ): ReturnType< $hyoo_tree_edit['list'] >
+	}
+	
+}
+
+//# sourceMappingURL=edit.view.tree.d.ts.map
+declare namespace $.$$ {
+    class $hyoo_tree_edit extends $.$hyoo_tree_edit {
+        value(next?: $mol_tree2): $mol_tree2;
+        sub(): $.$mol_list[];
+        item_row(path: number[]): ($mol_button_minor | $.$mol_pick | $mol_string_button)[];
+        item_kind(path: number[], next?: boolean): boolean;
+        item_type(path: number[], next?: string): string;
+        item_value(path: number[], next?: string): string;
+        item_delete_self(path: number[], event?: Event): void;
+        item_delete_tree(path: number[], event?: Event): void;
+        item_born(path: number[], event?: Event): void;
+        list(path: number[]): $.$mol_list[];
+    }
+}
+
+declare namespace $.$$ {
+}
+
+declare namespace $ {
+
 	type __mol_select_list_1 = $mol_type_enforce<
 		Parameters< $mol_select_list['filter_pattern'] >[0]
 		,
@@ -13767,222 +13991,242 @@ declare namespace $ {
 
 declare namespace $ {
 
-	type $mol_link_source__uri_hyoo_tree_1 = $mol_type_enforce<
+	type $mol_link_source__uri_hyoo_tree_app_1 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link_source['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_2 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_2 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_3 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_3 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_4 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_4 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_5 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_5 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_6 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_6 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_7 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_7 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_8 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_8 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_9 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_9 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_10 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_10 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_11 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_11 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_12 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_12 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_13 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_13 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_14 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_14 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_15 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_15 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_16 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_16 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_17 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_17 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_18 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_18 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_19 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_19 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_20 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_20 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_21 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_21 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_22 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_22 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_23 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_23 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__title_hyoo_tree_24 = $mol_type_enforce<
+	type $mol_link__title_hyoo_tree_app_24 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['title'] >
 	>
-	type $mol_link__uri_hyoo_tree_25 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_tree_app_25 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_list__rows_hyoo_tree_26 = $mol_type_enforce<
+	type $mol_list__rows_hyoo_tree_app_26 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_list['rows'] >
 	>
-	type $mol_page__title_hyoo_tree_27 = $mol_type_enforce<
+	type $mol_page__title_hyoo_tree_app_27 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_page['title'] >
 	>
-	type $mol_page__tools_hyoo_tree_28 = $mol_type_enforce<
+	type $mol_page__tools_hyoo_tree_app_28 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_page['tools'] >
 	>
-	type $mol_page__body_hyoo_tree_29 = $mol_type_enforce<
+	type $mol_page__body_hyoo_tree_app_29 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_page['body'] >
 	>
-	type $mol_textarea__value_hyoo_tree_30 = $mol_type_enforce<
-		ReturnType< $hyoo_tree['source'] >
+	type $mol_check_icon__hint_hyoo_tree_app_30 = $mol_type_enforce<
+		string
+		,
+		ReturnType< $mol_check_icon['hint'] >
+	>
+	type $mol_check_icon__checked_hyoo_tree_app_31 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['raw'] >
+		,
+		ReturnType< $mol_check_icon['checked'] >
+	>
+	type $mol_check_icon__Icon_hyoo_tree_app_32 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['Raw_icon'] >
+		,
+		ReturnType< $mol_check_icon['Icon'] >
+	>
+	type $hyoo_tree_edit__value_hyoo_tree_app_33 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['source_tree'] >
+		,
+		ReturnType< $hyoo_tree_edit['value'] >
+	>
+	type $mol_textarea__value_hyoo_tree_app_34 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['source'] >
 		,
 		ReturnType< $mol_textarea['value'] >
 	>
-	type $mol_textarea__hint_hyoo_tree_31 = $mol_type_enforce<
-		ReturnType< $hyoo_tree['source_hint'] >
+	type $mol_textarea__hint_hyoo_tree_app_35 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['source_hint'] >
 		,
 		ReturnType< $mol_textarea['hint'] >
 	>
-	type $mol_textarea__sidebar_showed_hyoo_tree_32 = $mol_type_enforce<
+	type $mol_textarea__sidebar_showed_hyoo_tree_app_36 = $mol_type_enforce<
 		boolean
 		,
 		ReturnType< $mol_textarea['sidebar_showed'] >
 	>
-	type $mol_page__title_hyoo_tree_33 = $mol_type_enforce<
+	type $mol_page__title_hyoo_tree_app_37 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_page['title'] >
 	>
-	type $mol_page__tools_hyoo_tree_34 = $mol_type_enforce<
-		ReturnType< $hyoo_tree['source_tools'] >
+	type $mol_page__tools_hyoo_tree_app_38 = $mol_type_enforce<
+		readonly(any)[]
 		,
 		ReturnType< $mol_page['tools'] >
 	>
-	type $mol_page__body_hyoo_tree_35 = $mol_type_enforce<
-		readonly(any)[]
+	type $mol_page__body_hyoo_tree_app_39 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['source_body'] >
 		,
 		ReturnType< $mol_page['body'] >
 	>
-	type $mol_select_list__value_hyoo_tree_36 = $mol_type_enforce<
-		ReturnType< $hyoo_tree['pipeline'] >
+	type $mol_select_list__value_hyoo_tree_app_40 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['pipeline'] >
 		,
 		ReturnType< $mol_select_list['value'] >
 	>
-	type $mol_select_list__options_pickable_hyoo_tree_37 = $mol_type_enforce<
-		ReturnType< $hyoo_tree['transform_options'] >
+	type $mol_select_list__options_pickable_hyoo_tree_app_41 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['transform_options'] >
 		,
 		ReturnType< $mol_select_list['options_pickable'] >
 	>
-	type $mol_select_list__pick_hint_hyoo_tree_38 = $mol_type_enforce<
-		ReturnType< $hyoo_tree['add_hint'] >
+	type $mol_select_list__pick_hint_hyoo_tree_app_42 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['add_hint'] >
 		,
 		ReturnType< $mol_select_list['pick_hint'] >
 	>
-	type $mol_text_code__sidebar_showed_hyoo_tree_39 = $mol_type_enforce<
+	type $mol_text_code__sidebar_showed_hyoo_tree_app_43 = $mol_type_enforce<
 		boolean
 		,
 		ReturnType< $mol_text_code['sidebar_showed'] >
 	>
-	type $mol_text_code__text_hyoo_tree_40 = $mol_type_enforce<
-		ReturnType< $hyoo_tree['result_text'] >
+	type $mol_text_code__text_hyoo_tree_app_44 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['result_text'] >
 		,
 		ReturnType< $mol_text_code['text'] >
 	>
-	type $mol_page__title_hyoo_tree_41 = $mol_type_enforce<
-		ReturnType< $hyoo_tree['result_title'] >
+	type $mol_page__title_hyoo_tree_app_45 = $mol_type_enforce<
+		ReturnType< $hyoo_tree_app['result_title'] >
 		,
 		ReturnType< $mol_page['title'] >
 	>
-	type $mol_page__head_hyoo_tree_42 = $mol_type_enforce<
+	type $mol_page__head_hyoo_tree_app_46 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_page['head'] >
 	>
-	type $mol_page__body_hyoo_tree_43 = $mol_type_enforce<
+	type $mol_page__body_hyoo_tree_app_47 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_page['body'] >
 	>
-	export class $hyoo_tree extends $mol_book2 {
+	export class $hyoo_tree_app extends $mol_book2 {
 		Theme( ): $mol_theme_auto
 		pipeline_default( ): readonly(string)[]
 		Lights( ): $mol_lights_toggle
@@ -14001,13 +14245,19 @@ declare namespace $ {
 		Span( ): $mol_link
 		Presets_list( ): $mol_list
 		Presets( ): $mol_page
+		raw( next?: boolean ): boolean
+		Raw_icon( ): $mol_icon_pencil_box_outline
+		Raw( ): $mol_check_icon
 		source_tools( ): readonly($mol_view_content)[]
+		source_tree( next?: $mol_tree2 ): $mol_tree2
+		Source_tree( ): $hyoo_tree_edit
 		source_default( ): string
-		source( next?: ReturnType< $hyoo_tree['source_default'] > ): ReturnType< $hyoo_tree['source_default'] >
+		source( next?: ReturnType< $hyoo_tree_app['source_default'] > ): ReturnType< $hyoo_tree_app['source_default'] >
 		source_hint( ): string
 		Source_text( ): $mol_textarea
+		source_body( ): readonly(any)[]
 		Source( ): $mol_page
-		result_title( ): ReturnType< ReturnType< $hyoo_tree['Pipeline'] >['title'] >
+		result_title( ): ReturnType< ReturnType< $hyoo_tree_app['Pipeline'] >['title'] >
 		transform_options( ): readonly(string)[]
 		add_hint( ): string
 		Pipeline( ): $mol_select_list
@@ -14141,7 +14391,7 @@ declare namespace $ {
 			}) ,
 		}) 
 		plugins( ): readonly(any)[]
-		pipeline( next?: ReturnType< $hyoo_tree['pipeline_default'] > ): ReturnType< $hyoo_tree['pipeline_default'] >
+		pipeline( next?: ReturnType< $hyoo_tree_app['pipeline_default'] > ): ReturnType< $hyoo_tree_app['pipeline_default'] >
 		Placeholder( ): any
 		pages( ): readonly(any)[]
 	}
@@ -14150,10 +14400,13 @@ declare namespace $ {
 
 //# sourceMappingURL=tree.view.tree.d.ts.map
 declare namespace $.$$ {
-    class $hyoo_tree extends $.$hyoo_tree {
+    class $hyoo_tree_app extends $.$hyoo_tree_app {
         pipeline(next?: string[]): readonly string[];
         add(index: number, next?: string): string;
+        raw(next?: boolean): boolean;
+        source_body(): $.$mol_textarea[] | $.$hyoo_tree_edit[];
         source(next?: string): string;
+        source_tree(next?: $mol_tree2): $mol_tree2;
         transform(index: number, next?: string): string;
         transform_options(): string[];
         result(index: number): string | $mol_tree2 | Uint8Array | $mol_wasm_module;
@@ -27005,15 +27258,6 @@ declare namespace $ {
 //# sourceMappingURL=paste.view.tree.d.ts.map
 declare namespace $ {
 
-	export class $mol_icon_delete extends $mol_icon {
-		path( ): string
-	}
-	
-}
-
-//# sourceMappingURL=delete.view.tree.d.ts.map
-declare namespace $ {
-
 	type $mol_string__hint_mol_toolbar_demo_1 = $mol_type_enforce<
 		ReturnType< $mol_toolbar_demo['search_hint'] >
 		,
@@ -27806,30 +28050,30 @@ declare namespace $ {
 		,
 		ReturnType< $mol_link['sub'] >
 	>
-	type $hyoo_tree__title_hyoo_mol_14 = $mol_type_enforce<
+	type $hyoo_tree_app__title_hyoo_mol_14 = $mol_type_enforce<
 		string
 		,
-		ReturnType< $hyoo_tree['title'] >
+		ReturnType< $hyoo_tree_app['title'] >
 	>
-	type $hyoo_tree__Presets_hyoo_mol_15 = $mol_type_enforce<
+	type $hyoo_tree_app__Presets_hyoo_mol_15 = $mol_type_enforce<
 		any
 		,
-		ReturnType< $hyoo_tree['Presets'] >
+		ReturnType< $hyoo_tree_app['Presets'] >
 	>
-	type $hyoo_tree__source_tools_hyoo_mol_16 = $mol_type_enforce<
+	type $hyoo_tree_app__source_tools_hyoo_mol_16 = $mol_type_enforce<
 		readonly(any)[]
 		,
-		ReturnType< $hyoo_tree['source_tools'] >
+		ReturnType< $hyoo_tree_app['source_tools'] >
 	>
-	type $hyoo_tree__pipeline_default_hyoo_mol_17 = $mol_type_enforce<
+	type $hyoo_tree_app__pipeline_default_hyoo_mol_17 = $mol_type_enforce<
 		ReturnType< $hyoo_mol['tree_pipeline'] >
 		,
-		ReturnType< $hyoo_tree['pipeline_default'] >
+		ReturnType< $hyoo_tree_app['pipeline_default'] >
 	>
-	type $hyoo_tree__source_default_hyoo_mol_18 = $mol_type_enforce<
+	type $hyoo_tree_app__source_default_hyoo_mol_18 = $mol_type_enforce<
 		ReturnType< $hyoo_mol['tree_source'] >
 		,
-		ReturnType< $hyoo_tree['source_default'] >
+		ReturnType< $hyoo_tree_app['source_default'] >
 	>
 	type $mol_frame__title_hyoo_mol_19 = $mol_type_enforce<
 		string
@@ -27855,7 +28099,7 @@ declare namespace $ {
 		View_tree_syntax( ): $mol_link
 		tree_pipeline( ): readonly(any)[]
 		tree_source( ): string
-		View_tree( ): $hyoo_tree
+		View_tree( ): $hyoo_tree_app
 		Icons( ): $mol_frame
 		plugins( ): readonly(any)[]
 		Placeholder( ): any
