@@ -3,7 +3,7 @@ namespace $.$$ {
 
 		@$mol_mem
 		hubhabRedirect() {
-			if (this.$.$mol_state_arg.value('section') === 'articles') {
+			if (this.$.$mol_state_arg.value('section') === 'articles' ) {
 				document.location.assign('https://habhub.hyoo.ru/' + document.location.hash)
 			}
 		}
