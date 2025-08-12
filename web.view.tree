@@ -836,7 +836,7 @@ $mol_image $mol_view
 		^
 		src <= uri \
 		alt <= title
-		loading <= loading \eager
+		loading <= loading \lazy
 		decoding <= decoding \async
 		crossOrigin <= cors null
 		width <= natural_width 0
@@ -873,8 +873,9 @@ $mol_icon_youtube $mol_icon path \M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 
 
 $mol_frame $mol_embed_native
 	attr *
-		^
+		tabindex <= tabindex
 		allow <= allow \
+		src <= uri
 		srcdoc <= html null
 	fullscreen true
 	accelerometer true
@@ -3810,6 +3811,7 @@ $mol_audio_status $mol_view
 	icons *
 		closed <= Closed $mol_icon_power_sleep
 		error <= Error $mol_icon_alert
+		interrupted <= Error $mol_icon_alert
 		suspended <= Suspended $mol_icon_sleep
 		playing <= Playing $mol_icon_play
 		running <= Running $mol_icon_pause
