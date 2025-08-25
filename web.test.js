@@ -1677,6 +1677,17 @@ var $;
 ;
 "use strict";
 var $;
+(function ($) {
+    $mol_test({
+        'return result without errors'() {
+            $mol_assert_equal($mol_try(() => false), false);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
 (function ($_1) {
     $mol_test_mocks.push($ => $.$mol_fail_log = () => false);
 })($ || ($ = {}));
@@ -4346,17 +4357,6 @@ var $;
 var $;
 (function ($) {
     $mol_test({
-        'return result without errors'() {
-            $mol_assert_equal($mol_try(() => false), false);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
         'strong'() {
             const res = [...'**text**'.matchAll($hyoo_marked_line)][0].groups;
             $mol_assert_equal(res.strong, '**text**');
@@ -6440,7 +6440,7 @@ var $;
 					test
 						case \\foo
 						case \\bar
-				`).hack(root), 'args[0] ≠ args[1]\n\\foo\n\n---\n\\bar\n\ntest\n?#2:6/4');
+				`).hack(root), 'Equality assertion failure\ntest\n?#2:6/4');
         },
         'jack test'($) {
             const tests = $.$mol_tree2_from_string(`

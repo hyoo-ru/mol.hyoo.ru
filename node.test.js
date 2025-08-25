@@ -384,6 +384,17 @@ var $;
     $.$mol_dev_format_register = $mol_dev_format_register;
     $.$mol_dev_format_head = Symbol('$mol_dev_format_head');
     $.$mol_dev_format_body = Symbol('$mol_dev_format_body');
+    function $mol_dev_format_button(label, click) {
+        return $mol_dev_format_auto({
+            [$.$mol_dev_format_head]() {
+                return $mol_dev_format_span({ color: 'cornflowerblue' }, label);
+            },
+            [$.$mol_dev_format_body]() {
+                Promise.resolve().then(click);
+                return $mol_dev_format_span({});
+            }
+        });
+    }
     $mol_dev_format_register({
         header: (val, config = false) => {
             if (config)
@@ -401,13 +412,41 @@ var $;
             if (typeof val === 'function') {
                 return $mol_dev_format_native(val);
             }
+            if (val instanceof Error) {
+                return $mol_dev_format_span({}, $mol_dev_format_native(val), ' ', $mol_dev_format_button('throw', () => $mol_fail_hidden(val)));
+            }
+            if (val instanceof Promise) {
+                return $.$mol_dev_format_shade($mol_dev_format_native(val), ' ', val[Symbol.toStringTag] ?? '');
+            }
             if (Symbol.toStringTag in val) {
                 return $mol_dev_format_native(val);
             }
             return null;
         },
-        hasBody: val => val[$.$mol_dev_format_body],
-        body: val => val[$.$mol_dev_format_body](),
+        hasBody: (val, config = false) => {
+            if (config)
+                return false;
+            if (!val)
+                return false;
+            if (val[$.$mol_dev_format_body])
+                return true;
+            return false;
+        },
+        body: (val, config = false) => {
+            if (config)
+                return null;
+            if (!val)
+                return null;
+            if ($.$mol_dev_format_body in val) {
+                try {
+                    return val[$.$mol_dev_format_body]();
+                }
+                catch (error) {
+                    return $.$mol_dev_format_accent($mol_dev_format_native(val), '💨', $mol_dev_format_native(error), '');
+                }
+            }
+            return null;
+        },
     });
     function $mol_dev_format_native(obj) {
         if (typeof obj === 'undefined')
@@ -473,6 +512,69 @@ var $;
     $.$mol_dev_format_indent = $.$mol_dev_format_div.bind(null, {
         'margin-left': '13px'
     });
+    class Stack extends Array {
+        toString() {
+            return this.join('\n');
+        }
+    }
+    class Call extends Object {
+        type;
+        function;
+        method;
+        eval;
+        source;
+        offset;
+        pos;
+        object;
+        flags;
+        [Symbol.toStringTag];
+        constructor(call) {
+            super();
+            this.type = call.getTypeName() ?? '';
+            this.function = call.getFunctionName() ?? '';
+            this.method = call.getMethodName() ?? '';
+            if (this.method === this.function)
+                this.method = '';
+            this.pos = [call.getEnclosingLineNumber() ?? 0, call.getEnclosingColumnNumber() ?? 0];
+            this.eval = call.getEvalOrigin() ?? '';
+            this.source = call.getScriptNameOrSourceURL() ?? '';
+            this.object = call.getThis();
+            this.offset = call.getPosition();
+            const flags = [];
+            if (call.isAsync())
+                flags.push('async');
+            if (call.isConstructor())
+                flags.push('constructor');
+            if (call.isEval())
+                flags.push('eval');
+            if (call.isNative())
+                flags.push('native');
+            if (call.isPromiseAll())
+                flags.push('PromiseAll');
+            if (call.isToplevel())
+                flags.push('top');
+            this.flags = flags;
+            const type = this.type ? this.type + '.' : '';
+            const func = this.function || '<anon>';
+            const method = this.method ? ' [' + this.method + '] ' : '';
+            this[Symbol.toStringTag] = `${type}${func}${method}`;
+        }
+        [Symbol.toPrimitive]() {
+            return this.toString();
+        }
+        toString() {
+            const object = this.object || '';
+            const label = this[Symbol.toStringTag];
+            const source = `${this.source}:${this.pos.join(':')} #${this.offset}`;
+            return `\tat ${object}${label} (${source})`;
+        }
+        [$.$mol_dev_format_head]() {
+            return $.$mol_dev_format_div({}, $mol_dev_format_native(this), $.$mol_dev_format_shade(' '), ...this.object ? [
+                $mol_dev_format_native(this.object),
+            ] : [], ...this.method ? [$.$mol_dev_format_shade(' ', ' [', this.method, ']')] : [], $.$mol_dev_format_shade(' ', this.flags.join(', ')));
+        }
+    }
+    Error.prepareStackTrace ??= (error, stack) => new Stack(...stack.map(call => new Call(call)));
 })($ || ($ = {}));
 
 ;
@@ -1020,7 +1122,7 @@ var $;
         if (left instanceof RegExp)
             return left.source === right.source && left.flags === right.flags;
         if (left instanceof Error)
-            return left.message === right.message && left.stack === right.stack;
+            return left.message === right.message && $mol_compare_deep(left.stack, right.stack);
         let left_cache = $.$mol_compare_deep_cache.get(left);
         if (left_cache) {
             const right_cache = left_cache.get(right);
@@ -1134,7 +1236,7 @@ var $;
 var $;
 (function ($) {
     function $mol_log3_area_lazy(event) {
-        const self = this;
+        const self = this.$;
         const stack = self.$mol_log3_stack;
         const deep = stack.length;
         let logged = false;
@@ -1786,12 +1888,27 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    function $mol_try(handler) {
+        try {
+            return handler();
+        }
+        catch (error) {
+            return error;
+        }
+    }
+    $.$mol_try = $mol_try;
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
     function $mol_fail_log(error) {
         if ($mol_promise_like(error))
             return false;
         if (!$mol_fail_catch(error))
             return false;
-        console.error(error);
+        $mol_try(() => { $mol_fail_hidden(error); });
         return true;
     }
     $.$mol_fail_log = $mol_fail_log;
@@ -2095,7 +2212,7 @@ var $;
                 get: () => stack_get() + '\n' + [
                     this.cause ?? 'no cause',
                     ...this.errors.flatMap(e => [
-                        e.stack,
+                        String(e.stack),
                         ...e instanceof $mol_error_mix || !e.cause ? [] : [e.cause]
                     ])
                 ].map(frame_normalize).join('\n')
@@ -2815,6 +2932,9 @@ var $;
         postfix() { return ')'; }
         static linear_gradient(value) {
             return new $mol_style_func('linear-gradient', value);
+        }
+        static radial_gradient(value) {
+            return new $mol_style_func('radial-gradient', value);
         }
         static calc(value) {
             return new $mol_style_func('calc', value);
@@ -5872,7 +5992,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/button/button.view.css", "[mol_button] {\n\tborder: none;\n\tfont: inherit;\n\tdisplay: inline-flex;\n\tflex-shrink: 0;\n\ttext-decoration: inherit;\n\tcursor: inherit;\n\tposition: relative;\n\tbox-sizing: border-box;\n\tword-break: normal;\n\tcursor: default;\n\tuser-select: none;\n\tborder-radius: var(--mol_gap_round);\n\tbackground: transparent;\n\tcolor: inherit;\n}\n\n[mol_button]:where(:not(:disabled)):hover {\n\tz-index: var(--mol_layer_hover);\n}\n\n[mol_button]:focus {\n\toutline: none;\n\tz-index: var(--mol_layer_focus);\n}\n");
+    $mol_style_attach("mol/button/button.view.css", "[mol_button] {\n\tborder: none;\n\tfont: inherit;\n\tdisplay: inline-flex;\n\tflex-shrink: 0;\n\ttext-decoration: inherit;\n\tcursor: inherit;\n\tposition: relative;\n\tbox-sizing: border-box;\n\tword-break: normal;\n\tcursor: default;\n\tuser-select: none;\n\t-webkit-user-select: none;\n\tborder-radius: var(--mol_gap_round);\n\tbackground: transparent;\n\tcolor: inherit;\n}\n\n[mol_button]:where(:not(:disabled)):hover {\n\tz-index: var(--mol_layer_hover);\n}\n\n[mol_button]:focus {\n\toutline: none;\n\tz-index: var(--mol_layer_focus);\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -16727,21 +16847,6 @@ var $;
 
 ;
 "use strict";
-var $;
-(function ($) {
-    function $mol_try(handler) {
-        try {
-            return handler();
-        }
-        catch (error) {
-            return error;
-        }
-    }
-    $.$mol_try = $mol_try;
-})($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -24269,7 +24374,7 @@ var $;
         catch (error) {
             $.$mol_fail = fail;
             if (typeof ErrorRight === 'string') {
-                $mol_assert_equal(error.message, ErrorRight);
+                $mol_assert_equal(error.message ?? error, ErrorRight);
             }
             else {
                 $mol_assert_equal(error instanceof ErrorRight, true);
@@ -24293,7 +24398,7 @@ var $;
                     continue;
                 if (!$mol_compare_deep(args[i], args[j]))
                     continue;
-                $mol_fail(new Error(`args[${i}] = args[${j}] = ${print(args[i])}`));
+                return $mol_fail(new Error(`Uniquesess assertion failure`, { cause: { [i]: args[i], [i]: args[i] } }));
             }
         }
     }
@@ -24304,29 +24409,10 @@ var $;
                 continue;
             if (args[0] instanceof $mol_dom_context.Element && args[i] instanceof $mol_dom_context.Element && args[0].outerHTML === args[i].outerHTML)
                 continue;
-            return $mol_fail(new Error(`args[0] ≠ args[${i}]\n${print(args[0])}\n---\n${print(args[i])}`));
+            return $mol_fail(new Error(`Equality assertion failure`, { cause: { 0: args[0], [i]: args[i] } }));
         }
     }
     $.$mol_assert_equal = $mol_assert_equal;
-    const print = (val) => {
-        if (!val)
-            return val;
-        if (typeof val === 'bigint')
-            return String(val) + 'n';
-        if (typeof val === 'symbol')
-            return `Symbol(${val.description})`;
-        if (typeof val !== 'object')
-            return val;
-        if ('outerHTML' in val)
-            return val.outerHTML;
-        try {
-            return JSON.stringify(val, (k, v) => typeof v === 'bigint' ? String(v) : v, '\t');
-        }
-        catch (error) {
-            console.error(error);
-            return val;
-        }
-    };
 })($ || ($ = {}));
 
 ;
@@ -52673,6 +52759,17 @@ var $;
 ;
 "use strict";
 var $;
+(function ($) {
+    $mol_test({
+        'return result without errors'() {
+            $mol_assert_equal($mol_try(() => false), false);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
 (function ($_1) {
     $mol_test_mocks.push($ => $.$mol_fail_log = () => false);
 })($ || ($ = {}));
@@ -57104,17 +57201,6 @@ var $;
 var $;
 (function ($) {
     $mol_test({
-        'return result without errors'() {
-            $mol_assert_equal($mol_try(() => false), false);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
         'strong'() {
             const res = [...'**text**'.matchAll($hyoo_marked_line)][0].groups;
             $mol_assert_equal(res.strong, '**text**');
@@ -58924,7 +59010,7 @@ var $;
 					test
 						case \\foo
 						case \\bar
-				`).hack(root), 'args[0] ≠ args[1]\n\\foo\n\n---\n\\bar\n\ntest\n?#2:6/4');
+				`).hack(root), 'Equality assertion failure\ntest\n?#2:6/4');
         },
         'jack test'($) {
             const tests = $.$mol_tree2_from_string(`

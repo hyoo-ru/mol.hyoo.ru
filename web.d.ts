@@ -6,6 +6,7 @@ declare class $ extends _$_ {
 declare namespace $ {
     export type $ = typeof $$;
     export class $$ extends $ {
+        static $: $;
     }
     namespace $$ {
         type $$ = $;
@@ -320,6 +321,10 @@ declare namespace $ {
 
 declare namespace $ {
     function $mol_fail_catch(error: unknown): boolean;
+}
+
+declare namespace $ {
+    function $mol_try<Result>(handler2: () => Result): Result | Error;
 }
 
 declare namespace $ {
@@ -677,6 +682,7 @@ declare namespace $ {
         prefix(): string;
         postfix(): string;
         static linear_gradient<Value>(value: Value): $mol_style_func<"linear-gradient", Value>;
+        static radial_gradient<Value>(value: Value): $mol_style_func<"radial-gradient", Value>;
         static calc<Value>(value: Value): $mol_style_func<"calc", Value>;
         static vary<Name extends string, Value extends string>(name: Name, defaultValue?: Value): $mol_style_func<"var", Name | (Name | Value)[]>;
         static url<Href extends string>(href: Href): $mol_style_func<"url", string>;
@@ -3293,11 +3299,11 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_base64_encode(src: string | Uint8Array): string;
+    function $mol_base64_encode(src: string | Uint8Array<ArrayBuffer>): string;
 }
 
 declare namespace $ {
-    function $mol_base64_encode_web(str: string | Uint8Array): string;
+    function $mol_base64_encode_web(str: string | Uint8Array<ArrayBuffer>): string;
 }
 
 declare namespace $ {
@@ -3309,7 +3315,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_base64_url_encode(buffer: Uint8Array): string;
+    function $mol_base64_url_encode(buffer: Uint8Array<ArrayBuffer>): string;
     function $mol_base64_url_decode(str: string): Uint8Array<ArrayBuffer>;
 }
 
@@ -3327,9 +3333,9 @@ declare namespace $ {
         constructor(native: CryptoKey & {
             type: 'public';
         });
-        static from(serial: string | Uint8Array): Promise<$mol_crypto_auditor_public>;
+        static from(serial: string | Uint8Array<ArrayBuffer>): Promise<$mol_crypto_auditor_public>;
         serial(): Promise<string>;
-        toArray(): Promise<Uint8Array>;
+        toArray(): Promise<Uint8Array<ArrayBuffer>>;
         verify(data: BufferSource, sign: BufferSource): Promise<boolean>;
     }
     class $mol_crypto_auditor_private extends Object {
@@ -3341,9 +3347,9 @@ declare namespace $ {
         constructor(native: CryptoKey & {
             type: 'private';
         });
-        static from(serial: string | Uint8Array): Promise<$mol_crypto_auditor_private>;
+        static from(serial: string | Uint8Array<ArrayBuffer>): Promise<$mol_crypto_auditor_private>;
         serial(): Promise<string>;
-        toArray(): Promise<Uint8Array>;
+        toArray(): Promise<Uint8Array<ArrayBuffer>>;
         sign(data: BufferSource): Promise<ArrayBuffer>;
         public(): Promise<$mol_crypto_auditor_public>;
     }
@@ -6594,10 +6600,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_try<Result>(handler2: () => Result): Result | Error;
-}
-
-declare namespace $ {
 
 	type $mol_button_minor__hint_mol_date_1 = $mol_type_enforce<
 		string
@@ -8366,7 +8368,7 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_base64_ae_encode(buffer: Uint8Array): string;
+    function $mol_base64_ae_encode(buffer: Uint8Array<ArrayBuffer>): string;
     function $mol_base64_ae_decode(str: string): Uint8Array<ArrayBuffer>;
 }
 
@@ -10813,7 +10815,7 @@ declare namespace $ {
     function $mol_assert_not(value: any): void;
     function $mol_assert_fail(handler: () => any, ErrorRight: string | typeof Error | typeof Promise): any;
     function $mol_assert_like<Value>(...args: [Value, Value, ...Value[]]): void;
-    function $mol_assert_unique(...args: [any, any, ...any[]]): void;
+    function $mol_assert_unique(...args: [any, any, ...any[]]): undefined;
     function $mol_assert_equal<Value>(...args: Value[]): undefined;
 }
 
@@ -13708,8 +13710,8 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_leb128_encode(val: number): Uint8Array;
-    function $mol_leb128_decode(bytes: Uint8Array): number;
+    function $mol_leb128_encode(val: number): Uint8Array<ArrayBuffer>;
+    function $mol_leb128_decode(bytes: Uint8Array<ArrayBuffer>): number;
 }
 
 declare namespace $ {
@@ -14385,7 +14387,7 @@ declare namespace $.$$ {
         source_tree(next?: $mol_tree2): $mol_tree2;
         transform(index: number, next?: string): string;
         transform_options(): string[];
-        result(index: number): string | $mol_tree2 | Uint8Array | $mol_wasm_module;
+        result(index: number): string | $mol_tree2 | Uint8Array<ArrayBuffer> | $mol_wasm_module;
         result_text(): string;
     }
 }
