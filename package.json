@@ -236,6 +236,7 @@
     "$mol_avatar",
     "$mol_hash_string",
     "$mol_hash",
+    "$mol_hash_numbers",
     "$hyoo_page_side_menu",
     "$hyoo_meta_menu",
     "$mol_icon_magnify",
