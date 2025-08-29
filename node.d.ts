@@ -20379,7 +20379,7 @@ declare namespace $ {
 
 //# sourceMappingURL=demo.view.tree.d.ts.map
 declare namespace $ {
-    function $mol_data_const<Val>(ref: Val): ((val: Val) => Val) & {
+    function $mol_data_const<const Val>(ref: Val): ((val: Val) => Val) & {
         config: Val;
         Value: Val;
     };
