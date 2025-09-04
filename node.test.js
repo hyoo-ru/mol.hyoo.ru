@@ -4433,7 +4433,7 @@ var $;
             return node;
         }
         auto() {
-            return null;
+            return [];
         }
         render() {
             const node = this.dom_node_actual();
@@ -21218,7 +21218,7 @@ var $;
 			return [(this.Theme())];
 		}
 		auto(){
-			return [(this.ref_track())];
+			return [...(super.auto()), (this.ref_track())];
 		}
 		pages(){
 			return [
