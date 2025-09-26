@@ -18089,6 +18089,77 @@ var $;
 })($ || ($ = {}));
 
 ;
+	($.$mol_button_major) = class $mol_button_major extends ($.$mol_button_minor) {
+		theme(){
+			return "$mol_theme_base";
+		}
+	};
+
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/button/major/major.view.css", "[mol_button_major] {\n\tbackground-color: var(--mol_theme_back);\n\tcolor: var(--mol_theme_text);\n}\n");
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+	($.$mol_status) = class $mol_status extends ($.$mol_view) {
+		message(){
+			return "";
+		}
+		status(){
+			return (this.title());
+		}
+		minimal_height(){
+			return 24;
+		}
+		minimal_width(){
+			return 0;
+		}
+		sub(){
+			return [(this.message())];
+		}
+	};
+
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    var $$;
+    (function ($$) {
+        class $mol_status extends $.$mol_status {
+            message() {
+                try {
+                    return this.status() ?? null;
+                }
+                catch (error) {
+                    if (error instanceof Promise)
+                        $mol_fail_hidden(error);
+                    $mol_fail_log(error);
+                    return error.message;
+                }
+            }
+        }
+        $$.$mol_status = $mol_status;
+    })($$ = $.$$ || ($.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_style_attach("mol/status/status.view.css", "[mol_status] {\n\tpadding: var(--mol_gap_text);\n\tborder-radius: var(--mol_gap_round);\n\tdisplay: block;\n}\n\n[mol_status]:not([mol_view_error=\"Promise\"]) {\n\tcolor: var(--mol_theme_focus);\n}\n\n[mol_status]:not([mol_view_error=\"Promise\"]):empty {\n\tdisplay: none;\n}\n");
+})($ || ($ = {}));
+
+;
 	($.$mol_row) = class $mol_row extends ($.$mol_view) {};
 
 
@@ -18119,8 +18190,34 @@ var $;
 			(obj.sub) = () => ((this.body()));
 			return obj;
 		}
+		submit_title(){
+			return (this.$.$mol_locale.text("$mol_form_submit_title"));
+		}
+		submit_hint(){
+			return "";
+		}
+		submit(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Submit(){
+			const obj = new this.$.$mol_button_major();
+			(obj.title) = () => ((this.submit_title()));
+			(obj.hint) = () => ((this.submit_hint()));
+			(obj.click) = (next) => ((this.submit(next)));
+			return obj;
+		}
+		result(next){
+			if(next !== undefined) return next;
+			return null;
+		}
+		Result(){
+			const obj = new this.$.$mol_status();
+			(obj.message) = () => ((this.result()));
+			return obj;
+		}
 		buttons(){
-			return [];
+			return [(this.Submit()), (this.Result())];
 		}
 		foot(){
 			return (this.buttons());
@@ -18139,9 +18236,15 @@ var $;
 		event(){
 			return {...(super.event()), "keydown": (next) => (this.keydown(next))};
 		}
-		submit(next){
+		save(next){
 			if(next !== undefined) return next;
 			return null;
+		}
+		message_done(){
+			return (this.$.$mol_locale.text("$mol_form_message_done"));
+		}
+		message_invalid(){
+			return (this.$.$mol_locale.text("$mol_form_message_invalid"));
 		}
 		rows(){
 			return [(this.Body()), (this.Foot())];
@@ -18149,8 +18252,12 @@ var $;
 	};
 	($mol_mem(($.$mol_form.prototype), "keydown"));
 	($mol_mem(($.$mol_form.prototype), "Body"));
-	($mol_mem(($.$mol_form.prototype), "Foot"));
 	($mol_mem(($.$mol_form.prototype), "submit"));
+	($mol_mem(($.$mol_form.prototype), "Submit"));
+	($mol_mem(($.$mol_form.prototype), "result"));
+	($mol_mem(($.$mol_form.prototype), "Result"));
+	($mol_mem(($.$mol_form.prototype), "Foot"));
+	($mol_mem(($.$mol_form.prototype), "save"));
 
 
 ;
@@ -18177,6 +18284,34 @@ var $;
                 if (next.ctrlKey && next.keyCode === $mol_keyboard_code.enter && !this.submit_blocked())
                     this.submit(next);
             }
+            result(next) {
+                if (next instanceof Error)
+                    next = next.message || this.message_invalid();
+                return next ?? '';
+            }
+            buttons() {
+                return [
+                    this.Submit(),
+                    ...this.result() ? [this.Result()] : [],
+                ];
+            }
+            submit(next) {
+                try {
+                    if (!this.submit_allowed()) {
+                        throw new Error(this.message_invalid());
+                    }
+                    this.save(next);
+                }
+                catch (e) {
+                    if ($mol_promise_like(e))
+                        $mol_fail_hidden(e);
+                    $mol_fail_log(e);
+                    this.result(e);
+                    return false;
+                }
+                this.result(this.message_done());
+                return true;
+            }
         }
         __decorate([
             $mol_mem
@@ -18184,6 +18319,15 @@ var $;
         __decorate([
             $mol_mem
         ], $mol_form.prototype, "submit_allowed", null);
+        __decorate([
+            $mol_mem
+        ], $mol_form.prototype, "result", null);
+        __decorate([
+            $mol_mem
+        ], $mol_form.prototype, "buttons", null);
+        __decorate([
+            $mol_action
+        ], $mol_form.prototype, "submit", null);
         $$.$mol_form = $mol_form;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
@@ -19249,24 +19393,6 @@ var $;
     }
     $.$hyoo_meta_person = $hyoo_meta_person;
 })($ || ($ = {}));
-
-;
-	($.$mol_button_major) = class $mol_button_major extends ($.$mol_button_minor) {
-		theme(){
-			return "$mol_theme_base";
-		}
-	};
-
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/button/major/major.view.css", "[mol_button_major] {\n\tbackground-color: var(--mol_theme_back);\n\tcolor: var(--mol_theme_text);\n}\n");
-})($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$hyoo_meta_rights) = class $hyoo_meta_rights extends ($.$mol_page) {
@@ -23038,59 +23164,6 @@ var $;
         ], $mol_app_demo_readme.prototype, "body", null);
         $$.$mol_app_demo_readme = $mol_app_demo_readme;
     })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-	($.$mol_status) = class $mol_status extends ($.$mol_view) {
-		message(){
-			return "";
-		}
-		status(){
-			return (this.title());
-		}
-		minimal_height(){
-			return 24;
-		}
-		minimal_width(){
-			return 0;
-		}
-		sub(){
-			return [(this.message())];
-		}
-	};
-
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    var $$;
-    (function ($$) {
-        class $mol_status extends $.$mol_status {
-            message() {
-                try {
-                    return this.status() ?? null;
-                }
-                catch (error) {
-                    if (error instanceof Promise)
-                        $mol_fail_hidden(error);
-                    $mol_fail_log(error);
-                    return error.message;
-                }
-            }
-        }
-        $$.$mol_status = $mol_status;
-    })($$ = $.$$ || ($.$$ = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_style_attach("mol/status/status.view.css", "[mol_status] {\n\tpadding: var(--mol_gap_text);\n\tborder-radius: var(--mol_gap_round);\n\tdisplay: block;\n}\n\n[mol_status]:not([mol_view_error=\"Promise\"]) {\n\tcolor: var(--mol_theme_focus);\n}\n\n[mol_status]:not([mol_view_error=\"Promise\"]):empty {\n\tdisplay: none;\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -43133,19 +43206,6 @@ var $;
 
 ;
 	($.$mol_form_draft) = class $mol_form_draft extends ($.$mol_form) {
-		submit_title(){
-			return (this.$.$mol_locale.text("$mol_form_draft_submit_title"));
-		}
-		submit_hint(){
-			return "";
-		}
-		Submit(){
-			const obj = new this.$.$mol_button_major();
-			(obj.title) = () => ((this.submit_title()));
-			(obj.hint) = () => ((this.submit_hint()));
-			(obj.click) = (next) => ((this.submit(next)));
-			return obj;
-		}
 		reset_title(){
 			return (this.$.$mol_locale.text("$mol_form_draft_reset_title"));
 		}
@@ -43158,15 +43218,6 @@ var $;
 			(obj.hint) = () => ((this.reset_title()));
 			(obj.sub) = () => ([(this.Reset_icon())]);
 			(obj.click) = (next) => ((this.reset(next)));
-			return obj;
-		}
-		result(next){
-			if(next !== undefined) return next;
-			return "";
-		}
-		Result(){
-			const obj = new this.$.$mol_status();
-			(obj.message) = () => ((this.result()));
 			return obj;
 		}
 		model(){
@@ -43210,25 +43261,16 @@ var $;
 			if(next !== undefined) return next;
 			return null;
 		}
-		message_done(){
-			return (this.$.$mol_locale.text("$mol_form_draft_message_done"));
-		}
-		message_invalid(){
-			return (this.$.$mol_locale.text("$mol_form_draft_message_invalid"));
+		done(next){
+			if(next !== undefined) return next;
+			return null;
 		}
 		buttons(){
-			return [
-				(this.Submit()), 
-				(this.Reset()), 
-				(this.Result())
-			];
+			return [(this.Submit()), (this.Reset())];
 		}
 	};
-	($mol_mem(($.$mol_form_draft.prototype), "Submit"));
 	($mol_mem(($.$mol_form_draft.prototype), "Reset_icon"));
 	($mol_mem(($.$mol_form_draft.prototype), "Reset"));
-	($mol_mem(($.$mol_form_draft.prototype), "result"));
-	($mol_mem(($.$mol_form_draft.prototype), "Result"));
 	($mol_mem(($.$mol_form_draft.prototype), "model"));
 	($mol_mem_key(($.$mol_form_draft.prototype), "value"));
 	($mol_mem_key(($.$mol_form_draft.prototype), "value_str"));
@@ -43237,6 +43279,7 @@ var $;
 	($mol_mem_key(($.$mol_form_draft.prototype), "dictionary_bool"));
 	($mol_mem_key(($.$mol_form_draft.prototype), "list_string"));
 	($mol_mem(($.$mol_form_draft.prototype), "reset"));
+	($mol_mem(($.$mol_form_draft.prototype), "done"));
 
 
 ;
@@ -43336,7 +43379,7 @@ var $;
                     ...this.result() ? [this.Result()] : [],
                 ];
             }
-            submit(next) {
+            save(next) {
                 const tasks = Object.entries(this.state()).map(([field, next]) => () => {
                     const prev = this.model_pick(field);
                     return {
@@ -43344,23 +43387,11 @@ var $;
                         next: normalize_val(prev, next)
                     };
                 });
-                try {
-                    if (!this.submit_allowed()) {
-                        throw new Error(this.message_invalid());
-                    }
-                    const normalized = $mol_wire_race(...tasks);
-                    $mol_wire_race(...normalized.map(({ field, next }) => () => this.model_pick(field, next)));
-                }
-                catch (e) {
-                    if ($mol_promise_like(e))
-                        $mol_fail_hidden(e);
-                    $mol_fail_log(e);
-                    this.result(e);
-                    return false;
-                }
+                const normalized = $mol_wire_race(...tasks);
+                $mol_wire_race(...normalized.map(({ field, next }) => () => this.model_pick(field, next)));
                 this.reset();
-                this.result(this.message_done());
-                return true;
+                this.done(next);
+                return null;
             }
         }
         __decorate([
@@ -43398,7 +43429,7 @@ var $;
         ], $mol_form_draft.prototype, "buttons", null);
         __decorate([
             $mol_action
-        ], $mol_form_draft.prototype, "submit", null);
+        ], $mol_form_draft.prototype, "save", null);
         $$.$mol_form_draft = $mol_form_draft;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
