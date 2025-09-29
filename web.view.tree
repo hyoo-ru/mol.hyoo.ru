@@ -4024,9 +4024,10 @@ $mol_avatar_demo $mol_example_small
 		\Algorithm/Hash
 
 $mol_email $mol_string
-	type \email
+	type \text
 	keyboard \email
 	hint \E-mail
+
 
 $mol_bar_demo $mol_example_small
 	title \Group of controls as one control
