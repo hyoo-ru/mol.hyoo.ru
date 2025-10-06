@@ -28829,15 +28829,30 @@ var $;
             '<=': bind => [call_of.call(this, bind, false)],
             '<=>': bind => [call_of.call(this, bind, true)],
             '=>': bind => [],
-            '^': (ref) => [
+            '^': (ref, belt, context) => [
                 ref.struct('...', [
-                    ref.struct('()', [
-                        ref.struct(ref.kids[0]?.type ? 'this' : 'super'),
-                        ref.struct('[]', [
-                            ref.data(ref.kids[0]?.type ? name_of.call(this, ref.kids[0]) : name),
-                        ]),
-                        ref.kids[0]?.type ? args_of.call(this, ref.kids[0]) : ref.struct('(,)')
-                    ]),
+                    ref.kids[0]?.type
+                        ? ref.struct('()', [
+                            ref.struct('this'),
+                            ref.struct('[]', [ref.data(name_of.call(this, ref.kids[0]))]),
+                            args_of.call(this, ref.kids[0])
+                        ])
+                        : context.chain
+                            ? ref.struct('()', [
+                                ref.struct('this'),
+                                ref.struct('[]', [ref.data('$')]),
+                                ref.struct('[]', [ref.data(op.type)]),
+                                ref.struct('[]', [ref.data('prototype')]),
+                                ref.struct('[]', [ref.data(context.chain[0])]),
+                                ref.struct('[]', [ref.data('call')]),
+                                ref.struct('(,)', [ref.struct('obj')]),
+                                ...context.chain.slice(1).map(field => ref.struct('[]', [ref.data(field)]))
+                            ])
+                            : ref.struct('()', [
+                                ref.struct('super'),
+                                ref.struct('[]', [ref.data(name)]),
+                                ref.struct('(,)')
+                            ]),
                 ]),
             ],
             '=': bind => [bind.struct('()', [
@@ -28853,7 +28868,7 @@ var $;
                     return [
                         input.struct('{,}', input.kids.map(field => {
                             if (field.type === '^')
-                                return field.list([field]).hack(belt)[0];
+                                return field.list([field]).hack(belt, context)[0];
                             const field_name = (field.type || field.value).replace(/\?\w*$/, '');
                             return field.struct(':', [
                                 field.data(field_name),
@@ -28869,7 +28884,7 @@ var $;
                 }
                 if (input.type[0] === '/')
                     return [
-                        input.struct('[,]', input.hack(belt)),
+                        input.struct('[,]', input.hack(belt, context)),
                     ];
                 if (input.type && $mol_tree2_js_is_number(input.type))
                     return [

@@ -28918,15 +28918,30 @@ var $;
             '<=': bind => [call_of.call(this, bind, false)],
             '<=>': bind => [call_of.call(this, bind, true)],
             '=>': bind => [],
-            '^': (ref) => [
+            '^': (ref, belt, context) => [
                 ref.struct('...', [
-                    ref.struct('()', [
-                        ref.struct(ref.kids[0]?.type ? 'this' : 'super'),
-                        ref.struct('[]', [
-                            ref.data(ref.kids[0]?.type ? name_of.call(this, ref.kids[0]) : name),
-                        ]),
-                        ref.kids[0]?.type ? args_of.call(this, ref.kids[0]) : ref.struct('(,)')
-                    ]),
+                    ref.kids[0]?.type
+                        ? ref.struct('()', [
+                            ref.struct('this'),
+                            ref.struct('[]', [ref.data(name_of.call(this, ref.kids[0]))]),
+                            args_of.call(this, ref.kids[0])
+                        ])
+                        : context.chain
+                            ? ref.struct('()', [
+                                ref.struct('this'),
+                                ref.struct('[]', [ref.data('$')]),
+                                ref.struct('[]', [ref.data(op.type)]),
+                                ref.struct('[]', [ref.data('prototype')]),
+                                ref.struct('[]', [ref.data(context.chain[0])]),
+                                ref.struct('[]', [ref.data('call')]),
+                                ref.struct('(,)', [ref.struct('obj')]),
+                                ...context.chain.slice(1).map(field => ref.struct('[]', [ref.data(field)]))
+                            ])
+                            : ref.struct('()', [
+                                ref.struct('super'),
+                                ref.struct('[]', [ref.data(name)]),
+                                ref.struct('(,)')
+                            ]),
                 ]),
             ],
             '=': bind => [bind.struct('()', [
@@ -28942,7 +28957,7 @@ var $;
                     return [
                         input.struct('{,}', input.kids.map(field => {
                             if (field.type === '^')
-                                return field.list([field]).hack(belt)[0];
+                                return field.list([field]).hack(belt, context)[0];
                             const field_name = (field.type || field.value).replace(/\?\w*$/, '');
                             return field.struct(':', [
                                 field.data(field_name),
@@ -28958,7 +28973,7 @@ var $;
                 }
                 if (input.type[0] === '/')
                     return [
-                        input.struct('[,]', input.hack(belt)),
+                        input.struct('[,]', input.hack(belt, context)),
                     ];
                 if (input.type && $mol_tree2_js_is_number(input.type))
                     return [
@@ -59964,6 +59979,29 @@ var $;
 
 
 ;
+	($.$mol_view_tree2_to_js_test_ex_simple_factory_inheritance_bar) = class $mol_view_tree2_to_js_test_ex_simple_factory_inheritance_bar extends ($.$mol_object) {
+		config(){
+			return {"ips": ["127.0.0.1"]};
+		}
+	};
+	($.$mol_view_tree2_to_js_test_ex_simple_factory_inheritance_foo) = class $mol_view_tree2_to_js_test_ex_simple_factory_inheritance_foo extends ($.$mol_object) {
+		addon(){
+			return ["1.1.1.1"];
+		}
+		Having(){
+			const obj = new this.$.$mol_view_tree2_to_js_test_ex_simple_factory_inheritance_bar();
+			(obj.config) = () => ({"ips": [
+				...(this.$.$mol_view_tree2_to_js_test_ex_simple_factory_inheritance_bar.prototype.config.call(obj).ips), 
+				"0.0.0.0", 
+				...(this.addon())
+			]});
+			return obj;
+		}
+	};
+	($mol_mem(($.$mol_view_tree2_to_js_test_ex_simple_factory_inheritance_foo.prototype), "Having"));
+
+
+;
 	($.$mol_view_tree2_to_js_test_ex_structural_with_inheritance_foo) = class $mol_view_tree2_to_js_test_ex_structural_with_inheritance_foo extends ($.$mol_object) {
 		field(){
 			return {"xxx": 123, "xxy": "test"};
@@ -60205,6 +60243,9 @@ var $;
     ], $mol_view_tree2_to_js_test_ex_right_hierarchy_bar.prototype, "domain", null);
     $.$mol_view_tree2_to_js_test_ex_right_hierarchy_bar = $mol_view_tree2_to_js_test_ex_right_hierarchy_bar;
 })($ || ($ = {}));
+
+;
+"use strict";
 
 ;
 "use strict";
@@ -60595,6 +60636,11 @@ sub
             $mol_assert_equal(foo.button().loc(), `$mol_view_tree2_to_js_test_ex_simple_factory_props_foo_button_loc`);
             $mol_assert_equal(foo.button().deep().loc, `$mol_view_tree2_to_js_test_ex_simple_factory_props_foo_button_deep_loc`);
             $mol_assert_equal(foo.button().sub()[0], 1);
+        },
+        'simple factory inheritance'($) {
+            const _foo = $mol_view_tree2_to_js_test_ex_simple_factory_inheritance_foo;
+            const foo = _foo.make({ $ });
+            $mol_assert_equal(foo.Having().config(), { ips: ['127.0.0.1', '0.0.0.0', '1.1.1.1'] });
         },
         'simple nan'($) {
             const _foo = $mol_view_tree2_to_js_test_ex_simple_nan_foo;
