@@ -143,6 +143,13 @@
 \/hyoo/tree/app
 	include \/mol/offline/install
 	include \/mol/import
+\/rise/demo
+	include \/rise/drag/demo
+	include \/rise/resize/demo
+	include \/rise/resize/ratio/demo
+	include \/rise/toggle/demo
+	include \/rise/range/demo
+	include \/rise/radio/demo
 \/hyoo/crowd/app
 	deploy \/hyoo/crowd/logo/logo.svg
 \/mol/app/quine
@@ -166,6 +173,7 @@
 	include \/mol/offline/install
 	include \/mol/app/demo
 	include \/jin/keyboard/demo
+	include \/rise/demo
 	include \/hyoo/crowd/text/demo
 	include \/mol/app/hello/demo
 	include \/mol/app/questions/demo
