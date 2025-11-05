@@ -393,6 +393,8 @@
     "$mol_example_large",
     "$mol_app_demo_readme",
     "$mol_fetch",
+    "$mol_rest_code",
+    "$mol_rest",
     "$mol_dom_parse",
     "$mol_func_is_class",
     "$mol_func_is",
