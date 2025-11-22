@@ -45727,8 +45727,9 @@ var $;
 		changed(){
 			return false;
 		}
-		state(){
-			return {};
+		state(next){
+			if(next !== undefined) return next;
+			return null;
 		}
 		state_pick(id, next){
 			if(next !== undefined) return next;
@@ -45777,6 +45778,7 @@ var $;
 	($mol_mem(($.$mol_form_draft.prototype), "Reset"));
 	($mol_mem(($.$mol_form_draft.prototype), "model"));
 	($mol_mem_key(($.$mol_form_draft.prototype), "model_pick"));
+	($mol_mem(($.$mol_form_draft.prototype), "state"));
 	($mol_mem_key(($.$mol_form_draft.prototype), "state_pick"));
 	($mol_mem_key(($.$mol_form_draft.prototype), "value"));
 	($mol_mem_key(($.$mol_form_draft.prototype), "value_str"));
@@ -45787,6 +45789,9 @@ var $;
 	($mol_mem(($.$mol_form_draft.prototype), "reset"));
 	($mol_mem(($.$mol_form_draft.prototype), "done"));
 
+
+;
+"use strict";
 
 ;
 "use strict";
