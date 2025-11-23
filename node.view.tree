@@ -1959,6 +1959,10 @@ $hyoo_apps $mol_book2
 			target \develop
 			title @ \RDF Browser
 			uri \http://rdf.hyoo.ru/
+		gymload *
+			target \release
+			title @ \Gymload
+			uri \https://gymload.github.io/
 
 $mol_tag_tree $mol_list
 	path /string

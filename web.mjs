@@ -21950,6 +21950,11 @@ var $;
 					"target": "develop", 
 					"title": (this.$.$mol_locale.text("$hyoo_apps_apps_rdf_title")), 
 					"uri": "http://rdf.hyoo.ru/"
+				}, 
+				"gymload": {
+					"target": "release", 
+					"title": (this.$.$mol_locale.text("$hyoo_apps_apps_gymload_title")), 
+					"uri": "https://gymload.github.io/"
 				}
 			};
 		}
