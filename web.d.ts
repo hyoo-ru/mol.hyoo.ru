@@ -4561,7 +4561,9 @@ declare namespace $ {
 declare namespace $ {
 }
 
-declare let $hyoo_sync_revision: string;
+declare namespace $ {
+    let $hyoo_sync_revision: string;
+}
 
 declare namespace $ {
     function $hyoo_sync_peer(path: string, next?: string): Promise<$hyoo_crowd_peer>;
