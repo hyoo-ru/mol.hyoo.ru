@@ -28455,6 +28455,7 @@ declare namespace $ {
 declare namespace $.$$ {
     class $mol_textarea_demo extends $.$mol_textarea_demo {
         symbols_hint(): string;
+        filled_descr(next?: string): string;
     }
 }
 
