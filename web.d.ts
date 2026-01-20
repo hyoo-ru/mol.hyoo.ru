@@ -13794,6 +13794,10 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
+    function $mol_array_chunks<Item>(array: readonly Item[], rule: number | ((item: Item, index: number) => boolean)): Item[][];
+}
+
+declare namespace $ {
     function $mol_tree2_from_json(json: any, span?: $mol_span): $mol_tree2;
 }
 
@@ -16778,10 +16782,6 @@ declare namespace $ {
 }
 
 //# sourceMappingURL=demo.view.tree.d.ts.map
-declare namespace $ {
-    function $mol_array_chunks<Item>(array: readonly Item[], rule: number | ((item: Item, index: number) => boolean)): Item[][];
-}
-
 declare namespace $ {
 }
 
