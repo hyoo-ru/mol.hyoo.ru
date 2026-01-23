@@ -45064,6 +45064,7 @@ var $;
 			const obj = new this.$.$mol_button_copy();
 			(obj.title) = () => ((this.group_title(id)));
 			(obj.text) = () => ((this.group_emoji_text(id)));
+			(obj.hint) = () => ("Copy all");
 			(obj.Icon) = () => (null);
 			return obj;
 		}
