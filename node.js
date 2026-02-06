@@ -25012,7 +25012,7 @@ var $;
         finally {
             $.$mol_fail = fail;
         }
-        $mol_fail(new Error('Not failed'));
+        $mol_fail(new Error('Not failed', { cause: { expect: ErrorRight } }));
     }
     $.$mol_assert_fail = $mol_assert_fail;
     function $mol_assert_like(...args) {
@@ -31303,7 +31303,7 @@ var $;
             const parent = this.$mol_view_tree2_child(klass);
             const props = this.$mol_view_tree2_class_props(klass);
             const aliases = [];
-            const context = { objects: [] };
+            const context = { klass: parent, prop: null };
             const klass_name = klass.type.slice(1);
             types.push(klass.struct('line', [
                 klass.data('export class '),
@@ -31325,9 +31325,9 @@ var $;
                     '<=>': (input) => return_type.call(this, klass.data(klass.type), this.$mol_view_tree2_child(input)),
                     '<=': (input) => return_type.call(this, klass.data(klass.type), this.$mol_view_tree2_child(input)),
                     '=>': () => [],
-                    '^': (input) => {
-                        const host = input.kids.length ? klass : parent;
-                        return return_type.call(this, host.data(host.type), input.kids.length ? input.kids[0] : prop);
+                    '^': (input, belt, context) => {
+                        const host = input.kids.length ? klass : context.klass;
+                        return return_type.call(this, host.data(host.type), input.kids.length ? input.kids[0] : (context.prop ?? prop));
                     },
                     '=': (input) => {
                         const left = input.kids[0];
@@ -31446,7 +31446,7 @@ var $;
                                     const bind = this.$mol_view_tree2_child(over);
                                     if (bind.type === '=>')
                                         continue;
-                                    types.push(type_enforce.call(this, over.data(`${input.type}__${name.value}_${klass_name}_${++assert_count}`), over.hack(belt), return_type.call(this, input.data(input.type), over)));
+                                    types.push(type_enforce.call(this, over.data(`${input.type}__${name.value}_${klass_name}_${++assert_count}`), over.hack(belt, { ...context, klass: input, prop: over }), return_type.call(this, input.data(input.type), over)));
                                 }
                             return [
                                 input.data(input.type),
