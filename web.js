@@ -53125,25 +53125,13 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    class $mol_spell_morphs extends Set {
-        max = 0;
-        constructor(items = []) {
-            super(items);
-            for (const item of items) {
-                if (item.length <= this.max)
-                    continue;
-                this.max = item.length;
-            }
-        }
-    }
-    $.$mol_spell_morphs = $mol_spell_morphs;
     class $mol_spell extends Object {
         head;
         prefix;
         root;
         postfix;
         foot;
-        constructor(head = new $mol_spell_morphs, prefix = new $mol_spell_morphs, root = new $mol_spell_morphs, postfix = new $mol_spell_morphs, foot = new $mol_spell_morphs) {
+        constructor(head = new Set, prefix = new Set, root = new Set, postfix = new Set, foot = new Set) {
             super();
             this.head = head;
             this.prefix = prefix;
@@ -53304,7 +53292,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $.$mol_spell_ru = new $mol_spell(undefined, new $mol_spell_morphs([
+    $.$mol_spell_ru = new $mol_spell(undefined, new Set([
         "противо",
         "внутри",
         "ультра",
@@ -53392,7 +53380,7 @@ var $;
         "о",
         "с",
         "у"
-    ]), new $mol_spell_morphs([
+    ]), new Set([
         "верноподданный",
         "заблаговременн",
         "конфиденциальн",
@@ -69937,7 +69925,7 @@ var $;
         "ёш",
         "ёж",
         "е",
-    ]), new $mol_spell_morphs([
+    ]), new Set([
         "енность",
         "ествова",
         "изирова",
@@ -70378,7 +70366,7 @@ var $;
         "ч",
         "ш",
         "ы"
-    ]), new $mol_spell_morphs([
+    ]), new Set([
         "ами",
         "еми",
         "емя",
@@ -70427,7 +70415,8 @@ var $;
         "и",
         "м",
         "о",
-        "у"
+        "у",
+        "й",
     ]));
 })($ || ($ = {}));
 
@@ -70462,7 +70451,7 @@ var $;
                 return wrong.join('\n');
             }
             segments() {
-                return this.words().map(word => $mol_spell_ru.split(word).join('-')).join(' ');
+                return this.words().map(word => $mol_spell_any.split(word).join('-')).join(' ');
             }
         }
         __decorate([
