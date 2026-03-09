@@ -362,6 +362,8 @@
     "$mol_base64_ae",
     "$mol_base64_encode",
     "$mol_crypto_salt",
+    "$mol_crypto2_nonce",
+    "$mol_crypto2",
     "$mol_crypto_restack",
     "$mol_wait_rest",
     "$mol_after_work",

@@ -8646,8 +8646,11 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_crypto_salt(): Uint8Array<ArrayBuffer>;
-    const $mol_crypto_salt_once: Uint8Array<ArrayBuffer>;
+    function $mol_crypto2_nonce(): Uint8Array<ArrayBuffer>;
+}
+
+declare namespace $ {
+    let $mol_crypto_salt: typeof $mol_crypto2_nonce;
 }
 
 declare namespace $ {
