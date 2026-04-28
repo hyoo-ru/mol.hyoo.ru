@@ -1943,7 +1943,7 @@ var $;
         handler = handler2;
         error = undefined;
         result = undefined;
-        window.dispatchEvent(new Event('$mol_try'));
+        self.dispatchEvent(new Event('$mol_try'));
         const error2 = error;
         const result2 = result;
         error = undefined;
@@ -26435,6 +26435,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($_1) {
     var $$;
@@ -26667,9 +26670,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/js/eval/eval.view.css", "[hyoo_js_eval_menu_page] {\n\tflex: 0 0 auto;\n}\n\n[hyoo_js_eval_code_page] {\n\tflex: 1 0 auto;\n}\n\n[hyoo_js_eval_code] {\n\tflex: 0 0 auto;\n}\n\n[hyoo_js_eval_result] {\n\tpadding: var(--mol_gap_text);\n}\n\n[hyoo_js_eval_result_page] {\n\tflex: 1 0 40rem;\n}\n\n[hyoo_js_eval_error_icon] {\n\tcolor: var(--mol_theme_focus);\n}\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$hyoo_js_perf_case_row) = class $hyoo_js_perf_case_row extends ($.$mol_view) {
@@ -33095,6 +33095,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -33144,9 +33147,6 @@ var $;
         $$.$rise_drag = $rise_drag;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$mol_card) = class $mol_card extends ($.$mol_list) {
@@ -33275,6 +33275,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -33290,9 +33293,6 @@ var $;
         $$.$rise_drag_view = $rise_drag_view;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$rise_drag_absolute) = class $rise_drag_absolute extends ($.$rise_drag_view) {
@@ -33331,6 +33331,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -33346,9 +33349,6 @@ var $;
         $$.$rise_drag_absolute = $rise_drag_absolute;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$rise_drag_demo) = class $rise_drag_demo extends ($.$mol_example_small) {
@@ -33715,6 +33715,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -33923,9 +33926,6 @@ var $;
         $$.$rise_resize = $rise_resize;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -34154,6 +34154,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -34194,9 +34197,6 @@ var $;
         $$.$rise_resize_demo = $rise_resize_demo;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -34381,6 +34381,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -34496,9 +34499,6 @@ var $;
         $$.$rise_resize_ratio = $rise_resize_ratio;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -34691,6 +34691,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -34731,9 +34734,6 @@ var $;
         $$.$rise_resize_ratio_demo = $rise_resize_ratio_demo;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -35002,6 +35002,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -35038,9 +35041,6 @@ var $;
         $$.$rise_range = $rise_range;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -35245,6 +35245,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -35260,9 +35263,6 @@ var $;
         $$.$rise_radio = $rise_radio;
     })($$ = $.$$ || ($.$$ = {}));
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 "use strict";
@@ -49891,6 +49891,9 @@ var $;
 
 ;
 "use strict";
+
+;
+"use strict";
 var $;
 (function ($) {
     var $$;
@@ -49925,9 +49928,6 @@ var $;
 (function ($) {
     $mol_style_attach("hyoo/harp/app/app.view.css", "[hyoo_harp_app_content] {\n\tpadding: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
-
-;
-"use strict";
 
 ;
 	($.$hyoo_harp_demo) = class $hyoo_harp_demo extends ($.$mol_example_large) {

@@ -19,10 +19,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $node_internal_check(name: string): boolean;
-}
-
-declare namespace $ {
     function $mol_promise_like(val: any): val is Promise<any>;
 }
 
@@ -45,15 +41,6 @@ declare namespace $ {
 declare namespace $ {
     function $mol_fail_log(error: unknown): boolean;
 }
-
-declare namespace $ {
-    function $node_autoinstall(this: typeof $, name: string): void;
-}
-
-interface $node {
-    [key: string]: any;
-}
-declare var $node: $node;
 
 declare namespace $ {
     function $mol_func_name(this: $, func: Function): string;
@@ -131,13 +118,6 @@ declare namespace $ {
     class $mol_object extends $mol_object2 {
         static make<This extends typeof $mol_object>(this: This, config: Partial<InstanceType<This>>): InstanceType<This>;
     }
-}
-
-declare namespace $ {
-    function $mol_env(): Record<string, string | undefined>;
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
@@ -412,37 +392,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_term_color {
-        static reset: (str: string) => string;
-        static bold: (str: string) => string;
-        static italic: (str: string) => string;
-        static underline: (str: string) => string;
-        static inverse: (str: string) => string;
-        static hidden: (str: string) => string;
-        static strike: (str: string) => string;
-        static gray: (str: string) => string;
-        static red: (str: string) => string;
-        static green: (str: string) => string;
-        static yellow: (str: string) => string;
-        static blue: (str: string) => string;
-        static magenta: (str: string) => string;
-        static cyan: (str: string) => string;
-        static Gray: (str: string) => string;
-        static Red: (str: string) => string;
-        static Green: (str: string) => string;
-        static Yellow: (str: string) => string;
-        static Blue: (str: string) => string;
-        static Magenta: (str: string) => string;
-        static Cyan: (str: string) => string;
-        static ansi(open: number, close: number): (str: string) => string;
-    }
-}
-
-declare namespace $ {
-    function $mol_log3_node_make(level: keyof Console, output: 'stdout' | 'stderr', type: string, color: (str: string) => string): (this: $, event: $mol_log3_event<{}>) => () => void;
-}
-
-declare namespace $ {
     class $mol_wire_task<Host, Args extends readonly unknown[], Result> extends $mol_wire_fiber<Host, Args, Result> {
         static getter<Host, Args extends readonly unknown[], Result>(task: (this: Host, ...args: Args) => Result): (host: Host, args: Args) => $mol_wire_task<Host, Args, Result>;
         get temp(): boolean;
@@ -461,44 +410,6 @@ declare namespace $ {
     };
     type ObjectOrFunctionResultAwaited<Some> = (Some extends (...args: any) => unknown ? FunctionResultAwaited<Some> : {}) & (Some extends Object ? MethodsResultAwaited<Some> & ConstructorResultAwaited<Some> : Some);
     export {};
-}
-
-declare namespace $ {
-    type $mol_run_error_context = {
-        pid?: number;
-        stdout: Buffer | string;
-        stderr: Buffer | string;
-    };
-    class $mol_run_error extends $mol_error_mix<{
-        timeout_kill?: boolean;
-        pid?: number;
-        signal?: NodeJS.Signals | null;
-        status?: number | null;
-        command: string;
-        dir: string;
-    }> {
-    }
-    const $mol_run_spawn: (...args: Parameters<(typeof $node)["child_process"]["spawn"]>) => import("node:child_process").ChildProcess;
-    const $mol_run_spawn_sync: (...args: Parameters<(typeof $node)["child_process"]["spawnSync"]>) => import("node:child_process").SpawnSyncReturns<string | NonSharedBuffer>;
-    type $mol_run_options = {
-        command: readonly string[] | string;
-        dir: string;
-        timeout?: number;
-        env?: Record<string, string | undefined>;
-    };
-    class $mol_run extends $mol_object {
-        static async_enabled(): boolean;
-        static spawn(options: $mol_run_options): import("node:child_process").SpawnSyncReturns<string | NonSharedBuffer> | $mol_run_error_context;
-        static spawn_async({ dir, sync, timeout, command, env }: $mol_run_options & {
-            sync?: boolean;
-        }): import("node:child_process").SpawnSyncReturns<string | NonSharedBuffer> | (Promise<$mol_run_error_context> & {
-            destructor: () => void;
-        });
-        static error_message(res?: $mol_run_error_context): string;
-    }
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
@@ -843,15 +754,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_window extends $mol_object {
-        static size(): {
-            width: number;
-            height: number;
-        };
-    }
-}
-
-declare namespace $ {
     function $mol_key<Value>(value: Value): string;
 }
 
@@ -862,13 +764,6 @@ declare namespace $ {
         id: any;
         constructor(delay: number, task: () => void);
         destructor(): void;
-    }
-}
-
-declare namespace $ {
-    class $mol_after_frame extends $mol_after_timeout {
-        task: () => void;
-        constructor(task: () => void);
     }
 }
 
@@ -1652,22 +1547,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    class $mol_file_transaction_node extends $mol_file_transaction {
-        protected descr(): number;
-        write({ buffer, offset, length, position }: {
-            buffer: ArrayBufferView | string | readonly ArrayBufferView[];
-            offset?: number | null;
-            length?: number | null;
-            position?: number | null;
-        }): number;
-        truncate(size: number): void;
-        read(): Uint8Array<ArrayBuffer>;
-        flush(): void;
-        close(): void;
-    }
-}
-
-declare namespace $ {
     class $mol_file_base extends $mol_object {
         static absolute<This extends typeof $mol_file_base>(this: This, path: string): InstanceType<This>;
         static relative<This extends typeof $mol_file_base>(this: This, path: string): InstanceType<This>;
@@ -1741,39 +1620,6 @@ declare namespace $ {
         ctime: Date;
     }
     class $mol_file extends $mol_file_base {
-    }
-}
-
-declare namespace $ {
-    function $mol_file_node_buffer_normalize(buf: Buffer<ArrayBuffer>): Uint8Array<ArrayBuffer>;
-    class $mol_file_node extends $mol_file {
-        static relative<This extends typeof $mol_file>(this: This, path: string): InstanceType<This>;
-        watcher(reset?: null): {
-            destructor(): void;
-        };
-        protected info(path: string): $mol_file_stat | null;
-        protected ensure(): null | undefined;
-        protected copy(to: string): void;
-        protected drop(): void;
-        protected read(): Uint8Array<ArrayBuffer>;
-        protected write(buffer: Uint8Array<ArrayBuffer>): undefined;
-        protected kids(): this[];
-        resolve(path: string): this;
-        relate(base?: $mol_file): string;
-        readable(opts: {
-            start?: number;
-            end?: number;
-        }): ReadableStream<Uint8Array<ArrayBuffer>>;
-        writable(opts?: {
-            start?: number;
-        }): WritableStream<Uint8Array<ArrayBuffer>>;
-    }
-}
-
-declare namespace $ {
-    class $mol_state_local_node<Value> extends $mol_state_local<Value> {
-        static dir(): $mol_file;
-        static value<Value>(key: string, next?: Value | null): Value | null;
     }
 }
 
@@ -2445,32 +2291,6 @@ declare namespace $.$$ {
 }
 
 declare namespace $ {
-}
-
-declare namespace $ {
-    class $mol_state_arg extends $mol_object {
-        prefix: string;
-        static prolog: string;
-        static separator: string;
-        static href(next?: string): string;
-        static href_normal(): string;
-        static dict(next?: {
-            [key: string]: string | null;
-        }): Readonly<{
-            [key: string]: string;
-        }>;
-        static value(key: string, next?: string | null): string | null;
-        static link(next: Record<string, string | null>): string;
-        static make_link(next: Record<string, string | null>): string;
-        static go(next: {
-            [key: string]: string | null;
-        }): void;
-        static commit(): void;
-        constructor(prefix?: string);
-        value(key: string, next?: string): string | null;
-        sub(postfix: string): $mol_state_arg;
-        link(next: Record<string, string | null>): string;
-    }
 }
 
 declare namespace $ {
@@ -3555,17 +3375,8 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    var $mol_crypto_native: Crypto;
-}
-
-declare namespace $ {
     function $mol_base64_url_encode(buffer: Uint8Array<ArrayBuffer>): string;
     function $mol_base64_url_decode(str: string): Uint8Array<ArrayBuffer>;
-}
-
-declare namespace $ {
-    function $mol_base64_url_encode_node(str: Uint8Array<ArrayBuffer>): string;
-    function $mol_base64_url_decode_node(str: string): Uint8Array<ArrayBuffer>;
 }
 
 declare namespace $ {
@@ -4668,10 +4479,6 @@ declare namespace $ {
 
 declare namespace $ {
     let $hyoo_sync_revision: string;
-}
-
-declare namespace $ {
-    function $hyoo_sync_peer(path: string, next?: string): Promise<$hyoo_crowd_peer>;
 }
 
 declare namespace $ {
@@ -8653,10 +8460,6 @@ declare namespace $ {
 }
 
 declare namespace $ {
-    function $mol_base64_decode_node(base64Str: string): Uint8Array<ArrayBuffer>;
-}
-
-declare namespace $ {
     function $mol_crypto2_hash(input: ArrayBufferView): Uint8Array<ArrayBuffer>;
 }
 
@@ -8666,10 +8469,6 @@ declare namespace $ {
 
 declare namespace $ {
     function $mol_base64_encode(src: Uint8Array<ArrayBuffer>): string;
-}
-
-declare namespace $ {
-    function $mol_base64_encode_node(str: Uint8Array<ArrayBuffer>): string;
 }
 
 declare namespace $ {
@@ -9210,9 +9009,6 @@ declare namespace $ {
         Key: IDBValidKey[];
         Doc: unknown;
     };
-}
-
-declare namespace $ {
 }
 
 declare namespace $ {
