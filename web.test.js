@@ -144,6 +144,8 @@ var $;
 
 ;
 "use strict";
+/** @jsx $mol_jsx */
+/** @jsxFrag $mol_jsx_frag */
 var $;
 (function ($) {
     $mol_test({
@@ -433,6 +435,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
+    /// @todo right orderinng
     $.$mol_after_mock_queue = [];
     function $mol_after_mock_warp() {
         const queue = $.$mol_after_mock_queue.splice(0);
@@ -723,6 +726,7 @@ var $;
 
 ;
 "use strict";
+/** @jsx $mol_jsx */
 var $;
 (function ($) {
     $mol_test({
@@ -784,6 +788,7 @@ var $;
             const obj3_copy = { test: 3, obj2: obj2_copy };
             obj1.obj3 = obj3;
             obj1_copy.obj3 = obj3_copy;
+            // warmup cache
             $mol_assert_not($mol_compare_deep(obj1, {}));
             $mol_assert_not($mol_compare_deep(obj2, {}));
             $mol_assert_not($mol_compare_deep(obj3, {}));
@@ -1004,6 +1009,7 @@ var $;
 var $;
 (function ($_1) {
     $mol_test({
+        // https://github.com/nin-jin/slides/tree/master/reactivity#component-states
         'Cached channel'($) {
             class App extends $mol_object2 {
                 static $ = $;
@@ -1061,6 +1067,7 @@ var $;
             $mol_assert_equal(App.value(5), 21);
             $mol_assert_equal(App.value(), 21);
         },
+        // https://github.com/nin-jin/slides/tree/master/reactivity#wish-consistency
         'Auto recalculation of cached values'($) {
             class App extends $mol_object2 {
                 static $ = $;
@@ -1088,6 +1095,7 @@ var $;
             App.xxx(5);
             $mol_assert_equal(App.zzz(), 7);
         },
+        // https://github.com/nin-jin/slides/tree/master/reactivity#wish-reasonability
         'Skip recalculation when actually no dependency changes'($) {
             const log = [];
             class App extends $mol_object2 {
@@ -1121,6 +1129,7 @@ var $;
             App.zzz();
             $mol_assert_like(log, ['zzz', 'yyy', 'xxx', 'xxx', 'yyy']);
         },
+        // https://github.com/nin-jin/slides/tree/master/reactivity#flow-auto
         'Flow: Auto'($) {
             class App extends $mol_object2 {
                 static get $() { return $; }
@@ -1158,6 +1167,7 @@ var $;
             $mol_assert_equal(App.result(), 23);
             $mol_assert_equal(App.counter, 4);
         },
+        // https://github.com/nin-jin/slides/tree/master/reactivity#dupes-equality
         'Dupes: Equality'($) {
             let counter = 0;
             class App extends $mol_object2 {
@@ -1181,6 +1191,7 @@ var $;
             App.foo({ numbs: [2] });
             $mol_assert_like(App.bar(), { numbs: [2], count: 2 });
         },
+        // https://github.com/nin-jin/slides/tree/master/reactivity#cycle-fail
         'Cycle: Fail'($) {
             class App extends $mol_object2 {
                 static $ = $;
@@ -1205,6 +1216,29 @@ var $;
             ], App, "test", null);
             App.test();
         },
+        // https://github.com/nin-jin/slides/tree/master/reactivity#wish-stability
+        // 'Update deps on push'( $ ) {
+        // 	class App extends $mol_object2 {
+        // 		static $ = $
+        // 		@ $mol_wire_solo
+        // 		static left( next = false ) {
+        // 			return next
+        // 		}
+        // 		@ $mol_wire_solo
+        // 		static right( next = false ) {
+        // 			return next
+        // 		}
+        // 		@ $mol_wire_solo
+        // 		static res( next?: boolean ) {
+        // 			return this.left( next ) && this.right()
+        // 		}
+        // 	}
+        // 	$mol_assert_equal( App.res(), false )
+        // 	$mol_assert_equal( App.res( true ), false )
+        // 	$mol_assert_equal( App.right( true ), true )
+        // 	$mol_assert_equal( App.res(), true )
+        // } ,
+        // https://github.com/nin-jin/slides/tree/master/reactivity#wish-stability
         'Different order of pull and push'($) {
             class App extends $mol_object2 {
                 static $ = $;
@@ -1216,7 +1250,7 @@ var $;
                 }
                 static slow(next) {
                     if (next !== undefined)
-                        this.slow();
+                        this.slow(); // enforce pull before push
                     return this.store(next);
                 }
             }
@@ -1235,6 +1269,7 @@ var $;
             App.store(777);
             $mol_assert_equal(App.fast(), App.slow(), 777);
         },
+        // https://github.com/nin-jin/slides/tree/master/reactivity#wish-stability
         'Actions inside invariant'($) {
             class App extends $mol_object2 {
                 static $ = $;
@@ -1274,6 +1309,7 @@ var $;
                 static toggle() {
                     const prev = this.checked();
                     $mol_assert_unique(this.checked(!prev), prev);
+                    // $mol_assert_equal( this.checked() , prev )
                 }
                 static res() {
                     return this.checked();
@@ -1298,6 +1334,39 @@ var $;
             ], App, "test", null);
             await $mol_wire_async(App).test();
         },
+        // // https://github.com/nin-jin/slides/tree/master/reactivity#wish-stability
+        // 'Stable order of multiple root'( $ ) {
+        // 	class App extends $mol_object2 {
+        // 		static $ = $
+        // 		static counter = 0
+        // 		@ $mol_wire_solo
+        // 		static left_trigger( next = 0 ) {
+        // 			return next
+        // 		}
+        // 		@ $mol_wire_solo
+        // 		static left_root() {
+        // 			this.left_trigger()
+        // 			return ++ this.counter
+        // 		}
+        // 		@ $mol_wire_solo
+        // 		static right_trigger( next = 0 ) {
+        // 			return next
+        // 		}
+        // 		@ $mol_wire_solo
+        // 		static right_root() {
+        // 			this.right_trigger()
+        // 			return ++ this.counter
+        // 		}
+        // 	}
+        // 	$mol_assert_equal( App.left_root(), 1 )
+        // 	$mol_assert_equal( App.right_root(), 2 )
+        // 	App.right_trigger( 1 )
+        // 	App.left_trigger( 1 )
+        // 	$mol_wire_fiber.sync()
+        // 	$mol_assert_equal( App.right_root(), 4 )
+        // 	$mol_assert_equal( App.left_root(), 3 )
+        // } ,
+        // https://github.com/nin-jin/slides/tree/master/reactivity#error-store
         'Restore after error'($) {
             class App extends $mol_object2 {
                 static get $() { return $; }
@@ -1395,6 +1464,7 @@ var $;
             App.showing(true);
             $mol_assert_unique(App.render(), details);
         },
+        // https://github.com/nin-jin/slides/tree/master/reactivity#wish-stability
         async 'Hold pubs while wait async task'($) {
             class App extends $mol_object2 {
                 static $ = $;
@@ -1610,6 +1680,7 @@ var $;
 
 ;
 "use strict";
+/** @jsx $mol_jsx */
 var $;
 (function ($) {
     $mol_test({
@@ -1695,6 +1766,12 @@ var $;
         'return result without errors'() {
             $mol_assert_equal($mol_try(() => false), false);
         },
+        //'return error if thrown'() {
+        //	
+        //	const error = new Error( '$mol_try test error' )
+        //	$mol_assert_equal( $mol_try( ()=> { throw error } ) , error )
+        //	
+        //} ,
     });
 })($ || ($ = {}));
 
@@ -2905,6 +2982,9 @@ var $;
         gender["bisexual"] = "bisexual";
         gender["trans"] = "transgender";
     })(gender || (gender = {}));
+    // Test disabled due https://github.com/microsoft/TypeScript/issues/46112
+    // const Sex = $mol_data_enum( 'sex' , sex )
+    // type sex_value =  $mol_type_assert< typeof Sex.Value , sex >
     $mol_test({
         'config of enum'() {
             const Sex = $mol_data_enum('sex', sex);
@@ -2934,6 +3014,8 @@ var $;
             $mol_assert_fail(() => Sex('__proto__'), `__proto__ is not value of sex enum`);
         },
     });
+    // Test disabled due https://github.com/microsoft/TypeScript/issues/46112
+    // type gender_value =  $mol_type_assert< typeof Gender.Value , gender >
     $mol_test({
         'config of enum'() {
             const Gender = $mol_data_enum('gender', gender);
@@ -3074,30 +3156,30 @@ var $;
 (function ($_1) {
     const common = [
         $mol_int62_to_string({
-            lo: 12 << 0 | 13 << 8 | 14 << 16 | 15 << 24,
-            hi: 13 << 0 | 14 << 8 | 15 << 16 | 16 << 24,
+            lo: 12 << 0 | 13 << 8 | 14 << 16 | 15 << 24, // land_lo
+            hi: 13 << 0 | 14 << 8 | 15 << 16 | 16 << 24, // land_hi
         }),
         $mol_int62_to_string({
-            lo: 2 << 0 | 3 << 8 | 4 << 16 | 5 << 24,
-            hi: 3 << 0 | 4 << 8 | 5 << 16 | 6 << 24,
+            lo: 2 << 0 | 3 << 8 | 4 << 16 | 5 << 24, // auth_lo
+            hi: 3 << 0 | 4 << 8 | 5 << 16 | 6 << 24, // auto_hi
         }),
         $mol_int62_to_string({
-            lo: 4 << 0 | 5 << 8 | 6 << 16 | 7 << 24,
-            hi: 5 << 0 | 6 << 8 | 7 << 16 | 8 << 24,
+            lo: 4 << 0 | 5 << 8 | 6 << 16 | 7 << 24, // head_lo
+            hi: 5 << 0 | 6 << 8 | 7 << 16 | 8 << 24, // head_hi
         }),
         $mol_int62_to_string({
-            lo: 10 << 0 | 11 << 8 | 12 << 16 | 13 << 24,
-            hi: 11 << 0 | 12 << 8 | 13 << 16 | 14 << 24,
+            lo: 10 << 0 | 11 << 8 | 12 << 16 | 13 << 24, // self_lo
+            hi: 11 << 0 | 12 << 8 | 13 << 16 | 14 << 24, // self_hi
         }),
         $mol_int62_to_string({
-            lo: 6 << 0 | 7 << 8 | 8 << 16 | 9 << 24,
-            hi: 7 << 0 | 8 << 8 | 9 << 16 | 10 << 24,
+            lo: 6 << 0 | 7 << 8 | 8 << 16 | 9 << 24, // next_lo
+            hi: 7 << 0 | 8 << 8 | 9 << 16 | 10 << 24, // next_hi
         }),
         $mol_int62_to_string({
-            lo: 8 << 0 | 9 << 8 | 10 << 16 | 11 << 24,
-            hi: 9 << 0 | 10 << 8 | 11 << 16 | 12 << 24,
+            lo: 8 << 0 | 9 << 8 | 10 << 16 | 11 << 24, // prev_lo
+            hi: 9 << 0 | 10 << 8 | 11 << 16 | 12 << 24, // prev_hi
         }),
-        1 << 0 | 2 << 8 | 3 << 16 | 4 << 24,
+        1 << 0 | 2 << 8 | 3 << 16 | 4 << 24, // time
     ];
     $mol_test({
         'pack and unpack unit with null'($) {
@@ -3134,6 +3216,8 @@ var $;
 
 ;
 "use strict";
+/** @jsx $mol_jsx */
+/** @jsxFrag $mol_jsx_frag */
 var $;
 (function ($) {
     $mol_test({
@@ -3333,6 +3417,7 @@ var $;
 
 ;
 "use strict";
+/** @jsx $mol_jsx */
 var $;
 (function ($) {
     $mol_test({
@@ -3500,8 +3585,10 @@ var $;
             const world2 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const land1 = await world1.grab();
             const land2 = await world1.grab();
+            // do changes
             land1.chief.as($hyoo_crowd_list).list([123, 456]);
             land2.chief.as($hyoo_crowd_list).list([456, 789]);
+            // apply changes
             for await (const batch of world1.delta()) {
                 $mol_assert_like((await world2.apply(batch)).forbid, new Map);
             }
@@ -3512,7 +3599,9 @@ var $;
             const world1 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const world2 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const land = world1.land(world1.peer.id);
+            // do changes
             land.chief.as($hyoo_crowd_list).list([123, 456]);
+            // apply changes
             const batch = await world1.delta_batch(land);
             $mol_assert_like((await world2.apply(batch)).forbid, new Map);
             $mol_assert_like(world2.land(land.id()).chief.as($hyoo_crowd_list).list(), [123, 456]);
@@ -3521,38 +3610,50 @@ var $;
             const world1 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const world2 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const land = await world1.grab();
+            // go to future
             const clock = land.clock_data;
             clock.see_time(clock.now() + 60 * 60 * 24 * 10);
+            // do changes
             land.chief.as($hyoo_crowd_reg).numb(123);
+            // 1 ignored units
             const batch = await world1.delta_batch(land);
             $mol_assert_like([...(await world2.apply(batch)).forbid.values()], ['Far future']);
+            // only 3 grab units
             $mol_assert_like(world2.land(land.id()).delta().length, 3);
         },
         async 'ignore auth as another peer'() {
             const world1 = new $hyoo_crowd_world({ ...await $hyoo_crowd_peer.generate(), id: '1_1' });
             const world2 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const land = await world1.grab();
+            // do changes
             land.chief.as($hyoo_crowd_reg).numb(123);
+            // 2 ignored units
             const batch = await world1.delta_batch(land);
             $mol_assert_like([...(await world2.apply(batch)).forbid.values()], ['Alien join key', 'No auth key']);
+            // only 2 grab units
             $mol_assert_like(world2.land(land.id()).delta().length, 2);
         },
         async 'ignore auth without key'() {
             const world1 = new $hyoo_crowd_world({ ...await $hyoo_crowd_peer.generate(), key_public_serial: [] });
             const world2 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const land = world1.land('1_1');
+            // do changes
             land.chief.as($hyoo_crowd_reg).numb(123);
+            // 2 ignored units
             const batch = await world1.delta_batch(land);
             $mol_assert_like([...(await world2.apply(batch)).forbid.values()], ['No join key', 'Level too low']);
+            // only 2 grab units
             $mol_assert_like(world2.land(land.id()).delta().length, 0);
         },
         async 'ignore changes with wrong signs'() {
             const world1 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const world2 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const land = await world1.grab();
+            // 2 ignored units
             const batch = await world1.delta_batch(land);
-            batch[152] = ~batch[152];
+            batch[152] = ~batch[152]; // break sign
             $mol_assert_like([...(await world2.apply(batch)).forbid.values()], ['Wrong join sign', 'Level too low']);
+            // no applied units 
             $mol_assert_like(world2.land(land.id()).delta().length, 0);
         },
         async 'ignore update auth except auth removing'() {
@@ -3563,6 +3664,7 @@ var $;
             const land2 = world2.land(land1.id());
             land2.clock_auth.tick(peer.id);
             land2.clock_data.tick(peer.id);
+            // do changes
             land1.chief.as($hyoo_crowd_reg).numb(123);
             land2.chief.as($hyoo_crowd_reg).numb(234);
             const batch = await world1.delta_batch(land1);
@@ -3578,15 +3680,16 @@ var $;
             const world1 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const world2 = new $hyoo_crowd_world(await $hyoo_crowd_peer.generate());
             const peer = await $hyoo_crowd_peer.generate();
-            const land1 = await world1.grab();
+            const land1 = await world1.grab(); // +3 units
             const land2 = world2.land(land1.id());
-            land1.chief.sub('foo', $hyoo_crowd_reg).numb(123);
+            // do changes
+            land1.chief.sub('foo', $hyoo_crowd_reg).numb(123); // +1 unit
             for await (const batch of world1.delta()) {
                 $mol_assert_like([...(await world2.apply(batch)).forbid.values()], []);
             }
-            land2.chief.sub('foo', $hyoo_crowd_reg).numb(234);
-            land2.chief.sub('bar', $hyoo_crowd_reg).numb(234);
-            land2.level(peer.id, $hyoo_crowd_peer_level.law);
+            land2.chief.sub('foo', $hyoo_crowd_reg).numb(234); // 1 unit update +1 unit
+            land2.chief.sub('bar', $hyoo_crowd_reg).numb(234); // +1 unit
+            land2.level(peer.id, $hyoo_crowd_peer_level.law); // ingnored
             $mol_assert_like(land1.delta().length, 4);
             level_get: {
                 const batch = await world2.delta_batch(land2);
@@ -3597,7 +3700,7 @@ var $;
                 $mol_assert_like(land1.level(peer.id), $hyoo_crowd_peer_level.get);
             }
             level_add: {
-                land1.level(land2.peer().id, $hyoo_crowd_peer_level.add);
+                land1.level(land2.peer().id, $hyoo_crowd_peer_level.add); // +1 unit
                 const batch = await world2.delta_batch(land2);
                 $mol_assert_like([...(await world1.apply(batch)).forbid.values()], ['Level too low']);
                 $mol_assert_like(land1.delta().length, 7);
@@ -3619,7 +3722,7 @@ var $;
                 for await (const batch of world1.delta()) {
                     $mol_assert_like([...(await world2.apply(batch)).forbid.values()], []);
                 }
-                land2.level(peer.id, $hyoo_crowd_peer_level.law);
+                land2.level(peer.id, $hyoo_crowd_peer_level.law); // +1 unit
                 const batch = await world2.delta_batch(land2);
                 $mol_assert_like([...(await world1.apply(batch)).forbid.values()], []);
                 $mol_assert_like(land1.delta().length, 8);
@@ -3634,6 +3737,7 @@ var $;
             const peer = await $hyoo_crowd_peer.generate();
             const land1 = await world1.grab();
             const land2 = world2.land(land1.id());
+            // do changes
             land1.chief.sub('foo', $hyoo_crowd_reg).numb(123);
             const batch = await world1.delta_batch(land1);
             $mol_assert_like([...(await world2.apply(batch)).forbid.values()], []);
@@ -3664,7 +3768,7 @@ var $;
                 for await (const batch of world1.delta()) {
                     $mol_assert_like([...(await world2.apply(batch)).forbid.values()], []);
                 }
-                land2.level(peer.id, $hyoo_crowd_peer_level.law);
+                land2.level(peer.id, $hyoo_crowd_peer_level.law); //ingnored
                 const batch = await world2.delta_batch(land2);
                 $mol_assert_like([...(await world1.apply(batch)).forbid.values()], []);
                 $mol_assert_like(land1.delta().length, 7);
@@ -5791,12 +5895,12 @@ var $;
 			`;
                 const dest = `
 				query? \\
-				clear?event null
+				clear? null
 				Query $mol_string value? <=> query?
 				Suggest_label $mol_dimmer
 					needle <= query?
 					key * escape? <=> clear?
-				Clear $mol_button_minor click?event <=> clear?event
+				Clear $mol_button_minor click? <=> clear?
 			`;
                 const res = normalize($, src, dest);
                 $mol_assert_equal(res.input, res.output);
@@ -5818,10 +5922,10 @@ var $;
                 const dest = `
 				Close_icon ${d}mol_icon_cross
 				Title ${d}mol_view sub / <= title
-				close?event null
+				close? null
 				Close ${d}mol_button
 					title \\close
-					click?event <=> close?event
+					click? <=> close?
 				title @ \\title
 				sub2 / <= Close_icon
 				sub /
@@ -5867,7 +5971,7 @@ var $;
                 const dest = `
 				clear? = Suggest_label clear?
 				Suggest_label $mol_dimmer clear? => clear?
-				Clear $mol_button_minor click?e <=> clear?e
+				Clear $mol_button_minor click? <=> clear?
 			`;
                 const res = normalize($, src, dest);
                 $mol_assert_equal(res.input, res.output);
@@ -5883,7 +5987,7 @@ var $;
                 $mol_assert_fail(() => normalize($, src).input, `Need an equal default values at \`/mol/view/tree2/class/props.test.ts#4:16/5\` vs \`/mol/view/tree2/class/props.test.ts#6:23/11\`
 <=>
 /mol/view/tree2/class/props.test.ts#6:19/3
-click?event
+click?
 /mol/view/tree2/class/props.test.ts#6:7/11
 $mol_button_minor
 /mol/view/tree2/class/props.test.ts#5:12/17
@@ -5902,6 +6006,14 @@ Clear
 var $;
 (function ($) {
     $mol_test({
+        // @todo enable on strict
+        // 'no functions'() {
+        // 	const stringify = $mol_data_pipe()
+        // 	type Type = $mol_type_assert<
+        // 		typeof stringify,
+        // 		( input : never )=> never
+        // 	>
+        // },
         'single function'() {
             const stringify = $mol_data_pipe((input) => input.toString());
             $mol_assert_equal(stringify(5), '5');
@@ -6621,9 +6733,11 @@ var $;
 			`);
             const res = tests.hack({
                 ...$mol_jack.meta,
+                // Should processed
                 'one': input => [input.struct('ONE')],
                 'two': input => [input.struct('TWO')],
                 'three': input => [input.struct('THREE')],
+                // Shouldn't processed
                 'ONE': input => [input.struct('XXX')],
                 'TWO': input => [input.struct('XXX')],
                 'THREE': input => [input.struct('XXX')],
@@ -7440,98 +7554,130 @@ var $;
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
+
 ;
 "use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
 
 ;
 "use strict";
@@ -7568,44 +7714,58 @@ var $;
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
-;
-"use strict";
 
 ;
 "use strict";
 
+
 ;
 "use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
+
+;
+"use strict";
+
 
 ;
 "use strict";
@@ -7694,13 +7854,13 @@ var $;
                 $mol_view_tree2_to_js_test_run(`
 					Foo $mol_view
 						a!? $mol_view
-							expanded <=> cell_test_expanded!? null
+							expanded? <=> cell_test_expanded!? null
 				`);
-            }, `Required prop like some*? at \`.view.tree#4:21/20\`
+            }, `Required prop like some*? at \`.view.tree#4:22/20\`
 <=>
-.view.tree#4:17/3
-expanded
-.view.tree#4:8/8
+.view.tree#4:18/3
+expanded?
+.view.tree#4:8/9
 $mol_view
 .view.tree#3:11/9
 a!?
@@ -7734,7 +7894,9 @@ var $;
         'Left bind read only'($) {
             const _foo = $mol_view_tree2_to_js_test_ex_left_read_only_foo;
             const foo = _foo.make({ $ });
-            $mol_assert_like(foo.bar1(), foo.bar1(2), foo.bar1(), foo.bar2(), 1);
+            $mol_assert_like(foo.bar1(), 
+            // @ts-ignore
+            foo.bar1(2), foo.bar1(), foo.bar2(), 1);
             $mol_assert_like(foo.bar2(2), foo.bar1(), 2);
         },
         'Left bind second level index'($) {
@@ -7761,7 +7923,11 @@ var $;
             const foo = _foo.make({ $ });
             $mol_assert_equal(foo.d(), foo.c(), foo.b(), foo.a(), 0);
             $mol_assert_equal(foo.d(1), foo.c(), foo.b(), foo.a(), 1);
-            $mol_assert_equal(foo.a(2), foo.b(2), foo.c(), foo.d(), 1);
+            $mol_assert_equal(
+            // @ts-ignore
+            foo.a(2), 
+            // @ts-ignore
+            foo.b(2), foo.c(), foo.d(), 1);
             $mol_assert_equal(foo.c(2), foo.b(), foo.a(), 2);
             $mol_assert_equal(foo.d(1), 1);
             $mol_assert_equal(foo.d(3), foo.c(), foo.b(), foo.a(), 3);
@@ -7797,6 +7963,10 @@ var $;
         'Array of array or object'($) {
             const _foo = $mol_view_tree2_to_js_test_ex_array_of_array_or_object_foo;
             const foo = _foo.make({ $ });
+            // type a1 = $mol_type_assert<
+            // 	ReturnType<typeof foo.complex>,
+            // 	readonly (readonly(number | string)[] | Record<string, number | string>)[]
+            // >
             $mol_assert_like(foo.complex(), ['1', [true], ['1', 21], { a: 1, str: 'some' }]);
         },
         'Array inheritance'($) {
@@ -7888,7 +8058,9 @@ var $;
         'simple mutable and read only channels'($) {
             const _foo = $mol_view_tree2_to_js_test_ex_simple_mutable_and_read_only_foo;
             const foo = _foo.make({ $ });
-            $mol_assert_equal(foo.readonly(), foo.readonly(1), foo.readonly(), null);
+            $mol_assert_equal(foo.readonly(), 
+            // @ts-ignore
+            foo.readonly(1), foo.readonly(), null);
             $mol_assert_equal(foo.mutable(), null);
             $mol_assert_equal(foo.mutable(2), foo.mutable(), 2);
         },
@@ -8452,11 +8624,14 @@ var $;
                 Weight: $mol_data_integer,
                 Length: $mol_data_integer,
             });
-            Length(20);
-            let len = Length(10);
-            len = 20;
-            let num = len;
-            len = Length(Weight(20));
+            Length(20); // Validate
+            let len = Length(10); // Inferred type
+            len = 20; // Explicit type
+            let num = len; // Implicit cast
+            len = Length(Weight(20)); // Explicit cast
+            // len = 20 // Compile time error
+            // len = Weight( 20 ) // Compile time error
+            // len = Length( 20.1 ) // Run time error
         },
     });
 })($ || ($ = {}));
@@ -8470,10 +8645,12 @@ var $;
             const Weight = $mol_data_nominal({ Weight: $mol_data_integer });
             const Length = $mol_data_nominal({ Length: $mol_data_integer });
             let len = Length(10);
-            len = Length(20);
-            len = 20;
-            let num = len;
-            len = Weight(20);
+            len = Length(20); // Validate
+            len = 20; // Implicit Cast
+            let num = len; // Implicit Cast
+            len = Weight(20); // Explicit Cast
+            // len = Weight( 20 ) // Compile time error
+            // len = Length( 20.1 ) // Run time error
         },
     });
 })($ || ($ = {}));
@@ -8569,6 +8746,21 @@ var $;
             const User = $mol_data_record({ age: $mol_data_number });
             User({ age: 0, name: 'Jin' });
         },
+        // 'Recursive record' () {
+        // 	const User = $mol_data_record({
+        // 		name : $mol_data_string ,
+        // 		get kids() { return $mol_data_array( User ) } ,
+        // 	})
+        // 	User({
+        // 		name : 'Jin' ,
+        // 		kids : [
+        // 			{
+        // 				name : 'John' ,
+        // 				kids : [] ,
+        // 			}
+        // 		] ,
+        // 	})
+        // } ,
         'Shrinks record'() {
             $mol_assert_fail(() => {
                 const User = $mol_data_record({ age: $mol_data_number, name: $mol_data_string });
