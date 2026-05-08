@@ -7400,7 +7400,7 @@ var $;
 		indexed(id, next){
 			if(next !== undefined) return next;
 			const obj = new this.$.$mol_view_tree2_to_js_test_ex_bidi_indexed_second_level_bar();
-			(obj.expanded) = () => ((this.owner(id, next)));
+			(obj.expanded) = (next) => ((this.owner(id, next)));
 			return obj;
 		}
 	};

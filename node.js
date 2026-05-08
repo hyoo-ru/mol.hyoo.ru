@@ -7071,6 +7071,7 @@ var $;
             render_visible_only() {
                 return this.$.$mol_support_css_overflow_anchor();
             }
+            _view_window_last = [0, 0];
             view_window(next) {
                 const kids = this.sub();
                 if (kids.length < 3)
@@ -7080,7 +7081,7 @@ var $;
                 const rect = this.view_rect();
                 if (next)
                     return next;
-                let [min, max] = $mol_mem_cached(() => this.view_window()) ?? [0, 0];
+                let [min, max] = $mol_mem_cached(() => this.view_window()) ?? this._view_window_last;
                 const shift = this.view_window_shift();
                 this.view_window_shift(0);
                 min += shift;
@@ -7175,7 +7176,7 @@ var $;
             sub_visible() {
                 return [
                     ...this.gap_before() ? [this.Gap_before()] : [],
-                    ...this.sub().slice(...this.view_window()),
+                    ...this.sub().slice(...this._view_window_last = this.view_window()),
                     ...this.gap_after() ? [this.Gap_after()] : [],
                 ];
             }
@@ -27738,7 +27739,10 @@ var $;
             }
             code_enhanced() {
                 let code = this.code();
+                // var logs
                 code = code.replaceAll(/^([ \t]*)(?:const|var|let|class|function) +(\w+)/mig, (found, indent, name) => `__spy__( "${indent}${name} =", ()=>[ ${name} ] );${found}`);
+                // decors
+                code = code.replaceAll(/^([ \t]*)@\s*([\w$]+)\s+([\w$]+)/mig, (found, indent, decor, prop) => `${indent}static #${prop} = ${decor}( this.prototype, "${prop}" )\n${indent}${prop}`);
                 return code;
             }
             execute() {
@@ -30422,7 +30426,7 @@ var $;
                     normal = normal.substring(0, next + 1);
                 if (node.type === normal)
                     return [node.clone(node.hack(belt))];
-                console.warn(`Syntax ${node.type} is deprecated. Use ${normal} instead`);
+                console.warn(`Syntax ${node.type} at ${node.span} is deprecated. Use ${normal} instead`);
                 return [node.struct(normal, node.hack(belt))];
             }
         }));
@@ -30476,7 +30480,7 @@ var $;
                     if (!is_writable(right))
                         this.$mol_fail(err `Expected writable at ${right.span}`);
                 }
-                else if (operator?.type === "<=" && is_writable(left)) {
+                else if (context.factory && operator?.type === "<=" && is_writable(left)) {
                     this.$mol_fail(err `Expected readonly at ${left.span}`);
                 }
                 if (right)
@@ -47044,7 +47048,7 @@ var $;
 		}
 		Fetch(){
 			const obj = new this.$.$mol_button_major();
-			(obj.click) = (next) => ((this.fetch_data()));
+			(obj.click) = (next) => ((this.fetch_data(next)));
 			return obj;
 		}
 		Request(){
@@ -51795,7 +51799,7 @@ var $;
 		Reset(){
 			const obj = new this.$.$mol_button_major();
 			(obj.title) = () => ("Reset");
-			(obj.enabled) = (next) => ((this.reset_enabled()));
+			(obj.enabled) = () => ((this.reset_enabled()));
 			(obj.click) = (next) => ((this.reset_value(next)));
 			return obj;
 		}
@@ -51865,7 +51869,7 @@ var $;
 		Disabled_number(){
 			const obj = new this.$.$mol_number();
 			(obj.hint) = () => ("This hint not showed while enabled is false");
-			(obj.value) = (next) => ((this.value()));
+			(obj.value) = (next) => ((this.value(next)));
 			(obj.enabled) = () => (false);
 			return obj;
 		}
