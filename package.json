@@ -185,6 +185,7 @@
     "$mol_unicode",
     "$mol_link",
     "$mol_state_arg",
+    "$mol_dom_safe",
     "$mol_page",
     "$mol_match",
     "$mol_theme_auto",
