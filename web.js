@@ -8364,6 +8364,7 @@ var $;
                 const spread = this.spread_current();
                 if (spread instanceof $mol_book2)
                     spread.auto();
+                return [];
             }
             spread_ids() {
                 return Object.keys(this.spreads());
@@ -49153,7 +49154,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    $mol_style_attach("mol/infinite/infinite.view.css", "[mol_infinite_before],\n[mol_infinite_after] {\n\toverflow-anchor: none;\n\tborder-radius: var(--mol_gap_round);\n}\n\n[mol_infinite_after]:where([mol_view_error=\"Promise\"]) {\n\theight: 100vh;\n}\n");
+    $mol_style_attach("mol/infinite/infinite.view.css", "[mol_infinite_before],\n[mol_infinite_after] {\n\toverflow-anchor: none;\n\tborder-radius: var(--mol_gap_round);\n\tposition: relative;\n}\n\n[mol_infinite_before]:where([mol_view_error=\"Promise\"]),\n[mol_infinite_after]:where([mol_view_error=\"Promise\"]) {\n\theight: var(--mol_gap_block);\n}\n");
 })($ || ($ = {}));
 
 ;
@@ -49202,6 +49203,7 @@ var $;
 			const obj = new this.$.$mol_infinite();
 			(obj.before) = (id) => ((this.before(id)));
 			(obj.after) = (id) => ((this.after(id)));
+			(obj.item_height_min) = () => (72);
 			(obj.Row) = (id) => ((this.Item(id)));
 			return obj;
 		}
@@ -49410,14 +49412,14 @@ var $;
         class $mol_infinite_demo extends $.$mol_infinite_demo {
             // @ $mol_mem_key
             // before( anchor_id: number | null ) {
-            // 	this.$.$mol_wait_timeout( 10000 )
+            // 	this.$.$mol_wait_timeout( 250 )
             // 	return Array.from(
             // 		{ length: this.chunk_size() },
             // 		( _, index )=> ( anchor_id ?? 0 ) - index - 1,
             // 	).reverse()
             // }
             after(anchor_id) {
-                this.$.$mol_wait_timeout(500);
+                this.$.$mol_wait_timeout(250);
                 return Array.from({ length: this.chunk_size() }, (_, index) => (anchor_id ?? 0) + index + 1);
             }
             id(index) {
@@ -49425,7 +49427,7 @@ var $;
             }
             name(index) {
                 $mol_wire_solid();
-                return $mol_stub_person_name();
+                return index + ': ' + $mol_stub_person_name();
             }
             city(index) {
                 $mol_wire_solid();
