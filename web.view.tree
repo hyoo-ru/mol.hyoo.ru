@@ -2002,6 +2002,10 @@ $hyoo_apps $mol_book2
 			target \release
 			title @ \Gymload
 			uri \https://gymload.github.io/
+		ragu *
+			target \release
+			title @ \RAGU Knowledge Graph
+			uri \https://raguteam.github.io/web/#!mock=1
 
 $mol_tag_tree $mol_list
 	path /string

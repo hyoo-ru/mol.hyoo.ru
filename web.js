@@ -23485,6 +23485,11 @@ var $;
 					"target": "release", 
 					"title": (this.$.$mol_locale.text("$hyoo_apps_apps_gymload_title")), 
 					"uri": "https://gymload.github.io/"
+				}, 
+				"ragu": {
+					"target": "release", 
+					"title": (this.$.$mol_locale.text("$hyoo_apps_apps_ragu_title")), 
+					"uri": "https://raguteam.github.io/web/#!mock=1"
 				}
 			};
 		}
