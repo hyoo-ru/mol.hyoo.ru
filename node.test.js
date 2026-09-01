@@ -30609,7 +30609,7 @@ var $;
 "use strict";
 var $;
 (function ($) {
-    const class_regex = /^[$A-Z][$\w<>\[\]()"'?|]+$/;
+    const class_regex = /^[$A-Z][$\w<>\[\]()"'?|,]+$/;
     function $mol_view_tree2_class_match(klass) {
         if (!klass?.type)
             return false;
