@@ -30832,13 +30832,13 @@ declare namespace $ {
 //# sourceMappingURL=numeric.view.tree.d.ts.map
 declare namespace $ {
 
-	export class $mol_icon_ruler extends $mol_icon {
+	export class $mol_icon_division extends $mol_icon {
 		path( ): string
 	}
 	
 }
 
-//# sourceMappingURL=ruler.view.tree.d.ts.map
+//# sourceMappingURL=division.view.tree.d.ts.map
 declare namespace $ {
 
 	export class $mol_icon_alphabetical extends $mol_icon {
@@ -30859,22 +30859,22 @@ declare namespace $ {
 //# sourceMappingURL=variant.view.tree.d.ts.map
 declare namespace $ {
 
-	export class $mol_icon_order_numeric_ascending extends $mol_icon {
+	export class $mol_icon_format_list_bulleted extends $mol_icon {
 		path( ): string
 	}
 	
 }
 
-//# sourceMappingURL=ascending.view.tree.d.ts.map
+//# sourceMappingURL=bulleted.view.tree.d.ts.map
 declare namespace $ {
 
-	export class $mol_icon_order_alphabetical_ascending extends $mol_icon {
+	export class $mol_icon_table extends $mol_icon {
 		path( ): string
 	}
 	
 }
 
-//# sourceMappingURL=ascending.view.tree.d.ts.map
+//# sourceMappingURL=table.view.tree.d.ts.map
 declare namespace $ {
 
 	type $mol_select__Filter_mol_vary_edit_1 = $mol_type_enforce<
@@ -31078,11 +31078,11 @@ declare namespace $ {
 		Null_icon( ): $mol_icon_circle_off_outline
 		Bool_icon( ): $mol_icon_flag_checkered
 		Bint_icon( ): $mol_icon_numeric
-		Real_icon( ): $mol_icon_ruler
+		Real_icon( ): $mol_icon_division
 		Date_icon( ): $mol_icon_clock_outline
 		Text_icon( ): $mol_icon_alphabetical_variant
-		List_icon( ): $mol_icon_order_numeric_ascending
-		Tupl_icon( ): $mol_icon_order_alphabetical_ascending
+		List_icon( ): $mol_icon_format_list_bulleted
+		Tupl_icon( ): $mol_icon_table
 		rows( ): readonly(any)[]
 	}
 	
@@ -31093,7 +31093,7 @@ declare namespace $.$$ {
     class $mol_vary_edit extends $.$mol_vary_edit {
         Vary(): $mol_vary_class;
         type(next?: string): string;
-        Type_icon(type: string): $mol_icon_clock_outline | $mol_icon_flag_checkered | $mol_icon_numeric | $mol_icon_ruler | $mol_icon_alphabetical_variant | $mol_icon_order_numeric_ascending | $mol_icon_order_alphabetical_ascending | $mol_icon_circle_off_outline;
+        Type_icon(type: string): $mol_icon_clock_outline | $mol_icon_flag_checkered | $mol_icon_numeric | $mol_icon_division | $mol_icon_alphabetical_variant | $mol_icon_format_list_bulleted | $mol_icon_table | $mol_icon_circle_off_outline;
         bool(next?: boolean): boolean;
         bint(next?: bigint): bigint;
         real(next?: number): number;

@@ -75168,9 +75168,9 @@ var $;
 
 
 ;
-	($.$mol_icon_ruler) = class $mol_icon_ruler extends ($.$mol_icon) {
+	($.$mol_icon_division) = class $mol_icon_division extends ($.$mol_icon) {
 		path(){
-			return "M1.39,18.36L3.16,16.6L4.58,18L5.64,16.95L4.22,15.54L5.64,14.12L8.11,16.6L9.17,15.54L6.7,13.06L8.11,11.65L9.53,13.06L10.59,12L9.17,10.59L10.59,9.17L13.06,11.65L14.12,10.59L11.65,8.11L13.06,6.7L14.47,8.11L15.54,7.05L14.12,5.64L15.54,4.22L18,6.7L19.07,5.64L16.6,3.16L18.36,1.39L22.61,5.64L5.64,22.61L1.39,18.36Z";
+			return "M19,13H5V11H19V13M12,5A2,2 0 0,1 14,7A2,2 0 0,1 12,9A2,2 0 0,1 10,7A2,2 0 0,1 12,5M12,15A2,2 0 0,1 14,17A2,2 0 0,1 12,19A2,2 0 0,1 10,17A2,2 0 0,1 12,15Z";
 		}
 	};
 
@@ -75204,9 +75204,9 @@ var $;
 
 
 ;
-	($.$mol_icon_order_numeric_ascending) = class $mol_icon_order_numeric_ascending extends ($.$mol_icon) {
+	($.$mol_icon_format_list_bulleted) = class $mol_icon_format_list_bulleted extends ($.$mol_icon) {
 		path(){
-			return "M7 21H3V19H7V18H5C3.9 18 3 17.11 3 16V15C3 13.9 3.9 13 5 13H7C8.11 13 9 13.9 9 15V19C9 20.11 8.11 21 7 21M7 15H5V16H7M5 3H7C8.11 3 9 3.9 9 5V9C9 10.11 8.11 11 7 11H5C3.9 11 3 10.11 3 9V5C3 3.9 3.9 3 5 3M5 9H7V5H5M12 5H22V7H12M12 19V17H22V19M12 11H22V13H12Z";
+			return "M7,5H21V7H7V5M7,13V11H21V13H7M4,4.5A1.5,1.5 0 0,1 5.5,6A1.5,1.5 0 0,1 4,7.5A1.5,1.5 0 0,1 2.5,6A1.5,1.5 0 0,1 4,4.5M4,10.5A1.5,1.5 0 0,1 5.5,12A1.5,1.5 0 0,1 4,13.5A1.5,1.5 0 0,1 2.5,12A1.5,1.5 0 0,1 4,10.5M7,19V17H21V19H7M4,16.5A1.5,1.5 0 0,1 5.5,18A1.5,1.5 0 0,1 4,19.5A1.5,1.5 0 0,1 2.5,18A1.5,1.5 0 0,1 4,16.5Z";
 		}
 	};
 
@@ -75216,9 +75216,9 @@ var $;
 
 
 ;
-	($.$mol_icon_order_alphabetical_ascending) = class $mol_icon_order_alphabetical_ascending extends ($.$mol_icon) {
+	($.$mol_icon_table) = class $mol_icon_table extends ($.$mol_icon) {
 		path(){
-			return "M12 5H22V7H12M12 19V17H22V19M12 11H22V13H12M9 13V15L5.67 19H9V21H3V19L6.33 15H3V13M7 3H5C3.9 3 3 3.9 3 5V11H5V9H7V11H9V5C9 3.9 8.11 3 7 3M7 7H5V5H7Z";
+			return "M5,4H19A2,2 0 0,1 21,6V18A2,2 0 0,1 19,20H5A2,2 0 0,1 3,18V6A2,2 0 0,1 5,4M5,8V12H11V8H5M13,8V12H19V8H13M5,14V18H11V14H5M13,14V18H19V14H13Z";
 		}
 	};
 
@@ -75421,7 +75421,7 @@ var $;
 			return obj;
 		}
 		Real_icon(){
-			const obj = new this.$.$mol_icon_ruler();
+			const obj = new this.$.$mol_icon_division();
 			return obj;
 		}
 		Date_icon(){
@@ -75433,11 +75433,11 @@ var $;
 			return obj;
 		}
 		List_icon(){
-			const obj = new this.$.$mol_icon_order_numeric_ascending();
+			const obj = new this.$.$mol_icon_format_list_bulleted();
 			return obj;
 		}
 		Tupl_icon(){
-			const obj = new this.$.$mol_icon_order_alphabetical_ascending();
+			const obj = new this.$.$mol_icon_table();
 			return obj;
 		}
 		rows(){
