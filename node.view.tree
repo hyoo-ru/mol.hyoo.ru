@@ -2266,6 +2266,7 @@ $mol_number $mol_view
 			hint <= hint \ 
 			enabled <= string_enabled <= enabled
 			submit? <=> submit? null
+			selection? <=> selection? /number
 		<= Inc $mol_button_minor
 			event_click? <=> event_inc? null
 			enabled <= inc_enabled <= enabled
@@ -8374,7 +8375,7 @@ $mol_bigint_field $mol_bar
 			hint <= hint \ 
 			enabled <= string_enabled <= enabled
 			submit? <=> submit? null
-			selection? => selection?
+			selection? <=> selection? /number
 		<= Increment $mol_button_minor
 			click? <=> increment? null
 			enabled <= increment_enabled <= enabled
@@ -8405,6 +8406,7 @@ $mol_vary_edit $mol_list
 	schema null
 	value? null
 	Vary $mol_vary_class
+	selection? /
 	Null_icon $mol_icon_circle_off_outline
 	Bool_icon $mol_icon_flag_checkered
 	Bint_icon $mol_icon_numeric
@@ -8419,7 +8421,7 @@ $mol_vary_edit $mol_list
 				Filter null
 				Trigger_icon null
 				option_content* / <= Type_icon* $mol_icon
-				enabled <= enabled true
+				enabled <= type_mutable <= enabled true
 				dictionary *
 					Null \Nothing
 					Bool \Boolean
@@ -8436,15 +8438,18 @@ $mol_vary_edit $mol_list
 				<= Bint $mol_bigint_field
 					value? <=> bint? 0n
 					enabled <= enabled true
+					selection? <=> text_selection? /number
 				<= Real $mol_number
 					value? <=> real? 0
 					enabled <= enabled true
+					selection? <=> text_selection? /number
 				<= Date $mol_date
 					value_moment? <=> date? $mol_time_moment
 					enabled <= enabled true
 				<= Text $mol_textarea
 					value? <=> text? \
 					enabled <= enabled true
+					selection? <=> text_selection? /number
 				<= Item_add $mol_button_minor
 					click? <=> item_add? null
 					enabled <= enabled true
@@ -8465,6 +8470,7 @@ $mol_vary_edit $mol_list
 				<= Item_val* $mol_vary_edit
 					enabled <= enabled true
 					value? <=> item_val*? null
+					selection? <=> item_selection*? /
 
 $mol_vary_edit_demo $mol_example_small
 	sub /

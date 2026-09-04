@@ -25722,6 +25722,10 @@ var $;
 			if(next !== undefined) return next;
 			return null;
 		}
+		selection(next){
+			if(next !== undefined) return next;
+			return [];
+		}
 		String(){
 			const obj = new this.$.$mol_string();
 			(obj.type) = () => ((this.type()));
@@ -25730,6 +25734,7 @@ var $;
 			(obj.hint) = () => ((this.hint()));
 			(obj.enabled) = () => ((this.string_enabled()));
 			(obj.submit) = (next) => ((this.submit(next)));
+			(obj.selection) = (next) => ((this.selection(next)));
 			return obj;
 		}
 		inc_enabled(){
@@ -25788,6 +25793,7 @@ var $;
 	($mol_mem(($.$mol_number.prototype), "Dec"));
 	($mol_mem(($.$mol_number.prototype), "value_string"));
 	($mol_mem(($.$mol_number.prototype), "submit"));
+	($mol_mem(($.$mol_number.prototype), "selection"));
 	($mol_mem(($.$mol_number.prototype), "String"));
 	($mol_mem(($.$mol_number.prototype), "inc_icon"));
 	($mol_mem(($.$mol_number.prototype), "Inc"));
@@ -74953,7 +74959,8 @@ var $;
 			return null;
 		}
 		selection(next){
-			return (this.String().selection(next));
+			if(next !== undefined) return next;
+			return [];
 		}
 		String(){
 			const obj = new this.$.$mol_string();
@@ -74963,6 +74970,7 @@ var $;
 			(obj.hint) = () => ((this.hint()));
 			(obj.enabled) = () => ((this.string_enabled()));
 			(obj.submit) = (next) => ((this.submit(next)));
+			(obj.selection) = (next) => ((this.selection(next)));
 			return obj;
 		}
 		increment_enabled(){
@@ -75019,6 +75027,7 @@ var $;
 	($mol_mem(($.$mol_bigint_field.prototype), "Decrement"));
 	($mol_mem(($.$mol_bigint_field.prototype), "value_string"));
 	($mol_mem(($.$mol_bigint_field.prototype), "submit"));
+	($mol_mem(($.$mol_bigint_field.prototype), "selection"));
 	($mol_mem(($.$mol_bigint_field.prototype), "String"));
 	($mol_mem(($.$mol_bigint_field.prototype), "Increment_icon"));
 	($mol_mem(($.$mol_bigint_field.prototype), "Increment"));
@@ -75099,9 +75108,9 @@ var $;
                 flex: {
                     grow: 1,
                     shrink: 1,
-                    basis: `7rem`
+                    basis: `10rem`
                 },
-                width: `7rem`,
+                width: `10rem`,
             },
         });
     })($$ = $.$$ || ($.$$ = {}));
@@ -75236,6 +75245,9 @@ var $;
 		enabled(){
 			return true;
 		}
+		type_mutable(){
+			return (this.enabled());
+		}
 		type(next){
 			if(next !== undefined) return next;
 			return "Null";
@@ -75245,7 +75257,7 @@ var $;
 			(obj.Filter) = () => (null);
 			(obj.Trigger_icon) = () => (null);
 			(obj.option_content) = (id) => ([(this.Type_icon(id))]);
-			(obj.enabled) = () => ((this.enabled()));
+			(obj.enabled) = () => ((this.type_mutable()));
 			(obj.dictionary) = () => ({
 				"Null": "Nothing", 
 				"Bool": "Boolean", 
@@ -75272,10 +75284,15 @@ var $;
 			if(next !== undefined) return next;
 			return 0n;
 		}
+		text_selection(next){
+			if(next !== undefined) return next;
+			return [];
+		}
 		Bint(){
 			const obj = new this.$.$mol_bigint_field();
 			(obj.value) = (next) => ((this.bint(next)));
 			(obj.enabled) = () => ((this.enabled()));
+			(obj.selection) = (next) => ((this.text_selection(next)));
 			return obj;
 		}
 		real(next){
@@ -75286,6 +75303,7 @@ var $;
 			const obj = new this.$.$mol_number();
 			(obj.value) = (next) => ((this.real(next)));
 			(obj.enabled) = () => ((this.enabled()));
+			(obj.selection) = (next) => ((this.text_selection(next)));
 			return obj;
 		}
 		date(next){
@@ -75307,6 +75325,7 @@ var $;
 			const obj = new this.$.$mol_textarea();
 			(obj.value) = (next) => ((this.text(next)));
 			(obj.enabled) = () => ((this.enabled()));
+			(obj.selection) = (next) => ((this.text_selection(next)));
 			return obj;
 		}
 		item_add(next){
@@ -75378,10 +75397,15 @@ var $;
 			if(next !== undefined) return next;
 			return null;
 		}
+		item_selection(id, next){
+			if(next !== undefined) return next;
+			return [];
+		}
 		Item_val(id){
 			const obj = new this.$.$mol_vary_edit();
 			(obj.enabled) = () => ((this.enabled()));
 			(obj.value) = (next) => ((this.item_val(id, next)));
+			(obj.selection) = (next) => ((this.item_selection(id, next)));
 			return obj;
 		}
 		Item(id){
@@ -75407,6 +75431,10 @@ var $;
 		Vary(){
 			const obj = new this.$.$mol_vary_class();
 			return obj;
+		}
+		selection(next){
+			if(next !== undefined) return next;
+			return [];
 		}
 		Null_icon(){
 			const obj = new this.$.$mol_icon_circle_off_outline();
@@ -75450,6 +75478,7 @@ var $;
 	($mol_mem(($.$mol_vary_edit.prototype), "bool"));
 	($mol_mem(($.$mol_vary_edit.prototype), "Bool"));
 	($mol_mem(($.$mol_vary_edit.prototype), "bint"));
+	($mol_mem(($.$mol_vary_edit.prototype), "text_selection"));
 	($mol_mem(($.$mol_vary_edit.prototype), "Bint"));
 	($mol_mem(($.$mol_vary_edit.prototype), "real"));
 	($mol_mem(($.$mol_vary_edit.prototype), "Real"));
@@ -75468,11 +75497,13 @@ var $;
 	($mol_mem_key(($.$mol_vary_edit.prototype), "Item_drag"));
 	($mol_mem_key(($.$mol_vary_edit.prototype), "Item_drop"));
 	($mol_mem_key(($.$mol_vary_edit.prototype), "item_val"));
+	($mol_mem_key(($.$mol_vary_edit.prototype), "item_selection"));
 	($mol_mem_key(($.$mol_vary_edit.prototype), "Item_val"));
 	($mol_mem_key(($.$mol_vary_edit.prototype), "Item"));
 	($mol_mem(($.$mol_vary_edit.prototype), "Body"));
 	($mol_mem(($.$mol_vary_edit.prototype), "value"));
 	($mol_mem(($.$mol_vary_edit.prototype), "Vary"));
+	($mol_mem(($.$mol_vary_edit.prototype), "selection"));
 	($mol_mem(($.$mol_vary_edit.prototype), "Null_icon"));
 	($mol_mem(($.$mol_vary_edit.prototype), "Bool_icon"));
 	($mol_mem(($.$mol_vary_edit.prototype), "Bint_icon"));
@@ -75503,6 +75534,9 @@ var $;
                         return next;
                     this.value(null);
                 }
+                const schema = this.schema();
+                if (schema)
+                    return schema;
                 const val = this.value();
                 if (val == null)
                     return 'Null';
@@ -75517,6 +75551,9 @@ var $;
                 if (val instanceof Date)
                     return 'Date';
                 return 'Tupl';
+            }
+            type_mutable() {
+                return !this.schema();
             }
             Type_icon(type) {
                 switch (type) {
@@ -75621,6 +75658,19 @@ var $;
                 ]);
                 this.Field_add().value('');
             }
+            text_selection(next) {
+                const sel = this.selection(next === undefined ? undefined : ['', next[0], next[1]]);
+                if (sel[0] !== '')
+                    return [0, 0];
+                return [sel[1], sel[2]];
+            }
+            item_selection(index, next) {
+                const prefix = '/' + index;
+                const sel = this.selection(next === undefined ? undefined : [prefix + next[0], next[1], next[2]]);
+                if (!sel[0].startsWith(prefix))
+                    return ['', 0, 0];
+                return [sel[0].slice(prefix.length), sel[1], sel[2]];
+            }
         }
         __decorate([
             $mol_mem
@@ -75698,6 +75748,11 @@ var $;
                     padding: $mol_gap.text,
                 },
             },
+            Text: {
+                flex: {
+                    shrink: 1,
+                },
+            },
             Field_add: {
                 background: 'none',
                 box: {
@@ -75721,6 +75776,7 @@ var $;
                 flex: {
                     grow: 1,
                 },
+                width: `100%`,
                 display: 'table-cell',
             },
             Item_drag: {
