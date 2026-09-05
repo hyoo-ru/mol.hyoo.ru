@@ -75998,6 +75998,7 @@ var $;
             },
             Type: {
                 width: '2.5rem',
+                color: $mol_theme.shade,
                 Trigger: {
                     padding: $mol_gap.text,
                 },
