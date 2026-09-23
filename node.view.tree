@@ -450,6 +450,8 @@ $mol_select $mol_pick
 	trigger_enabled <= enabled
 
 $mol_locale_select $mol_select
+	langs /string
+		\en
 
 $mol_avatar $mol_icon
 	view_box \0 0 24 24
