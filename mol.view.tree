@@ -8,7 +8,9 @@ $hyoo_mol $mol_book2_catalog
 			uri \https://github.com/hyoo-ru/mam_mol
 		<= Lights $mol_lights_toggle
 	menu_foot /
-		<= Lang $mol_locale_select
+		<= Lang $mol_locale_select langs
+			\en
+			\ru
 	param \section
 	spreads *
 		docs
