@@ -31621,97 +31621,102 @@ declare namespace $ {
 		,
 		ReturnType< $mol_link_source['uri'] >
 	>
-	type $hyoo_page__side_main_id_hyoo_mol_2 = $mol_type_enforce<
+	type $mol_locale_select__langs_hyoo_mol_2 = $mol_type_enforce<
+		readonly(any)[]
+		,
+		ReturnType< $mol_locale_select['langs'] >
+	>
+	type $hyoo_page__side_main_id_hyoo_mol_3 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $hyoo_page['side_main_id'] >
 	>
-	type $hyoo_page__menu_title_hyoo_mol_3 = $mol_type_enforce<
+	type $hyoo_page__menu_title_hyoo_mol_4 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $hyoo_page['menu_title'] >
 	>
-	type $hyoo_page__News_hyoo_mol_4 = $mol_type_enforce<
+	type $hyoo_page__News_hyoo_mol_5 = $mol_type_enforce<
 		any
 		,
 		ReturnType< $hyoo_page['News'] >
 	>
-	type $hyoo_page__tools_ext_hyoo_mol_5 = $mol_type_enforce<
+	type $hyoo_page__tools_ext_hyoo_mol_6 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $hyoo_page['tools_ext'] >
 	>
-	type $hyoo_apps__menu_title_hyoo_mol_6 = $mol_type_enforce<
+	type $hyoo_apps__menu_title_hyoo_mol_7 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $hyoo_apps['menu_title'] >
 	>
-	type $hyoo_apps__tools_hyoo_mol_7 = $mol_type_enforce<
+	type $hyoo_apps__tools_hyoo_mol_8 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $hyoo_apps['tools'] >
 	>
-	type $mol_app_demo__menu_title_hyoo_mol_8 = $mol_type_enforce<
+	type $mol_app_demo__menu_title_hyoo_mol_9 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_app_demo['menu_title'] >
 	>
-	type $mol_app_demo__tools_hyoo_mol_9 = $mol_type_enforce<
+	type $mol_app_demo__tools_hyoo_mol_10 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_app_demo['tools'] >
 	>
-	type $hyoo_mol_bench__menu_tools_hyoo_mol_10 = $mol_type_enforce<
+	type $hyoo_mol_bench__menu_tools_hyoo_mol_11 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $hyoo_mol_bench['menu_tools'] >
 	>
-	type $mol_link__hint_hyoo_mol_11 = $mol_type_enforce<
+	type $mol_link__hint_hyoo_mol_12 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['hint'] >
 	>
-	type $mol_link__uri_hyoo_mol_12 = $mol_type_enforce<
+	type $mol_link__uri_hyoo_mol_13 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_link['uri'] >
 	>
-	type $mol_link__sub_hyoo_mol_13 = $mol_type_enforce<
+	type $mol_link__sub_hyoo_mol_14 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $mol_link['sub'] >
 	>
-	type $hyoo_tree_app__title_hyoo_mol_14 = $mol_type_enforce<
+	type $hyoo_tree_app__title_hyoo_mol_15 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $hyoo_tree_app['title'] >
 	>
-	type $hyoo_tree_app__Presets_hyoo_mol_15 = $mol_type_enforce<
+	type $hyoo_tree_app__Presets_hyoo_mol_16 = $mol_type_enforce<
 		any
 		,
 		ReturnType< $hyoo_tree_app['Presets'] >
 	>
-	type $hyoo_tree_app__source_tools_hyoo_mol_16 = $mol_type_enforce<
+	type $hyoo_tree_app__source_tools_hyoo_mol_17 = $mol_type_enforce<
 		readonly(any)[]
 		,
 		ReturnType< $hyoo_tree_app['source_tools'] >
 	>
-	type $hyoo_tree_app__pipeline_default_hyoo_mol_17 = $mol_type_enforce<
+	type $hyoo_tree_app__pipeline_default_hyoo_mol_18 = $mol_type_enforce<
 		ReturnType< $hyoo_mol['tree_pipeline'] >
 		,
 		ReturnType< $hyoo_tree_app['pipeline_default'] >
 	>
-	type $hyoo_tree_app__source_default_hyoo_mol_18 = $mol_type_enforce<
+	type $hyoo_tree_app__source_default_hyoo_mol_19 = $mol_type_enforce<
 		ReturnType< $hyoo_mol['tree_source'] >
 		,
 		ReturnType< $hyoo_tree_app['source_default'] >
 	>
-	type $mol_frame__title_hyoo_mol_19 = $mol_type_enforce<
+	type $mol_frame__title_hyoo_mol_20 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_frame['title'] >
 	>
-	type $mol_frame__uri_hyoo_mol_20 = $mol_type_enforce<
+	type $mol_frame__uri_hyoo_mol_21 = $mol_type_enforce<
 		string
 		,
 		ReturnType< $mol_frame['uri'] >

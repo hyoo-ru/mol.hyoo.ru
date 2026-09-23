@@ -33749,6 +33749,7 @@ var $;
 		}
 		Lang(){
 			const obj = new this.$.$mol_locale_select();
+			(obj.langs) = () => (["en", "ru"]);
 			return obj;
 		}
 		Docs(){
