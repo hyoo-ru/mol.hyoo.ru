@@ -632,7 +632,7 @@ declare namespace $ {
      * Theme css variables
      * @see https://mol.hyoo.ru/#!section=demos/demo=mol_textarea_demo
      */
-    const $mol_theme: Record<"image" | "line" | "text" | "field" | "hue" | "back" | "hover" | "card" | "current" | "special" | "control" | "shade" | "focus" | "spirit" | "hue_spread", $mol_style_func<"var", unknown>>;
+    const $mol_theme: Record<"image" | "line" | "text" | "field" | "current" | "focus" | "hover" | "hue" | "back" | "card" | "special" | "control" | "shade" | "spirit" | "hue_spread", $mol_style_func<"var", unknown>>;
 }
 
 declare namespace $ {
@@ -643,7 +643,7 @@ declare namespace $ {
      * Gap in CSS
      * @see https://page.hyoo.ru/#!=msdb74_bm7nsq
      */
-    let $mol_gap: Record<"text" | "block" | "emoji" | "blur" | "page" | "space" | "round", $mol_style_func<"var", unknown>>;
+    let $mol_gap: Record<"text" | "block" | "blur" | "emoji" | "page" | "space" | "round", $mol_style_func<"var", unknown>>;
 }
 
 declare namespace $ {
@@ -800,10 +800,12 @@ declare namespace $ {
         stale = -1,
         /** Some of (transitive) pub update required. */
         doubt = -2,
+        /** Doubt check in progress, so any incoming quant is noticeable. */
+        check = -3,
         /** Actual state but may be dropped. */
-        fresh = -3,
+        fresh = -4,
         /** State will never be changed. */
-        final = -4
+        final = -5
     }
 }
 
@@ -848,6 +850,10 @@ declare namespace $ {
          * Enforce actualization. Should not throw errors.
          */
         fresh(): void;
+        /**
+         * Lives inside single calculation of subscriber or not.
+         */
+        get temp(): boolean;
         /**
          * Allow to put data to caches in the subtree.
          */
@@ -955,7 +961,6 @@ declare namespace $ {
     class $mol_wire_pub_sub extends $mol_wire_pub implements $mol_wire_sub {
         protected pub_from: number;
         protected cursor: $mol_wire_cursor;
-        get temp(): boolean;
         get pub_list(): $mol_wire_pub[];
         track_on(): $mol_wire_sub | null;
         promote(): void;
@@ -1699,7 +1704,7 @@ declare namespace $ {
      * Z-index values for layers
      * https://page.hyoo.ru/#!=xthcpx_wqmiba
      */
-    let $mol_layer: Record<"float" | "hover" | "focus" | "speck" | "popup", $mol_style_func<"var", unknown>>;
+    let $mol_layer: Record<"focus" | "hover" | "float" | "speck" | "popup", $mol_style_func<"var", unknown>>;
 }
 
 declare namespace $ {
@@ -6257,7 +6262,7 @@ declare namespace $.$$ {
         col_head_content(colId: string): readonly string[];
         rows(): readonly $mol_view[];
         cells(row_id: string[]): readonly $mol_view[];
-        col_type(col_id: string): "number" | "text" | "branch";
+        col_type(col_id: string): "text" | "number" | "branch";
         Cell(id: {
             row: string[];
             col: string;
@@ -8567,8 +8572,8 @@ declare namespace $ {
         [x: string]: string;
         readonly list: string;
         readonly header: string;
-        readonly table: string;
         readonly cut: string;
+        readonly table: string;
         readonly quote: string;
         readonly paragraph: string;
         readonly script: string;
@@ -11501,7 +11506,7 @@ declare namespace $.$$ {
         }): number;
         col_head_title(col: string): string;
         event_sort_toggle(col: string, next?: Event): void;
-        col_type(col: string): "number" | "text" | "branch";
+        col_type(col: string): "text" | "number" | "branch";
         cell_content_number(id: {
             row: string[];
             col: string;
@@ -30949,7 +30954,7 @@ declare namespace $.$$ {
         type_auto(): "Text" | "Null" | "Bool" | "Bint" | "Real" | "Date" | "List" | "Tupl";
         type_mutable(): boolean;
         type_option_content(type: string): readonly any[];
-        Type_icon(type: string): $mol_icon_clock_outline | $mol_icon_flag_checkered | $mol_icon_pound | $mol_icon_division | $mol_icon_card_text_outline | $mol_icon_format_list_bulleted | $mol_icon_table | $mol_icon_circle_off_outline;
+        Type_icon(type: string): $mol_icon_flag_checkered | $mol_icon_pound | $mol_icon_division | $mol_icon_clock_outline | $mol_icon_card_text_outline | $mol_icon_format_list_bulleted | $mol_icon_table | $mol_icon_circle_off_outline;
         bool(next?: boolean): boolean;
         bint(next?: bigint): bigint;
         real(next?: number): number;
