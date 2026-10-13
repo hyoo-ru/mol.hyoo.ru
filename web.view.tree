@@ -3221,7 +3221,7 @@ $hyoo_mol $mol_book2_catalog
 			source_tools /
 				<= View_tree_syntax $mol_link
 					hint @ \view.tree syntax
-					uri \#!section=docs/=vv2nig_s5zr0f
+					uri \#!section=docs/=cx1tyu_aduyqj
 					sub /
 						<= View_tree_syntax_icon $mol_icon_help
 				<= Spread_close

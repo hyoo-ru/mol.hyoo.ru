@@ -33805,7 +33805,7 @@ var $;
 		View_tree_syntax(){
 			const obj = new this.$.$mol_link();
 			(obj.hint) = () => ((this.$.$mol_locale.text("$hyoo_mol_View_tree_syntax_hint")));
-			(obj.uri) = () => ("#!section=docs/=vv2nig_s5zr0f");
+			(obj.uri) = () => ("#!section=docs/=cx1tyu_aduyqj");
 			(obj.sub) = () => ([(this.View_tree_syntax_icon())]);
 			return obj;
 		}
