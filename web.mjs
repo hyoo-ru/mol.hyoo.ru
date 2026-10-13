@@ -33480,7 +33480,7 @@ var $;
 		Source(){
 			const obj = new this.$.$mol_page();
 			(obj.title) = () => ((this.$.$mol_locale.text("$hyoo_tree_app_Source_title")));
-			(obj.tools) = () => ([(this.Raw()), (this.source_tools())]);
+			(obj.tools) = () => ([(this.Raw()), ...(this.source_tools())]);
 			(obj.body) = () => ((this.source_body()));
 			return obj;
 		}

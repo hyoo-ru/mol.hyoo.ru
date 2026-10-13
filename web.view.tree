@@ -3166,7 +3166,7 @@ $hyoo_tree_app $mol_book2
 					hint \Raw code edit
 					checked? <=> raw? true
 					Icon <= Raw_icon $mol_icon_pencil_box_outline
-				<= source_tools /$mol_view_content
+				^ source_tools /$mol_view_content
 			body <= source_body /
 				<= Source_tree $hyoo_tree_edit
 					value? <=> source_tree? $mol_tree2
