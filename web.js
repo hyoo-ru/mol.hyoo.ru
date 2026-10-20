@@ -33852,7 +33852,7 @@ var $;
 		menu_title(){
 			return (this.$.$mol_locale.text("$hyoo_mol_menu_title"));
 		}
-		menu_tools(){
+		menu_foot(){
 			return (this.tools_root());
 		}
 		param(){

@@ -31728,7 +31728,7 @@ declare namespace $ {
 		plugins( ): readonly(any)[]
 		Placeholder( ): any
 		menu_title( ): string
-		menu_tools( ): ReturnType< $hyoo_mol['tools_root'] >
+		menu_foot( ): ReturnType< $hyoo_mol['tools_root'] >
 		param( ): string
 		spreads( ): ({ 
 			'docs': ReturnType< $hyoo_mol['Docs'] >,

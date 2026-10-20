@@ -3189,7 +3189,7 @@ $hyoo_mol $mol_book2_catalog
 		<= Theme $mol_theme_auto
 	Placeholder null
 	menu_title @ \$mol framework
-	menu_tools <= tools_root /
+	menu_foot <= tools_root /
 		<= Sources $mol_link_source
 			uri \https://github.com/hyoo-ru/mam_mol
 		<= Lang $mol_locale_select langs /
