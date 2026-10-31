@@ -18138,6 +18138,9 @@ var $;
 
 ;
 	($.$mol_date) = class $mol_date extends ($.$mol_pick) {
+		error(){
+			return "";
+		}
 		enabled(){
 			return true;
 		}
@@ -18335,6 +18338,11 @@ var $;
 			const obj = new this.$.$mol_icon_calendar();
 			return obj;
 		}
+		Error(){
+			const obj = new this.$.$mol_speck();
+			(obj.value) = () => ((this.error()));
+			return obj;
+		}
 		bubble_content(){
 			return [(this.Input_row()), (this.Calendar())];
 		}
@@ -18373,6 +18381,7 @@ var $;
 	($mol_mem(($.$mol_date.prototype), "Calendar_tools"));
 	($mol_mem(($.$mol_date.prototype), "Calendar"));
 	($mol_mem(($.$mol_date.prototype), "Icon"));
+	($mol_mem(($.$mol_date.prototype), "Error"));
 	($mol_mem(($.$mol_date.prototype), "value_number"));
 	($mol_mem(($.$mol_date.prototype), "value_moment"));
 	($.$mol_date_calendar) = class $mol_date_calendar extends ($.$mol_calendar) {
@@ -18401,6 +18410,34 @@ var $;
 
 ;
 "use strict";
+var $;
+(function ($) {
+    function pass(data) {
+        return data;
+    }
+    function $mol_error_fence(task, fallback, loading = pass) {
+        try {
+            return task();
+        }
+        catch (error) {
+            let normalized;
+            try {
+                normalized = $mol_promise_like(error) ? loading(error) : fallback(error);
+            }
+            catch (sub_error) {
+                normalized = $mol_promise_like(sub_error) ? sub_error : new $mol_error_mix(sub_error.message, { error }, sub_error);
+            }
+            if (normalized instanceof Error || $mol_promise_like(normalized)) {
+                $mol_fail_hidden(normalized);
+            }
+            return normalized;
+        }
+    }
+    $.$mol_error_fence = $mol_error_fence;
+})($ || ($ = {}));
+
+;
+"use strict";
 
 
 ;
@@ -18415,6 +18452,8 @@ var $;
          */
         class $mol_date extends $.$mol_date {
             trigger_content() {
+                if (this.error())
+                    return [this.Error(), this.Icon()];
                 return [this.value() || this.Icon()];
             }
             input_mask(val) {
@@ -18424,13 +18463,16 @@ var $;
                 return [
                     this.Today(),
                     this.Input(),
-                    ...this.value() ? [this.Clear()] : [],
+                    ...this.error() || this.value() ? [this.Clear()] : [],
                 ];
             }
+            error() {
+                const err = $mol_error_fence(() => (this.value_moment(), [null]), e => ($mol_fail_log(e), [e]))?.[0];
+                return !err ? '' : this.$.$mol_error_message(err);
+            }
             value(val) {
-                const moment = this.value_moment();
                 if (val === undefined)
-                    return moment?.toString('YYYY-MM-DD hh:mm') ?? '';
+                    return this.value_moment()?.toString('YYYY-MM-DD hh:mm') ?? '';
                 const moment2 = val && $mol_try(() => new $mol_time_moment(val)) || null;
                 if (moment2 instanceof Error)
                     return val;
@@ -18438,16 +18480,16 @@ var $;
                 return val;
             }
             value_moment(next) {
-                const stamp = this.value_number();
                 if (next === undefined) {
+                    const stamp = this.value_number();
                     return isNaN(stamp) ? null : new $mol_time_moment(stamp);
                 }
                 this.value_number(next?.valueOf() ?? NaN);
                 return next;
             }
             value_number(next) {
-                const value = this.value();
                 if (next === undefined) {
+                    const value = this.value();
                     if (!value)
                         return NaN;
                     const moment = $mol_try(() => new $mol_time_moment(value));
@@ -18456,11 +18498,11 @@ var $;
                     return moment.valueOf() ?? NaN;
                 }
                 const moment = $mol_try(() => new $mol_time_moment(next));
-                this.value(moment.toString(value.length > 12 ? 'YYYY-MM-DD hh:mm' : 'YYYY-MM-DD'));
+                this.value(moment.toString(this.error() || this.value().length > 12 ? 'YYYY-MM-DD hh:mm' : 'YYYY-MM-DD'));
                 return next;
             }
             value_moment_today() {
-                return this.value()
+                return !this.error() && this.value()
                     ? new $mol_time_moment().mask(this.value())
                     : new $mol_time_moment();
             }
@@ -18480,12 +18522,15 @@ var $;
                 }
                 return moment;
             }
+            value_moment_safe() {
+                return this.error() ? null : this.value_moment();
+            }
             day_selected(day) {
-                return this.value_moment()?.toString('YYYY-MM-DD') === day;
+                return this.value_moment_safe()?.toString('YYYY-MM-DD') === day;
             }
             day_click(day) {
                 const moment = new $mol_time_moment(day);
-                this.value_moment(this.value_moment()?.merge(moment) ?? moment);
+                this.value_moment(this.value_moment_safe()?.merge(moment) ?? moment);
                 this.showed(false);
             }
             month_prev() {
@@ -18504,6 +18549,15 @@ var $;
                 this.value_moment(this.value_moment_today());
             }
         }
+        __decorate([
+            $mol_mem
+        ], $mol_date.prototype, "trigger_content", null);
+        __decorate([
+            $mol_mem
+        ], $mol_date.prototype, "input_content", null);
+        __decorate([
+            $mol_mem
+        ], $mol_date.prototype, "error", null);
         __decorate([
             $mol_mem
         ], $mol_date.prototype, "value", null);
@@ -24628,34 +24682,6 @@ var $;
         $mol_rest_code[$mol_rest_code["Network Read Timeout Error"] = 598] = "Network Read Timeout Error";
         $mol_rest_code[$mol_rest_code["Network Connect Timeout Error"] = 599] = "Network Connect Timeout Error";
     })($mol_rest_code = $.$mol_rest_code || ($.$mol_rest_code = {}));
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function pass(data) {
-        return data;
-    }
-    function $mol_error_fence(task, fallback, loading = pass) {
-        try {
-            return task();
-        }
-        catch (error) {
-            let normalized;
-            try {
-                normalized = $mol_promise_like(error) ? loading(error) : fallback(error);
-            }
-            catch (sub_error) {
-                normalized = $mol_promise_like(sub_error) ? sub_error : new $mol_error_mix(sub_error.message, { error }, sub_error);
-            }
-            if (normalized instanceof Error || $mol_promise_like(normalized)) {
-                $mol_fail_hidden(normalized);
-            }
-            return normalized;
-        }
-    }
-    $.$mol_error_fence = $mol_error_fence;
 })($ || ($ = {}));
 
 ;
