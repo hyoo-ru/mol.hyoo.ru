@@ -8260,14 +8260,225 @@ var $;
 ;
 "use strict";
 var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Float schema"($) {
+                $mol_assert_equal('$mol_schema_float', $mol_schema_float + '', $mol_key($mol_schema_float));
+                $mol_assert_equal(true, $mol_schema_float.check(0));
+                $mol_assert_equal(true, $mol_schema_float.check(Number.NaN));
+                $mol_assert_equal(true, $mol_schema_float.check(Number.POSITIVE_INFINITY));
+                $mol_assert_equal(false, $mol_schema_float.check(null));
+                $mol_assert_equal(1.5, $mol_schema_float.cast(1.5));
+                $mol_assert_equal(Number.NaN, $mol_schema_float.cast('0'));
+                $mol_assert_equal(Number.EPSILON, $mol_schema_float.guard(Number.EPSILON));
+                $mol_assert_fail(() => $mol_schema_float.guard('0'), 'Wrong type');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "String schema"($) {
+                $mol_assert_equal('$mol_schema_string', $mol_schema_string + '', $mol_key($mol_schema_string));
+                $mol_assert_equal(true, $mol_schema_string.check('foo'));
+                $mol_assert_equal(false, $mol_schema_string.check(123));
+                $mol_assert_equal('foo', $mol_schema_string.cast('foo'));
+                $mol_assert_equal('', $mol_schema_string.cast(123));
+                $mol_assert_equal('foo', $mol_schema_string.guard('foo'));
+                $mol_assert_fail(() => $mol_schema_string.guard(123), 'Wrong type');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Cache of maybe schema"($) {
+                $mol_assert_equal($mol_schema_maybe($mol_schema_float), $mol_schema_maybe($mol_schema_float));
+                $mol_assert_unique($mol_schema_maybe($mol_schema_float), $mol_schema_maybe($mol_schema_string));
+            },
+            "Optional value"($) {
+                const Config = $mol_schema_maybe($mol_schema_string);
+                $mol_assert_equal('$mol_schema_maybe<$mol_schema_string>', Config + '');
+                $mol_assert_equal(true, Config.check('foo'));
+                $mol_assert_equal(true, Config.check(undefined));
+                $mol_assert_equal(true, Config.check(null));
+                $mol_assert_equal(false, Config.check(0));
+                $mol_assert_equal('foo', Config.cast('foo'));
+                $mol_assert_equal(undefined, Config.cast(undefined));
+                $mol_assert_equal(null, Config.cast(null));
+                $mol_assert_equal(null, Config.cast(0));
+                $mol_assert_equal('foo', Config.guard('foo'));
+                $mol_assert_fail(() => Config.guard(123), 'Wrong type');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Cache of instance schema"($) {
+                $mol_assert_equal($mol_schema_instance(Uint8Array), $mol_schema_instance(Uint8Array));
+                $mol_assert_unique($mol_schema_instance(Uint8Array), $mol_schema_instance(Int8Array));
+            },
+            "Class instance schema"($) {
+                const Blob = $mol_schema_instance(Uint8Array);
+                $mol_assert_equal('$mol_schema_instance<Uint8Array>', Blob + '', $mol_key(Blob));
+                $mol_assert_equal(true, Blob.check(new Uint8Array));
+                $mol_assert_equal(false, Blob.check(new Int8Array));
+                $mol_assert_equal(false, Blob.check(null));
+                $mol_assert_equal(new Uint8Array([0, 1]), Blob.cast(new Uint8Array([0, 1])));
+                $mol_assert_fail(() => Blob.cast(new Int8Array), 'Wrong class');
+                $mol_assert_equal(new Uint8Array, Blob.guard(new Uint8Array));
+                $mol_assert_fail(() => Blob.guard(new Int8Array), 'Wrong class');
+            },
+            "Boxed instance schema"($) {
+                const Str = $mol_schema_instance(String);
+                $mol_assert_equal('$mol_schema_instance<String>', Str + '', $mol_key(Str));
+                $mol_assert_equal(true, Str.check(Object('')));
+                $mol_assert_equal(true, Str.check(''));
+                $mol_assert_equal(true, Object('') instanceof Str);
+            },
+            "Schema instance schema"($) {
+                const Str = $mol_schema_instance($mol_schema_instance(String));
+                $mol_assert_equal('$mol_schema_instance<String>', Str + '', $mol_key(Str));
+                $mol_assert_equal(true, Str.check(Object('')));
+                $mol_assert_equal(true, Str.check(''));
+                $mol_assert_equal(true, Object('') instanceof Str);
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Validation"($) {
+                $mol_assert_fail(() => new $giper_baza_link('qwertyui_asdfghjk123'), 'Wrong Link');
+            },
+            "From integer"($) {
+                $mol_assert_equal($giper_baza_link.from_int(178308648732587), new $giper_baza_link('qwertyui'));
+            },
+            "Pick Lord only"($) {
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0').lord(), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed').lord(), new $giper_baza_link('qwertyui_asdfghjk').lord(), new $giper_baza_link('qwertyui_asdfghjk'));
+            },
+            "Pick Land only"($) {
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').land(), new $giper_baza_link('qwertyui_asdfghjk').land(), new $giper_baza_link('qwertyui_asdfghjk'));
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0').land(), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed').land(), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed'));
+            },
+            "Pick Peer only"($) {
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0').peer(), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').peer(), new $giper_baza_link('qwertyui'));
+                $mol_assert_equal(new $giper_baza_link('___qazwsxed').peer(), new $giper_baza_link(''));
+            },
+            "Pick Head only"($) {
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0').head(), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').head(), new $giper_baza_link('zxcvbnm0'));
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed').head(), new $giper_baza_link('qwertyui_asdfghjk').head(), new $giper_baza_link(''));
+            },
+            "Pick Area only"($) {
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed').area(), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0').area(), new $giper_baza_link('qazwsxed'));
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').area(), new $giper_baza_link('qwertyui_asdfghjk').area(), new $giper_baza_link('').area(), new $giper_baza_link(''));
+            },
+            "Binary encoding"($) {
+                const pawn = new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0').toBin();
+                const land = new $giper_baza_link('qwertyui_asdfghjk_qazwsxed').toBin();
+                const lord = new $giper_baza_link('qwertyui_asdfghjk').toBin();
+                const rel_pawn = new $giper_baza_link('___zxcvbnm0').toBin();
+                const rel_root = new $giper_baza_link('').toBin();
+                $mol_assert_equal(pawn.length, 24);
+                $mol_assert_equal(land.length, 18);
+                $mol_assert_equal(lord.length, 12);
+                $mol_assert_equal(rel_pawn.length, 6);
+                $mol_assert_equal(rel_root.length, 0);
+                $mol_assert_equal($giper_baza_link.from_bin(pawn), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0'));
+                $mol_assert_equal($giper_baza_link.from_bin(land), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed'));
+                $mol_assert_equal($giper_baza_link.from_bin(lord), new $giper_baza_link('qwertyui_asdfghjk'));
+                $mol_assert_equal($giper_baza_link.from_bin(rel_pawn), new $giper_baza_link('zxcvbnm0'));
+                $mol_assert_equal($giper_baza_link.from_bin(rel_root), new $giper_baza_link(''));
+            },
+            "Relate to base"($) {
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').relate(new $giper_baza_link('QWERTYUI_ASDFGHJK')), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').relate(new $giper_baza_link('QWERTYUI_ASDFGHJK__ZXCVBNM0')), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0'));
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0').relate(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed')), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0').relate(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_12345678')), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').relate(new $giper_baza_link('qwertyui_asdfghjk')), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').relate(new $giper_baza_link('qwertyui_asdfghjk__12345678')), new $giper_baza_link('___zxcvbnm0'));
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed').relate(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0')), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed').relate(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed')), new $giper_baza_link('qwertyui_asdfghjk').relate(new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0')), new $giper_baza_link('qwertyui_asdfghjk').relate(new $giper_baza_link('qwertyui_asdfghjk')), new $giper_baza_link(''));
+            },
+            "Resolve Link from base"($) {
+                $mol_assert_equal(new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').resolve(new $giper_baza_link('QWERTYUI_ASDFGHJK__ZXCVBNM0')), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').resolve(new $giper_baza_link('QWERTYUI_ASDFGHJK')), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0').resolve(new $giper_baza_link('qwertyui_asdfghjk')), new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0'));
+                $mol_assert_equal(new $giper_baza_link('___12345678').resolve(new $giper_baza_link('qwertyui_asdfghjk')), new $giper_baza_link('___12345678').resolve(new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0')), new $giper_baza_link('qwertyui_asdfghjk__12345678'));
+                $mol_assert_equal(new $giper_baza_link('___12345678').resolve(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed')), new $giper_baza_link('___12345678').resolve(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0')), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_12345678'));
+                $mol_assert_equal(new $giper_baza_link('').resolve(new $giper_baza_link('qwertyui_asdfghjk')), new $giper_baza_link('').resolve(new $giper_baza_link('qwertyui_asdfghjk__zxcvbnm0')), new $giper_baza_link('qwertyui_asdfghjk'));
+                $mol_assert_equal(new $giper_baza_link('').resolve(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed')), new $giper_baza_link('').resolve(new $giper_baza_link('qwertyui_asdfghjk_qazwsxed_zxcvbnm0')), new $giper_baza_link('qwertyui_asdfghjk_qazwsxed'));
+            },
+            'Hashing'() {
+                $mol_assert_equal($giper_baza_link.hash_bin(new Uint8Array([1, 2, 3])), new $giper_baza_link('cDeAcZjC_Kn0rCAc3'));
+                $mol_assert_equal($giper_baza_link.hash_str('foo bar'), new $giper_baza_link('N3PeplFW_kJg4æmwi'));
+            }
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
 (function ($) {
     $mol_test({
-        'trim array'() {
-            const array = [undefined, null, 0, false, null, undefined, undefined];
-            const correct = [undefined, null, 0, false, null];
-            $mol_array_trim(array);
-            $mol_assert_like(array, correct);
-        }
+        async 'str & bin sizes'() {
+            const signer = await $$.$mol_crypto2_signer.generate();
+            const auditor = signer.auditor();
+            $mol_assert_equal(signer.toStringPrivate().length, $mol_crypto2_signer.size_str);
+            $mol_assert_equal(auditor.toString().length, $mol_crypto2_auditor.size_str);
+            $mol_assert_equal(signer.asArrayPrivate().length, $mol_crypto2_signer.size_bin);
+            $mol_assert_equal(auditor.asArray().length, $mol_crypto2_auditor.size_bin);
+            const data = new Uint8Array([1, 2, 3]);
+            const sign = await signer.sign(data);
+            $mol_assert_equal(sign.byteLength, $mol_crypto2_signer.size_sign);
+        },
+        async 'verify self signed with auto generated key'() {
+            const Alice = await $$.$mol_crypto2_signer.generate();
+            const data = new Uint8Array([1, 2, 3]);
+            const sign = await Alice.sign(data);
+            $mol_assert_equal(true, await Alice.auditor().verify(data, sign));
+        },
+        async 'verify signed with str exported auto generated key'() {
+            const Alice = await $$.$mol_crypto2_signer.generate();
+            const data = new Uint8Array([1, 2, 3]);
+            const Bella = $mol_crypto2_signer.from(Alice.toString() + Alice.toStringPrivate());
+            const sign = await Bella.sign(data);
+            const Catie = $mol_crypto2_auditor.from(Alice.auditor().toString());
+            $mol_assert_equal(true, await Catie.verify(data, sign));
+            const Diana = $mol_crypto2_auditor.from(Alice.toString());
+            $mol_assert_equal(true, await Diana.verify(data, sign));
+        },
+        async 'verify signed with bin exported auto generated key'() {
+            const Alice = await $$.$mol_crypto2_signer.generate();
+            const data = new Uint8Array([1, 2, 3]);
+            const Bella = $mol_crypto2_signer.from(new Uint8Array([...Alice.asArray(), ...Alice.asArrayPrivate()]));
+            const sign = await Bella.sign(data);
+            const Catie = $mol_crypto2_auditor.from(Alice.auditor().asArray());
+            $mol_assert_equal(true, await Catie.verify(data, sign));
+            const Diana = $mol_crypto2_auditor.from(Alice.asArray());
+            $mol_assert_equal(true, await Diana.verify(data, sign));
+        },
     });
 })($ || ($ = {}));
 
@@ -8276,104 +8487,34 @@ var $;
 var $;
 (function ($) {
     $mol_test({
-        'triplets'() {
-            $mol_assert_equal(new $mol_time_interval('2015-01-01/P1M').end.toString(), '2015-02-01');
-            $mol_assert_equal(new $mol_time_interval('P1M/2015-02-01').start.toString(), '2015-01-01');
-            $mol_assert_equal(new $mol_time_interval('2015-01-01/2015-02-01').duration.toString(), 'PT2678400S');
+        async 'Sizes'() {
+            const secret = $mol_crypto2_secret.make();
+            $mol_assert_equal(secret.asArray().byteLength, $mol_crypto2_secret.size);
+            const data = new Uint8Array([1, 2, 3]);
+            const nonce = $mol_crypto2_nonce();
+            const closed = await secret.encrypt(data, nonce);
+            $mol_assert_equal(closed.byteLength, data.byteLength);
         },
-        'comparison'() {
-            const iso = '2021-01-02/2022-03-04';
-            $mol_assert_like(new $mol_time_interval(iso), new $mol_time_interval(iso));
+        'Wrong key size'() {
+            $mol_assert_fail(() => $mol_crypto2_secret.from(new Uint8Array(8)), 'Wrong key size');
         },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Vector limiting'() {
-            let point = new $mol_vector_3d(7, 10, 13);
-            const res = point.limited([[1, 5], [15, 20], [5, 10]]);
-            $mol_assert_equal(res.x, 5);
-            $mol_assert_equal(res.y, 15);
-            $mol_assert_equal(res.z, 10);
+        async 'Decrypt self encrypted'() {
+            const secret = $mol_crypto2_secret.make();
+            const nonce = $mol_crypto2_nonce();
+            const data = new Uint8Array([1, 2, 3]);
+            const closed = await secret.encrypt(data, nonce);
+            $mol_assert_equal(closed.byteLength, 3);
+            const opened = await secret.decrypt(closed, nonce);
+            $mol_assert_equal(opened, data);
         },
-        'Vector adding scalar'() {
-            let point = new $mol_vector_3d(1, 2, 3);
-            let res = point.added0(5);
-            $mol_assert_equal(res.x, 6);
-            $mol_assert_equal(res.y, 7);
-            $mol_assert_equal(res.z, 8);
-        },
-        'Vector adding vector'() {
-            let point = new $mol_vector_3d(1, 2, 3);
-            let res = point.added1([5, 10, 15]);
-            $mol_assert_equal(res.x, 6);
-            $mol_assert_equal(res.y, 12);
-            $mol_assert_equal(res.z, 18);
-        },
-        'Vector multiplying scalar'() {
-            let point = new $mol_vector_3d(2, 3, 4);
-            let res = point.multed0(-1);
-            $mol_assert_equal(res.x, -2);
-            $mol_assert_equal(res.y, -3);
-            $mol_assert_equal(res.z, -4);
-        },
-        'Vector multiplying vector'() {
-            let point = new $mol_vector_3d(2, 3, 4);
-            let res = point.multed1([5, 2, -2]);
-            $mol_assert_equal(res.x, 10);
-            $mol_assert_equal(res.y, 6);
-            $mol_assert_equal(res.z, -8);
-        },
-        'Matrix adding matrix'() {
-            let matrix = new $mol_vector_matrix(...[[1, 2], [3, 4], [5, 6]]);
-            let res = matrix.added2([[10, 20], [30, 40], [50, 60]]);
-            $mol_assert_equal(res[0][0], 11);
-            $mol_assert_equal(res[0][1], 22);
-            $mol_assert_equal(res[1][0], 33);
-            $mol_assert_equal(res[1][1], 44);
-            $mol_assert_equal(res[2][0], 55);
-            $mol_assert_equal(res[2][1], 66);
-        },
-        'Matrix multiplying matrix'() {
-            let matrix = new $mol_vector_matrix(...[[2, 3], [4, 5], [6, 7]]);
-            let res = matrix.multed2([[2, 3], [4, 5], [6, 7]]);
-            $mol_assert_equal(res[0][0], 4);
-            $mol_assert_equal(res[0][1], 9);
-            $mol_assert_equal(res[1][0], 16);
-            $mol_assert_equal(res[1][1], 25);
-            $mol_assert_equal(res[2][0], 36);
-            $mol_assert_equal(res[2][1], 49);
-        },
-        'Range expanding'() {
-            let range = $mol_vector_range_full.inversed;
-            const expanded = range.expanded0(10).expanded0(5);
-            $mol_assert_like([...expanded], [5, 10]);
-        },
-        'Vector of range expanding by vector'() {
-            let dimensions = new $mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
-            const expanded = dimensions.expanded1([1, 7]).expanded1([3, 5]);
-            $mol_assert_like([...expanded.x], [1, 3]);
-            $mol_assert_like([...expanded.y], [5, 7]);
-        },
-        'Vector of range expanding by vector of range'() {
-            let dimensions = new $mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
-            const expanded = dimensions
-                .expanded2([[1, 3], [7, 9]])
-                .expanded2([[2, 4], [6, 8]]);
-            $mol_assert_like([...expanded.x], [1, 4]);
-            $mol_assert_like([...expanded.y], [6, 9]);
-        },
-        'Vector of infinity range expanding by vector of range'() {
-            let dimensions = new $mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
-            const next = new $mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
-            const expanded = next
-                .expanded2(dimensions);
-            $mol_assert_like([...expanded.x], [Infinity, -Infinity]);
-            $mol_assert_like([...expanded.y], [Infinity, -Infinity]);
+        async 'Decrypt encrypted with exported key'() {
+            const data = new Uint8Array([1, 2, 3]);
+            const nonce = $mol_crypto2_nonce();
+            const Alice = $mol_crypto2_secret.make();
+            const closed = await Alice.encrypt(data, nonce);
+            const Bob = $mol_crypto2_secret.from(Alice.asArray());
+            const opened = await Bob.decrypt(closed, nonce);
+            $mol_assert_equal(data, opened);
         },
     });
 })($ || ($ = {}));
@@ -8383,32 +8524,163 @@ var $;
 var $;
 (function ($) {
     $mol_test({
-        'serial & parse'() {
-            const data = [
-                { foo: '123', bar: '456' },
-                { foo: 'x"xx', bar: 'y,y\ny' },
+        async 'str & bin sizes'() {
+            const cipher = await $$.$mol_crypto2_cipher.generate();
+            const socket = cipher.socket();
+            $mol_assert_equal(cipher.toStringPrivate().length, $mol_crypto2_cipher.size_str);
+            $mol_assert_equal(socket.toString().length, $mol_crypto2_socket.size_str);
+            $mol_assert_equal(cipher.asArrayPrivate().length, $mol_crypto2_cipher.size_bin);
+            $mol_assert_equal(socket.asArray().length, $mol_crypto2_socket.size_bin);
+            const secret = await cipher.secret(socket);
+            $mol_assert_equal(secret.byteLength, $mol_crypto2_cipher.size_secret);
+        },
+        async 'Shared secret from public & private keys'() {
+            const A = await $mol_crypto2_cipher.generate();
+            const B = await $mol_crypto2_cipher.generate();
+            const SA = await A.secret(B.socket());
+            const SB = await B.secret(A.socket());
+            $mol_assert_equal(SA.asArray(), SB.asArray());
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            async "Signing & encryption"($) {
+                const Alice = await $mol_crypto2_private.generate();
+                const Bella = await $mol_crypto2_private.generate();
+                const secretA = await Alice.cipher().secret(Bella.socket());
+                const secretB = await Bella.cipher().secret(Alice.socket());
+                $mol_assert_equal(secretA, secretB);
+                const data = new Uint8Array([1, 2, 3]);
+                const nonce = $mol_crypto2_nonce();
+                const closed = await secretA.encrypt(data, nonce);
+                const digest = $mol_crypto2_hash(closed);
+                const sign = await Alice.signer().sign(digest);
+                $mol_assert_equal(true, await Alice.auditor().verify(digest, sign));
+                $mol_assert_equal(data, await secretA.decrypt(closed, nonce));
+            },
+            async "Serial & Deserial"($) {
+                const orig = await $mol_crypto2_private.generate();
+                const bin = new Uint8Array([...orig.asArray(), ...orig.asArrayPrivate()]);
+                const str = orig.toString() + orig.toStringPrivate();
+                $mol_assert_equal(orig, $mol_crypto2_private.from(bin), $mol_crypto2_private.from(str));
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        class $giper_baza_auth_mock extends $.$giper_baza_auth {
+            static current() {
+                return this.from('_7uaNxSijvQDjZ-9a9r22hpcROZwhgBTaWZrcDIMwkU3e6xFHq_7h9-Dfxgif7E_szNlubYXJLUWFNt8x5ko3wb0YsrNPmwb8tahStoyKB_J5_gj8LqmJItGnwJHsGmRs17BgVIMzCEMbNqhiBiz6-dkW9PFWp346RUya2lNHzpk');
+            }
+            static embryos = [
+                '_7bJySpjwMJr-9xpQtl3XIQhiiHIAJ3mJGJ9Z8XJXOMbKLhjUHMrA4RZzmscCgO0c7xnXnw_UFhwhDN7CRHOTca4x_vAJdIvjnNNRkBaYqJJRHBiLn6Cjf1Iv7ZYsHBZQZ72WxwYK8xKs8L3Kokv5RZ-jqBoozqc8JIFI1DWayJM',
+                '_zOldFN6un21Kk9V_Z51D84ZJXdDoSfkxZZl5iNdSJ8mN-zcOuKh0tUTajmynoVmYG73krPQXIkIlGLAEwx5n03Fju-SIG0_fENxSNDRH8Pukvibs6nnMDPgXCYRvJi6gL8ZVwedP7LYkwa1qpsaUN7nmjWvhkkgVcVMLYK0Jk7g',
+                '_8-GDFlnyEYoMzoeCiH1H7lBLuqMyZ1S_2ZEt0o4YIE4frZ1syTbDar0RqkFzC78BhVCYVykYxDTewnzyq4nEwG3y1Al3BskP59eYuDeaH0UKbBNF407K7kGJrMpJXZtMj0kZdX16E3aKfUmeLp0NL9VWFrAg6QiVQd1jJ5-MU5w',
+                '_9GnExCEqMmBM5nBUnfdGBPjYSVHOUjHygAFipsPU0UU8mOgMS9JC8Wwkv0waX-JgfPrI_em3gPznH-2_C9MDcP03zEmIAoLRltMEBftax-lHJ52kciH3GUFAdQ1glc9Ej8ypgYHvfvO5gkQA6q0DhCEcWUPkOok5OvJre6iO358',
+                '_y1XB55LywSvOEtuyr_hh3wjRaW7gFW_aebG1eSQFmcFTzFvw50xd9Vft_jXFvP3Cd9T4jL-eIPMizBX9gafRcaW8XDdjaWW6GDCJLeXBSoFQH4PpNjufNT7BaPCZfAwY_12rLEO66Pse1GrzdVHU6wSOciL99w56zQLgzFLHErc',
+                '_62jup6y61Rt8SN8Oq1Lzu5GXA_WL7oxoRPkRPQNkiwvKz8z4D2p8g_Qa5QWvBYmFrgBwAZmarD1UJ1ucA_zUQbrgMUBmEiYv7S4AApUa1Obo6r2KQ_70BebGOo_F3lNUtzfNxEnMh4FRLShzu0hLlp6gZyFjW7aZKoqLRXR68bw',
+                '_yXB4FEZnF35nrJxHpsiS3YB18ADNOwbrKIYKcXAdpAIjWy6A4-Nx6K44RWNvgnreWlACm6PaaymM6he1TaCAAyS8ouYHqSezBbGRPyKmKVXjcyHYfQ33W3tQvipwLM8YB3VcOAuvRBNaiQLLzPb9saE5HT2cU25EJE34hpAVm6I',
+                '_6iVZXF5fD2ztELDFvmhTAJWMRNLBMRv3W6GArqcVLwcCM6WeoqPAySo05cG-XaqXTme0iC3Pzf5jvlHqY1GgAO4qfQcF3EWV66Uw9sYD1T_tu_rmKYjYT5YXyaxtki08r50YHA-Jw4obKcDHt6_sDONANUA7pCYjIeFGt0mv1Zs',
+                '_yPV-YZgPu0_edJc3I8o1SUKqUucgYVKlbTrKqVyl3sxjQo3u73nGtQq190q3W_ebhVnQWLC8A4JFhbjWDCTzY8i7shadOvvSEeAfuPqsyK5JERqw-tbJm_0nvR8bShIcXzyrYDIg_ZBU_wNKbFzoCXHmh-CNsuKpb6NyBQPsIrU',
+                '_-67MXDuic5c7e4Febc1QuI456bgmfeMnmp3rWcGWzcMIPytythDMqmZISsGGsLVFUOQxsGjm7s3ULV-307L3wd47B4K4BtUhTR5cyKMI4y5Ld-UstbevtgOURqLsc_XIhyFilGTJ8ORTRW7RI3O83xtRu-_0lRg9WcmnhWERBIU',
             ];
-            $mol_assert_equal($mol_csv_parse($mol_csv_serial(data)), data);
+        }
+        __decorate([
+            $mol_mem
+        ], $giper_baza_auth_mock, "current", null);
+        $.$giper_baza_auth = $giper_baza_auth_mock;
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'ordered links'() {
+            var graph = new $mol_graph();
+            graph.link('A', 'B', 'E');
+            $mol_assert_equal(graph.edge_out('A', 'B'), 'E');
+            $mol_assert_equal(graph.edge_in('B', 'A'), 'E');
+            $mol_assert_equal(graph.edge_out('B', 'A'), null);
+            $mol_assert_equal(graph.edge_in('A', 'B'), null);
         },
-        'parse & serial'() {
-            const csv = '"foo","bar"\n"123","456"\n"x""xx","y,y\ny"';
-            $mol_assert_equal($mol_csv_serial($mol_csv_parse(csv)), csv);
+        'nodes without edges'() {
+            var graph = new $mol_graph();
+            graph.nodes.add('A');
+            graph.nodes.add('B');
+            graph.nodes.add('C');
+            graph.nodes.add('D');
+            graph.acyclic(edge => 0);
+            $mol_assert_equal([...graph.sorted].join(''), 'ABCD');
         },
-        'one row'() {
-            const csv = '"foo","y,y\ny"';
-            $mol_assert_equal($mol_csv_serial_table($mol_csv_parse_table(csv)), csv);
+        'partial ordering'() {
+            var graph = new $mol_graph();
+            graph.nodes.add('A');
+            graph.nodes.add('B');
+            graph.nodes.add('C');
+            graph.nodes.add('D');
+            graph.link('B', 'C', { priority: 0 });
+            graph.acyclic(edge => edge.priority);
+            $mol_assert_equal([...graph.sorted].join(''), 'ACBD');
         },
-        'one col'() {
-            const csv = '"foo"\n"y,y\ny"';
-            $mol_assert_equal($mol_csv_serial($mol_csv_parse(csv)), csv);
+        'sorting must cut cycles at low priority edges A'() {
+            var graph = new $mol_graph();
+            graph.link('A', 'B', { priority: 0 });
+            graph.link('B', 'C', { priority: -2 });
+            graph.link('C', 'D', { priority: 0 });
+            graph.link('D', 'A', { priority: -1 });
+            graph.acyclic(edge => edge.priority);
+            $mol_assert_equal([...graph.sorted].join(''), 'BADC');
         },
-        'one cell'() {
-            const csv = '"y,y\ny"';
-            $mol_assert_equal($mol_csv_serial_table($mol_csv_parse_table(csv)), csv);
+        'sorting must cut cycles at low priority edges B'() {
+            var graph = new $mol_graph();
+            graph.link('B', 'C', { priority: -2 });
+            graph.link('C', 'D', { priority: 0 });
+            graph.link('D', 'A', { priority: -1 });
+            graph.link('A', 'B', { priority: 0 });
+            graph.acyclic(edge => edge.priority);
+            $mol_assert_equal([...graph.sorted].join(''), 'BADC');
         },
-        'tab separated'() {
-            const tsv = '"foo"\t"bar"\n"123"\t"456"\n"x""xx"\t"y,y\ny"';
-            $mol_assert_equal($mol_csv_serial($mol_csv_parse(tsv, '\t'), '\t'), tsv);
+        'sorting must cut cycles at low priority edges C'() {
+            var graph = new $mol_graph();
+            graph.link('C', 'D', { priority: 0 });
+            graph.link('D', 'A', { priority: -1 });
+            graph.link('A', 'B', { priority: 0 });
+            graph.link('B', 'C', { priority: -2 });
+            graph.acyclic(edge => edge.priority);
+            $mol_assert_equal([...graph.sorted].join(''), 'BADC');
+        },
+        'sorting must cut cycles at low priority edges D'() {
+            var graph = new $mol_graph();
+            graph.link('D', 'A', { priority: -1 });
+            graph.link('A', 'B', { priority: 0 });
+            graph.link('B', 'C', { priority: -2 });
+            graph.link('C', 'D', { priority: 0 });
+            graph.acyclic(edge => edge.priority);
+            $mol_assert_equal([...graph.sorted].join(''), 'BADC');
+        },
+        'sorting must group cutted cycles'() {
+            var graph = new $mol_graph();
+            graph.link('A', 'B', 0);
+            graph.link('B', 'C', 0);
+            graph.link('C', 'D', -2);
+            graph.link('D', 'E', 0);
+            graph.link('E', 'C', 0);
+            graph.acyclic(edge => edge);
+            $mol_assert_equal([...graph.sorted].join(''), 'CEDBA');
         },
     });
 })($ || ($ = {}));
@@ -8430,204 +8702,6 @@ var $;
             $mol_assert_fail(() => {
                 $mol_data_number(new Number(''));
             }, '0 is not a number');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Is empty array'() {
-            $mol_data_array($mol_data_number)([]);
-        },
-        'Is array'() {
-            $mol_data_array($mol_data_number)([1, 2]);
-        },
-        'Is not array'() {
-            $mol_assert_fail(() => {
-                $mol_data_array($mol_data_number)({ [0]: 1, length: 1, map: () => { } });
-            }, '[object Object] is not an array');
-        },
-        'Has wrong item'() {
-            $mol_assert_fail(() => {
-                $mol_data_array($mol_data_number)([1, '1']);
-            }, '[1] 1 is not a number');
-        },
-        'Has wrong deep item'() {
-            $mol_assert_fail(() => {
-                $mol_data_array($mol_data_array($mol_data_number))([[], [0, 0, false]]);
-            }, '[1] [2] false is not a number');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Is boolean - true'() {
-            $mol_data_boolean(true);
-        },
-        'Is boolean - false'() {
-            $mol_data_boolean(false);
-        },
-        'Is not boolean'() {
-            $mol_assert_fail(() => {
-                $mol_data_boolean('x');
-            }, 'x is not a boolean');
-        },
-        'Is object boolean'() {
-            $mol_assert_fail(() => {
-                $mol_data_boolean(new Boolean(''));
-            }, 'false is not a boolean');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'is same number'() {
-            const Nan = $mol_data_const(Number.NaN);
-            Nan(Number.NaN);
-        },
-        'is equal object'() {
-            const Tags = $mol_data_const({ tags: ['deep', 'equals'] });
-            Tags({ tags: ['deep', 'equals'] });
-        },
-        'is different number'() {
-            const Five = $mol_data_const(5);
-            $mol_assert_fail(() => Five(6), '6 is not 5');
-        },
-        'is different object'() {
-            const Tags = $mol_data_const({ tags: ['deep', 'equals'] });
-            $mol_assert_fail(() => Tags({ tags: ['shallow', 'equals'] }), `{"tags":["shallow","equals"]} is not {"tags":["deep","equals"]}`);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Is empty dict'() {
-            $mol_data_dict($mol_data_number)({});
-        },
-        'Is dict'() {
-            $mol_data_dict($mol_data_number)({ foo: 123 });
-        },
-        'Is not dict'() {
-            $mol_assert_fail(() => {
-                $mol_data_dict($mol_data_number)([123]);
-            }, '123 is not an Object');
-        },
-        'Has wrong item'() {
-            $mol_assert_fail(() => {
-                $mol_data_dict($mol_data_number)({ foo: 1, bar: '1' });
-            }, '["bar"] 1 is not a number');
-        },
-        'Has wrong deep item'() {
-            $mol_assert_fail(() => {
-                $mol_data_dict($mol_data_dict($mol_data_number))({ foo: { bar: false } });
-            }, '["foo"] ["bar"] false is not a number');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Is string'() {
-            $mol_data_string('');
-        },
-        'Is not string'() {
-            $mol_assert_fail(() => {
-                $mol_data_string(0);
-            }, '0 is not a string');
-        },
-        'Is object string'() {
-            $mol_assert_fail(() => {
-                $mol_data_string(new String('x'));
-            }, 'x is not a string');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Is fit'() {
-            $mol_data_pattern(/^-$/)('-');
-        },
-        'Is not fit'() {
-            $mol_assert_fail(() => {
-                $mol_data_pattern(/^-$/)('+');
-            }, '+ is not a /^-$/');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Is email'() {
-            $mol_data_email('foo@bar');
-        },
-        'Has not host'() {
-            $mol_assert_fail(() => {
-                $mol_data_email('foo@');
-            }, 'foo@ is not a /.+@.+/');
-        },
-        'Has not name'() {
-            $mol_assert_fail(() => {
-                $mol_data_email('@bar');
-            }, '@bar is not a /.+@.+/');
-        },
-        'Has not @'() {
-            $mol_assert_fail(() => {
-                $mol_data_email('foo.bar');
-            }, 'foo.bar is not a /.+@.+/');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Is same class'() {
-            $mol_data_instance(Date)(new Date);
-        },
-        'Is sub class'() {
-            $mol_data_instance(Object)(new Date);
-        },
-        'Is super class'() {
-            $mol_assert_fail(() => {
-                $mol_data_instance(Date)(new Object);
-            }, '[object Object] is not a Date');
-        },
-        'Is another class'() {
-            $mol_assert_fail(() => {
-                $mol_data_instance(Date)(new Array);
-            }, ' is not a Date');
-        },
-        'Is not object'() {
-            $mol_assert_fail(() => {
-                $mol_data_instance(Date)(null);
-            }, 'null is not a Date');
         },
     });
 })($ || ($ = {}));
@@ -8673,20 +8747,102 @@ var $;
 ;
 "use strict";
 var $;
-(function ($) {
-    $mol_test({
-        'Nominal typing'() {
-            const Weight = $mol_data_nominal({ Weight: $mol_data_integer });
-            const Length = $mol_data_nominal({ Length: $mol_data_integer });
-            let len = Length(10);
-            len = Length(20); // Validate
-            len = 20; // Implicit Cast
-            let num = len; // Implicit Cast
-            len = Weight(20); // Explicit Cast
-            // len = Weight( 20 ) // Compile time error
-            // len = Length( 20.1 ) // Run time error
-        },
-    });
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Empty release"($) {
+                const pool = new $mol_memory_pool;
+                $mol_assert_equal(pool.empty(), true);
+                pool.release(0, 0);
+                $mol_assert_equal(pool.acquire(8), 0);
+                $mol_assert_equal(pool.empty(), false);
+                pool.release(0, 8);
+                $mol_assert_equal(pool.empty(), true);
+            },
+            "linear allocation"($) {
+                const pool = new $mol_memory_pool;
+                $mol_assert_equal(pool.acquire(8), 0);
+                $mol_assert_equal(pool.acquire(16), 8);
+                $mol_assert_equal(pool.acquire(32), 24);
+            },
+            "allocation in released"($) {
+                const pool = new $mol_memory_pool;
+                $mol_assert_equal(pool.acquire(8), 0);
+                $mol_assert_equal(pool.acquire(16), 8);
+                pool.release(0, 16);
+                $mol_assert_equal(pool.acquire(8), 0);
+                $mol_assert_equal(pool.acquire(16), 24);
+                $mol_assert_equal(pool.acquire(8), 8);
+            },
+            "space limitation"($) {
+                const pool = new $mol_memory_pool(10);
+                pool.acquire(8);
+                pool.release(2, 4);
+                $mol_assert_fail(() => pool.acquire(6), 'No free space\nneed: 6\nhave: 4');
+            },
+            "double release"($) {
+                const pool = new $mol_memory_pool;
+                $mol_assert_fail(() => pool.release(0, 2), 'Double release');
+                $mol_assert_fail(() => pool.release(2, 2), 'Release out of allocated');
+                pool.acquire(16);
+                pool.release(4, 8);
+                $mol_assert_fail(() => pool.release(4, 8), 'Double release');
+                $mol_assert_fail(() => pool.release(10, 4), 'Double release');
+                $mol_assert_fail(() => pool.release(2, 4), 'Double release');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "faces serial and parse"($) {
+                const land1 = new $giper_baza_link('12345678_12345678');
+                const land2 = new $giper_baza_link('87654321_87654321');
+                const land3 = new $giper_baza_link('87654321_00000000');
+                const peer1 = new $giper_baza_link('12345678');
+                const peer2 = new $giper_baza_link('87654321');
+                const faces1 = new $giper_baza_face_map;
+                faces1.peer_time(peer1.str, $giper_baza_time_now(), 0);
+                faces1.peer_summ(peer1.str, 0);
+                faces1.peer_time(peer2.str, $giper_baza_time_now(), 0);
+                faces1.peer_summ(peer2.str, 64_000);
+                const faces2 = new $giper_baza_face_map;
+                faces2.peer_time(peer1.str, $giper_baza_time_now(), 0);
+                faces2.peer_summ(peer1.str, 1);
+                faces2.peer_time(peer2.str, $giper_baza_time_now(), 1);
+                const faces3 = new $giper_baza_face_map;
+                const parts = [
+                    [land1.str, new $giper_baza_pack_part([], faces1)],
+                    [land2.str, new $giper_baza_pack_part([], faces2)],
+                    [land3.str, new $giper_baza_pack_part([], faces3)],
+                ];
+                const pack = $giper_baza_pack.make(parts);
+                $mol_assert_equal(parts, pack.parts());
+            },
+            "units serial and parse"($) {
+                const land = new $giper_baza_link('12345678_12345678');
+                const pass = $.$giper_baza_auth.grab().pass();
+                const gift = $giper_baza_unit_gift.make();
+                const sand_small = $giper_baza_unit_sand.make(5);
+                const ball = new Uint8Array($giper_baza_unit_sand.size_equator + 5);
+                const sand_big = $giper_baza_unit_sand.make(ball.byteLength);
+                sand_big.ball(ball);
+                const seal = $giper_baza_unit_seal.make(15, true);
+                const parts = [
+                    [land.str, new $giper_baza_pack_part([pass, gift, sand_small, sand_big, seal])],
+                ];
+                const pack = $giper_baza_pack.make(parts);
+                $mol_assert_equal(parts, pack.parts());
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
 })($ || ($ = {}));
 
 ;
@@ -8694,440 +8850,14 @@ var $;
 var $;
 (function ($) {
     $mol_test({
-        'Is null'() {
-            $mol_data_nullable($mol_data_number)(null);
+        'triplets'() {
+            $mol_assert_equal(new $mol_time_interval('2015-01-01/P1M').end.toString(), '2015-02-01');
+            $mol_assert_equal(new $mol_time_interval('P1M/2015-02-01').start.toString(), '2015-01-01');
+            $mol_assert_equal(new $mol_time_interval('2015-01-01/2015-02-01').duration.toString(), 'PT2678400S');
         },
-        'Is not null'() {
-            $mol_data_nullable($mol_data_number)(0);
-        },
-        'Is undefined'() {
-            $mol_assert_fail(() => {
-                const Type = $mol_data_nullable($mol_data_number);
-                Type(undefined);
-            }, 'undefined is not a number');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    const Age = $mol_data_optional($mol_data_number);
-    const Age_or_zero = $mol_data_optional($mol_data_number, () => 0);
-    $mol_test({
-        'Is not present'() {
-            $mol_assert_equal(Age(undefined), undefined);
-        },
-        'Is present'() {
-            $mol_assert_equal(Age(0), 0);
-        },
-        'Fallbacked'() {
-            $mol_assert_equal(Age_or_zero(undefined), 0);
-        },
-        'Is null'() {
-            $mol_assert_fail(() => Age(null), 'null is not a number');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Closed number range'() {
-            const Pos = $mol_data_range(0, 1);
-            Pos(Number.EPSILON);
-            $mol_assert_fail(() => Pos(1), '1 is out range (0,1)');
-            $mol_assert_fail(() => Pos(0), '0 is out range (0,1)');
-            $mol_assert_fail(() => Pos(Number.POSITIVE_INFINITY), 'Infinity is out range (0,1)');
-            $mol_assert_fail(() => Pos(Number.NEGATIVE_INFINITY), '-Infinity is out range (0,1)');
-            $mol_assert_fail(() => Pos(NaN), 'NaN is out range (0,1)');
-        },
-        'Open number range'() {
-            const Pos = $mol_data_range(0, Number.POSITIVE_INFINITY);
-            Pos(Number.EPSILON);
-            Pos(Number.MAX_VALUE);
-            $mol_assert_fail(() => Pos(0), '0 is out range (0,Infinity)');
-            $mol_assert_fail(() => Pos(Number.POSITIVE_INFINITY), 'Infinity is out range (0,Infinity)');
-            $mol_assert_fail(() => Pos(Number.NEGATIVE_INFINITY), '-Infinity is out range (0,Infinity)');
-            $mol_assert_fail(() => Pos(NaN), 'NaN is out range (0,Infinity)');
-        },
-        'String range'() {
-            const Code = $mol_data_range('A', 'B');
-            Code('Aa');
-            Code('AZ');
-            $mol_assert_fail(() => Code('A'), 'A is out range (A,B)');
-            $mol_assert_fail(() => Code('B'), 'B is out range (A,B)');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Fit to record'() {
-            const User = $mol_data_record({ age: $mol_data_number });
-            User({ age: 0 });
-        },
-        'Extends record'() {
-            const User = $mol_data_record({ age: $mol_data_number });
-            User({ age: 0, name: 'Jin' });
-        },
-        // 'Recursive record' () {
-        // 	const User = $mol_data_record({
-        // 		name : $mol_data_string ,
-        // 		get kids() { return $mol_data_array( User ) } ,
-        // 	})
-        // 	User({
-        // 		name : 'Jin' ,
-        // 		kids : [
-        // 			{
-        // 				name : 'John' ,
-        // 				kids : [] ,
-        // 			}
-        // 		] ,
-        // 	})
-        // } ,
-        'Shrinks record'() {
-            $mol_assert_fail(() => {
-                const User = $mol_data_record({ age: $mol_data_number, name: $mol_data_string });
-                User({ age: 0 });
-            }, '["name"] undefined is not a string');
-        },
-        'Shrinks deep record'() {
-            $mol_assert_fail(() => {
-                const User = $mol_data_record({ wife: $mol_data_record({ age: $mol_data_number }) });
-                User({ wife: {} });
-            }, '["wife"] ["age"] undefined is not a number');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Is first'() {
-            $mol_data_variant($mol_data_number, $mol_data_string)(0);
-        },
-        'Is second'() {
-            $mol_data_variant($mol_data_number, $mol_data_string)('');
-        },
-        'Is false'() {
-            $mol_assert_fail(() => {
-                $mol_data_variant($mol_data_number, $mol_data_string)(false);
-            }, 'false is not any of variants');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'convertion to primitives'() {
-            var unit = new $mol_unit_money_usd(5);
-            $mol_assert_equal(unit.valueOf(), 5);
-            $mol_assert_equal(unit * 2, 10);
-            $mol_assert_equal(unit + '', '$5');
-            $mol_assert_equal(`${unit}`, '$5');
-            $mol_assert_equal(unit.toString(), '$5');
-            $mol_assert_equal(String(unit), '$5');
-        },
-        'arithmetic'() {
-            var usd1 = new $mol_unit_money_usd(2);
-            var usd2 = new $mol_unit_money_usd(3);
-            var rur = new $mol_unit_money_rub(2);
-            $mol_assert_equal($mol_unit.summ(usd1, usd2).toString(), '$5');
-            $mol_assert_equal(usd1.mult(2).toString(), '$4');
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Wrap & unwrap'() {
-            const val = [1];
-            const mut = $mol_mutable(val);
-            $mol_assert_equal(val, mut());
-        },
-        'Deep array'() {
-            const val = [[1], [2], [3]];
-            const mut = $mol_mutable(val);
-            $mol_assert_equal(mut[1][0](v => -v), -2);
-            $mol_assert_unique(val, mut());
-            $mol_assert_equal(val[0], mut()[0]);
-            $mol_assert_equal(val[2], mut()[2]);
-            $mol_assert_unique(val[1], mut()[1]);
-            $mol_assert_like(mut()[1], [-2]);
-        },
-        'Array insert'() {
-            const val = [[1, 2, 3, 4]];
-            const mut = $mol_mutable(val);
-            $mol_assert_like(mut[0](a => [...a.slice(0, 2), 7, ...a.slice(2)]), [1, 2, 7, 3, 4]);
-            $mol_assert_like(mut(), [[1, 2, 7, 3, 4]]);
-        },
-        'Deep objects'() {
-            const val = { a: { x: 1 }, b: { y: 2 }, c: { z: 3 } };
-            const mut = $mol_mutable(val);
-            $mol_assert_equal(mut.b.y(v => -v), -2);
-            $mol_assert_unique(val, mut());
-            $mol_assert_equal(val.a, mut().a);
-            $mol_assert_equal(val.c, mut().c);
-            $mol_assert_unique(val.b, mut().b);
-            $mol_assert_like(mut().b, { y: -2 });
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function $hyoo_harp_to_string(query) {
-        return Object.entries(query).map(([field, harp]) => {
-            if (field === '+')
-                return '';
-            if (field === '=')
-                return '';
-            if (field === '!=')
-                return '';
-            if (!harp)
-                return '';
-            const harp2 = harp;
-            const order = harp2['+'] === true ? '+' : harp2['+'] === false ? '-' : '';
-            const filter = harp2['='] ? '=' : harp2['!='] ? '!=' : '';
-            const name = encodeURIComponent(field);
-            let values = (harp2['='] || harp2['!='] || []).map(([min, max]) => {
-                if (max === undefined || min === max)
-                    return encodeURIComponent(String(min)) + '=';
-                min = (min === undefined) ? '' : encodeURIComponent(String(min));
-                max = (max === undefined) ? '' : encodeURIComponent(String(max));
-                return `${min}@${max}=`;
-            }).join('');
-            let fetch = $hyoo_harp_to_string(harp);
-            if (fetch)
-                fetch = `(${fetch})`;
-            return `${order}${name}${filter}${values}${fetch}`;
-        }).filter(Boolean).join(';');
-    }
-    $.$hyoo_harp_to_string = $hyoo_harp_to_string;
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    function check(str, query) {
-        $mol_assert_like(str, $hyoo_harp_to_string(query));
-        $mol_assert_like(query, $hyoo_harp_from_string(str));
-    }
-    $mol_test({
-        'root'() {
-            check('', {});
-        },
-        'only field'() {
-            check('user%3D777', {
-                'user=777': {},
-            });
-        },
-        'primary key'() {
-            check('user=jin%2C777!=', {
-                user: {
-                    '=': [['jin,777!']],
-                },
-            });
-        },
-        'single fetch'() {
-            check('friend(age%24)', {
-                friend: {
-                    age$: {},
-                },
-            });
-        },
-        'fetch and primary key'() {
-            check('user=jin()=(friend)', {
-                'user': {
-                    '=': [['jin()']],
-                    friend: {},
-                },
-            });
-        },
-        'multiple fetch'() {
-            check('age;friend', {
-                age: {},
-                friend: {},
-            });
-        },
-        'common query string back compatible'() {
-            $mol_assert_like($hyoo_harp_from_string('user=jin&age=100500'), {
-                user: {
-                    '=': [['jin']],
-                },
-                age: {
-                    '=': [['100500']],
-                },
-            });
-        },
-        'common pathname back compatible'() {
-            $mol_assert_like($hyoo_harp_from_string('users/jin/comments'), {
-                users: {},
-                jin: {},
-                comments: {},
-            });
-        },
-        'deep fetch'() {
-            check('my(friend(age);name);stat', {
-                my: {
-                    friend: {
-                        age: {},
-                    },
-                    name: {},
-                },
-                stat: {},
-            });
-        },
-        'orders'() {
-            check('+age;-name', {
-                age: {
-                    '+': true
-                },
-                name: {
-                    '+': false
-                },
-            });
-        },
-        'filter types'() {
-            check('sex=female=;status!=married=', {
-                sex: {
-                    '=': [['female']],
-                },
-                status: {
-                    '!=': [['married']],
-                },
-            });
-        },
-        'filter ranges'() {
-            check('sex=female=;age=18@25=;weight=@50=;height=150@=;hobby=paint=singing=', {
-                sex: {
-                    '=': [['female']],
-                },
-                age: {
-                    '=': [['18', '25']],
-                },
-                weight: {
-                    '=': [['', '50']],
-                },
-                height: {
-                    '=': [['150', '']],
-                },
-                hobby: {
-                    '=': [['paint'], ['singing']],
-                },
-            });
-        },
-        'unescaped values'() {
-            $mol_assert_like($hyoo_harp_from_string('foo=jin=777=;bar=jin!=666='), {
-                foo: {
-                    '=': [['jin'], ['777']],
-                },
-                bar: {
-                    '=': [['jin!'], ['666']],
-                },
-            });
-        },
-        'slicing'() {
-            check('friend(_num=0@100=)', {
-                friend: {
-                    _num: { '=': [['0', '100']] },
-                },
-            });
-        },
-        'complex'() {
-            check('pullRequest(state=closed=merged=;+repository(name;private);-updateTime;_num=0@100=)', {
-                pullRequest: {
-                    state: {
-                        '=': [
-                            ['closed'],
-                            ['merged'],
-                        ]
-                    },
-                    repository: {
-                        '+': true,
-                        name: {},
-                        private: {},
-                    },
-                    updateTime: {
-                        '+': false,
-                    },
-                    _num: {
-                        '=': [['0', '100']],
-                    },
-                },
-            });
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Word making'() {
-            $mol_assert_equal(true, $mol_spell_ru.check('пил'));
-            $mol_assert_equal(true, $mol_spell_ru.check('пила'));
-            $mol_assert_equal(true, $mol_spell_ru.check('запил'));
-            $mol_assert_equal(true, $mol_spell_ru.check('завопил'));
-            $mol_assert_equal(true, $mol_spell_ru.check('пилил'));
-            $mol_assert_equal(true, $mol_spell_ru.check('пилоел'));
-            $mol_assert_equal(true, $mol_spell_ru.check('недоперепилоперенедоела'));
-        },
-        'Wrong words'() {
-            $mol_assert_equal(false, $mol_spell_ru.check('недперепила'));
-            $mol_assert_equal(false, $mol_spell_ru.check('недоbook'));
-        },
-        'Segmentation'() {
-            $mol_assert_equal($mol_spell_ru.split('пил'), ["пил"]);
-            $mol_assert_equal($mol_spell_ru.split('пила'), ["пил", "а"]);
-            $mol_assert_equal($mol_spell_ru.split('запил'), ["за", "пил"]);
-            $mol_assert_equal($mol_spell_ru.split('завопил'), ["за", "во", "пил"]);
-            $mol_assert_equal($mol_spell_ru.split('пилил'), ["пил", "ил"]);
-            $mol_assert_equal($mol_spell_ru.split('пилоел'), ["пил", "ое", "л"]);
-            $mol_assert_equal($mol_spell_ru.split('сине-зелёное'), ["син", "е", "-", "зелён", "ое"]);
-            $mol_assert_equal($mol_spell_ru.split('недоперепила'), ["недо", "пере", "пил", "а"]);
-            $mol_assert_equal($mol_spell_ru.split('перенедоела'), ["пере", "недо", "е", "л", "а"]);
-            $mol_assert_equal($mol_spell_ru.split('недоперепилоперенедоела'), ["недо", "пере", "пил", "о", "пере", "недо", "е", "л", "а"]);
-            $mol_assert_equal($mol_spell_ru.split('недперепилъ'), ["н", "ед", "пере", "пил", "ъ"]);
-        },
-    });
-})($ || ($ = {}));
-
-;
-"use strict";
-var $;
-(function ($) {
-    $mol_test({
-        'Known language'() {
-            $mol_assert_ok($mol_spell_any.check('пила'));
-        },
-        'Unknown language'() {
-            $mol_assert_not($mol_spell_any.check('пиri'));
+        'comparison'() {
+            const iso = '2021-01-02/2022-03-04';
+            $mol_assert_like(new $mol_time_interval(iso), new $mol_time_interval(iso));
         },
     });
 })($ || ($ = {}));
@@ -9509,6 +9239,2264 @@ var $;
             },
         });
     })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+/** @jsx $mol_jsx */
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        function check(vary) {
+            $mol_assert_equal(vary, $giper_baza_vary.take($giper_baza_vary.pack([vary]))[0]);
+        }
+        $mol_test({
+            "Bin"($) {
+                check(null);
+                check(new Uint8Array([1, 2, 3]));
+            },
+            "Bool"($) {
+                check(false);
+                check(true);
+            },
+            "Int"($) {
+                check(0);
+                check(4611686018427387904n);
+            },
+            "Real"($) {
+                check(0);
+                check(Math.PI);
+                check(Number.NaN);
+                check(Number.POSITIVE_INFINITY);
+                check(Number.NEGATIVE_INFINITY);
+                check(Number.MAX_SAFE_INTEGER);
+                check(Number.MIN_SAFE_INTEGER);
+                check(BigInt(Number.MAX_VALUE));
+                check(Number.MIN_VALUE);
+            },
+            "Link"($) {
+                check(new $giper_baza_link(''));
+                check($giper_baza_link.from_int(123456789));
+            },
+            "Str"($) {
+                check('');
+                check('123');
+                check('🐱‍👤');
+            },
+            "Time"($) {
+                check(new $mol_time_moment('1984-08-04T09:05:13.666+03:00'));
+                check(new $mol_time_moment);
+            },
+            "Dura"($) {
+                check(new $mol_time_duration('P1Y2M3DT4h5m6.6s'));
+            },
+            "Span"($) {
+                check(new $mol_time_interval('T09:00/PT9h'));
+            },
+            "JSON"($) {
+                check({ foo: ['bar'] });
+                check([{ foo: 'bar' }]);
+            },
+            "DOM"($) {
+                const xml = ($mol_jsx("div", null,
+                    $mol_jsx("span", { class: "bar" }, "xxx")));
+                $mol_assert_equal($mol_dom_serialize($giper_baza_vary.take($giper_baza_vary.pack([xml]))[0]), $mol_dom_serialize(xml));
+            },
+            "Tree"($) {
+                const tree = $.$mol_tree2_from_string(`
+				foo \\bar
+					foo \\bar
+			`);
+                $mol_assert_equal($.$mol_tree2_to_string($giper_baza_vary.take($giper_baza_vary.pack([tree]))[0]), $.$mol_tree2_to_string(tree));
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        class $mol_bus extends $.$mol_bus {
+            send() { }
+        }
+        $.$mol_bus = $mol_bus;
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        class $giper_baza_land_mock extends $.$giper_baza_land {
+            sync() {
+                return this;
+            }
+        }
+        $.$giper_baza_land = $giper_baza_land_mock;
+    });
+    $mol_test({
+        async 'Give rights'($) {
+            const auth0 = await $.$giper_baza_auth.grab();
+            const auth1 = await $.$giper_baza_auth.grab();
+            const auth2 = await $.$giper_baza_auth.grab();
+            const land0 = $giper_baza_land.make({ $, auth: () => auth0 });
+            const land1 = $giper_baza_land.make({ $, link: () => land0.link(), auth: () => auth1 });
+            $mol_assert_equal(land0.lord_rank(land0.link()), $giper_baza_rank_rule);
+            $mol_assert_equal(land0.lord_rank(auth1.pass().lord()), $giper_baza_rank_read);
+            land1.give(auth2.pass(), $giper_baza_rank_post('just'));
+            $mol_assert_equal(land0.pass_rank(auth1.pass()), $giper_baza_rank_read);
+            land0.give(auth1.pass(), $giper_baza_rank_read);
+            $mol_assert_equal(land0.pass_rank(auth1.pass()), $giper_baza_rank_read);
+            land0.give(auth1.pass(), $giper_baza_rank_read);
+            $mol_assert_equal(land0.pass_rank(auth1.pass()), $giper_baza_rank_read);
+            land0.give(auth1.pass(), $giper_baza_rank_post('just'));
+            $mol_assert_equal(land0.pass_rank(auth1.pass()), $giper_baza_rank_post('just'));
+            land0.give(auth1.pass(), $giper_baza_rank_pull('just'));
+            $mol_assert_equal(land0.pass_rank(auth1.pass()), $giper_baza_rank_pull('just'));
+            land0.give(auth1.pass(), $giper_baza_rank_rule);
+            $mol_assert_equal(land0.pass_rank(auth1.pass()), $giper_baza_rank_rule);
+            land0.give(auth1.pass(), $giper_baza_rank_post('just'));
+            $mol_assert_equal(land0.pass_rank(auth1.pass()), $giper_baza_rank_post('just'));
+            await $mol_wire_async(land1).units_steal(land0);
+            $mol_assert_equal(land1.pass_rank(auth1.pass()), $giper_baza_rank_post('just'));
+            land1.give(auth2.pass(), $giper_baza_rank_post('just'));
+        },
+        async 'Post Data and pick Delta'($) {
+            const auth1 = $.$giper_baza_auth.grab();
+            const auth2 = $.$giper_baza_auth.grab();
+            const land1 = $giper_baza_land.make({ $, auth: () => auth1 });
+            const land2 = $giper_baza_land.make({ $, link: () => land1.link(), auth: () => auth2 });
+            $mol_assert_equal(await $mol_wire_async(land1).diff_units(), []);
+            land1.post($giper_baza_link.hole, $giper_baza_link.hole, new $giper_baza_link('AA111111'), new Uint8Array([1]));
+            $mol_assert_equal((await $mol_wire_async(land1).diff_units()).length, 4);
+            const face = land1.faces.clone();
+            land1.post(new $giper_baza_link('AA111111'), $giper_baza_link.hole, new $giper_baza_link('AA222222'), new Uint8Array([2]));
+            $mol_assert_equal((await $mol_wire_async(land1).diff_units()).length, 5);
+            $mol_assert_equal((await $mol_wire_async(land1).diff_units(face)).length, 2);
+            await $mol_wire_async(land2).units_steal(land1);
+            land2.post(new $giper_baza_link('AA222222'), $giper_baza_link.hole, new $giper_baza_link('AA333333'), new Uint8Array([3]));
+            $mol_assert_equal((await $mol_wire_async(land2).diff_units()).length, 5);
+            $mol_assert_equal((await $mol_wire_async(land2).diff_units(face)).length, 2);
+            land1.give(auth2.pass(), $giper_baza_rank_post('just'));
+            await $mol_wire_async(land2).units_steal(land1);
+            land2.post(new $giper_baza_link('AA222222'), $giper_baza_link.hole, new $giper_baza_link('AA333333'), new Uint8Array([5]));
+            $mol_assert_equal((await $mol_wire_async(land2).diff_units()).length, 9);
+            $mol_assert_equal((await $mol_wire_async(land2).diff_units(face)).length, 6);
+            land1.give(auth2.pass(), $giper_baza_rank_read);
+            await $mol_wire_async(land2).units_steal(land1);
+            $mol_assert_equal((await $mol_wire_async(land2).diff_units()).length, 7);
+        },
+        async 'Land encryption'($) {
+            const land = $mol_wire_async($giper_baza_land.make({ $ }));
+            $mol_assert_equal(await land.encrypted(), false);
+            await land.encrypted(true);
+            $mol_assert_equal(await land.encrypted(), true);
+            const material = await land.post($giper_baza_link.hole, $giper_baza_link.hole, null, new Uint8Array([1, 2, 3]));
+            $mol_assert_equal((await land.sand_encode(material)).data().length, 16);
+            $mol_assert_equal(await land.sand_decode(material), new Uint8Array([1, 2, 3]));
+            $mol_assert_equal((await land.sand_ordered({ head: $giper_baza_link.hole, peer: $giper_baza_link.hole })).length, 1);
+            const tombstone = await land.post($giper_baza_link.hole, $giper_baza_link.hole, material.self(), null);
+            $mol_assert_equal((await land.sand_encode(tombstone)).data().length, 1);
+            $mol_assert_equal(await land.sand_decode(tombstone), null);
+            $mol_assert_equal((await land.sand_ordered({ head: $giper_baza_link.hole, peer: $giper_baza_link.hole })).length, 1);
+        },
+        'Land fork & merge': $mol_wire_async(($) => {
+            const home = $.$giper_baza_glob.home().land();
+            const left = home.fork();
+            home.Data($giper_baza_list).items_vary(['foo', 'xxx']);
+            $mol_assert_equal(home.Data($giper_baza_list).items_vary(), ['foo', 'xxx']);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), ['foo', 'xxx']);
+            left.faces.sync(home.faces);
+            left.Data($giper_baza_list).items_vary(['foo', 'yyy']);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), ['foo', 'yyy']);
+            const right = home.fork();
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary(['foo', 'zzz']);
+            $mol_assert_equal(right.Data($giper_baza_list).items_vary(), ['foo', 'zzz']);
+            const both = home.fork();
+            $mol_assert_equal(both.Data($giper_baza_list).items_vary(), ['foo', 'xxx']);
+            both.Tine().items_vary([right.link()]);
+            $mol_assert_equal(both.Data($giper_baza_list).items_vary(), ['foo', 'zzz']);
+            both.Tine().items_vary([left.link()]);
+            $mol_assert_equal(both.Data($giper_baza_list).items_vary(), ['foo', 'yyy']);
+            both.Tine().items_vary([right.link(), left.link()]);
+            $mol_assert_equal(both.Data($giper_baza_list).items_vary(), ['foo', 'yyy']);
+            both.Tine().items_vary([left.link(), right.link()]);
+            $mol_assert_equal(both.Data($giper_baza_list).items_vary(), ['foo', 'zzz']);
+        }),
+        'Inner Links are relative to forked Land': $mol_wire_async(($) => {
+            const Alice = $.$giper_baza_glob.home().land();
+            const Bella = Alice.fork();
+            const alice_val = Alice.Pawn($giper_baza_atom_text).Head(new $giper_baza_link('qwertyui'));
+            const bella_val = Bella.Pawn($giper_baza_atom_text).Head(new $giper_baza_link('qwertyui'));
+            alice_val.val('Alice');
+            bella_val.val('Bella');
+            const alice_link = Alice.Pawn($giper_baza_atom_link).Head(new $giper_baza_link('asdfghjk'));
+            const bella_link = Bella.Pawn($giper_baza_atom_link).Head(new $giper_baza_link('asdfghjk'));
+            alice_link.val(alice_val.link());
+            $mol_assert_equal(alice_link.val(), alice_val.link());
+            $mol_assert_unique(alice_link.val(), bella_link.val());
+            $mol_assert_equal(bella_link.val(), bella_val.link());
+        }),
+        async 'Land Area inherits rights'($) {
+            const area = await $mol_wire_async(() => {
+                const base = $.$giper_baza_glob.land_grab([[null, $giper_baza_rank_post('just')]]);
+                base.units_saving();
+                return base.area_make();
+            })();
+            $mol_assert_equal(area.pass_rank(area.auth().pass()), $giper_baza_rank_rule);
+            $mol_assert_equal(area.lord_rank($giper_baza_link.hole), $giper_baza_rank_post('just'));
+        },
+        async 'Gift to new Mate reaches Peer which knows Lord'($) {
+            const auth0 = $.$giper_baza_auth.grab();
+            const auth1 = $.$giper_baza_auth.grab();
+            const auth2 = $.$giper_baza_auth.grab();
+            const land0 = $giper_baza_land.make({ $, auth: () => auth0 });
+            const land1 = $giper_baza_land.make({ $, link: () => land0.link(), auth: () => auth1 });
+            land0.post($giper_baza_link.hole, $giper_baza_link.hole, new $giper_baza_link('AA111111'), new Uint8Array([1]));
+            await $mol_wire_async(land1).units_steal(land0);
+            const face = land1.faces.clone();
+            land0.give(auth2.pass(), $giper_baza_rank_post('just'));
+            const delta = await $mol_wire_async(land0).diff_units(face);
+            await $mol_wire_async(land1).diff_apply(delta);
+            $mol_assert_equal(land1.lord_rank(auth2.pass().lord()), $giper_baza_rank_post('just'));
+        },
+        // async 'Merge text changes'() {
+        // 	const base = new $giper_baza_land( 1n, 1 )
+        // 	base.chief.as( $hyoo_crowd_text ).str( 'Hello World and fun!' )
+        // 	const left = base.fork( await $hyoo_crowd_peer.generate() )
+        // 	const right = base.fork( await $hyoo_crowd_peer.generate() )
+        // 	right.clock_data.tick( right.peer().id )
+        // 	left.chief.as( $hyoo_crowd_text ).str( 'Hello Alice and fun!' )
+        // 	right.chief.as( $hyoo_crowd_text ).str( 'Bye World and fun!' )
+        // 	const left_delta = left.delta()
+        // 	const right_delta = right.delta()
+        // 	left.apply( right_delta )
+        // 	right.apply( left_delta )
+        // 	$mol_assert_equal(
+        // 		left.chief.as( $hyoo_crowd_text ).str(),
+        // 		right.chief.as( $hyoo_crowd_text ).str(),
+        // 		'Bye Alice and fun!',
+        // 	)
+        // },
+        // async 'Write into token'() {
+        // 	const store = new $giper_baza_land( 1n, 1 )
+        // 	store.chief.as( $hyoo_crowd_text ).str( 'foobar' )
+        // 	store.chief.as( $hyoo_crowd_text ).write( 'xyz', 3 )
+        // 	$mol_assert_equal( store.chief.as( $hyoo_crowd_list ).list(), [ 'fooxyzbar' ] )
+        // },
+        // async 'Write into token with split'() {
+        // 	const store = new $giper_baza_land( 1n, 1 )
+        // 	store.chief.as( $hyoo_crowd_text ).str( 'foobar' )
+        // 	store.chief.as( $hyoo_crowd_text ).write( 'XYZ', 2, 4 )
+        // 	$mol_assert_equal( store.chief.as( $hyoo_crowd_list ).list(), [ 'fo', 'XYZar' ] )
+        // },
+        // async 'Write over few tokens'() {
+        // 	const store = new $giper_baza_land( 1n, 1 )
+        // 	store.chief.as( $hyoo_crowd_text ).str( 'xxx foo bar yyy' )
+        // 	store.chief.as( $hyoo_crowd_text ).write( 'X Y Z', 6, 9 )
+        // 	$mol_assert_equal( store.chief.as( $hyoo_crowd_list ).list(), [ 'xxx', ' fo', 'X', ' Y', ' Zar', ' yyy' ] )
+        // },
+        // async 'Write whole token'() {
+        // 	const store = new $giper_baza_land( 1n, 1 )
+        // 	store.chief.as( $hyoo_crowd_text ).str( 'xxxFoo yyy' )
+        // 	store.chief.as( $hyoo_crowd_text ).write( 'bar', 3, 7 )
+        // 	$mol_assert_equal( store.chief.as( $hyoo_crowd_list ).list(), [ 'xxxbaryyy' ] )
+        // },
+        // async 'Write whole text'() {
+        // 	const store = new $giper_baza_land( 1n, 1 )
+        // 	store.chief.as( $hyoo_crowd_text ).str( 'foo bar' )
+        // 	store.chief.as( $hyoo_crowd_text ).write( 'xxx', 0, 7 )
+        // 	$mol_assert_equal( store.chief.as( $hyoo_crowd_list ).list(), [ 'xxx' ] )
+        // },
+        // async 'Write at the end'() {
+        // 	const store = new $giper_baza_land( 1n, 1 )
+        // 	store.chief.as( $hyoo_crowd_text ).str( 'foo' )
+        // 	store.chief.as( $hyoo_crowd_text ).write( 'bar' )
+        // 	$mol_assert_equal( store.chief.as( $hyoo_crowd_list ).list(), [ 'foobar' ] )
+        // },
+        // async 'Write between tokens'() {
+        // 	const store = new $giper_baza_land( 1n, 1 )
+        // 	store.chief.as( $hyoo_crowd_text ).str( 'foo bar' )
+        // 	store.chief.as( $hyoo_crowd_text ).write( 'xxx', 4 )
+        // 	$mol_assert_equal( store.chief.as( $hyoo_crowd_list ).list(), [ 'foo', ' xxxbar' ] )
+        // },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'gift unit type'() {
+            const gift = $giper_baza_unit_gift.make();
+            gift.rank($giper_baza_rank_rule);
+            $mol_assert_equal(gift.kind(), 'gift');
+            $mol_assert_equal(gift.rank(), $giper_baza_rank_rule);
+        },
+        'data unit type'() {
+            const unit = $giper_baza_unit_sand.make(2);
+            unit.ball(new Uint8Array([0xFF, 0xFF]));
+            $mol_assert_equal(unit.kind(), 'sand');
+            $mol_assert_equal(unit.size(), 2);
+            $mol_assert_equal(unit.ball(), new Uint8Array([0xFF, 0xFF]));
+        },
+        'big data unit type'() {
+            const unit = $giper_baza_unit_sand.make(1000);
+            unit.ball(new Uint8Array(1000));
+            $mol_assert_equal(unit.kind(), 'sand');
+            $mol_assert_equal(unit.size(), 1000);
+            $mol_assert_equal(unit.ball(), new Uint8Array(1000));
+        },
+        'gift unit fields'() {
+            const unit = $giper_baza_unit_gift.make();
+            $mol_assert_equal(unit.time(), 0);
+            $mol_assert_equal(unit.mate(), $giper_baza_link.hole);
+            unit.time_tick(0xd1d2d3d4d5d6);
+            unit.mate(new $giper_baza_link('ÆPv6æfj3_9vX08ÆLx'));
+            $mol_assert_equal(unit.time_tick(), 0xd1d2d3d4d5d6);
+            $mol_assert_equal(unit.mate(), new $giper_baza_link('ÆPv6æfj3_9vX08ÆLx'));
+        },
+        'data unit fields'() {
+            const unit = $giper_baza_unit_sand.make(0);
+            $mol_assert_equal(unit.time(), 0);
+            $mol_assert_equal(unit.head(), $giper_baza_link.hole);
+            $mol_assert_equal(unit.self(), $giper_baza_link.hole);
+            $mol_assert_equal(unit.lead(), $giper_baza_link.hole);
+            unit.time_tick(0xd1d2d3d4d5d6);
+            unit.head(new $giper_baza_link('ÆPv6æfj3'));
+            unit.self(new $giper_baza_link('Pv6æfj39'));
+            unit.lead(new $giper_baza_link('v6æfj39v'));
+            $mol_assert_equal(unit.time_tick(), 0xd1d2d3d4d5d6);
+            $mol_assert_equal(unit.head(), new $giper_baza_link('ÆPv6æfj3'));
+            $mol_assert_equal(unit.self(), new $giper_baza_link('Pv6æfj39'));
+            $mol_assert_equal(unit.lead(), new $giper_baza_link('v6æfj39v'));
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        class $giper_baza_mine_mock extends $.$giper_baza_mine_temp {
+        }
+        $.$giper_baza_mine = $giper_baza_mine_mock;
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Boolean schema"($) {
+                $mol_assert_equal('$mol_schema_boolean', $mol_schema_boolean + '', $mol_key($mol_schema_boolean));
+                $mol_assert_equal(true, $mol_schema_boolean.check(false));
+                $mol_assert_equal(true, $mol_schema_boolean.check(true));
+                $mol_assert_equal(false, $mol_schema_boolean.check('true'));
+                $mol_assert_equal(false, $mol_schema_boolean.check(0));
+                $mol_assert_equal(false, $mol_schema_boolean.cast(false));
+                $mol_assert_equal(false, $mol_schema_boolean.cast('true'));
+                $mol_assert_equal(false, $mol_schema_boolean.guard(false));
+                $mol_assert_fail(() => $mol_schema_boolean.guard(null), 'Wrong type');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Integer schema"($) {
+                $mol_assert_equal('$mol_schema_integer', $mol_schema_integer + '', $mol_key($mol_schema_integer));
+                $mol_assert_equal(true, $mol_schema_integer.check(Number.MAX_SAFE_INTEGER));
+                $mol_assert_equal(true, $mol_schema_integer.check(Number.MIN_SAFE_INTEGER));
+                $mol_assert_equal(true, $mol_schema_integer.check(0));
+                $mol_assert_equal(false, $mol_schema_integer.check(Number.EPSILON));
+                $mol_assert_equal(false, $mol_schema_integer.check(Number.POSITIVE_INFINITY));
+                $mol_assert_equal(false, $mol_schema_integer.check(Number.NEGATIVE_INFINITY));
+                $mol_assert_equal(Number.MAX_SAFE_INTEGER, $mol_schema_integer.cast(Number.MAX_SAFE_INTEGER));
+                $mol_assert_equal(0, $mol_schema_integer.cast(Number.EPSILON));
+                $mol_assert_equal(0, $mol_schema_integer.cast(1.5));
+                $mol_assert_equal(0, $mol_schema_integer.guard(0));
+                $mol_assert_fail(() => $mol_schema_integer.guard(''), 'Wrong type');
+                $mol_assert_fail(() => $mol_schema_integer.guard(Number.NaN), 'Non finite');
+                $mol_assert_fail(() => $mol_schema_integer.guard(1.5), 'Non integer');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "BigInt schema"($) {
+                $mol_assert_equal('$mol_schema_bigint', $mol_schema_bigint + '', $mol_key($mol_schema_bigint));
+                $mol_assert_equal(true, $mol_schema_bigint.check(0n));
+                $mol_assert_equal(false, $mol_schema_bigint.check(0));
+                $mol_assert_equal(1n, $mol_schema_bigint.cast(1n));
+                $mol_assert_equal(1n, $mol_schema_bigint.cast(1));
+                $mol_assert_equal(0n, $mol_schema_bigint.guard(0n));
+                $mol_assert_fail(() => $mol_schema_bigint.guard(1), 'Wrong type');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_schema_pattern = $mol_memo_key.func(function $mol_schema_pattern(Pattern) {
+        return class $mol_schema_pattern_ extends $mol_schema_string {
+            static Pattern = Pattern;
+            static toString() {
+                if (this !== $mol_schema_pattern_)
+                    return super.toString();
+                return '$mol_schema_pattern<' + $mol_key(Pattern) + '>';
+            }
+            static guard(value) {
+                if (Pattern.test(super.guard(value)))
+                    return value;
+                return $mol_fail(new TypeError('Wrong string', { cause: { value, schema: this } }));
+            }
+            static cast(value) {
+                return super.cast(value);
+            }
+            static default = '';
+        };
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Cache of pattern schema"($) {
+                $mol_assert_equal($mol_schema_pattern(/foo/), $mol_schema_pattern(/foo/));
+                $mol_assert_unique($mol_schema_pattern(/foo/), $mol_schema_pattern(/bar/));
+            },
+            "String pattern schema"($) {
+                const Email = $mol_schema_pattern(/^.*@.*$/);
+                $mol_assert_equal('$mol_schema_pattern</^.*@.*$/>', Email + '', $mol_key(Email));
+                $mol_assert_equal(true, Email.check('foo@bar'));
+                $mol_assert_equal(false, Email.check('foo'));
+                $mol_assert_equal(false, Email.check(123));
+                $mol_assert_equal('foo@bar', Email.cast('foo@bar'));
+                $mol_assert_equal('', Email.cast('foo'));
+                $mol_assert_equal('', Email.cast(123));
+                $mol_assert_equal('foo@bar', Email.guard('foo@bar'));
+                $mol_assert_fail(() => Email.guard('foo'), 'Wrong string');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test({
+        "Cache of dict schema"($) {
+            $mol_assert_equal($mol_schema_dict([$mol_schema_string, $mol_schema_float]), $mol_schema_dict([$mol_schema_string, $mol_schema_float]));
+            $mol_assert_unique($mol_schema_dict([$mol_schema_string, $mol_schema_float]), $mol_schema_dict([$mol_schema_string, $mol_schema_string]));
+        },
+        "Dictionary schema"($) {
+            const Flags = $mol_schema_dict([$mol_schema_pattern(/^[a-z]+$/), $mol_schema_boolean]);
+            $mol_assert_equal(true, Flags.check({}));
+            $mol_assert_equal(true, Flags.check({ foo: false }));
+            $mol_assert_equal(false, Flags.check({ f00: false }));
+            $mol_assert_equal(false, Flags.check([]));
+            $mol_assert_equal(false, Flags.check({ foo: 0 }));
+            $mol_assert_equal({ foo: false }, Flags.cast({ foo: false, f00: true }));
+            $mol_assert_equal({ foo: false }, Flags.cast({ foo: 123 }));
+            $mol_assert_equal({}, Flags.guard({}));
+            $mol_assert_equal({ foo: false }, Flags.guard({ foo: false }));
+            $mol_assert_fail(() => Flags.guard({ foo: 123 }), 'Wrong val');
+            $mol_assert_fail(() => Flags.guard({ f00: 123 }), 'Wrong key');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Cache of list schema"($) {
+                $mol_assert_equal($mol_schema_list($mol_schema_float), $mol_schema_list($mol_schema_float));
+                $mol_assert_unique($mol_schema_list($mol_schema_float), $mol_schema_list($mol_schema_string));
+            },
+            "Array schema"($) {
+                const Vector = $mol_schema_list($mol_schema_float);
+                $mol_assert_equal('$mol_schema_list<$mol_schema_float>', Vector + '');
+                $mol_assert_equal(true, Vector.check([]));
+                $mol_assert_equal(true, Vector.check([123]));
+                $mol_assert_equal(false, Vector.check(['foo']));
+                $mol_assert_equal([123], Vector.cast([123]));
+                $mol_assert_equal([123, Number.NaN], Vector.cast([123, 'foo']));
+                $mol_assert_equal([], Vector.guard([]));
+                $mol_assert_equal([123], Vector.guard([123]));
+                $mol_assert_fail(() => Vector.guard(0), 'Non array');
+                $mol_assert_fail(() => Vector.guard([false]), 'Wrong item');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $.$mol_schema_enum = $mol_memo_key.func(function $mol_schema_enum(Options) {
+        return class $mol_schema_enum_ extends $mol_schema_any {
+            static Options = Options;
+            static toString() {
+                if (this !== $mol_schema_enum_)
+                    return super.toString();
+                return '$mol_schema_enum<' + $mol_key(Options) + '>';
+            }
+            static guard(value) {
+                if (Options.some(Option => Object.is(Option, value)))
+                    return value;
+                return $mol_fail(new TypeError('Wrong option', { cause: { value, schema: this } }));
+            }
+            static cast(value) {
+                if (this.check(value))
+                    return value;
+                return Options[0];
+            }
+            static default = Options[0];
+        };
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Cache of enum schema"($) {
+                $mol_assert_equal($mol_schema_enum(['foo']), $mol_schema_enum(['foo']));
+                $mol_assert_unique($mol_schema_enum(['foo']), $mol_schema_enum(['bar']));
+            },
+            "Enum options"($) {
+                const Config = $mol_schema_enum([123, 'foo']);
+                $mol_assert_equal('$mol_schema_enum<[123,"foo"]>', Config + '', $mol_key(Config));
+                $mol_assert_equal(true, Config.check(123));
+                $mol_assert_equal(true, Config.check('foo'));
+                $mol_assert_equal(false, Config.check(true));
+                $mol_assert_equal(false, Config.check(321));
+                $mol_assert_equal(false, Config.check('bar'));
+                $mol_assert_equal(Config.cast(123), 123);
+                $mol_assert_equal(Config.cast('foo'), 'foo');
+                $mol_assert_equal(Config.cast('bar'), 123);
+                $mol_assert_equal(123, Config.guard(123));
+                $mol_assert_fail(() => Config.guard(321), 'Wrong option');
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Empty representation"($) {
+                const land = $giper_baza_land.make({ $ });
+                const reg = land.Pawn($giper_baza_atom_time).Data();
+                $mol_assert_equal(reg.val(), null);
+                reg.vary(null);
+                $mol_assert_equal(reg.val(), null);
+            },
+            "Validation on set, cast on get"($) {
+                const land = $.$giper_baza_glob.home().land();
+                const head = new $giper_baza_link('22222222');
+                const str = land.Pawn($giper_baza_atom.of($mol_schema_maybe($mol_schema_string))).Head(head);
+                const mail = land.Pawn($giper_baza_atom.of($mol_schema_pattern(/.+@.+/))).Head(head);
+                $mol_assert_equal(str.val(), null);
+                $mol_assert_equal(mail.val(), null);
+                $mol_assert_fail(() => str.val(123), 'Wrong type');
+                $mol_assert_fail(() => mail.val('foo'), 'Wrong string');
+                $mol_assert_equal(str.val(), null);
+                $mol_assert_equal(mail.val(), null);
+                str.val('foo');
+                $mol_assert_equal(str.val(), 'foo');
+                $mol_assert_equal(mail.val(), null);
+                mail.val('foo@bar');
+                $mol_assert_equal(str.val(), 'foo@bar');
+                $mol_assert_equal(mail.val(), 'foo@bar');
+            },
+            "Hyper link to another land"($) {
+                const land = $.$giper_baza_glob.home().land();
+                const reg = land.Pawn($giper_baza_atom_link.to(() => $giper_baza_atom)).Head(new $giper_baza_link('11111111'));
+                const remote = reg.ensure(land);
+                $mol_assert_unique(reg.land(), remote.land());
+                $mol_assert_equal(reg.vary(), remote.link());
+                $mol_assert_equal(reg.remote(), remote);
+            },
+            "Register with linked Pawns"($) {
+                const land = $.$giper_baza_glob.home().land();
+                const str = land.Pawn($giper_baza_atom_text).Head(new $giper_baza_link('11111111'));
+                const link = land.Pawn($giper_baza_atom_link.to(() => $giper_baza_atom_text)).Head(new $giper_baza_link('11111111'));
+                $mol_assert_equal(link.remote(), null);
+                link.remote(str);
+                $mol_assert_equal(link.vary(), link.remote().link(), str.link());
+            },
+            "Enumerated reg type"($) {
+                class FileType extends $giper_baza_atom.of($mol_schema_maybe($mol_schema_enum(['file', 'dir', 'link']))) {
+                }
+                const land = $.$giper_baza_glob.home().land();
+                const type = land.Data(FileType);
+                $mol_assert_equal(type.val(), null);
+                type.val('file');
+                $mol_assert_equal(type.val(), 'file');
+                $mol_assert_fail(() => type.val('drive'), 'Wrong option');
+                $mol_assert_equal(type.val(), 'file');
+                type.vary('drive');
+                $mol_assert_equal(type.val(), null);
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    function clone(base) {
+        const land = $mol_wire_sync(base.$.$giper_baza_land).make({ $: base.$ });
+        land.units_steal(base);
+        return land;
+    }
+    function sync(left, right) {
+        left.units_steal(right);
+        right.units_steal(left);
+    }
+    $mol_test({
+        'Basic list ops'($) {
+            const land = $.$giper_baza_land.make({ $ });
+            const list = land.Pawn($giper_baza_list).Data();
+            $mol_assert_equal(list.items_vary(), []);
+            list.items_vary([2, 3]);
+            $mol_assert_equal(list.items_vary(), [2, 3]);
+            $mol_assert_equal(list.has(1), false);
+            list.add(1);
+            $mol_assert_equal(list.items_vary(), [1, 2, 3]);
+            $mol_assert_equal(list.has(1), true);
+            list.add(3);
+            $mol_assert_equal(list.items_vary(), [1, 2, 3]);
+            list.splice([2]);
+            $mol_assert_equal(list.items_vary(), [1, 2, 3, 2]);
+            list.splice([2], 0);
+            $mol_assert_equal(list.items_vary(), [2, 1, 2, 3, 2]);
+            list.wipe(2);
+            $mol_assert_equal(list.items_vary(), [2, 1, 3, 2]);
+            list.move(2, 1);
+            $mol_assert_equal(list.items_vary(), [2, 3, 1, 2]);
+            list.move(1, 3);
+            $mol_assert_equal(list.items_vary(), [2, 1, 3, 2]);
+            list.cut(2);
+            $mol_assert_equal(list.items_vary(), [1, 3]);
+            $mol_assert_equal(list.has(2), false);
+            list.cut(2);
+            $mol_assert_equal(list.items_vary(), [1, 3]);
+        },
+        'Different types'($) {
+            const land = $.$giper_baza_land.make({ $ });
+            const list = land.Pawn($.$giper_baza_list).Data();
+            list.items_vary([
+                null,
+                false,
+                true,
+                0n,
+                4611686018427387904n,
+                0,
+                Math.PI,
+                Number.NaN,
+                Number.NEGATIVE_INFINITY,
+                '',
+                '1234567890123456789012345678901234567890',
+                new Uint8Array([]),
+                new Uint8Array([1, 2, 3]),
+                new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0]),
+                list.link(),
+            ]);
+            $mol_assert_equal(list.items_vary(), [
+                false,
+                true,
+                0,
+                4611686018427387904n,
+                0,
+                Math.PI,
+                Number.NaN,
+                Number.NEGATIVE_INFINITY,
+                '',
+                '1234567890123456789012345678901234567890',
+                new Uint8Array([]),
+                new Uint8Array([1, 2, 3]),
+                new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0]),
+                list.link(),
+            ]);
+        },
+        async 'List merge'($) {
+            const land1 = $.$giper_baza_land.make({ $ });
+            const land2 = $.$giper_baza_land.make({ $ });
+            const list1 = land1.Pawn($giper_baza_list).Data();
+            const list2 = land2.Pawn($giper_baza_list).Data();
+            list1.items_vary(['foo', 'xxx']);
+            land2.tick();
+            list2.items_vary(['foo', 'yyy']);
+            await $mol_wire_async(land1).units_steal(land2);
+            $mol_assert_equal(list1.items_vary(), ['foo', 'yyy', 'foo', 'xxx']);
+        },
+        'Insert before removed before changed'($) {
+            const land = $.$giper_baza_land.make({ $ });
+            const list = land.Pawn($giper_baza_list).Data();
+            list.items_vary(['foo', 'bar']);
+            list.items_vary(['xxx', 'foo', 'bar']);
+            list.items_vary(['xxx', 'bars']);
+            $mol_assert_equal(list.items_vary(), ['xxx', 'bars']);
+        },
+        'Many moves'($) {
+            const land = $.$giper_baza_land.make({ $ });
+            const list = land.Pawn($giper_baza_list).Data();
+            list.items_vary(['foo', 'bar', 'lol']);
+            list.move(2, 1);
+            list.move(2, 1);
+            list.move(0, 3);
+            list.move(2, 1);
+            $mol_assert_equal(list.items_vary(), ['bar', 'foo', 'lol']);
+        },
+        'Reorder separated sublists'($) {
+            const land = $.$giper_baza_land.make({ $ });
+            const list = land.Pawn($giper_baza_list).Data();
+            list.items_vary([1, 2, 3, 4, 5, 6]);
+            list.move(3, 5);
+            list.move(3, 5);
+            list.move(5, 4);
+            list.move(0, 2);
+            list.move(0, 2);
+            list.move(2, 1);
+            $mol_assert_equal(list.items_vary(), [1, 3, 2, 4, 6, 5]);
+        },
+        'Insert after moved right': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 7, 2, 3, 4]);
+            const right = clone(base);
+            right.Data($giper_baza_list).move(0, 2);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [2, 1, 7, 3, 4]);
+        }),
+        'Insert before moved left': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).move(1, 0);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 7, 2, 3, 4]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [2, 1, 7, 3, 4]);
+        }),
+        'Move left after inserted': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 7, 2, 3, 4]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).move(1, 0);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [2, 1, 3, 7, 4]);
+        }),
+        'Insert before moved right': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).move(1, 4);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 7, 2, 3, 4]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 7, 3, 4, 2]);
+        }),
+        'Move right after inserted': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 7, 2, 3, 4]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).move(1, 4);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 3, 7, 4, 2]);
+        }),
+        'Insert after wiped': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 3, 4]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 2, 7, 3, 4]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 7, 3, 4]);
+        }),
+        'Wiped before inserted': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 2, 7, 3, 4]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 3, 4]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 7, 3, 4]);
+        }),
+        'Insert before wiped': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).wipe(2);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 2, 7, 3, 4]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 2, 7, 4]);
+        }),
+        'Wiped after inserted': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 2, 7, 3, 4]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).wipe(2);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 2, 7, 4]);
+        }),
+        'Insert after moved out': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.sand_move(left.Data($giper_baza_list).units()[1], new $giper_baza_link('11111111'), 0);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 2, 7, 3, 4]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 7, 3, 4]);
+            $mol_assert_equal(left.Pawn($giper_baza_list).Head(new $giper_baza_link('11111111')).items_vary(), right.Pawn($giper_baza_list).Head(new $giper_baza_link('11111111')).items_vary(), [2]);
+        }),
+        'Move out before inserted': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 2, 7, 3, 4]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.sand_move(right.Data($giper_baza_list).units()[1], new $giper_baza_link('11111111'), 0);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 7, 3, 4]);
+            $mol_assert_equal(left.Pawn($giper_baza_list).Head(new $giper_baza_link('11111111')).items_vary(), right.Pawn($giper_baza_list).Head(new $giper_baza_link('11111111')).items_vary(), [2]);
+        }),
+        'Insert before changed': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 2, 7, 4]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 2, 13, 3, 4]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 2, 13, 7, 4]);
+        }),
+        'Change after inserted': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 2, 13, 3, 4]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 2, 7, 4]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 2, 7, 13, 4]);
+        }),
+        'Insert between moved': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4, 5, 6]);
+            const left = clone(base);
+            left.Data($giper_baza_list).move(1, 5);
+            left.Data($giper_baza_list).move(1, 5);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).items_vary([1, 2, 7, 3, 4, 5, 6]);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 4, 5, 2, 7, 3, 6]);
+        }),
+        'Move near inserted': $mol_wire_async(($) => {
+            const base = $mol_wire_sync($.$giper_baza_land).make({ $ });
+            base.Data($giper_baza_list).items_vary([1, 2, 3, 4, 5, 6]);
+            const left = clone(base);
+            left.Data($giper_baza_list).items_vary([1, 2, 7, 3, 4, 5, 6]);
+            const right = clone(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_list).move(1, 5);
+            right.Data($giper_baza_list).move(1, 5);
+            sync(left, right);
+            $mol_assert_equal(left.Data($giper_baza_list).items_vary(), right.Data($giper_baza_list).items_vary(), [1, 4, 5, 2, 3, 7, 6]);
+        }),
+        async '3 transactions in same second must keep ordering'($) {
+            const auth_left = $.$giper_baza_auth.grab();
+            const auth_right = $.$giper_baza_auth.grab();
+            const land_left = $.$giper_baza_land.make({ $, auth: () => auth_left });
+            land_left.give(auth_right.pass(), $giper_baza_rank_post('just'));
+            const land_right = $.$giper_baza_land.make({ $, auth: () => auth_right, link: () => land_left.link() });
+            const list_left = land_left.Data($giper_baza_list);
+            const list_right = land_right.Data($giper_baza_list);
+            list_left.items_vary(['a', 'b', 'c', 'd']);
+            $mol_assert_equal(list_left.items_vary(), ['a', 'b', 'c', 'd']);
+            await $mol_wire_async(land_right).units_steal(land_left);
+            $mol_assert_equal(list_right.items_vary(), ['a', 'b', 'c', 'd']);
+            list_right.splice(['x'], 0, 0);
+            $mol_assert_equal(list_right.items_vary(), ['x', 'a', 'b', 'c', 'd']);
+            await $mol_wire_async(land_left).units_steal(land_right);
+            $mol_assert_equal(list_left.items_vary(), ['x', 'a', 'b', 'c', 'd']);
+            list_left.items_vary(['d', 'x', 'a', 'b', 'c']);
+            $mol_assert_equal(list_left.items_vary(), ['d', 'x', 'a', 'b', 'c']);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            async 'Dictionary invariants'($) {
+                const land = $giper_baza_land.make({ $ });
+                const dict = land.Pawn($giper_baza_dict).Data();
+                $mol_assert_equal(dict.keys(), []);
+                dict.dive(123, $giper_baza_atom, null);
+                dict.dive('xxx', $giper_baza_atom, null);
+                $mol_assert_equal(dict.keys(), ['xxx', 123]);
+                $mol_assert_equal(dict.has(123), true);
+                $mol_assert_equal(dict.has('xxx'), true);
+                $mol_assert_equal(dict.has('yyy'), false);
+                $mol_assert_equal(dict.dive(123, $giper_baza_atom).vary(), null);
+                $mol_assert_equal(dict.dive('xxx', $giper_baza_atom).vary(), null);
+                dict.dive(123, $giper_baza_atom).vary(777);
+                $mol_assert_equal(dict.dive(123, $giper_baza_atom).vary(), 777);
+                dict.dive('xxx', $giper_baza_list).items_vary(['foo', 'bar']);
+                $mol_assert_equal(dict.dive('xxx', $giper_baza_list).items_vary(), ['foo', 'bar']);
+                dict.has(123, false);
+                $mol_assert_equal(dict.keys(), ['xxx']);
+            },
+            async 'Dictionary merge'($) {
+                const land1 = $giper_baza_land.make({ $ });
+                const land2 = $giper_baza_land.make({ $ });
+                const dict1 = land1.Pawn($giper_baza_dict).Data();
+                const dict2 = land2.Pawn($giper_baza_dict).Data();
+                dict1.dive(123, $giper_baza_atom, null).vary(666);
+                land2.tick();
+                dict2.dive(123, $giper_baza_atom, null).vary(777);
+                await $mol_wire_async(land1).units_steal(land2);
+                $mol_assert_equal(dict1.dive(123, $giper_baza_atom).vary(), 777);
+                dict1.dive('xxx', $giper_baza_list, null).items_vary(['foo']);
+                land2.tick();
+                dict2.dive('xxx', $giper_baza_list, null).items_vary(['bar']);
+                await $mol_wire_async(land1).units_steal(land2);
+                $mol_assert_equal(dict1.dive('xxx', $giper_baza_list).items_vary(), ['bar', 'foo']);
+            },
+            async "Narrowed Dictionary with linked Dictionaries and others"($) {
+                class User extends $giper_baza_dict.with({
+                    Title: $giper_baza_atom_text,
+                    Account: $giper_baza_atom_link.to(() => Account),
+                    Articles: $giper_baza_list_link.to(() => Article),
+                }) {
+                }
+                class Account extends $giper_baza_dict.with({
+                    Title: $giper_baza_atom_text,
+                    User: $giper_baza_atom_link.to(() => User),
+                }) {
+                }
+                class Article extends $giper_baza_dict.with({
+                    Title: $giper_baza_dict_to($giper_baza_atom_text),
+                    Author: $giper_baza_atom_link.to(() => User),
+                }) {
+                }
+                const land = $.$giper_baza_glob.home().land();
+                const user = land.Pawn(User).Head(new $giper_baza_link('11111111'));
+                $mol_assert_equal(user.Title()?.val() ?? null, null);
+                $mol_assert_equal(user.Account()?.remote() ?? null, null);
+                $mol_assert_equal(user.Articles()?.remote_list() ?? [], []);
+                user.Title(null).val('Jin');
+                $mol_assert_equal(user.Title().val() ?? '', 'Jin');
+                const account = (await $mol_wire_async(user.Account(null)).ensure([[null, $giper_baza_rank_read]]));
+                $mol_assert_equal(user.Account()?.remote() ?? null, account);
+                $mol_assert_equal(account.User()?.remote() ?? null, null);
+                account.User(null).remote(user);
+                $mol_assert_equal(account.User()?.remote(), user);
+                const articles = [
+                    await $mol_wire_async(user.Articles(null)).make([[null, $giper_baza_rank_read]]),
+                    await $mol_wire_async(user.Articles(null)).make([[null, $giper_baza_rank_read]]),
+                ];
+                $mol_assert_equal(user.Articles()?.remote_list().map(n => n[Symbol.toStringTag]), articles.map(n => n[Symbol.toStringTag]));
+                articles[0].Title(null).key('en', 'auto').val('Hello!');
+                $mol_assert_equal(articles[0].Title()?.key('en').val(), 'Hello!');
+                $mol_assert_equal(articles[1].Title()?.key('ru')?.val() ?? null, null);
+                $mol_assert_equal(articles[1].Title()?.key('ru')?.val() ?? null, null);
+                $mol_assert_unique(user.land(), account.land(), ...articles.map(article => article.land()));
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        class $giper_baza_glob_mock extends $.$giper_baza_glob {
+            static $ = $;
+            static lands_touched = new $mol_wire_set();
+        }
+        $.$giper_baza_glob = $giper_baza_glob_mock;
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test_mocks.push($ => {
+        class $giper_baza_yard_mock extends $.$giper_baza_yard {
+            master() {
+                return null;
+            }
+        }
+        $.$giper_baza_yard = $giper_baza_yard_mock;
+    });
+    $giper_baza_yard.masters_override = () => ['http://localhost:9090/'];
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'empty string'() {
+            $mol_assert_equal(''.match($giper_baza_text_tokens), null);
+        },
+        'new lines'() {
+            $mol_assert_equal('\n\r\n'.match($giper_baza_text_tokens), ['\n', '\r\n']);
+        },
+        'numbers'() {
+            $mol_assert_equal('123'.match($giper_baza_text_tokens), ['123']);
+        },
+        'emoji'() {
+            $mol_assert_equal('😀😁'.match($giper_baza_text_tokens), ['😀', '😁']);
+        },
+        'emoji with modifier'() {
+            $mol_assert_equal('👩🏿👩🏿'.match($giper_baza_text_tokens), ['👩🏿', '👩🏿']);
+        },
+        'combo emoji with modifier'() {
+            $mol_assert_equal('👩🏿‍🤝‍🧑🏿👩🏿‍🤝‍🧑🏿'.match($giper_baza_text_tokens), ['👩🏿‍🤝‍🧑🏿', '👩🏿‍🤝‍🧑🏿']);
+        },
+        'word with spaces'() {
+            $mol_assert_equal('foo1  bar2'.match($giper_baza_text_tokens), ['foo1', ' ', ' bar2']);
+        },
+        'word with diactric'() {
+            $mol_assert_equal('Е́е́'.match($giper_baza_text_tokens), ['Е́е́']);
+        },
+        'word with punctuation'() {
+            $mol_assert_equal('foo--bar'.match($giper_baza_text_tokens), ['foo', '--', 'bar']);
+        },
+        'CamelCase'() {
+            $mol_assert_equal('Foo1BAR2'.match($giper_baza_text_tokens), ['Foo1', 'BAR2']);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test({
+        'Change sequences'($) {
+            const land = $giper_baza_land.make({ $ });
+            const text = land.Data($giper_baza_text);
+            const list = land.Data($giper_baza_list);
+            $mol_assert_equal(text.str(), '');
+            $mol_assert_equal(list.items_vary(), []);
+            text.str('foo');
+            $mol_assert_equal(text.str(), 'foo');
+            $mol_assert_equal(list.items_vary(), ['foo']);
+            text.str('foo bar');
+            $mol_assert_equal(text.str(), 'foo bar');
+            $mol_assert_equal(list.items_vary(), ['foo', ' bar']);
+            text.str('foo lol bar');
+            $mol_assert_equal(text.str(), 'foo lol bar');
+            $mol_assert_equal(list.items_vary(), ['foo', ' lol', ' bar']);
+            text.str('lol bar');
+            $mol_assert_equal(text.str(), 'lol bar');
+            $mol_assert_equal(list.items_vary(), ['lol', ' bar']);
+            text.str('foo bar');
+            $mol_assert_equal(text.str(), 'foo bar');
+            $mol_assert_equal(list.items_vary(), ['foo', ' bar']);
+            text.str('foo  bar');
+            $mol_assert_equal(text.str(), 'foo  bar');
+            $mol_assert_equal(list.items_vary(), ['foo', ' ', ' bar']);
+            text.str('foo  BarBar');
+            $mol_assert_equal(text.str(), 'foo  BarBar');
+            $mol_assert_equal(list.items_vary(), ['foo', ' ', ' Bar', 'Bar']);
+        },
+        async 'str: Offset <=> Point'($) {
+            const land = $giper_baza_land.make({ $ });
+            const text = land.Data($giper_baza_text);
+            text.str('fooBar');
+            const [first, second] = text.units();
+            $mol_assert_equal(text.point_by_offset(0), [first.self().str, 0, 0]);
+            $mol_assert_equal(text.offset_by_point([first.self().str, 0, 0]), [first.self().str, 0]);
+            $mol_assert_equal(text.point_by_offset(3), [first.self().str, 3, 0]);
+            $mol_assert_equal(text.offset_by_point([first.self().str, 3, 0]), [first.self().str, 3]);
+            $mol_assert_equal(text.offset_by_point([first.self().str, 5, 0]), [first.self().str, 5]);
+            $mol_assert_equal(text.point_by_offset(5), [second.self().str, 2, 0]);
+            $mol_assert_equal(text.offset_by_point([second.self().str, 2, 0]), [second.self().str, 5]);
+            $mol_assert_equal(text.point_by_offset(6), [second.self().str, 3, 0]);
+            $mol_assert_equal(text.offset_by_point([second.self().str, 3, 0]), [second.self().str, 6]);
+            $mol_assert_equal(text.point_by_offset(7), ['', 1, 0]);
+            $mol_assert_equal(text.offset_by_point(['', 1, 0]), ['', 7]);
+        },
+        async 'text: Offset <=> Point'($) {
+            const land = $giper_baza_land.make({ $ });
+            const text = land.Data($giper_baza_text);
+            text.text('foo bar\n666 777');
+            const [first, second] = text.pawns($giper_baza_text);
+            $mol_assert_equal(text.point_by_offset(0), [first.units()[0].self().str, 0, 0]);
+            $mol_assert_equal(text.offset_by_point([first.units()[0].self().str, 0, 0]), [first.units()[0].self().str, 0]);
+            $mol_assert_equal(text.point_by_offset(8), [first.units()[2].self().str, 1, 0]);
+            $mol_assert_equal(text.offset_by_point([first.units()[2].self().str, 1, 0]), [first.units()[2].self().str, 8]);
+        },
+        async 'Merge different sequences'($) {
+            const land1 = $giper_baza_land.make({ $ });
+            const land2 = $giper_baza_land.make({ $ });
+            const text1 = land1.Pawn($giper_baza_text).Data();
+            const text2 = land2.Pawn($giper_baza_text).Data();
+            text1.str('foo bar.');
+            land2.faces.stat.time = land1.faces.stat.time;
+            text2.str('xxx yyy.');
+            const delta1 = await $mol_wire_async(land1).diff_units();
+            const delta2 = await $mol_wire_async(land2).diff_units();
+            await $mol_wire_async(land1).diff_apply(delta2);
+            await $mol_wire_async(land2).diff_apply(delta1);
+            $mol_assert_equal(text1.str(), text2.str(), 'xxx yyy.foo bar.');
+        },
+        async 'Merge same insertions with different changes to same place'($) {
+            const base = $giper_baza_land.make({ $ });
+            base.Data($giper_baza_text).str('( )');
+            const left = $giper_baza_land.make({ $ });
+            await $mol_wire_async(left).units_steal(base);
+            left.Data($giper_baza_text).str('( [ f ] )');
+            left.Data($giper_baza_text).str('( [ foo ] )');
+            const right = $giper_baza_land.make({ $ });
+            await $mol_wire_async(right).units_steal(base);
+            right.faces.sync(left.faces);
+            right.Data($giper_baza_text).str('( [ f ] )');
+            right.Data($giper_baza_text).str('( [ fu ] )');
+            const left_delta = await $mol_wire_async(left).diff_units(base.faces);
+            const right_delta = await $mol_wire_async(right).diff_units(base.faces);
+            await $mol_wire_async(left).diff_apply(right_delta);
+            await $mol_wire_async(right).diff_apply(left_delta);
+            $mol_assert_equal(left.Data($giper_baza_text).str(), right.Data($giper_baza_text).str(), '( [ fu ] [ foo ] )');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    function html(dom) {
+        return dom.html().replace(/ (id|xmlns)=".+?"/g, '');
+    }
+    $mol_test({
+        'plain text'($) {
+            const left = $giper_baza_land.make({ $ }).Data($giper_baza_rich);
+            left.html('foo bar');
+            $mol_assert_equal(html(left), '<span>foo</span><span> bar</span>');
+        },
+        'simple tags'($) {
+            const left = $giper_baza_land.make({ $ }).Data($giper_baza_rich);
+            left.html('<br /><hr />');
+            $mol_assert_equal(html(left), '<br /><hr />');
+        },
+        'tags with attrs'($) {
+            const left = $giper_baza_land.make({ $ }).Data($giper_baza_rich);
+            left.html('<br hidden="" /><hr tabindex="-1" />');
+            $mol_assert_equal(html(left), '<br hidden="" /><hr tabindex="-1" />');
+        },
+        'nested tags'($) {
+            const left = $giper_baza_land.make({ $ }).Data($giper_baza_rich);
+            left.html('<p><br /></p>');
+            $mol_assert_equal(html(left), '<p><br /></p>');
+        },
+        'paragraphs'($) {
+            const left = $giper_baza_land.make({ $ }).Data($giper_baza_rich);
+            left.html('<p>foo bar</p><p>xxx yyy</p>');
+            $mol_assert_equal(html(left), '<p><span>foo</span><span> bar</span></p><p><span>xxx</span><span> yyy</span></p>');
+        },
+        'import exported html'($) {
+            const left = $giper_baza_land.make({ $ }).Data($giper_baza_rich);
+            left.html('foo<a data-xxx="yyy" href="hhh:zzz">ton</a>bar');
+            const right = $giper_baza_land.make({ $ }).Data($giper_baza_rich);
+            right.html(left.html());
+            $mol_assert_equal(html(left), html(right));
+            $mol_assert_equal(left.html(), right.html());
+        },
+        'import wild spans'($) {
+            const left = $giper_baza_land.make({ $ }).Data($giper_baza_rich);
+            left.html('<span>foo bar<a href="hhh:ton"/></span>');
+            $mol_assert_equal(html(left), '<span>foo</span><span> bar</span><a href="hhh:ton"></a>');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+/** @jsx $mol_jsx */
+var $;
+(function ($) {
+    $mol_test({
+        'Attach to document'() {
+            const doc = $mol_dom_parse('<html><body id="foo"></body></html>');
+            $mol_jsx_attach(doc, () => $mol_jsx("body", { id: "foo" }, "bar"));
+            $mol_assert_equal(doc.documentElement.outerHTML, '<html><body id="foo">bar</body></html>');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+/** @jsx $mol_jsx */
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Head"($) {
+                const div = $mol_jsx("div", null, "foo");
+                $mol_assert_equal($mol_dom_point.head(div), new $mol_dom_point(div, 0));
+                $mol_assert_equal($mol_dom_point.head(div).is_head(), true);
+                $mol_assert_equal(new $mol_dom_point(div.firstChild, 1).is_head(), false);
+            },
+            "Foot"($) {
+                const div = $mol_jsx("div", null, "foo");
+                $mol_assert_equal($mol_dom_point.foot(div), new $mol_dom_point(div, 1), $mol_dom_point.tail(div.firstChild));
+                $mol_assert_equal($mol_dom_point.foot(div).is_foot(), true);
+                $mol_assert_equal(new $mol_dom_point(div.firstChild, 2).is_foot(), false);
+            },
+            "Near & jump"($) {
+                const div = $mol_jsx("div", null,
+                    "123",
+                    $mol_jsx("span", null, "foo"),
+                    "456");
+                const span = div.childNodes[1];
+                $mol_assert_equal(new $mol_dom_point(div, 1), $mol_dom_point.near(span, -1), new $mol_dom_point(span, 1).jump(-1));
+                $mol_assert_equal(new $mol_dom_point(div, 2), $mol_dom_point.near(span, +1), new $mol_dom_point(span, 1).jump(+1));
+            },
+            "Lift points to common parent"($) {
+                const div = $mol_jsx("div", null,
+                    "123",
+                    $mol_jsx("p", null,
+                        $mol_jsx("span", null, "one")),
+                    "456");
+                const para = div.firstChild.nextSibling;
+                const deep = para.firstChild.firstChild;
+                $mol_assert_equal($mol_dom_point.head(deep).lifted_to(div), para);
+                $mol_assert_equal($mol_dom_point.head(div.firstChild).lifted_to(div), div.firstChild);
+            },
+            "move by steps to the end"($) {
+                const div = $mol_jsx("div", null,
+                    "1",
+                    $mol_jsx("span", null, "23"),
+                    $mol_jsx("br", null),
+                    "4");
+                const span = div.childNodes[1];
+                const br = div.childNodes[2];
+                let cursor = $mol_dom_point.head(div);
+                $mol_assert_equal([
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                    cursor = cursor.move_step(+1),
+                ], [
+                    $mol_dom_point.head(div.firstChild),
+                    $mol_dom_point.foot(div.firstChild),
+                    $mol_dom_point.tail(div.firstChild),
+                    $mol_dom_point.head(span),
+                    $mol_dom_point.head(span.firstChild),
+                    new $mol_dom_point(span.firstChild, 1),
+                    $mol_dom_point.foot(span.firstChild),
+                    $mol_dom_point.tail(span.firstChild),
+                    $mol_dom_point.tail(span),
+                    $mol_dom_point.head(br),
+                    $mol_dom_point.tail(br),
+                    $mol_dom_point.head(div.lastChild),
+                    $mol_dom_point.foot(div.lastChild),
+                    $mol_dom_point.tail(div.lastChild),
+                    null,
+                ]);
+            },
+            "move by chars to the end"($) {
+                const div = $mol_jsx("div", null,
+                    "1",
+                    $mol_jsx("span", null, "23"),
+                    $mol_jsx("br", null),
+                    "4");
+                const span = div.childNodes[1];
+                const br = div.childNodes[2];
+                let start = $mol_dom_point.head(div);
+                $mol_assert_equal([
+                    start.move_chars(div, +0),
+                    start.move_chars(div, +1),
+                    start.move_chars(div, +2),
+                    start.move_chars(div, +3),
+                    start.move_chars(div, +4),
+                    start.move_chars(div, +5),
+                ], [
+                    $mol_dom_point.head(div),
+                    $mol_dom_point.foot(div.firstChild),
+                    new $mol_dom_point(span.firstChild, 1),
+                    $mol_dom_point.foot(span.firstChild),
+                    $mol_dom_point.foot(div.lastChild),
+                    $mol_dom_point.foot(div),
+                ]);
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+/** @jsx $mol_jsx */
+var $;
+(function ($_1) {
+    var $$;
+    (function ($$) {
+        $mol_test({
+            "Inside, expand & around"($) {
+                const div = $mol_jsx("div", null,
+                    "123",
+                    $mol_jsx("span", null, "foo"),
+                    "456");
+                const span = div.childNodes[1];
+                $mol_assert_equal($mol_dom_range.inside(span).expand(), $mol_dom_range.around(span));
+            },
+            "Order range points"($) {
+                const div = $mol_jsx("div", null,
+                    $mol_jsx("span", null, "one"),
+                    $mol_jsx("span", null, "two"));
+                const one = $mol_dom_point.head(div.firstChild);
+                const two = $mol_dom_point.head(div.lastChild);
+                const forward = new $mol_dom_range(one, two);
+                const backward = new $mol_dom_range(two, one);
+                $mol_assert_equal(forward.ordered(), backward.ordered(), forward);
+            },
+            "Lift to common block parent"($) {
+                const quote = $mol_jsx("blockquote", null,
+                    "123",
+                    $mol_jsx("p", null,
+                        $mol_jsx("span", null, "foo")),
+                    $mol_jsx("p", null,
+                        $mol_jsx("span", null, "bar")),
+                    "456");
+                const foo = quote.firstChild.nextSibling;
+                const bar = quote.lastChild.previousSibling.firstChild.firstChild;
+                const lifted = new $mol_dom_range($mol_dom_point.head(foo), $mol_dom_point.foot(bar)).lifted();
+                const ideal = new $mol_dom_range($mol_dom_point.tail(quote.firstChild), $mol_dom_point.nose(quote.lastChild));
+                $mol_assert_equal(lifted, ideal);
+            },
+        });
+    })($$ = $_1.$$ || ($_1.$$ = {}));
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    function check(str, query) {
+        $mol_assert_like(str, $hyoo_harp_to_string(query));
+        $mol_assert_like(query, $hyoo_harp_from_string(str));
+    }
+    $mol_test({
+        'root'() {
+            check('', {});
+        },
+        'only field'() {
+            check('user%3D777', {
+                'user=777': {},
+            });
+        },
+        'primary key'() {
+            check('user=jin%2C777!=', {
+                user: {
+                    '=': [['jin,777!']],
+                },
+            });
+        },
+        'single fetch'() {
+            check('friend(age%24)', {
+                friend: {
+                    age$: {},
+                },
+            });
+        },
+        'fetch and primary key'() {
+            check('user=jin()=(friend)', {
+                'user': {
+                    '=': [['jin()']],
+                    friend: {},
+                },
+            });
+        },
+        'multiple fetch'() {
+            check('age;friend', {
+                age: {},
+                friend: {},
+            });
+        },
+        'common query string back compatible'() {
+            $mol_assert_like($hyoo_harp_from_string('user=jin&age=100500'), {
+                user: {
+                    '=': [['jin']],
+                },
+                age: {
+                    '=': [['100500']],
+                },
+            });
+        },
+        'common pathname back compatible'() {
+            $mol_assert_like($hyoo_harp_from_string('users/jin/comments'), {
+                users: {},
+                jin: {},
+                comments: {},
+            });
+        },
+        'deep fetch'() {
+            check('my(friend(age);name);stat', {
+                my: {
+                    friend: {
+                        age: {},
+                    },
+                    name: {},
+                },
+                stat: {},
+            });
+        },
+        'orders'() {
+            check('+age;-name', {
+                age: {
+                    '+': true
+                },
+                name: {
+                    '+': false
+                },
+            });
+        },
+        'filter types'() {
+            check('sex=female=;status!=married=', {
+                sex: {
+                    '=': [['female']],
+                },
+                status: {
+                    '!=': [['married']],
+                },
+            });
+        },
+        'filter ranges'() {
+            check('sex=female=;age=18@25=;weight=@50=;height=150@=;hobby=paint=singing=', {
+                sex: {
+                    '=': [['female']],
+                },
+                age: {
+                    '=': [['18', '25']],
+                },
+                weight: {
+                    '=': [['', '50']],
+                },
+                height: {
+                    '=': [['150', '']],
+                },
+                hobby: {
+                    '=': [['paint'], ['singing']],
+                },
+            });
+        },
+        'unescaped values'() {
+            $mol_assert_like($hyoo_harp_from_string('foo=jin=777=;bar=jin!=666='), {
+                foo: {
+                    '=': [['jin'], ['777']],
+                },
+                bar: {
+                    '=': [['jin!'], ['666']],
+                },
+            });
+        },
+        'slicing'() {
+            check('friend(_num=0@100=)', {
+                friend: {
+                    _num: { '=': [['0', '100']] },
+                },
+            });
+        },
+        'complex'() {
+            check('pullRequest(state=closed=merged=;+repository(name;private);-updateTime;_num=0@100=)', {
+                pullRequest: {
+                    state: {
+                        '=': [
+                            ['closed'],
+                            ['merged'],
+                        ]
+                    },
+                    repository: {
+                        '+': true,
+                        name: {},
+                        private: {},
+                    },
+                    updateTime: {
+                        '+': false,
+                    },
+                    _num: {
+                        '=': [['0', '100']],
+                    },
+                },
+            });
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is string'() {
+            $mol_data_string('');
+        },
+        'Is not string'() {
+            $mol_assert_fail(() => {
+                $mol_data_string(0);
+            }, '0 is not a string');
+        },
+        'Is object string'() {
+            $mol_assert_fail(() => {
+                $mol_data_string(new String('x'));
+            }, 'x is not a string');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is first'() {
+            $mol_data_variant($mol_data_number, $mol_data_string)(0);
+        },
+        'Is second'() {
+            $mol_data_variant($mol_data_number, $mol_data_string)('');
+        },
+        'Is false'() {
+            $mol_assert_fail(() => {
+                $mol_data_variant($mol_data_number, $mol_data_string)(false);
+            }, 'false is not any of variants');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    const Age = $mol_data_optional($mol_data_number);
+    const Age_or_zero = $mol_data_optional($mol_data_number, () => 0);
+    $mol_test({
+        'Is not present'() {
+            $mol_assert_equal(Age(undefined), undefined);
+        },
+        'Is present'() {
+            $mol_assert_equal(Age(0), 0);
+        },
+        'Fallbacked'() {
+            $mol_assert_equal(Age_or_zero(undefined), 0);
+        },
+        'Is null'() {
+            $mol_assert_fail(() => Age(null), 'null is not a number');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Fit to record'() {
+            const User = $mol_data_record({ age: $mol_data_number });
+            User({ age: 0 });
+        },
+        'Extends record'() {
+            const User = $mol_data_record({ age: $mol_data_number });
+            User({ age: 0, name: 'Jin' });
+        },
+        // 'Recursive record' () {
+        // 	const User = $mol_data_record({
+        // 		name : $mol_data_string ,
+        // 		get kids() { return $mol_data_array( User ) } ,
+        // 	})
+        // 	User({
+        // 		name : 'Jin' ,
+        // 		kids : [
+        // 			{
+        // 				name : 'John' ,
+        // 				kids : [] ,
+        // 			}
+        // 		] ,
+        // 	})
+        // } ,
+        'Shrinks record'() {
+            $mol_assert_fail(() => {
+                const User = $mol_data_record({ age: $mol_data_number, name: $mol_data_string });
+                User({ age: 0 });
+            }, '["name"] undefined is not a string');
+        },
+        'Shrinks deep record'() {
+            $mol_assert_fail(() => {
+                const User = $mol_data_record({ wife: $mol_data_record({ age: $mol_data_number }) });
+                User({ wife: {} });
+            }, '["wife"] ["age"] undefined is not a number');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is empty array'() {
+            $mol_data_array($mol_data_number)([]);
+        },
+        'Is array'() {
+            $mol_data_array($mol_data_number)([1, 2]);
+        },
+        'Is not array'() {
+            $mol_assert_fail(() => {
+                $mol_data_array($mol_data_number)({ [0]: 1, length: 1, map: () => { } });
+            }, '[object Object] is not an array');
+        },
+        'Has wrong item'() {
+            $mol_assert_fail(() => {
+                $mol_data_array($mol_data_number)([1, '1']);
+            }, '[1] 1 is not a number');
+        },
+        'Has wrong deep item'() {
+            $mol_assert_fail(() => {
+                $mol_data_array($mol_data_array($mol_data_number))([[], [0, 0, false]]);
+            }, '[1] [2] false is not a number');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is boolean - true'() {
+            $mol_data_boolean(true);
+        },
+        'Is boolean - false'() {
+            $mol_data_boolean(false);
+        },
+        'Is not boolean'() {
+            $mol_assert_fail(() => {
+                $mol_data_boolean('x');
+            }, 'x is not a boolean');
+        },
+        'Is object boolean'() {
+            $mol_assert_fail(() => {
+                $mol_data_boolean(new Boolean(''));
+            }, 'false is not a boolean');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'type safe build & parse'() {
+            let States;
+            (function (States) {
+                States["opened"] = "opened";
+                States["closed"] = "closed";
+            })(States || (States = {}));
+            const State = $hyoo_harp_scheme({}, $mol_data_enum('States', States));
+            const Str = $hyoo_harp_scheme({}, $mol_data_string);
+            const Bool = $hyoo_harp_scheme({}, $mol_data_boolean);
+            const Repository = $hyoo_harp_scheme({
+                name: $mol_data_optional(Str),
+                isPrivate: $mol_data_optional(Bool),
+                // pullRequests: PullRequest,
+            });
+            const PullRequest = $hyoo_harp_scheme({
+                state: $mol_data_optional(State),
+                updated_at: $mol_data_optional(Str),
+                repository: $mol_data_optional(Repository),
+            });
+            const Request = $hyoo_harp_scheme({
+                pullRequest: $mol_data_optional(PullRequest),
+            });
+            const uri = 'pullRequest(state=closed=;-updated_at;repository(name;isPrivate);_num=0@100=)';
+            let query = Request({
+                pullRequest: {
+                    state: { '=': [[States.closed]] }, // filter
+                    updated_at: { '+': false }, // order
+                    repository: {
+                        name: {},
+                        isPrivate: {},
+                    },
+                    _num: { '=': [[0, 100]] }, // slice
+                }
+            });
+            $mol_assert_like(uri, Request.build(query));
+            $mol_assert_like(query, Request.parse(uri));
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($_1) {
+    $mol_test({
+        'save and load buffers'($) {
+            const land = $giper_baza_land.make({ $ });
+            const file = land.Data($giper_baza_file);
+            const source = new Uint8Array(2 ** 15 + 1);
+            source[2 ** 15] = 255;
+            file.buffer(source);
+            $mol_assert_equal(file.chunks().length, 2);
+            $mol_assert_equal(file.buffer(), source);
+        },
+        async 'save and load blobs'($) {
+            const land = $giper_baza_land.make({ $ });
+            const file = land.Data($giper_baza_file);
+            const source = new Uint8Array(2 ** 16 + 1);
+            source[2 ** 16 + 1] = 255;
+            await $mol_wire_async(file).blob(new $mol_blob([source], { type: 'test/test' }));
+            $mol_assert_equal('test/test', file.blob().type);
+            $mol_assert_equal(source, new Uint8Array(await file.blob().arrayBuffer()));
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Vector limiting'() {
+            let point = new $mol_vector_3d(7, 10, 13);
+            const res = point.limited([[1, 5], [15, 20], [5, 10]]);
+            $mol_assert_equal(res.x, 5);
+            $mol_assert_equal(res.y, 15);
+            $mol_assert_equal(res.z, 10);
+        },
+        'Vector adding scalar'() {
+            let point = new $mol_vector_3d(1, 2, 3);
+            let res = point.added0(5);
+            $mol_assert_equal(res.x, 6);
+            $mol_assert_equal(res.y, 7);
+            $mol_assert_equal(res.z, 8);
+        },
+        'Vector adding vector'() {
+            let point = new $mol_vector_3d(1, 2, 3);
+            let res = point.added1([5, 10, 15]);
+            $mol_assert_equal(res.x, 6);
+            $mol_assert_equal(res.y, 12);
+            $mol_assert_equal(res.z, 18);
+        },
+        'Vector multiplying scalar'() {
+            let point = new $mol_vector_3d(2, 3, 4);
+            let res = point.multed0(-1);
+            $mol_assert_equal(res.x, -2);
+            $mol_assert_equal(res.y, -3);
+            $mol_assert_equal(res.z, -4);
+        },
+        'Vector multiplying vector'() {
+            let point = new $mol_vector_3d(2, 3, 4);
+            let res = point.multed1([5, 2, -2]);
+            $mol_assert_equal(res.x, 10);
+            $mol_assert_equal(res.y, 6);
+            $mol_assert_equal(res.z, -8);
+        },
+        'Matrix adding matrix'() {
+            let matrix = new $mol_vector_matrix(...[[1, 2], [3, 4], [5, 6]]);
+            let res = matrix.added2([[10, 20], [30, 40], [50, 60]]);
+            $mol_assert_equal(res[0][0], 11);
+            $mol_assert_equal(res[0][1], 22);
+            $mol_assert_equal(res[1][0], 33);
+            $mol_assert_equal(res[1][1], 44);
+            $mol_assert_equal(res[2][0], 55);
+            $mol_assert_equal(res[2][1], 66);
+        },
+        'Matrix multiplying matrix'() {
+            let matrix = new $mol_vector_matrix(...[[2, 3], [4, 5], [6, 7]]);
+            let res = matrix.multed2([[2, 3], [4, 5], [6, 7]]);
+            $mol_assert_equal(res[0][0], 4);
+            $mol_assert_equal(res[0][1], 9);
+            $mol_assert_equal(res[1][0], 16);
+            $mol_assert_equal(res[1][1], 25);
+            $mol_assert_equal(res[2][0], 36);
+            $mol_assert_equal(res[2][1], 49);
+        },
+        'Range expanding'() {
+            let range = $mol_vector_range_full.inversed;
+            const expanded = range.expanded0(10).expanded0(5);
+            $mol_assert_like([...expanded], [5, 10]);
+        },
+        'Vector of range expanding by vector'() {
+            let dimensions = new $mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
+            const expanded = dimensions.expanded1([1, 7]).expanded1([3, 5]);
+            $mol_assert_like([...expanded.x], [1, 3]);
+            $mol_assert_like([...expanded.y], [5, 7]);
+        },
+        'Vector of range expanding by vector of range'() {
+            let dimensions = new $mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
+            const expanded = dimensions
+                .expanded2([[1, 3], [7, 9]])
+                .expanded2([[2, 4], [6, 8]]);
+            $mol_assert_like([...expanded.x], [1, 4]);
+            $mol_assert_like([...expanded.y], [6, 9]);
+        },
+        'Vector of infinity range expanding by vector of range'() {
+            let dimensions = new $mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
+            const next = new $mol_vector_2d($mol_vector_range_full.inversed, $mol_vector_range_full.inversed);
+            const expanded = next
+                .expanded2(dimensions);
+            $mol_assert_like([...expanded.x], [Infinity, -Infinity]);
+            $mol_assert_like([...expanded.y], [Infinity, -Infinity]);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'trim array'() {
+            const array = [undefined, null, 0, false, null, undefined, undefined];
+            const correct = [undefined, null, 0, false, null];
+            $mol_array_trim(array);
+            $mol_assert_like(array, correct);
+        }
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'serial & parse'() {
+            const data = [
+                { foo: '123', bar: '456' },
+                { foo: 'x"xx', bar: 'y,y\ny' },
+            ];
+            $mol_assert_equal($mol_csv_parse($mol_csv_serial(data)), data);
+        },
+        'parse & serial'() {
+            const csv = '"foo","bar"\n"123","456"\n"x""xx","y,y\ny"';
+            $mol_assert_equal($mol_csv_serial($mol_csv_parse(csv)), csv);
+        },
+        'one row'() {
+            const csv = '"foo","y,y\ny"';
+            $mol_assert_equal($mol_csv_serial_table($mol_csv_parse_table(csv)), csv);
+        },
+        'one col'() {
+            const csv = '"foo"\n"y,y\ny"';
+            $mol_assert_equal($mol_csv_serial($mol_csv_parse(csv)), csv);
+        },
+        'one cell'() {
+            const csv = '"y,y\ny"';
+            $mol_assert_equal($mol_csv_serial_table($mol_csv_parse_table(csv)), csv);
+        },
+        'tab separated'() {
+            const tsv = '"foo"\t"bar"\n"123"\t"456"\n"x""xx"\t"y,y\ny"';
+            $mol_assert_equal($mol_csv_serial($mol_csv_parse(tsv, '\t'), '\t'), tsv);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'is same number'() {
+            const Nan = $mol_data_const(Number.NaN);
+            Nan(Number.NaN);
+        },
+        'is equal object'() {
+            const Tags = $mol_data_const({ tags: ['deep', 'equals'] });
+            Tags({ tags: ['deep', 'equals'] });
+        },
+        'is different number'() {
+            const Five = $mol_data_const(5);
+            $mol_assert_fail(() => Five(6), '6 is not 5');
+        },
+        'is different object'() {
+            const Tags = $mol_data_const({ tags: ['deep', 'equals'] });
+            $mol_assert_fail(() => Tags({ tags: ['shallow', 'equals'] }), `{"tags":["shallow","equals"]} is not {"tags":["deep","equals"]}`);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is empty dict'() {
+            $mol_data_dict($mol_data_number)({});
+        },
+        'Is dict'() {
+            $mol_data_dict($mol_data_number)({ foo: 123 });
+        },
+        'Is not dict'() {
+            $mol_assert_fail(() => {
+                $mol_data_dict($mol_data_number)([123]);
+            }, '123 is not an Object');
+        },
+        'Has wrong item'() {
+            $mol_assert_fail(() => {
+                $mol_data_dict($mol_data_number)({ foo: 1, bar: '1' });
+            }, '["bar"] 1 is not a number');
+        },
+        'Has wrong deep item'() {
+            $mol_assert_fail(() => {
+                $mol_data_dict($mol_data_dict($mol_data_number))({ foo: { bar: false } });
+            }, '["foo"] ["bar"] false is not a number');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is fit'() {
+            $mol_data_pattern(/^-$/)('-');
+        },
+        'Is not fit'() {
+            $mol_assert_fail(() => {
+                $mol_data_pattern(/^-$/)('+');
+            }, '+ is not a /^-$/');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is email'() {
+            $mol_data_email('foo@bar');
+        },
+        'Has not host'() {
+            $mol_assert_fail(() => {
+                $mol_data_email('foo@');
+            }, 'foo@ is not a /.+@.+/');
+        },
+        'Has not name'() {
+            $mol_assert_fail(() => {
+                $mol_data_email('@bar');
+            }, '@bar is not a /.+@.+/');
+        },
+        'Has not @'() {
+            $mol_assert_fail(() => {
+                $mol_data_email('foo.bar');
+            }, 'foo.bar is not a /.+@.+/');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is same class'() {
+            $mol_data_instance(Date)(new Date);
+        },
+        'Is sub class'() {
+            $mol_data_instance(Object)(new Date);
+        },
+        'Is super class'() {
+            $mol_assert_fail(() => {
+                $mol_data_instance(Date)(new Object);
+            }, '[object Object] is not a Date');
+        },
+        'Is another class'() {
+            $mol_assert_fail(() => {
+                $mol_data_instance(Date)(new Array);
+            }, ' is not a Date');
+        },
+        'Is not object'() {
+            $mol_assert_fail(() => {
+                $mol_data_instance(Date)(null);
+            }, 'null is not a Date');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Nominal typing'() {
+            const Weight = $mol_data_nominal({ Weight: $mol_data_integer });
+            const Length = $mol_data_nominal({ Length: $mol_data_integer });
+            let len = Length(10);
+            len = Length(20); // Validate
+            len = 20; // Implicit Cast
+            let num = len; // Implicit Cast
+            len = Weight(20); // Explicit Cast
+            // len = Weight( 20 ) // Compile time error
+            // len = Length( 20.1 ) // Run time error
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Is null'() {
+            $mol_data_nullable($mol_data_number)(null);
+        },
+        'Is not null'() {
+            $mol_data_nullable($mol_data_number)(0);
+        },
+        'Is undefined'() {
+            $mol_assert_fail(() => {
+                const Type = $mol_data_nullable($mol_data_number);
+                Type(undefined);
+            }, 'undefined is not a number');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Closed number range'() {
+            const Pos = $mol_data_range(0, 1);
+            Pos(Number.EPSILON);
+            $mol_assert_fail(() => Pos(1), '1 is out range (0,1)');
+            $mol_assert_fail(() => Pos(0), '0 is out range (0,1)');
+            $mol_assert_fail(() => Pos(Number.POSITIVE_INFINITY), 'Infinity is out range (0,1)');
+            $mol_assert_fail(() => Pos(Number.NEGATIVE_INFINITY), '-Infinity is out range (0,1)');
+            $mol_assert_fail(() => Pos(NaN), 'NaN is out range (0,1)');
+        },
+        'Open number range'() {
+            const Pos = $mol_data_range(0, Number.POSITIVE_INFINITY);
+            Pos(Number.EPSILON);
+            Pos(Number.MAX_VALUE);
+            $mol_assert_fail(() => Pos(0), '0 is out range (0,Infinity)');
+            $mol_assert_fail(() => Pos(Number.POSITIVE_INFINITY), 'Infinity is out range (0,Infinity)');
+            $mol_assert_fail(() => Pos(Number.NEGATIVE_INFINITY), '-Infinity is out range (0,Infinity)');
+            $mol_assert_fail(() => Pos(NaN), 'NaN is out range (0,Infinity)');
+        },
+        'String range'() {
+            const Code = $mol_data_range('A', 'B');
+            Code('Aa');
+            Code('AZ');
+            $mol_assert_fail(() => Code('A'), 'A is out range (A,B)');
+            $mol_assert_fail(() => Code('B'), 'B is out range (A,B)');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'convertion to primitives'() {
+            var unit = new $mol_unit_money_usd(5);
+            $mol_assert_equal(unit.valueOf(), 5);
+            $mol_assert_equal(unit * 2, 10);
+            $mol_assert_equal(unit + '', '$5');
+            $mol_assert_equal(`${unit}`, '$5');
+            $mol_assert_equal(unit.toString(), '$5');
+            $mol_assert_equal(String(unit), '$5');
+        },
+        'arithmetic'() {
+            var usd1 = new $mol_unit_money_usd(2);
+            var usd2 = new $mol_unit_money_usd(3);
+            var rur = new $mol_unit_money_rub(2);
+            $mol_assert_equal($mol_unit.summ(usd1, usd2).toString(), '$5');
+            $mol_assert_equal(usd1.mult(2).toString(), '$4');
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Wrap & unwrap'() {
+            const val = [1];
+            const mut = $mol_mutable(val);
+            $mol_assert_equal(val, mut());
+        },
+        'Deep array'() {
+            const val = [[1], [2], [3]];
+            const mut = $mol_mutable(val);
+            $mol_assert_equal(mut[1][0](v => -v), -2);
+            $mol_assert_unique(val, mut());
+            $mol_assert_equal(val[0], mut()[0]);
+            $mol_assert_equal(val[2], mut()[2]);
+            $mol_assert_unique(val[1], mut()[1]);
+            $mol_assert_like(mut()[1], [-2]);
+        },
+        'Array insert'() {
+            const val = [[1, 2, 3, 4]];
+            const mut = $mol_mutable(val);
+            $mol_assert_like(mut[0](a => [...a.slice(0, 2), 7, ...a.slice(2)]), [1, 2, 7, 3, 4]);
+            $mol_assert_like(mut(), [[1, 2, 7, 3, 4]]);
+        },
+        'Deep objects'() {
+            const val = { a: { x: 1 }, b: { y: 2 }, c: { z: 3 } };
+            const mut = $mol_mutable(val);
+            $mol_assert_equal(mut.b.y(v => -v), -2);
+            $mol_assert_unique(val, mut());
+            $mol_assert_equal(val.a, mut().a);
+            $mol_assert_equal(val.c, mut().c);
+            $mol_assert_unique(val.b, mut().b);
+            $mol_assert_like(mut().b, { y: -2 });
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Word making'() {
+            $mol_assert_equal(true, $mol_spell_ru.check('пил'));
+            $mol_assert_equal(true, $mol_spell_ru.check('пила'));
+            $mol_assert_equal(true, $mol_spell_ru.check('запил'));
+            $mol_assert_equal(true, $mol_spell_ru.check('завопил'));
+            $mol_assert_equal(true, $mol_spell_ru.check('пилил'));
+            $mol_assert_equal(true, $mol_spell_ru.check('пилоел'));
+            $mol_assert_equal(true, $mol_spell_ru.check('недоперепилоперенедоела'));
+        },
+        'Wrong words'() {
+            $mol_assert_equal(false, $mol_spell_ru.check('недперепила'));
+            $mol_assert_equal(false, $mol_spell_ru.check('недоbook'));
+        },
+        'Segmentation'() {
+            $mol_assert_equal($mol_spell_ru.split('пил'), ["пил"]);
+            $mol_assert_equal($mol_spell_ru.split('пила'), ["пил", "а"]);
+            $mol_assert_equal($mol_spell_ru.split('запил'), ["за", "пил"]);
+            $mol_assert_equal($mol_spell_ru.split('завопил'), ["за", "во", "пил"]);
+            $mol_assert_equal($mol_spell_ru.split('пилил'), ["пил", "ил"]);
+            $mol_assert_equal($mol_spell_ru.split('пилоел'), ["пил", "ое", "л"]);
+            $mol_assert_equal($mol_spell_ru.split('сине-зелёное'), ["син", "е", "-", "зелён", "ое"]);
+            $mol_assert_equal($mol_spell_ru.split('недоперепила'), ["недо", "пере", "пил", "а"]);
+            $mol_assert_equal($mol_spell_ru.split('перенедоела'), ["пере", "недо", "е", "л", "а"]);
+            $mol_assert_equal($mol_spell_ru.split('недоперепилоперенедоела'), ["недо", "пере", "пил", "о", "пере", "недо", "е", "л", "а"]);
+            $mol_assert_equal($mol_spell_ru.split('недперепилъ'), ["н", "ед", "пере", "пил", "ъ"]);
+        },
+    });
+})($ || ($ = {}));
+
+;
+"use strict";
+var $;
+(function ($) {
+    $mol_test({
+        'Known language'() {
+            $mol_assert_ok($mol_spell_any.check('пила'));
+        },
+        'Unknown language'() {
+            $mol_assert_not($mol_spell_any.check('пиri'));
+        },
+    });
 })($ || ($ = {}));
 
 
